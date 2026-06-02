@@ -260,7 +260,7 @@ export function headTags(meta: Meta) {
     <meta name="twitter:title" content="${meta.title}" />
     <meta name="twitter:description" content="${meta.description}" />
     <meta name="twitter:image" content="${og}" />
-    <meta name="theme-color" content="#1d3a34" />
+    <meta name="theme-color" content="#122036" />
     <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />

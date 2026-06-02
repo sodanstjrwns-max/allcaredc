@@ -1,30 +1,35 @@
 import { html, raw } from 'hono/html'
 import { Page } from '../components/page'
-import { organizationSchema, schemaTag } from '../components/layout'
+import { organizationSchema } from '../components/layout'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../data/clinic'
+
+// 핵심 진료별 영문 캐치프레이즈 (seoulof 톤 → 매거진 업그레이드)
+const TX_ENG: Record<string, string> = {
+  implant: 'Expert-Level Implant.',
+  ortho: 'A Balanced Bite.',
+  esthetic: 'Art, not alteration.',
+}
 
 export function HomePage() {
   const body = html`
-  <!-- ============ HERO ============ -->
+  <!-- ============ HERO — 매거진 표지 ============ -->
   <section class="hero">
     <div class="hero-bg">
       <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" data-parallax="0.16" fetchpriority="high" />
     </div>
-    <div class="hero-rule"></div>
     <div class="hero-top">
       <span>ALLCARE DENTAL — SEOUL</span>
       <span>EST. 2023 · 약수역</span>
     </div>
     <div class="hero-inner">
-      <span class="eyebrow reveal">약수역 5번 출구 · 3인 전문의 진료</span>
+      <span class="eyebrow">약수역 5번 출구 · 3인 전문의 진료</span>
       <h1>
-        <span class="line-mask"><span>불편함을 끝까지</span></span>
-        <span class="line-mask"><span class="accent">책임지는</span></span>
-        <span class="line-mask"><span>한 곳.</span></span>
+        <span class="line-mask"><span>Care for</span></span>
+        <span class="line-mask"><span class="accent disp">every detail.</span></span>
       </h1>
       <div class="hero-row">
         <div>
-          <p class="lead reveal reveal-d2">${CLINIC.heroSub}</p>
+          <p class="lead reveal reveal-d2">불편함을 끝까지 책임지는 한 곳. 진단부터 회복까지, 흩어지지 않는 진료를 약수동에서 이어갑니다.</p>
           <div class="hero-actions reveal reveal-d3">
             <a href="/reservation" class="btn btn-accent">예약 문의 <i class="fa-solid fa-arrow-right"></i></a>
             <a href="/treatments" class="btn btn-ghost">진료 안내 보기</a>
@@ -50,11 +55,11 @@ export function HomePage() {
     </div>
   </div>
 
-  <!-- ============ 철학 (인지·공감·해소) ============ -->
+  <!-- ============ 철학 (인지·공감·해소·원칙) ============ -->
   <section class="section" id="philosophy">
     <div class="container">
       <div class="section-head reveal">
-        <span class="sec-label"><span class="num">01</span> 진료 철학</span>
+        <span class="sec-label"><span class="num">01</span> Our Philosophy</span>
         <h2>치료 이전에, <em>불편을 먼저</em> 읽습니다</h2>
         <p>${CLINIC.philosophy} 올케어치과가 환자를 대하는 변하지 않는 네 가지 원칙입니다.</p>
       </div>
@@ -70,25 +75,29 @@ export function HomePage() {
     </div>
   </section>
 
-  <!-- ============ 핵심 진료 TOP3 ============ -->
-  <section class="section" style="background:var(--paper)" id="core-treatments">
+  <!-- ============ 핵심 진료 TOP3 — 기사형 큐레이션 ============ -->
+  <section class="section" style="background:var(--ivory-2)" id="core-treatments">
     <div class="container">
       <div class="section-head reveal">
-        <span class="sec-label"><span class="num">02</span> 핵심 진료</span>
-        <h2>깊이 있게, 끝까지 책임지는<br><em>세 가지 진료</em></h2>
+        <span class="sec-label"><span class="num">02</span> Signature Care</span>
+        <h2>깊이 있게, 끝까지 책임지는 <em>세 가지 진료</em></h2>
         <p>분야별 전문의가 진단부터 마무리까지 일관되게 맡습니다.</p>
       </div>
-      <div class="tx-grid">
+      <div class="tx-feature">
         ${raw(CORE_TREATMENTS.map((t, i) => `
-          <a href="/treatments/${t.slug}" class="tx-card tilt reveal reveal-d${i + 1}">
-            <div class="tx-bg"><img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name} 진료" loading="lazy"></div>
-            <div class="tx-content">
-              <span class="tx-no">0${i + 1} — ${t.name}</span>
-              <h3>${t.hero}</h3>
-              <p>${t.short}</p>
-              <span class="tx-link">자세히 보기 <i class="fa-solid fa-arrow-right"></i></span>
+          <article class="tx-article reveal">
+            <div class="tx-art-media tilt">
+              <span class="tag">0${i + 1} · ${t.name}</span>
+              <img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name} 진료" loading="lazy">
             </div>
-          </a>`).join(''))}
+            <div class="tx-art-body">
+              <span class="tx-no">No. 0${i + 1}</span>
+              <span class="tx-eng disp">${TX_ENG[t.slug] || ''}</span>
+              <h3>${t.hero}</h3>
+              <p>${t.intro.slice(0, 130)}…</p>
+              <a href="/treatments/${t.slug}" class="link-arrow">자세히 보기 <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>`).join(''))}
       </div>
     </div>
   </section>
@@ -98,19 +107,19 @@ export function HomePage() {
     <div class="container">
       <div class="grid-2">
         <div class="reveal">
-          <span class="sec-label"><span class="num">03</span> 올케어의 차이</span>
-          <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 26px;font-weight:300">규모와 시설, 그리고<br><em>2대를 잇는 섬세함</em></h2>
+          <span class="sec-label"><span class="num">03</span> Why ALLCARE</span>
+          <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 26px">규모와 시설, 그리고<br><em>끝까지 잇는 섬세함</em></h2>
           <ul class="check prose" style="font-size:1.05rem">
             <li><strong>3인 전문의 협진</strong> — 구강악안면외과·통합치의학과·보철과 전문의가 한 곳에서.</li>
             <li><strong>원내 기공실 운영</strong> — 상주 기공사와 직접 호흡을 맞춰 보철을 정밀하게.</li>
             <li><strong>수면진료 세팅</strong> — 두려움이 큰 분, 장시간 진료가 필요한 분을 위한 환경.</li>
             <li><strong>에어플로우 등 위생 관리</strong> — 깨끗하고 안심되는 진료 환경.</li>
-            <li><strong>2대에 걸친 진료 철학</strong> — 필요한 진료만, 끝까지 책임지는 경험과 신뢰.</li>
+            <li><strong>책임지는 진료 철학</strong> — 필요한 진료만, 끝까지 책임지는 경험과 신뢰.</li>
           </ul>
-          <a href="/mission" class="btn btn-outline" style="margin-top:24px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/mission" class="btn btn-outline" style="margin-top:30px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
         </div>
         <div class="reveal reveal-d2">
-          <img src="/static/img/interior.webp" alt="올케어치과 진료 공간" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)" loading="lazy">
+          <img src="/static/img/interior.webp" alt="올케어치과 진료 공간" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);aspect-ratio:4/5;object-fit:cover;width:100%" loading="lazy">
         </div>
       </div>
     </div>
@@ -122,7 +131,7 @@ export function HomePage() {
       <div class="stats-grid">
         <div class="stat reveal"><div class="num"><span data-count="3">3</span></div><div class="lbl">분야별 전문의</div></div>
         <div class="stat reveal reveal-d1"><div class="num"><span data-count="1">1</span></div><div class="lbl">원내 기공실 (상주 기공사)</div></div>
-        <div class="stat reveal reveal-d2"><div class="num"><span data-count="6">6</span></div><div class="lbl">야간진료 마감 20:30시</div></div>
+        <div class="stat reveal reveal-d2"><div class="num"><span data-count="20" data-suffix=":30">20:30</span></div><div class="lbl">야간진료 마감 (월·화·목)</div></div>
         <div class="stat reveal reveal-d3"><div class="num"><span data-count="2023">2023</span></div><div class="lbl">개원 연도</div></div>
       </div>
     </div>
@@ -132,7 +141,7 @@ export function HomePage() {
   <section class="section" id="doctors">
     <div class="container">
       <div class="section-head reveal">
-        <span class="sec-label"><span class="num">04</span> 의료진</span>
+        <span class="sec-label"><span class="num">04</span> Our Specialists</span>
         <h2>각 분야의 <em>전문의</em>가 함께합니다</h2>
         <p>입안 전체를 하나의 그림으로 보는 협진. 환자 한 분을 여러 과로 나누지 않습니다.</p>
       </div>
@@ -156,10 +165,10 @@ export function HomePage() {
   </section>
 
   <!-- ============ 일반 진료 (sub) ============ -->
-  <section class="section-sm" style="background:var(--beige-soft)">
+  <section class="section-sm" style="background:var(--ivory-2)">
     <div class="container">
       <div class="section-head reveal">
-        <span class="sec-label"><span class="num">05</span> 전체 진료</span>
+        <span class="sec-label"><span class="num">05</span> Everyday Dentistry</span>
         <h2>일상의 <em>모든 치과 진료</em></h2>
       </div>
       <div class="tx-sub-grid">
@@ -175,26 +184,26 @@ export function HomePage() {
   <!-- ============ 진료시간 / 오시는길 요약 ============ -->
   <section class="section" id="info">
     <div class="container">
-      <div class="grid-2">
+      <div class="grid-2" style="align-items:start">
         <div class="reveal">
-          <span class="eyebrow">진료 안내</span>
-          <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:16px 0 24px">언제 오시면 되나요?</h2>
-          <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--gray-100);overflow:hidden;box-shadow:var(--shadow-sm)">
+          <span class="sec-label"><span class="num">06</span> Visit Us</span>
+          <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:18px 0 24px">언제 오시면 되나요?</h2>
+          <div style="background:#fff;border-radius:var(--radius-lg);border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow-sm)">
             ${raw(CLINIC.hours.map(h => `
-              <div style="display:flex;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--gray-100)">
-                <span style="font-weight:600;color:${h.night ? 'var(--brand)' : 'var(--ink-soft)'}">${h.day}${h.night ? ' <span style="font-size:11px;background:var(--brand-accent);color:#062b27;padding:2px 8px;border-radius:6px;margin-left:6px">야간</span>' : ''}</span>
-                <span style="color:var(--gray-600)">${h.time}</span>
+              <div style="display:flex;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--line-soft)">
+                <span style="font-weight:600;color:${h.night ? 'var(--mint)' : 'var(--ink-soft)'}">${h.day}${h.night ? ' <span style="font-size:11px;background:var(--mint);color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px">야간</span>' : ''}</span>
+                <span style="color:var(--gray-600);font-family:var(--font-disp)">${h.time}</span>
               </div>`).join(''))}
           </div>
           <p style="margin-top:14px;font-size:14px;color:var(--gray-600)"><i class="fa-solid fa-circle-info text-mint"></i> ${CLINIC.hoursNote} · 점심시간은 전화로 문의해 주세요.</p>
         </div>
         <div class="reveal reveal-d2">
-          <span class="eyebrow">오시는 길</span>
-          <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:16px 0 24px">${CLINIC.directions}</h2>
-          <div class="inlink-box" style="background:var(--brand);color:#fff">
-            <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-location-dot" style="color:var(--brand-accent-2);font-size:20px;margin-top:3px"></i><div><strong style="display:block;font-size:17px;margin-bottom:4px">${CLINIC.name}</strong>${CLINIC.address}</div></div>
-            <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-train-subway" style="color:var(--brand-accent-2);font-size:20px;margin-top:3px"></i><div>${CLINIC.subway}</div></div>
-            <div style="display:flex;gap:14px"><i class="fa-solid fa-phone" style="color:var(--brand-accent-2);font-size:20px;margin-top:3px"></i><a href="tel:${CLINIC.phoneRaw}" style="font-weight:700;font-size:18px">${CLINIC.phone}</a></div>
+          <span class="sec-label"><span class="num">07</span> Directions</span>
+          <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:18px 0 24px">${CLINIC.directions}</h2>
+          <div class="inlink-box" style="background:var(--navy-900);color:#fff">
+            <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-location-dot" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div><strong style="display:block;font-size:17px;margin-bottom:4px">${CLINIC.name}</strong>${CLINIC.address}</div></div>
+            <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-train-subway" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div>${CLINIC.subway}</div></div>
+            <div style="display:flex;gap:14px"><i class="fa-solid fa-phone" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><a href="tel:${CLINIC.phoneRaw}" style="font-weight:700;font-size:18px;font-family:var(--font-disp)">${CLINIC.phone}</a></div>
             <a href="/directions" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:24px">지도 보기 <i class="fa-solid fa-arrow-right"></i></a>
           </div>
         </div>
@@ -206,6 +215,7 @@ export function HomePage() {
   <section class="section" style="padding-top:0">
     <div class="container">
       <div class="cta-band reveal">
+        <span class="kicker" style="color:var(--gold-300);display:block;margin-bottom:18px">Start your care</span>
         <h2>불편한 곳이 있으신가요?</h2>
         <p>지금 상담을 예약하시면, 진료시간에 맞춰 친절히 안내해 드리겠습니다.</p>
         <div class="actions">
