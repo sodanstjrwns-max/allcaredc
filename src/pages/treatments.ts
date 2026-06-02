@@ -1,0 +1,207 @@
+import { html, raw } from 'hono/html'
+import { Page, PageHero } from '../components/page'
+import { breadcrumbSchema, faqSchema, schemaTag } from '../components/layout'
+import {
+  CLINIC, TREATMENTS, CORE_TREATMENTS, SUB_TREATMENTS, TX_IMAGES,
+  getTreatment, doctorsForTreatment, Treatment,
+} from '../data/clinic'
+
+const SPEC_LABEL: Record<string, string> = {
+  implant: '임플란트', surgery: '구강외과', tmj: '턱관절', conservative: '보존치료',
+  prosthetics: '보철', gum: '잇몸치료', esthetic: '심미보철', denture: '틀니',
+}
+
+// ============================================================
+// 진료 목록 페이지 /treatments
+// ============================================================
+export function TreatmentsIndex() {
+  const body = html`
+  ${PageHero({
+    crumb: [{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }],
+    title: '진료안내',
+    desc: '구강악안면외과·통합치의학과·보철과 전문의가 함께하는 올케어치과의 진료 영역입니다.',
+  })}
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">핵심 진료</span>
+        <h2>깊이 있게 책임지는 세 가지</h2>
+      </div>
+      <div class="tx-grid">
+        ${raw(CORE_TREATMENTS.map((t, i) => `
+          <a href="/treatments/${t.slug}" class="tx-card reveal reveal-d${i + 1}">
+            <div class="tx-bg"><img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name}" loading="lazy"></div>
+            <div class="tx-content">
+              <span class="tx-no">0${i + 1} · ${t.name}</span>
+              <h3>${t.hero}</h3>
+              <p>${t.short}</p>
+              <span class="tx-link">자세히 보기 <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+          </a>`).join(''))}
+      </div>
+
+      <div class="section-head reveal" style="margin-top:80px">
+        <span class="eyebrow">일반 진료</span>
+        <h2>일상의 모든 치과 진료</h2>
+      </div>
+      <div class="tx-sub-grid">
+        ${raw(SUB_TREATMENTS.map((t, i) => `
+          <a href="/treatments/${t.slug}" class="tx-sub reveal reveal-d${(i % 3) + 1}">
+            <span class="ico"><i class="fa-solid fa-${t.icon}"></i></span>
+            <span><strong>${t.name}</strong><br><span>${t.short.slice(0, 28)}…</span></span>
+          </a>`).join(''))}
+      </div>
+    </div>
+  </section>
+  ${ctaBand()}
+  `
+  return Page({
+    title: '진료안내 | 임플란트·교정·심미보철·수면진료 | 올케어치과',
+    description: '약수역 올케어치과 진료안내. 임플란트, 치아교정, 심미보철 등 핵심 진료부터 충치·신경·잇몸·턱관절·사랑니까지 3인 전문의가 진료합니다.',
+    path: '/treatments',
+    schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }])],
+  }, body)
+}
+
+// ============================================================
+// 진료 상세 페이지 /treatments/:slug
+// ============================================================
+export function TreatmentDetail(slug: string) {
+  const t = getTreatment(slug)
+  if (!t) return null
+  const docs = doctorsForTreatment(slug)
+  const related = TREATMENTS.filter(x => x.slug !== slug).slice(0, 5)
+
+  const procedureSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalProcedure',
+    name: t.name,
+    description: t.intro,
+    howPerformed: (t.steps || []).map(s => s.t).join(' → '),
+    provider: { '@type': 'Dentist', name: CLINIC.name, telephone: CLINIC.phone },
+  }
+  const medWebPage = {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    name: `${t.name} - ${CLINIC.name}`,
+    lastReviewed: '2026-05-20',
+    reviewedBy: docs.length ? { '@type': 'Person', name: docs[0].name + ' ' + docs[0].role } : undefined,
+  }
+
+  const body = html`
+  ${PageHero({
+    crumb: [{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }, { name: t.name, url: `/treatments/${slug}` }],
+    title: t.name,
+    desc: t.hero,
+  })}
+
+  <section class="section">
+    <div class="container">
+      <div class="grid-detail">
+        <!-- 본문 -->
+        <article class="prose reveal">
+          ${t.core && TX_IMAGES[t.slug] ? html`<img src="${TX_IMAGES[t.slug]}" alt="${t.name}" style="border-radius:var(--radius-lg);margin-bottom:30px;width:100%;aspect-ratio:16/9;object-fit:cover" loading="lazy">` : ''}
+
+          <p style="font-size:1.2rem;color:var(--ink);font-weight:500">${t.intro}</p>
+
+          ${raw(t.sections.map(s => `
+            <h2>${s.h}</h2>
+            <p>${s.p}</p>
+          `).join(''))}
+
+          ${t.steps ? html`
+            <h2>진료는 이렇게 진행됩니다</h2>
+            <div class="steps">
+              ${raw(t.steps.map((s, i) => `
+                <div class="step">
+                  <div class="n">${i + 1}</div>
+                  <h4>${s.t}</h4>
+                  <p>${s.d}</p>
+                </div>`).join(''))}
+            </div>
+          ` : ''}
+
+          ${t.subProcedures ? html`
+            <h2>세부 진료</h2>
+            <ul class="check">
+              ${raw(t.subProcedures.map(sp => `<li><strong>${sp.name}</strong> — ${sp.desc}</li>`).join(''))}
+            </ul>
+          ` : ''}
+
+          <!-- FAQ -->
+          <h2 style="margin-top:50px">자주 묻는 질문</h2>
+          <div class="faq" style="margin-top:10px">
+            ${raw(t.faqs.map(f => `
+              <div class="faq-item">
+                <button class="faq-q">${f.q}<span class="pm"><i class="fa-solid fa-plus"></i></span></button>
+                <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+              </div>`).join(''))}
+          </div>
+        </article>
+
+        <!-- 사이드바 (인링크) -->
+        <aside class="reveal reveal-d2">
+          <div class="inlink-box" style="background:var(--brand);color:#fff;margin-bottom:20px">
+            <h4 style="color:#fff">상담이 필요하신가요?</h4>
+            <p style="font-size:14px;color:rgba(255,255,255,.8);margin-bottom:18px">${t.name}에 대해 더 궁금한 점은 편하게 문의해 주세요.</p>
+            <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin-bottom:10px">예약 문의</a>
+            <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center">${CLINIC.phone}</a>
+          </div>
+
+          ${docs.length ? html`
+            <div class="inlink-box" style="margin-bottom:20px">
+              <h4><i class="fa-solid fa-user-doctor text-mint"></i> 담당 의료진</h4>
+              ${raw(docs.map(d => `
+                <a href="/doctors/${d.slug}">
+                  <span>${d.name} ${d.role}</span>
+                  <i class="fa-solid fa-arrow-right" style="font-size:12px"></i>
+                </a>`).join(''))}
+            </div>
+          ` : ''}
+
+          <div class="inlink-box" style="margin-bottom:20px">
+            <h4><i class="fa-solid fa-images text-mint"></i> 관련 진료사례</h4>
+            <a href="/cases?cat=${t.slug}"><span>${t.name} 비포/애프터</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
+            <a href="/cases"><span>전체 진료사례 보기</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
+          </div>
+
+          <div class="inlink-box">
+            <h4><i class="fa-solid fa-link text-mint"></i> 다른 진료</h4>
+            ${raw(related.map(r => `
+              <a href="/treatments/${r.slug}"><span>${r.name}</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>`).join(''))}
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+  ${ctaBand()}
+  `
+
+  const docNames = docs.map(d => d.name).join('·')
+  return Page({
+    title: `${t.name} | 약수역 ${t.name} - 올케어치과`,
+    description: `약수역 올케어치과 ${t.name}. ${t.short} ${docNames ? docNames + ' 전문의가 진료합니다.' : ''}`.slice(0, 158),
+    path: `/treatments/${slug}`,
+    schema: [
+      breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }, { name: t.name, url: `/treatments/${slug}` }]),
+      procedureSchema, medWebPage, faqSchema(t.faqs),
+    ],
+  }, body)
+}
+
+function ctaBand() {
+  return html`
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>불편한 곳이 있으신가요?</h2>
+        <p>${CLINIC.philosophy}</p>
+        <div class="actions">
+          <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
+          <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost"><i class="fa-solid fa-phone"></i> ${CLINIC.phone}</a>
+        </div>
+      </div>
+    </div>
+  </section>`
+}
