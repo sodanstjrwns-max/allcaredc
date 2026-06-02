@@ -260,11 +260,14 @@ export function headTags(meta: Meta) {
     <meta name="twitter:title" content="${meta.title}" />
     <meta name="twitter:description" content="${meta.description}" />
     <meta name="twitter:image" content="${og}" />
-    <meta name="theme-color" content="#16324f" />
+    <meta name="theme-color" content="#1d3a34" />
     <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Nanum+Myeongjo:wght@400;700;800&display=swap" />
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="/static/style.css" />

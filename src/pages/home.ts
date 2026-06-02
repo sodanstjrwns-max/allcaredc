@@ -8,25 +8,33 @@ export function HomePage() {
   <!-- ============ HERO ============ -->
   <section class="hero">
     <div class="hero-bg">
-      <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" data-parallax="0.18" fetchpriority="high" />
+      <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" data-parallax="0.16" fetchpriority="high" />
     </div>
-    <div class="hero-glow"></div>
-    <div class="hero-glow g2"></div>
+    <div class="hero-rule"></div>
+    <div class="hero-top">
+      <span>ALLCARE DENTAL — SEOUL</span>
+      <span>EST. 2023 · 약수역</span>
+    </div>
     <div class="hero-inner">
       <span class="eyebrow reveal">약수역 5번 출구 · 3인 전문의 진료</span>
       <h1>
         <span class="line-mask"><span>불편함을 끝까지</span></span>
-        <span class="line-mask"><span class="accent">책임지는</span> <span>한 곳.</span></span>
+        <span class="line-mask"><span class="accent">책임지는</span></span>
+        <span class="line-mask"><span>한 곳.</span></span>
       </h1>
-      <p class="lead reveal reveal-d2">${CLINIC.heroSub}</p>
-      <div class="hero-actions reveal reveal-d3">
-        <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
-        <a href="/treatments" class="btn btn-ghost">진료 안내 보기 <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="hero-meta reveal reveal-d4">
-        <div class="item"><span class="num"><span data-count="3">3</span></span><span class="lbl">분야별 전문의</span></div>
-        <div class="item"><span class="num"><span data-count="10" data-suffix="+">10+</span></span><span class="lbl">진료 영역</span></div>
-        <div class="item"><span class="num"><span data-count="20" data-suffix=":30">20:30</span></span><span class="lbl">야간진료 (월·화·목)</span></div>
+      <div class="hero-row">
+        <div>
+          <p class="lead reveal reveal-d2">${CLINIC.heroSub}</p>
+          <div class="hero-actions reveal reveal-d3">
+            <a href="/reservation" class="btn btn-accent">예약 문의 <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="/treatments" class="btn btn-ghost">진료 안내 보기</a>
+          </div>
+        </div>
+        <div class="hero-meta reveal reveal-d4">
+          <div class="item"><span class="num"><span data-count="3">3</span></span><span class="lbl">분야별 전문의</span></div>
+          <div class="item"><span class="num"><span data-count="10" data-suffix="+">10+</span></span><span class="lbl">진료 영역</span></div>
+          <div class="item"><span class="num"><span data-count="20" data-suffix=":30">20:30</span></span><span class="lbl">야간진료 (월·화·목)</span></div>
+        </div>
       </div>
     </div>
     <div class="scroll-ind"><span>SCROLL</span><span class="line"></span></div>
@@ -43,17 +51,18 @@ export function HomePage() {
   </div>
 
   <!-- ============ 철학 (인지·공감·해소) ============ -->
-  <section class="section section-glow" id="philosophy">
+  <section class="section" id="philosophy">
     <div class="container">
-      <div class="section-head center reveal">
-        <span class="eyebrow">우리의 진료 철학</span>
-        <h2>치료 이전에, 불편을 먼저 읽습니다</h2>
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">01</span> 진료 철학</span>
+        <h2>치료 이전에, <em>불편을 먼저</em> 읽습니다</h2>
         <p>${CLINIC.philosophy} 올케어치과가 환자를 대하는 변하지 않는 네 가지 원칙입니다.</p>
       </div>
       <div class="value-grid stagger">
         ${raw(CLINIC.values.map((v, i) => `
           <div class="value-card">
-            <div class="ico"><i class="fa-solid fa-${v.icon}"></i></div>
+            <span class="v-no">0${i + 1}</span>
+            <span class="ico"><i class="fa-solid fa-${v.icon}"></i></span>
             <h3>${v.title}</h3>
             <p>${v.desc}</p>
           </div>`).join(''))}
@@ -62,11 +71,11 @@ export function HomePage() {
   </section>
 
   <!-- ============ 핵심 진료 TOP3 ============ -->
-  <section class="section" style="background:var(--beige-soft)" id="core-treatments">
+  <section class="section" style="background:var(--paper)" id="core-treatments">
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">핵심 진료</span>
-        <h2>깊이 있게, 끝까지 책임지는<br>세 가지 진료</h2>
+        <span class="sec-label"><span class="num">02</span> 핵심 진료</span>
+        <h2>깊이 있게, 끝까지 책임지는<br><em>세 가지 진료</em></h2>
         <p>분야별 전문의가 진단부터 마무리까지 일관되게 맡습니다.</p>
       </div>
       <div class="tx-grid">
@@ -74,7 +83,7 @@ export function HomePage() {
           <a href="/treatments/${t.slug}" class="tx-card tilt reveal reveal-d${i + 1}">
             <div class="tx-bg"><img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name} 진료" loading="lazy"></div>
             <div class="tx-content">
-              <span class="tx-no">0${i + 1} · ${t.name}</span>
+              <span class="tx-no">0${i + 1} — ${t.name}</span>
               <h3>${t.hero}</h3>
               <p>${t.short}</p>
               <span class="tx-link">자세히 보기 <i class="fa-solid fa-arrow-right"></i></span>
@@ -89,8 +98,8 @@ export function HomePage() {
     <div class="container">
       <div class="grid-2">
         <div class="reveal">
-          <span class="eyebrow">올케어치과의 차이</span>
-          <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:16px 0 22px">규모와 시설, 그리고<br>2대를 잇는 섬세함</h2>
+          <span class="sec-label"><span class="num">03</span> 올케어의 차이</span>
+          <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 26px;font-weight:300">규모와 시설, 그리고<br><em>2대를 잇는 섬세함</em></h2>
           <ul class="check prose" style="font-size:1.05rem">
             <li><strong>3인 전문의 협진</strong> — 구강악안면외과·통합치의학과·보철과 전문의가 한 곳에서.</li>
             <li><strong>원내 기공실 운영</strong> — 상주 기공사와 직접 호흡을 맞춰 보철을 정밀하게.</li>
@@ -122,9 +131,9 @@ export function HomePage() {
   <!-- ============ 의료진 ============ -->
   <section class="section" id="doctors">
     <div class="container">
-      <div class="section-head center reveal">
-        <span class="eyebrow">의료진 소개</span>
-        <h2>각 분야의 전문의가 함께합니다</h2>
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">04</span> 의료진</span>
+        <h2>각 분야의 <em>전문의</em>가 함께합니다</h2>
         <p>입안 전체를 하나의 그림으로 보는 협진. 환자 한 분을 여러 과로 나누지 않습니다.</p>
       </div>
       <div class="doc-grid">
@@ -149,9 +158,9 @@ export function HomePage() {
   <!-- ============ 일반 진료 (sub) ============ -->
   <section class="section-sm" style="background:var(--beige-soft)">
     <div class="container">
-      <div class="section-head center reveal">
-        <span class="eyebrow">전체 진료</span>
-        <h2>일상의 모든 치과 진료</h2>
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">05</span> 전체 진료</span>
+        <h2>일상의 <em>모든 치과 진료</em></h2>
       </div>
       <div class="tx-sub-grid">
         ${raw(SUB_TREATMENTS.map((t, i) => `
