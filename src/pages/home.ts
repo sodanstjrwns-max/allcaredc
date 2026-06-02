@@ -11,9 +11,13 @@ export function HomePage() {
       <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" data-parallax="0.18" fetchpriority="high" />
     </div>
     <div class="hero-glow"></div>
+    <div class="hero-glow g2"></div>
     <div class="hero-inner">
       <span class="eyebrow reveal">약수역 5번 출구 · 3인 전문의 진료</span>
-      <h1 class="reveal reveal-d1">불편함을 끝까지<br><span class="accent">책임지는</span> 한 곳.</h1>
+      <h1>
+        <span class="line-mask"><span>불편함을 끝까지</span></span>
+        <span class="line-mask"><span class="accent">책임지는</span> <span>한 곳.</span></span>
+      </h1>
       <p class="lead reveal reveal-d2">${CLINIC.heroSub}</p>
       <div class="hero-actions reveal reveal-d3">
         <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
@@ -28,17 +32,27 @@ export function HomePage() {
     <div class="scroll-ind"><span>SCROLL</span><span class="line"></span></div>
   </section>
 
+  <!-- ============ 신뢰 마퀴 띠 ============ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>구강악안면외과 전문의</span><span>통합치의학과 전문의</span><span>보철과 전문의</span>
+      <span>원내 기공실</span><span>수면 진료</span><span>야간 진료</span>
+      <span>구강악안면외과 전문의</span><span>통합치의학과 전문의</span><span>보철과 전문의</span>
+      <span>원내 기공실</span><span>수면 진료</span><span>야간 진료</span>
+    </div>
+  </div>
+
   <!-- ============ 철학 (인지·공감·해소) ============ -->
-  <section class="section" id="philosophy">
+  <section class="section section-glow" id="philosophy">
     <div class="container">
       <div class="section-head center reveal">
         <span class="eyebrow">우리의 진료 철학</span>
         <h2>치료 이전에, 불편을 먼저 읽습니다</h2>
         <p>${CLINIC.philosophy} 올케어치과가 환자를 대하는 변하지 않는 네 가지 원칙입니다.</p>
       </div>
-      <div class="value-grid">
+      <div class="value-grid stagger">
         ${raw(CLINIC.values.map((v, i) => `
-          <div class="value-card reveal reveal-d${i + 1}">
+          <div class="value-card">
             <div class="ico"><i class="fa-solid fa-${v.icon}"></i></div>
             <h3>${v.title}</h3>
             <p>${v.desc}</p>
@@ -57,7 +71,7 @@ export function HomePage() {
       </div>
       <div class="tx-grid">
         ${raw(CORE_TREATMENTS.map((t, i) => `
-          <a href="/treatments/${t.slug}" class="tx-card reveal reveal-d${i + 1}">
+          <a href="/treatments/${t.slug}" class="tx-card tilt reveal reveal-d${i + 1}">
             <div class="tx-bg"><img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name} 진료" loading="lazy"></div>
             <div class="tx-content">
               <span class="tx-no">0${i + 1} · ${t.name}</span>
