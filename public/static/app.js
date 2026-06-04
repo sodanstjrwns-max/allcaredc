@@ -461,6 +461,46 @@
     update();
   })();
 
+  // ---------- 히어로 실시간 시계 + LIVE 운영상태 (디테일 밀도) ----------
+  (function () {
+    var clock = document.getElementById('heroClock');
+    var live = document.getElementById('heroLive');
+    if (!clock && !live) return;
+    // 진료시간(요일별 마감). 0=일 ~ 6=토. [start, end] (24h, 분 단위). null=휴진
+    var HOURS = {
+      0: null,                 // 일 휴진
+      1: [[9 * 60 + 30, 20 * 60 + 30]],  // 월 09:30~20:30 (야간)
+      2: [[9 * 60 + 30, 20 * 60 + 30]],  // 화 야간
+      3: [[9 * 60 + 30, 18 * 60 + 30]],  // 수
+      4: [[9 * 60 + 30, 20 * 60 + 30]],  // 목 야간
+      5: [[9 * 60 + 30, 18 * 60 + 30]],  // 금
+      6: [[9 * 60 + 30, 13 * 60 + 30]]   // 토 ~13:30
+    };
+    function kstNow() {
+      // KST = UTC+9
+      var now = new Date();
+      var utc = now.getTime() + now.getTimezoneOffset() * 60000;
+      return new Date(utc + 9 * 3600000);
+    }
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function tick() {
+      var d = kstNow();
+      if (clock) clock.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + ' KST';
+      if (live) {
+        var mins = d.getHours() * 60 + d.getMinutes();
+        var ranges = HOURS[d.getDay()];
+        var open = false;
+        if (ranges) ranges.forEach(function (r) { if (mins >= r[0] && mins < r[1]) open = true; });
+        live.classList.toggle('open', open);
+        live.classList.toggle('closed', !open);
+        var txt = live.querySelector('.txt');
+        if (txt) txt.textContent = open ? '진료 중 · OPEN' : '진료 시간 외 · CLOSED';
+      }
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+
   // ---------- 관성 lerp 스크롤 느낌 (미세, 헤더 제외 콘텐츠 살짝 follow) ----------
   // ※ 진짜 스크롤 하이재킹은 접근성/모바일 리스크가 커서 지양.
   //    대신 reveal·media 요소에 미세한 lerp drift만 주어 "묵직한 관성감" 연출.

@@ -19,11 +19,12 @@ export function HomePage() {
     </div>
     <div class="hero-top">
       <span>ALLCARE DENTAL — SEOUL</span>
+      <span class="hero-coord">37.5547°N · 127.0107°E</span>
       <span>EST. 2023 · 약수역</span>
     </div>
     <div class="hero-inner">
       <span class="hero-badge">약수역 5번 출구 · 3인 전문의 진료</span>
-      <h1>
+      <h1 class="hero-mega">
         <span class="line-mask"><span>Care for</span></span>
         <span class="line-mask"><span class="accent disp">every detail.</span></span>
       </h1>
@@ -41,6 +42,10 @@ export function HomePage() {
           <div class="item"><span class="num"><span data-count="20" data-suffix=":30">20:30</span></span><span class="lbl">야간진료 (월·화·목)</span></div>
         </div>
       </div>
+    </div>
+    <div class="hero-foot">
+      <span class="hero-live" id="heroLive"><span class="dot"></span><span class="txt">상태 확인 중</span></span>
+      <span class="hero-now" id="heroClock">--:--:-- KST</span>
     </div>
     <div class="scroll-ind"><span>SCROLL</span><span class="line"></span></div>
   </section>
