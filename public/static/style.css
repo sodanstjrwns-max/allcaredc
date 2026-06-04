@@ -1363,6 +1363,32 @@ body::after {
 .magnetic { transition: transform .45s var(--spring); }
 .magnetic:active { transition: transform .15s var(--spring); }
 
+/* ---- F. /treatments — v7 디테일 (정제된 살아있음) ---- */
+/* 상세 인트로 lead: 좌측 민트 헤어라인 + 격 */
+.tx-intro-lead {
+  position: relative; padding-left: 22px; margin-bottom: 8px;
+  letter-spacing: -.01em;
+}
+.tx-intro-lead::before {
+  content: ''; position: absolute; left: 0; top: .35em; bottom: .35em;
+  width: 2px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--mint-400), var(--mint-600));
+}
+/* step: 호버 시 미세 슬라이드 + 번호 가중 (살아있음) */
+.step { transition: background .4s var(--ease); }
+.step:hover { background: var(--ivory-2); }
+.step:hover .n { transform: translateX(2px); }
+.step .n { transition: transform .45s var(--spring); }
+/* core 카드 번호(tx-no) 모노 격상 */
+.tx-content .tx-no {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--mint-400);
+  display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px;
+}
+.tx-content .tx-no::before {
+  content: ''; width: 18px; height: 1px; background: var(--mint-400); opacity: .7;
+}
+
 /* ---- responsive: kinetic on mobile ---- */
 @media (max-width: 820px) {
   .kinetic-track { font-size: clamp(2.4rem, 16vw, 5rem); }

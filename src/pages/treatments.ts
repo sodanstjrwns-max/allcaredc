@@ -25,13 +25,13 @@ export function TreatmentsIndex() {
   <section class="section">
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">핵심 진료</span>
-        <h2>깊이 있게 책임지는 세 가지</h2>
+        <span class="sec-label"><span class="num">01</span> Core Treatments</span>
+        <h2 class="split-rise">깊이 있게 책임지는 <em>세 가지</em></h2>
       </div>
       <div class="tx-grid">
         ${raw(CORE_TREATMENTS.map((t, i) => `
           <a href="/treatments/${t.slug}" class="tx-card reveal reveal-d${i + 1}">
-            <div class="tx-bg"><img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name}" loading="lazy"></div>
+            <div class="tx-bg"><img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name}" loading="lazy" data-drift="14"></div>
             <div class="tx-content">
               <span class="tx-no">0${i + 1} · ${t.name}</span>
               <h3>${t.hero}</h3>
@@ -42,8 +42,8 @@ export function TreatmentsIndex() {
       </div>
 
       <div class="section-head reveal" style="margin-top:80px">
-        <span class="eyebrow">일반 진료</span>
-        <h2>일상의 모든 치과 진료</h2>
+        <span class="sec-label"><span class="num">02</span> General Care</span>
+        <h2 class="split-rise">일상의 모든 <em>치과 진료</em></h2>
       </div>
       <div class="tx-sub-grid">
         ${raw(SUB_TREATMENTS.map((t, i) => `
@@ -103,15 +103,15 @@ export function TreatmentDetail(slug: string) {
         <article class="prose reveal">
           ${t.core && TX_IMAGES[t.slug] ? html`<img src="${TX_IMAGES[t.slug]}" alt="${t.name}" style="border-radius:var(--radius-lg);margin-bottom:30px;width:100%;aspect-ratio:16/9;object-fit:cover" loading="lazy">` : ''}
 
-          <p style="font-size:1.2rem;color:var(--ink);font-weight:500">${t.intro}</p>
+          <p class="tx-intro-lead" style="font-size:1.2rem;color:var(--ink);font-weight:500">${t.intro}</p>
 
           ${raw(t.sections.map(s => `
-            <h2>${s.h}</h2>
+            <h2 class="split-rise">${s.h}</h2>
             <p>${s.p}</p>
           `).join(''))}
 
           ${t.steps ? html`
-            <h2>진료는 이렇게 진행됩니다</h2>
+            <h2 class="split-rise">진료는 <em>이렇게</em> 진행됩니다</h2>
             <div class="steps">
               ${raw(t.steps.map((s, i) => `
                 <div class="step">
@@ -123,14 +123,14 @@ export function TreatmentDetail(slug: string) {
           ` : ''}
 
           ${t.subProcedures ? html`
-            <h2>세부 진료</h2>
+            <h2 class="split-rise">세부 <em>진료</em></h2>
             <ul class="check">
               ${raw(t.subProcedures.map(sp => `<li><strong>${sp.name}</strong> — ${sp.desc}</li>`).join(''))}
             </ul>
           ` : ''}
 
           <!-- FAQ -->
-          <h2 style="margin-top:50px">자주 묻는 질문</h2>
+          <h2 class="split-rise" style="margin-top:50px">자주 묻는 <em>질문</em></h2>
           <div class="faq" style="margin-top:10px">
             ${raw(t.faqs.map(f => `
               <div class="faq-item">
@@ -195,7 +195,7 @@ function ctaBand() {
   <section class="section" style="padding-top:0">
     <div class="container">
       <div class="cta-band reveal">
-        <h2>불편한 곳이 있으신가요?</h2>
+        <h2 class="split-rise">불편한 곳이 <em>있으신가요?</em></h2>
         <p>${CLINIC.philosophy}</p>
         <div class="actions">
           <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
