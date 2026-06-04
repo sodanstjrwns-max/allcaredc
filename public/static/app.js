@@ -164,21 +164,50 @@
       el.addEventListener('mouseenter', function () { ring.classList.add('hover'); dot.classList.add('hover'); });
       el.addEventListener('mouseleave', function () { ring.classList.remove('hover'); dot.classList.remove('hover'); });
     });
+
+    // 미디어 위 커서 라벨 (VIEW) + 큰 링
+    var label = document.createElement('div'); label.className = 'cursor-label';
+    document.body.appendChild(label);
+    window.addEventListener('mousemove', function (e) {
+      label.style.left = e.clientX + 'px'; label.style.top = e.clientY + 'px';
+    });
+    document.querySelectorAll('[data-cursor-label]').forEach(function (el) {
+      var txt = el.getAttribute('data-cursor-label') || 'VIEW';
+      el.addEventListener('mouseenter', function () {
+        ring.classList.add('media'); dot.style.opacity = '0';
+        label.textContent = txt; label.classList.add('show');
+      });
+      el.addEventListener('mouseleave', function () {
+        ring.classList.remove('media'); dot.style.opacity = '1';
+        label.classList.remove('show');
+      });
+    });
+
     window.addEventListener('mouseout', function (e) { if (!e.relatedTarget) { dot.style.opacity = ring.style.opacity = '0'; } });
     window.addEventListener('mouseover', function () { dot.style.opacity = ring.style.opacity = '1'; });
   })();
 
-  // ---------- magnetic buttons ----------
-  if (!reduce && window.matchMedia('(hover: hover)').matches) {
-    document.querySelectorAll('.btn, .magnetic').forEach(function (el) {
+  // ---------- magnetic buttons (강화: 강도↑ + 자기장 영역 확장 + 로고) ----------
+  if (!reduce && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.btn, .magnetic, .logo, [data-magnetic]').forEach(function (el) {
       el.classList.add('magnetic');
+      // 강도: data-mag 로 개별 조정 가능 (기본 0.4)
+      var strength = parseFloat(el.getAttribute('data-mag')) || 0.4;
+      var pad = 28; // 자기장 감지 패딩 (버튼 밖에서도 끌림 시작)
       el.addEventListener('mousemove', function (e) {
         var r = el.getBoundingClientRect();
         var x = e.clientX - r.left - r.width / 2;
         var y = e.clientY - r.top - r.height / 2;
-        el.style.transform = 'translate(' + (x * 0.28) + 'px,' + (y * 0.4) + 'px)';
+        el.style.transform = 'translate(' + (x * strength) + 'px,' + (y * strength * 1.15) + 'px)';
+        // 내부 아이콘 살짝 더 끌림 (입체감)
+        var ic = el.querySelector('i');
+        if (ic) ic.style.transform = 'translate(' + (x * strength * 0.4) + 'px,' + (y * strength * 0.4) + 'px)';
       });
-      el.addEventListener('mouseleave', function () { el.style.transform = ''; });
+      el.addEventListener('mouseleave', function () {
+        el.style.transform = '';
+        var ic = el.querySelector('i'); if (ic) ic.style.transform = '';
+      });
+      void pad;
     });
   }
 
@@ -242,6 +271,226 @@
     slider.addEventListener('touchmove', function (e) { if (dragging) setPos(e.touches[0].clientX); }, { passive: true });
     slider.addEventListener('touchend', function () { dragging = false; });
   });
+
+  // ============================================================
+  //  ★★★ 2026 LAYER
+  // ============================================================
+
+  // ---------- cinematic pin-scale hero (scroll-linked clip-path) ----------
+  (function () {
+    if (reduce) return;
+    var hero = document.querySelector('.hero.cinema');
+    if (!hero) return;
+    function upd() {
+      var h = hero.offsetHeight || 1;
+      var y = window.scrollY;
+      var p = Math.min(Math.max(y / h, 0), 1); // 0 top → 1 scrolled past
+      // 시작: 살짝 안쪽으로 클립(라운드 창) → 스크롤하며 풀블리드
+      var clip = (1 - p) * 4;          // 4% → 0%
+      var radius = (1 - p) * 18;       // 18px → 0
+      var scale = 1.08 + p * 0.06;
+      hero.style.setProperty('--clip', clip.toFixed(2) + '%');
+      hero.style.setProperty('--clipr', radius.toFixed(1) + 'px');
+      hero.style.setProperty('--heroScale', scale.toFixed(3));
+    }
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd, { passive: true });
+    upd();
+  })();
+
+  // ---------- kinetic marquee (scroll-velocity drift + letter highlight) ----------
+  (function () {
+    var tracks = document.querySelectorAll('.kinetic-track');
+    if (!tracks.length) return;
+    if (reduce) return;
+    var lastY = window.scrollY, vel = 0;
+    var base = {};
+    tracks.forEach(function (t, i) { base[i] = (i % 2 === 0) ? 0 : -200; });
+    function loop() {
+      var y = window.scrollY;
+      var dv = y - lastY; lastY = y;
+      vel = vel * 0.9 + dv * 0.6;
+      tracks.forEach(function (t, i) {
+        var dir = (i % 2 === 0) ? 1 : -1;
+        base[i] -= (0.6 + Math.abs(vel) * 0.5) * dir; // constant drift + velocity boost
+        // wrap
+        var w = t.scrollWidth / 2 || 1;
+        if (base[i] <= -w) base[i] += w;
+        if (base[i] >= 0 && dir < 0) base[i] -= w;
+        t.style.transform = 'translateX(' + base[i] + 'px)';
+      });
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  // ---------- word-rise reveal (split heading words) ----------
+  (function () {
+    var heads = document.querySelectorAll('[data-words]');
+    heads.forEach(function (h) {
+      var raw = h.getAttribute('data-words');
+      var parts = (raw || h.textContent).split(' ');
+      h.innerHTML = parts.map(function (w) {
+        return '<span class="word-rise"><span>' + w + '</span></span>';
+      }).join(' ');
+    });
+    if (reduce) { document.querySelectorAll('.word-rise').forEach(function(w){w.classList.add('in');}); return; }
+    if ('IntersectionObserver' in window) {
+      var wio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            var words = e.target.querySelectorAll('.word-rise');
+            words.forEach(function (w, i) { w.querySelector('span').style.transitionDelay = (i * 0.06) + 's'; w.classList.add('in'); });
+            wio.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      document.querySelectorAll('[data-words]').forEach(function (h) { wio.observe(h); });
+    } else {
+      document.querySelectorAll('.word-rise').forEach(function(w){w.classList.add('in');});
+    }
+  })();
+
+  // ---------- split-rise reveal (마크업 보존: em 등 유지하며 단어 마스크) ----------
+  (function () {
+    var heads = document.querySelectorAll('.split-rise');
+    if (!heads.length) return;
+
+    function wrapTextNode(node) {
+      var frag = document.createDocumentFragment();
+      var words = node.textContent.split(/(\s+)/); // 공백 보존
+      words.forEach(function (w) {
+        if (w.trim() === '') { frag.appendChild(document.createTextNode(w)); return; }
+        var wr = document.createElement('span'); wr.className = 'wr';
+        var inner = document.createElement('span'); inner.textContent = w;
+        wr.appendChild(inner); frag.appendChild(wr);
+      });
+      return frag;
+    }
+    function processEl(el) {
+      var kids = Array.prototype.slice.call(el.childNodes);
+      kids.forEach(function (n) {
+        if (n.nodeType === 3) { // text node
+          el.replaceChild(wrapTextNode(n), n);
+        } else if (n.nodeType === 1) { // element (em 등) — 안쪽 텍스트도 동일 처리
+          processEl(n);
+        }
+      });
+    }
+    heads.forEach(function (h) { processEl(h); });
+
+    if (reduce) { heads.forEach(function (h) { h.classList.add('in'); }); return; }
+    if ('IntersectionObserver' in window) {
+      var sio2 = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            var ws = e.target.querySelectorAll('.wr');
+            ws.forEach(function (w, i) { w.querySelector('span').style.transitionDelay = (i * 0.05) + 's'; });
+            e.target.classList.add('in'); sio2.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.35 });
+      heads.forEach(function (h) { sio2.observe(h); });
+    } else { heads.forEach(function (h) { h.classList.add('in'); }); }
+  })();
+
+  // ---------- media-mask reveal (image clip-in) ----------
+  (function () {
+    var masks = document.querySelectorAll('.media-mask');
+    if (!masks.length) return;
+    if (reduce) { masks.forEach(function (m) { m.classList.add('in'); }); return; }
+    if ('IntersectionObserver' in window) {
+      var mio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); mio.unobserve(e.target); } });
+      }, { threshold: 0.25 });
+      masks.forEach(function (m) { mio.observe(m); });
+    } else { masks.forEach(function (m) { m.classList.add('in'); }); }
+  })();
+
+  // ============================================================
+  //  ★★★★ 2026 HIGH-END INTERACTIVE LAYER
+  // ============================================================
+
+  // ---------- 섹션 인디케이터 (우측 도트 네비) ----------
+  (function () {
+    var defs = [
+      { id: 'hero', label: 'Top' },
+      { id: 'philosophy', label: 'Philosophy' },
+      { id: 'core-treatments', label: 'Care' },
+      { id: 'difference', label: 'Why' },
+      { id: 'doctors', label: 'Doctors' },
+      { id: 'info', label: 'Visit' }
+    ];
+    var heroSec = document.querySelector('.hero');
+    if (heroSec && !heroSec.id) heroSec.id = 'hero';
+    var sections = defs.map(function (d) { return { def: d, el: document.getElementById(d.id) }; })
+                       .filter(function (s) { return s.el; });
+    if (sections.length < 2) return;
+
+    var nav = document.createElement('nav');
+    nav.className = 'section-nav';
+    nav.setAttribute('aria-label', '섹션 바로가기');
+    sections.forEach(function (s) {
+      var a = document.createElement('a');
+      a.href = '#' + s.def.id;
+      a.setAttribute('data-label', s.def.label);
+      a.setAttribute('aria-label', s.def.label);
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        s.el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      });
+      s.link = a;
+      nav.appendChild(a);
+    });
+    document.body.appendChild(nav);
+
+    function update() {
+      var y = window.scrollY + window.innerHeight * 0.38;
+      // hero 지나면 nav 표시
+      var heroH = (document.getElementById('hero') || {}).offsetHeight || 600;
+      if (window.scrollY > heroH * 0.45) nav.classList.add('show');
+      else nav.classList.remove('show');
+      var current = sections[0];
+      sections.forEach(function (s) {
+        if (s.el.offsetTop <= y) current = s;
+      });
+      sections.forEach(function (s) { s.link.classList.toggle('active', s === current); });
+    }
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  })();
+
+  // ---------- 관성 lerp 스크롤 느낌 (미세, 헤더 제외 콘텐츠 살짝 follow) ----------
+  // ※ 진짜 스크롤 하이재킹은 접근성/모바일 리스크가 커서 지양.
+  //    대신 reveal·media 요소에 미세한 lerp drift만 주어 "묵직한 관성감" 연출.
+  (function () {
+    if (reduce) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var driftEls = document.querySelectorAll('[data-drift]');
+    if (!driftEls.length) return;
+    var targets = [], current = [];
+    driftEls.forEach(function (el, i) { targets[i] = 0; current[i] = 0; });
+    function calc() {
+      driftEls.forEach(function (el, i) {
+        var r = el.getBoundingClientRect();
+        var center = r.top + r.height / 2;
+        var p = (center - window.innerHeight / 2) / window.innerHeight; // -0.5~0.5
+        var amt = parseFloat(el.getAttribute('data-drift')) || 26;
+        targets[i] = p * amt;
+      });
+    }
+    window.addEventListener('scroll', calc, { passive: true });
+    window.addEventListener('resize', calc, { passive: true });
+    calc();
+    (function loop() {
+      driftEls.forEach(function (el, i) {
+        current[i] += (targets[i] - current[i]) * 0.08; // lerp = 관성
+        el.style.transform = 'translate3d(0,' + current[i].toFixed(2) + 'px,0)';
+      });
+      requestAnimationFrame(loop);
+    })();
+  })();
 
   // ---------- toast helper (global) ----------
   window.showToast = function (msg) {

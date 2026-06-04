@@ -12,17 +12,17 @@ const TX_ENG: Record<string, string> = {
 
 export function HomePage() {
   const body = html`
-  <!-- ============ HERO — 매거진 표지 ============ -->
-  <section class="hero">
+  <!-- ============ HERO — 시네마틱 매거진 표지 ============ -->
+  <section class="hero cinema">
     <div class="hero-bg">
-      <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" data-parallax="0.16" fetchpriority="high" />
+      <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" fetchpriority="high" />
     </div>
     <div class="hero-top">
       <span>ALLCARE DENTAL — SEOUL</span>
       <span>EST. 2023 · 약수역</span>
     </div>
     <div class="hero-inner">
-      <span class="eyebrow">약수역 5번 출구 · 3인 전문의 진료</span>
+      <span class="hero-badge">약수역 5번 출구 · 3인 전문의 진료</span>
       <h1>
         <span class="line-mask"><span>Care for</span></span>
         <span class="line-mask"><span class="accent disp">every detail.</span></span>
@@ -55,12 +55,25 @@ export function HomePage() {
     </div>
   </div>
 
+  <!-- ============ 키네틱 디스플레이 띠 (2026) ============ -->
+  <section class="kinetic" aria-hidden="true">
+    <div class="kinetic-track">
+      <span class="lit">Expert-Level&nbsp;Care.</span><span class="out">Expert-Level&nbsp;Care.</span>
+      <span class="lit">Expert-Level&nbsp;Care.</span><span class="out">Expert-Level&nbsp;Care.</span>
+    </div>
+    <div class="kinetic-track">
+      <span class="out">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span><span class="lit">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span>
+      <span class="out">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span><span class="lit">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span>
+    </div>
+    <p class="kinetic-sub">진단부터 회복까지, 흩어지지 않는 한 곳의 진료</p>
+  </section>
+
   <!-- ============ 철학 (인지·공감·해소·원칙) ============ -->
   <section class="section" id="philosophy">
     <div class="container">
       <div class="section-head reveal">
         <span class="sec-label"><span class="num">01</span> Our Philosophy</span>
-        <h2>치료 이전에, <em>불편을 먼저</em> 읽습니다</h2>
+        <h2 class="split-rise">치료 이전에, <em>불편을 먼저</em> 읽습니다</h2>
         <p>${CLINIC.philosophy} 올케어치과가 환자를 대하는 변하지 않는 네 가지 원칙입니다.</p>
       </div>
       <div class="value-grid stagger">
@@ -80,16 +93,17 @@ export function HomePage() {
     <div class="container">
       <div class="section-head reveal">
         <span class="sec-label"><span class="num">02</span> Signature Care</span>
-        <h2>깊이 있게, 끝까지 책임지는 <em>세 가지 진료</em></h2>
+        <h2 class="split-rise">깊이 있게, 끝까지 책임지는 <em>세 가지 진료</em></h2>
         <p>분야별 전문의가 진단부터 마무리까지 일관되게 맡습니다.</p>
       </div>
       <div class="tx-feature">
         ${raw(CORE_TREATMENTS.map((t, i) => `
           <article class="tx-article reveal">
-            <div class="tx-art-media tilt">
+            <a href="/treatments/${t.slug}" class="tx-art-media tilt media-mask zoom-media" data-cursor-label="VIEW" aria-label="${t.name} 자세히 보기">
               <span class="tag">0${i + 1} · ${t.name}</span>
               <img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name} 진료" loading="lazy">
-            </div>
+              <span class="zm-label"><span class="zm-t">${TX_ENG[t.slug] || t.name}</span><span class="zm-go"><i class="fa-solid fa-arrow-right"></i></span></span>
+            </a>
             <div class="tx-art-body">
               <span class="tx-no">No. 0${i + 1}</span>
               <span class="tx-eng disp">${TX_ENG[t.slug] || ''}</span>
@@ -118,8 +132,9 @@ export function HomePage() {
           </ul>
           <a href="/mission" class="btn btn-outline" style="margin-top:30px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
         </div>
-        <div class="reveal reveal-d2">
-          <img src="/static/img/interior.webp" alt="올케어치과 진료 공간" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);aspect-ratio:4/5;object-fit:cover;width:100%" loading="lazy">
+        <div class="media-mask zoom-media reveal reveal-d2" data-drift="34" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)">
+          <img src="/static/img/interior.webp" alt="올케어치과 진료 공간" style="aspect-ratio:4/5;object-fit:cover;width:100%" loading="lazy">
+          <span class="zm-label"><span class="zm-t">Inside ALLCARE</span></span>
         </div>
       </div>
     </div>

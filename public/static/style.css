@@ -72,6 +72,7 @@
   --maxw: 1320px;
   --gutter: clamp(20px, 5vw, 64px);
   --ease: cubic-bezier(.22,.61,.36,1);
+  --spring: cubic-bezier(.16,1,.3,1);
 }
 
 /* ============================================================
@@ -404,12 +405,11 @@ em, .italic { font-style: normal; color: var(--mint); }
 }
 .tx-article:nth-child(even) { grid-template-columns: .95fr 1.05fr; }
 .tx-article:nth-child(even) .tx-art-media { order: -1; }
-.tx-art-media { position: relative; overflow: hidden; border-radius: var(--radius-lg); }
+.tx-art-media { position: relative; display: block; overflow: hidden; border-radius: var(--radius-lg); }
 .tx-art-media img {
   width: 100%; aspect-ratio: 4/3; object-fit: cover;
-  transition: transform 1.1s var(--ease);
 }
-.tx-article:hover .tx-art-media img { transform: scale(1.05); }
+/* 호버 줌은 .zoom-media 규칙에 위임 (media-mask transform과 충돌 방지) */
 .tx-art-media .tag {
   position: absolute; top: 20px; left: 20px;
   font-family: var(--font-disp); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
@@ -978,7 +978,194 @@ em, .italic { font-style: normal; color: var(--mint); }
   .hero h1 { font-size: clamp(2.6rem, 14vw, 4rem); }
 }
 
+/* ============================================================
+   ★★★ 2026 LAYER — kinetic / cinematic / grain / glass
+   기존 매거진 톤(아이보리·네이비·민트) 유지 + 최신 인터랙션
+   ============================================================ */
+
+/* ---- 1. global film grain (subtle, fixed) ---- */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+  opacity: .035; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- 2. cinematic pin-scale hero ---- */
+/* 히어로 이미지가 처음엔 둥근 창처럼 보였다가 스크롤하며 풀블리드로 확장 */
+.hero.cinema .hero-bg {
+  clip-path: inset(var(--clip,0%) round var(--clipr,0px));
+  transition: clip-path .1s linear;
+  will-change: clip-path;
+}
+.hero.cinema .hero-bg img { transform: scale(var(--heroScale,1.08)); transition: transform .1s linear; }
+
+/* hero kicker 위 작은 영문 라벨 (cinema 전용 강조) */
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-disp); font-style: italic; font-size: 14px;
+  color: var(--mint-400); margin-bottom: 18px;
+}
+.hero-badge::before { content: ""; width: 26px; height: 1px; background: var(--mint-400); }
+
+/* ---- 3. word-by-word reveal (heading) ---- */
+.word-rise { display: inline-block; overflow: hidden; vertical-align: top; }
+.word-rise > span { display: inline-block; transform: translateY(110%); transition: transform .9s var(--ease); }
+.word-rise.in > span,
+.in .word-rise > span { transform: translateY(0); }
+
+/* ---- 4. kinetic marquee strip (giant english, scroll-linked) ---- */
+.kinetic {
+  overflow: hidden; padding: clamp(40px,7vw,110px) 0; background: var(--navy-900); color: #fff;
+  position: relative;
+}
+.kinetic::before {
+  content: ""; position: absolute; inset: 0; opacity: .14;
+  background: radial-gradient(60% 80% at 20% 30%, rgba(86,176,196,.5), transparent 60%),
+              radial-gradient(50% 70% at 85% 70%, rgba(221,199,155,.35), transparent 60%);
+}
+.kinetic-track {
+  display: flex; gap: .5em; white-space: nowrap; will-change: transform; position: relative;
+  font-family: var(--font-disp); font-style: italic; font-weight: 340;
+  font-size: clamp(3rem, 11vw, 11rem); line-height: 1; letter-spacing: -.02em;
+}
+.kinetic-track span { color: rgba(255,255,255,.14); transition: color .4s; }
+.kinetic-track .lit { color: #fff; }
+.kinetic-track .out { -webkit-text-stroke: 1px rgba(255,255,255,.3); color: transparent; }
+.kinetic-sub {
+  position: relative; text-align: center; margin-top: clamp(24px,3vw,40px);
+  font-family: var(--font-body); font-size: clamp(.95rem,1.4vw,1.15rem);
+  color: rgba(255,255,255,.6); letter-spacing: .02em;
+}
+
+/* ---- 5. glass refinement on dark inlink / cta ---- */
+.cta-band, .stats-band { position: relative; overflow: hidden; }
+.cta-band::after, .stats-band::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background: radial-gradient(50% 60% at 80% 10%, rgba(86,176,196,.18), transparent 60%);
+}
+
+/* ---- 6. media reveal mask (image clip-in on scroll) ---- */
+.media-mask { overflow: hidden; }
+.media-mask > img { clip-path: inset(0 0 100% 0); transform: scale(1.12); transition: clip-path 1.1s var(--ease), transform 1.4s var(--ease); }
+.media-mask.in > img { clip-path: inset(0 0 0 0); transform: scale(1); }
+/* tag 라벨은 클립 제외 */
+.media-mask .tag { clip-path: none !important; }
+
+/* ---- 7. card hover lift refinement (2026 spring) ---- */
+.tx-art-media, .doc-card, .value-card, .tx-card, .enc-item, .case-card {
+  transition: transform .55s cubic-bezier(.16,1,.3,1), box-shadow .55s cubic-bezier(.16,1,.3,1), border-color .4s;
+}
+
+/* ---- 8. animated section-label number tick ---- */
+.sec-label .num { position: relative; }
+
+/* ---- 9. link-arrow underline sweep (already exists; enhance) ---- */
+.link-arrow { position: relative; }
+
+/* ============================================================
+   ★★★★ 2026 HIGH-END INTERACTIVE LAYER
+   섹션 도트 네비 / 워드 마스크 리빌 / 이미지 inner-zoom+라벨
+   / 커서 라벨(VIEW) / 스프링 디테일
+   ============================================================ */
+
+/* ---- A. 섹션 인디케이터 (우측 도트 네비, Awwwards) ---- */
+.section-nav {
+  position: fixed; right: clamp(16px, 2.4vw, 38px); top: 50%;
+  transform: translateY(-50%);
+  z-index: 60; display: flex; flex-direction: column; gap: 16px;
+  opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility .5s;
+  mix-blend-mode: difference;
+}
+.section-nav.show { opacity: 1; visibility: visible; }
+.section-nav a {
+  position: relative; display: block; width: 11px; height: 11px;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,.5);
+  background: transparent; transition: all .45s var(--spring);
+}
+.section-nav a::after {
+  content: attr(data-label);
+  position: absolute; right: 24px; top: 50%; transform: translateY(-50%) translateX(8px);
+  white-space: nowrap; font-family: var(--font-disp); font-style: italic;
+  font-size: 13px; color: #fff; letter-spacing: .02em;
+  opacity: 0; pointer-events: none; transition: all .4s var(--ease);
+}
+.section-nav a:hover::after,
+.section-nav a.active::after { opacity: 1; transform: translateY(-50%) translateX(0); }
+.section-nav a:hover { border-color: #fff; }
+.section-nav a.active {
+  background: #fff; border-color: #fff;
+  box-shadow: 0 0 0 4px rgba(255,255,255,.18);
+}
+@media (max-width: 1024px) { .section-nav { display: none; } }
+
+/* ---- B. 워드 마스크 리빌 (em 강조 유지) ---- */
+.split-rise .wr { display: inline-block; overflow: hidden; vertical-align: top; line-height: 1.06; }
+.split-rise .wr > span {
+  display: inline-block; transform: translateY(110%);
+  transition: transform .85s var(--ease);
+}
+.split-rise.in .wr > span { transform: translateY(0); }
+/* em(강조) 단어는 색만 토큰 유지 */
+.split-rise em { font-style: inherit; color: var(--mint); }
+
+/* ---- C. 이미지 호버 inner-zoom + 라벨 슬라이드 ---- */
+.zoom-media { position: relative; overflow: hidden; }
+.zoom-media > img,
+.zoom-media .zm-img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.001); transition: transform 1.1s var(--spring);
+  will-change: transform;
+}
+.zoom-media:hover > img,
+.zoom-media:hover .zm-img { transform: scale(1.08); }
+.zoom-media .zm-label {
+  position: absolute; left: 0; bottom: 0; right: 0;
+  padding: 26px 24px 22px;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+  color: #fff; z-index: 3;
+  background: linear-gradient(to top, rgba(14,27,48,.78), rgba(14,27,48,0));
+  transform: translateY(14px); opacity: 0;
+  transition: transform .6s var(--spring), opacity .6s var(--ease);
+}
+.zoom-media:hover .zm-label { transform: translateY(0); opacity: 1; }
+.zoom-media .zm-label .zm-t { font-family: var(--font-disp); font-style: italic; font-size: clamp(1.1rem,1.6vw,1.4rem); }
+.zoom-media .zm-label .zm-go {
+  flex: none; width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.6); display: grid; place-items: center;
+  font-size: 13px; transition: all .4s var(--spring);
+}
+.zoom-media:hover .zm-label .zm-go { background: #fff; color: var(--navy-900); }
+
+/* ---- D. 커서 라벨 (미디어 위 VIEW) ---- */
+.cursor-ring.media { width: 88px; height: 88px; background: rgba(255,255,255,.06); backdrop-filter: blur(1px); }
+.cursor-label {
+  position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+  font-family: var(--font-disp); font-style: italic; font-size: 13px;
+  color: #fff; letter-spacing: .08em; text-transform: uppercase;
+  opacity: 0; transform: translate(-50%,-50%) scale(.7);
+  transition: opacity .3s var(--ease), transform .35s var(--spring);
+  mix-blend-mode: difference;
+}
+.cursor-label.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+
+/* ---- E. 마그네틱 스프링 복귀 ---- */
+.magnetic { transition: transform .45s var(--spring); }
+.magnetic:active { transition: transform .15s var(--spring); }
+
+/* ---- responsive: kinetic on mobile ---- */
+@media (max-width: 820px) {
+  .kinetic-track { font-size: clamp(2.4rem, 16vw, 5rem); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   .reveal, .stagger > *, .line-mask > span, .hero h1 .line-mask > span { opacity: 1 !important; transform: none !important; }
+  .word-rise > span { transform: none !important; }
+  .media-mask > img { clip-path: none !important; transform: none !important; }
+  .hero.cinema .hero-bg { clip-path: none !important; }
+  body::after { display: none; }
+  .split-rise .wr > span { transform: none !important; }
+  .section-nav { display: none !important; }
+  .cursor-label { display: none !important; }
+  .zoom-media > img, .zoom-media .zm-img { transform: none !important; }
 }
