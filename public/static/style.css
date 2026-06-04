@@ -485,6 +485,18 @@ em, .italic { font-style: normal; color: var(--mint); }
 }
 .check li strong { color: var(--ink); font-weight: 700; }
 
+/* AEO 질문-직답형 강점 리스트 (difference) */
+.aeo-list { display: grid; gap: 22px; }
+.aeo-item { border-left: 2px solid var(--line); padding-left: 18px; transition: border-color .4s var(--ease); }
+.aeo-item:hover { border-color: var(--mint); }
+.aeo-item dt {
+  font-family: 'Nanum Myeongjo', serif; font-weight: 800;
+  font-size: 1.12rem; color: var(--ink); margin-bottom: 7px;
+  display: flex; align-items: center; gap: 9px;
+}
+.aeo-item dt i { color: var(--mint); font-size: .95rem; width: 20px; text-align: center; }
+.aeo-item dd { margin: 0; color: var(--ink-soft); line-height: 1.78; font-size: .98rem; }
+
 /* ============================================================
    STATS BAND — 카운트업
    ============================================================ */

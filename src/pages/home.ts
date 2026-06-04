@@ -1,6 +1,6 @@
 import { html, raw } from 'hono/html'
 import { Page } from '../components/page'
-import { organizationSchema } from '../components/layout'
+import { organizationSchema, faqSchema } from '../components/layout'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../data/clinic'
 
 // 핵심 진료별 영문 캐치프레이즈 (seoulof 톤 → 매거진 업그레이드)
@@ -128,13 +128,13 @@ export function HomePage() {
         <div class="reveal">
           <span class="sec-label"><span class="num">03</span> Why ALLCARE</span>
           <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 26px">규모와 시설, 그리고<br><em>끝까지 잇는 섬세함</em></h2>
-          <ul class="check prose" style="font-size:1.05rem">
-            <li><strong>3인 전문의 협진</strong> — 구강악안면외과·통합치의학과·보철과 전문의가 한 곳에서.</li>
-            <li><strong>원내 기공실 운영</strong> — 상주 기공사와 직접 호흡을 맞춰 보철을 정밀하게.</li>
-            <li><strong>수면진료 세팅</strong> — 두려움이 큰 분, 장시간 진료가 필요한 분을 위한 환경.</li>
-            <li><strong>에어플로우 등 위생 관리</strong> — 깨끗하고 안심되는 진료 환경.</li>
-            <li><strong>책임지는 진료 철학</strong> — 필요한 진료만, 끝까지 책임지는 경험과 신뢰.</li>
-          </ul>
+          <dl class="aeo-list">
+            ${raw(CLINIC.strengths.map(s => `
+              <div class="aeo-item">
+                <dt><i class="fa-solid fa-${s.icon}"></i> ${s.title}</dt>
+                <dd>${s.desc}</dd>
+              </div>`).join(''))}
+          </dl>
           <a href="/mission" class="btn btn-outline" style="margin-top:30px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
         </div>
         <div class="media-mask zoom-media reveal reveal-d2" data-drift="34" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)">
@@ -251,7 +251,11 @@ export function HomePage() {
     title: '올케어치과 | 약수역 임플란트·교정·심미보철 3인 전문의 치과',
     description: '약수역 5번 출구 올케어치과. 구강악안면외과·통합치의학과·보철과 3인 전문의가 임플란트, 치아교정, 심미보철을 진단부터 책임집니다. 수면진료·원내 기공실·야간진료(월·화·목 20:30).',
     path: '/',
-    schema: [organizationSchema()],
+    // AEO: 강점을 질문-직답형 FAQPage 스키마로 노출 → AI 답변엔진 인용 유도
+    schema: [
+      organizationSchema(),
+      faqSchema(CLINIC.strengths.map(s => ({ q: s.head, a: s.desc }))),
+    ],
   }
   return Page(meta, body)
 }
