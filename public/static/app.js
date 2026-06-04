@@ -613,4 +613,236 @@
       .finally(function () { btn.disabled = false; btn.textContent = '예약 문의 보내기'; });
     return false;
   };
+
+  // ---------- v7: 스토리텔링 타이포 — 글자별 가변폰트 weight 모핑 ----------
+  // Fraunces 가변폰트(wght 300..600). line-mask reveal이 끝난 뒤 각 글자를
+  // <span>으로 쪼개고, 마우스 X 근접도/스크롤에 따라 wght가 물결처럼 흐르게.
+  (function () {
+    var h1 = document.querySelector('[data-morph]');
+    if (!h1) return;
+    var lines = h1.querySelectorAll('.morph-line');
+    var glyphs = [];
+
+    // line-mask 슬라이드업(약 1.3s) 끝난 뒤 글자 분해 → 시각적 충돌 방지
+    setTimeout(function () {
+      lines.forEach(function (line) {
+        var text = line.textContent;
+        line.textContent = '';
+        line.classList.add('morphed');
+        for (var i = 0; i < text.length; i++) {
+          var ch = text[i];
+          var s = document.createElement('span');
+          s.className = 'gl';
+          s.textContent = ch === ' ' ? '\u00A0' : ch;
+          s.style.display = 'inline-block';
+          s.style.transition = 'font-variation-settings .5s var(--spring, ease), transform .5s var(--spring, ease)';
+          line.appendChild(s);
+          glyphs.push(s);
+        }
+      });
+
+      if (reduce || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+      var raf = null, mouseX = -1;
+      h1.addEventListener('mousemove', function (e) {
+        mouseX = e.clientX;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      h1.addEventListener('mouseleave', function () {
+        mouseX = -1;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      function apply() {
+        raf = null;
+        glyphs.forEach(function (g) {
+          var r = g.getBoundingClientRect();
+          var gc = r.left + r.width / 2;
+          var w;
+          if (mouseX < 0) { w = 360; g.style.transform = 'translateY(0)'; }
+          else {
+            var dist = Math.abs(mouseX - gc);
+            var infl = Math.max(0, 1 - dist / 220); // 220px 반경
+            w = 320 + infl * 260;                   // 320 → 580
+            g.style.transform = 'translateY(' + (-infl * 6).toFixed(1) + 'px)';
+          }
+          g.style.fontVariationSettings = '"opsz" 144, "wght" ' + Math.round(w);
+        });
+      }
+    }, 1400);
+  })();
+
+  // ---------- v7: 히어로 살아 숨쉬는 그라데이션 메시 + 필름 노이즈 ----------
+  // Three.js 없이 Canvas 2D로 가볍게. 차분한 의료 톤(네이비·민트·골드)의 메시가
+  // 천천히 흐르고, 마우스에 미세 반응. reduced-motion이면 정적 1프레임만.
+  (function () {
+    var cv = document.getElementById('heroCanvas');
+    if (!cv) return;
+    var ctx = cv.getContext('2d');
+    if (!ctx) return;
+
+    // 저해상도 렌더 → CSS로 확대 (성능). 노이즈 타일은 별도 캔버스.
+    var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    var W = 0, H = 0;
+    function resize() {
+      W = cv.clientWidth; H = cv.clientHeight;
+      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    // 떠다니는 그라데이션 "블롭" (의료 톤)
+    var blobs = [
+      { x: .76, y: .20, r: .52, c: [86, 176, 196], a: .30, sx: .00009, sy: .00006, px: 0, py: 0 }, // 민트
+      { x: .22, y: .68, r: .60, c: [47, 138, 160], a: .22, sx: -.00007, sy: .00008, px: 0, py: 0 }, // 딥민트
+      { x: .58, y: .82, r: .44, c: [194, 160, 106], a: .14, sx: .00006, sy: -.00005, px: 0, py: 0 }, // 골드 악센트(절제)
+      { x: .40, y: .30, r: .50, c: [86, 176, 196], a: .16, sx: -.00005, sy: -.00007, px: 0, py: 0 }
+    ];
+
+    // 마우스 시차 (미세)
+    var mx = 0, my = 0, tmx = 0, tmy = 0;
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      window.addEventListener('mousemove', function (e) {
+        tmx = (e.clientX / window.innerWidth - .5);
+        tmy = (e.clientY / window.innerHeight - .5);
+      }, { passive: true });
+    }
+
+    // 필름 노이즈 타일 (한 번 만들어 재사용)
+    var noise = document.createElement('canvas');
+    noise.width = 140; noise.height = 140;
+    var nctx = noise.getContext('2d');
+    function regenNoise() {
+      var id = nctx.createImageData(noise.width, noise.height);
+      var d = id.data;
+      for (var i = 0; i < d.length; i += 4) {
+        var v = (Math.random() * 255) | 0;
+        d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 11; // 매우 옅게
+      }
+      nctx.putImageData(id, 0, 0);
+    }
+    regenNoise();
+
+    function drawMesh(t) {
+      ctx.clearRect(0, 0, W, H);
+      // 마우스 lerp
+      mx += (tmx - mx) * 0.04; my += (tmy - my) * 0.04;
+      ctx.globalCompositeOperation = 'lighter';
+      for (var i = 0; i < blobs.length; i++) {
+        var b = blobs[i];
+        // 자체 부유 + 마우스 시차
+        b.px = Math.sin(t * b.sx * 1000 + i) * 0.05;
+        b.py = Math.cos(t * b.sy * 1000 + i) * 0.05;
+        var cx = (b.x + b.px + mx * (0.04 + i * 0.012)) * W;
+        var cy = (b.y + b.py + my * (0.04 + i * 0.012)) * H;
+        var rad = b.r * Math.max(W, H);
+        var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+        var c = b.c;
+        g.addColorStop(0, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + b.a + ')');
+        g.addColorStop(1, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+      }
+      // 노이즈 오버레이 (타일)
+      ctx.globalCompositeOperation = 'overlay';
+      var pat = ctx.createPattern(noise, 'repeat');
+      ctx.fillStyle = pat; ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    if (reduce) {
+      drawMesh(0); // 정적 1프레임
+      return;
+    }
+    var noiseTick = 0;
+    (function loop(ts) {
+      drawMesh(ts || 0);
+      // 노이즈는 6프레임마다 갱신 (살짝 살아있는 grain 느낌, 성능 절약)
+      if ((noiseTick++ % 6) === 0) regenNoise();
+      requestAnimationFrame(loop);
+    })();
+  })();
+
+  /* ---------- ②/④ 철학 핀드 스토리 시퀀스 ----------
+     pin 섹션을 스크롤 동안 고정, 진행도에 따라 4스텝(인지·공감·해소·원칙)을
+     전환하고 좌측 인덱스 .on + SVG 진행선(stroke-dashoffset)을 그린다.
+     860px 미만은 CSS가 unpin → JS는 트랙 높이/transform 건드리지 않음. */
+  (function () {
+    var pin = document.querySelector('[data-philo-pin]');
+    if (!pin) return;
+    var sticky = pin.querySelector('.philo-sticky');
+    var track = pin.querySelector('.philo-track');
+    var steps = pin.querySelectorAll('.philo-step');
+    var idxItems = pin.querySelectorAll('.philo-index li');
+    var pathFg = document.getElementById('philoPathFg');
+    var n = parseInt(track && track.getAttribute('data-steps'), 10) || steps.length;
+    if (!sticky || !track || n < 1) return;
+
+    var DASH = 200; // SVG line stroke-dasharray 기준값과 동일
+    var active = -1;
+    var pinned = false;
+    var raf = 0;
+
+    function isMobile() { return window.matchMedia('(max-width: 860px)').matches; }
+
+    function setActive(i) {
+      if (i === active) return;
+      active = i;
+      for (var s = 0; s < steps.length; s++) {
+        steps[s].classList.toggle('active', s === i);
+      }
+      for (var k = 0; k < idxItems.length; k++) {
+        idxItems[k].classList.toggle('on', k === i);
+      }
+    }
+
+    function layout() {
+      if (isMobile() || reduce) {
+        // 모바일/모션축소: 핀 해제 상태 → 트랙 높이 제거, 전부 노출
+        track.style.height = '';
+        pinned = false;
+        for (var s = 0; s < steps.length; s++) steps[s].classList.add('active');
+        return;
+      }
+      // 스텝당 한 화면씩 스크롤 거리 확보 (+ 마지막 스텝 머무름 0.6화면)
+      track.style.height = (n * 100 + 60) + 'vh';
+      pinned = true;
+      onScroll();
+    }
+
+    function onScroll() {
+      if (!pinned) return;
+      var rect = pin.getBoundingClientRect();
+      var vh = window.innerHeight;
+      // pin 상단이 0을 지나면서 스크롤된 거리 / 전체 스크롤 가능 거리
+      var total = pin.offsetHeight - vh;
+      var scrolled = Math.min(Math.max(-rect.top, 0), total);
+      var progress = total > 0 ? scrolled / total : 0; // 0~1
+
+      // 스텝 인덱스: 진행도를 n 구간으로 나눔
+      var i = Math.min(n - 1, Math.floor(progress * n));
+      setActive(i);
+
+      // SVG 진행선: 진행도만큼 dashoffset 줄이기
+      if (pathFg) pathFg.style.strokeDashoffset = String(DASH * (1 - progress));
+    }
+
+    function tick() {
+      raf = 0;
+      onScroll();
+    }
+    function requestTick() {
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
+
+    layout();
+    if (pinned) setActive(0); // 모바일/reduce(unpin)일 땐 전부 노출 유지
+    window.addEventListener('scroll', requestTick, { passive: true });
+
+    var rt;
+    window.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(layout, 160);
+    }, { passive: true });
+  })();
 })();

@@ -12,11 +12,13 @@ const TX_ENG: Record<string, string> = {
 
 export function HomePage() {
   const body = html`
-  <!-- ============ HERO — 시네마틱 매거진 표지 ============ -->
+  <!-- ============ HERO — 시네마틱 매거진 표지 (v7: WebGL 메시) ============ -->
   <section class="hero cinema">
     <div class="hero-bg">
       <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" fetchpriority="high" />
     </div>
+    <!-- v7: 살아 숨쉬는 그라데이션 메시 + 노이즈 (Canvas, 차분한 의료 톤) -->
+    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
     <div class="hero-top">
       <span>ALLCARE DENTAL — SEOUL</span>
       <span class="hero-coord">37.5547°N · 127.0107°E</span>
@@ -24,9 +26,9 @@ export function HomePage() {
     </div>
     <div class="hero-inner">
       <span class="hero-badge">약수역 5번 출구 · 3인 전문의 진료</span>
-      <h1 class="hero-mega">
-        <span class="line-mask"><span>Care for</span></span>
-        <span class="line-mask"><span class="accent disp">every detail.</span></span>
+      <h1 class="hero-mega" data-morph>
+        <span class="line-mask"><span class="morph-line">Care for</span></span>
+        <span class="line-mask"><span class="accent disp morph-line">every detail.</span></span>
       </h1>
       <div class="hero-row">
         <div>
@@ -73,24 +75,38 @@ export function HomePage() {
     <p class="kinetic-sub">진단부터 회복까지, 흩어지지 않는 한 곳의 진료</p>
   </section>
 
-  <!-- ============ 철학 (인지·공감·해소·원칙) ============ -->
-  <section class="section" id="philosophy">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="sec-label"><span class="num">01</span> Our Philosophy</span>
-        <h2 class="split-rise">치료 이전에, <em>불편을 먼저</em> 읽습니다</h2>
-        <p>${CLINIC.philosophy} 올케어치과가 환자를 대하는 변하지 않는 네 가지 원칙입니다.</p>
-      </div>
-      <div class="value-grid stagger">
-        ${raw(CLINIC.values.map((v, i) => `
-          <div class="value-card">
-            <span class="v-no">0${i + 1}</span>
-            <span class="ico"><i class="fa-solid fa-${v.icon}"></i></span>
-            <h3>${v.title}</h3>
-            <p>${v.desc}</p>
-          </div>`).join(''))}
+  <!-- ============ 철학 — v7 핀드 스토리 시퀀스 (인지→공감→해소→원칙) ============ -->
+  <section class="philo-pin" id="philosophy" data-philo-pin>
+    <div class="philo-sticky">
+      <div class="container philo-grid">
+        <!-- 좌: 고정 타이틀 + 진행 인덱스 -->
+        <div class="philo-aside">
+          <span class="sec-label"><span class="num">01</span> Our Philosophy</span>
+          <h2 class="philo-h2">치료 이전에,<br><em>불편을 먼저</em> 읽습니다</h2>
+          <p class="philo-lead">${CLINIC.philosophy}</p>
+          <!-- SVG 진행 path (스크롤 드로잉) -->
+          <svg class="philo-path" viewBox="0 0 4 200" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="2" y1="0" x2="2" y2="200" class="philo-path-bg"/>
+            <line x1="2" y1="0" x2="2" y2="200" class="philo-path-fg" id="philoPathFg"/>
+          </svg>
+          <ol class="philo-index" aria-hidden="true">
+            ${raw(CLINIC.values.map((v, i) => `<li data-i="${i}"><span class="pi-no">0${i + 1}</span> ${v.title}</li>`).join(''))}
+          </ol>
+        </div>
+        <!-- 우: 스택된 스텝 카드 (스크롤에 따라 active 전환) -->
+        <div class="philo-stage">
+          ${raw(CLINIC.values.map((v, i) => `
+            <article class="philo-step${i === 0 ? ' active' : ''}" data-step="${i}">
+              <span class="ps-no">0${i + 1}<span class="ps-total">/ 0${CLINIC.values.length}</span></span>
+              <span class="ps-ico"><i class="fa-solid fa-${v.icon}"></i></span>
+              <h3>${v.title}</h3>
+              <p>${v.desc}</p>
+            </article>`).join(''))}
+        </div>
       </div>
     </div>
+    <!-- 스크롤 길이 확보용 트랙 (스텝 수 × 1화면) -->
+    <div class="philo-track" data-steps="${CLINIC.values.length}"></div>
   </section>
 
   <!-- ============ 핵심 진료 TOP3 — 기사형 큐레이션 ============ -->
