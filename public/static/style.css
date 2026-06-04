@@ -497,6 +497,31 @@ em, .italic { font-style: normal; color: var(--mint); }
 .aeo-item dt i { color: var(--mint); font-size: .95rem; width: 20px; text-align: center; }
 .aeo-item dd { margin: 0; color: var(--ink-soft); line-height: 1.78; font-size: .98rem; }
 
+/* AEO 카드 그리드 (mission) */
+.aeo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+.aeo-card {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 34px 32px; transition: transform .5s var(--spring), box-shadow .5s var(--ease), border-color .4s var(--ease);
+}
+.aeo-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--mint); }
+.aeo-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--ivory-2); color: var(--mint); font-size: 1.15rem; margin-bottom: 16px;
+}
+.aeo-card dt {
+  font-family: 'Nanum Myeongjo', serif; font-weight: 800;
+  font-size: 1.2rem; color: var(--ink); margin-bottom: 12px;
+}
+.aeo-card dd { margin: 0; }
+.aeo-card .aeo-q {
+  font-family: var(--font-mono); font-size: .82rem; letter-spacing: -.01em;
+  color: var(--mint); margin-bottom: 8px; font-weight: 500;
+}
+.aeo-card .aeo-q::before { content: 'Q. '; opacity: .6; }
+.aeo-card .aeo-a { color: var(--ink-soft); line-height: 1.78; font-size: .97rem; }
+@media (max-width: 720px) { .aeo-grid { grid-template-columns: 1fr; } }
+
 /* ============================================================
    STATS BAND — 카운트업
    ============================================================ */
@@ -535,7 +560,13 @@ em, .italic { font-style: normal; color: var(--mint); }
   color: var(--gold-600); display: block; margin-bottom: 10px;
 }
 .doc-body h3 { font-size: 1.5rem; margin-bottom: 8px; }
-.doc-body .title-line { color: var(--gray-600); font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+.doc-body .title-line { color: var(--gray-600); font-size: 14px; line-height: 1.6; margin-bottom: 10px; }
+.doc-body .doc-career {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: -.01em;
+  color: var(--mint); margin-bottom: 16px; line-height: 1.5;
+  display: flex; align-items: center; gap: 6px;
+}
+.doc-body .doc-career::before { content: '\f559'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; opacity: .7; }
 .doc-tags { display: flex; flex-wrap: wrap; gap: 7px; }
 .doc-tags span {
   font-size: 12.5px; padding: 5px 12px; background: var(--mint-tint); color: var(--mint-600);

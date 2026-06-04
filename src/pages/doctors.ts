@@ -24,6 +24,7 @@ export function DoctorsIndex() {
               <span class="role">${d.role}</span>
               <h3>${d.name}</h3>
               <p class="title-line">${d.titleLine}</p>
+              <p class="doc-career">${d.career[0]}</p>
               <div class="doc-tags">
                 ${d.specialties.slice(0, 3).map(s => `<span>${specLabel(s)}</span>`).join('')}
               </div>

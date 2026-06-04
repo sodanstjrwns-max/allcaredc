@@ -1,37 +1,49 @@
 import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
-import { breadcrumbSchema } from '../components/layout'
+import { breadcrumbSchema, faqSchema } from '../components/layout'
 import { CLINIC, TREATMENTS } from '../data/clinic'
 
 // ════════════════ 병원소개 / 미션 ════════════════
 export function MissionPage() {
   const body = html`
-  <section class="hero" style="min-height:75vh">
-    <div class="hero-bg"><img src="/static/img/interior.webp" alt="올케어치과" data-parallax="0.15"></div>
-    <div class="hero-glow"></div>
+  <!-- ============ HERO — 매거진 톤 통일 ============ -->
+  <section class="hero cinema" style="min-height:78vh">
+    <div class="hero-bg"><img src="/static/img/interior.webp" alt="올케어치과 진료 공간" data-drift="20"></div>
+    <div class="hero-top">
+      <span>ALLCARE DENTAL — SEOUL</span>
+      <span class="hero-coord">37.5547°N · 127.0107°E</span>
+      <span>EST. 2023 · 약수역</span>
+    </div>
     <div class="hero-inner">
-      <span class="eyebrow reveal">병원소개</span>
-      <h1 class="reveal reveal-d1" style="font-size:clamp(2.2rem,5.5vw,4rem)">${CLINIC.philosophy}</h1>
-      <p class="lead reveal reveal-d2">${CLINIC.mission}를 향해 나아갑니다.</p>
+      <span class="hero-badge">병원소개 · About</span>
+      <h1 class="hero-mega" style="font-size:clamp(2.6rem,8vw,6rem)">
+        <span class="line-mask"><span>인지하고, 공감하고,</span></span>
+        <span class="line-mask"><span class="accent disp">해소합니다.</span></span>
+      </h1>
+      <p class="lead reveal reveal-d2" style="max-width:640px">${CLINIC.mission}. 진단부터 회복까지, 흩어지지 않는 진료를 약수동에서 이어갑니다.</p>
     </div>
   </section>
 
+  <!-- ============ 우리의 시작 — 2대(父子) 서사 (인테이크 기반) ============ -->
   <section class="section">
-    <div class="container" style="max-width:820px">
-      <div class="prose reveal" style="text-align:center">
-        <span class="eyebrow" style="justify-content:center">우리의 시작</span>
-        <h2 style="font-size:clamp(1.7rem,4vw,2.6rem);margin:16px 0 30px">불편함을 끝까지<br>책임지는 한 곳을 위해</h2>
-        <p style="font-size:1.15rem">봉직의 생활에 한계를 느끼던 어느 날, 약수동의 한 신축 건물을 마주했습니다. 그곳에서 "내가 끝까지 책임질 수 있는 진료를 하자"는 마음으로 올케어치과를 시작했습니다.</p>
-        <p style="font-size:1.15rem">화려한 약속보다, 환자 한 분 한 분의 불편함을 끝까지 들여다보는 치과가 되고 싶었습니다. 그것이 지역 안에서 인정받고 오래 머무는 길이라 믿습니다.</p>
+    <div class="container" style="max-width:860px">
+      <div class="reveal" style="text-align:center">
+        <span class="sec-label" style="justify-content:center"><span class="num">01</span> Our Story</span>
+        <h2 class="split-rise" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 34px">같은 자리에서, <em>2대(父子)</em>에 걸쳐</h2>
+      </div>
+      <div class="prose reveal reveal-d1" style="font-size:1.13rem;line-height:1.95">
+        <p>올케어치과는 한 지역을 오래 지켜온 치과입니다. 아버지가 진료하던 그 자리에서, 아들이 다시 가운을 입었습니다. 2대(父子)에 걸쳐 같은 동네를 지킨다는 것은, 한 번의 진료로 끝나는 관계가 아니라 시간을 두고 신뢰를 쌓아간다는 약속입니다.</p>
+        <p>그래서 화려한 약속보다 환자 한 분 한 분의 불편함을 끝까지 들여다보는 일을 먼저 합니다. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과 — 그것이 지역 안에서 인정받고 오래 머무는 길이라 믿습니다.</p>
       </div>
     </div>
   </section>
 
-  <section class="section" style="background:var(--beige-soft)">
+  <!-- ============ 네 가지 원칙 ============ -->
+  <section class="section" style="background:var(--ivory-2)">
     <div class="container">
-      <div class="section-head center reveal">
-        <span class="eyebrow">우리의 약속</span>
-        <h2>네 가지 원칙</h2>
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">02</span> Our Principles</span>
+        <h2>네 가지 <em>원칙</em></h2>
       </div>
       <div class="value-grid">
         ${raw(CLINIC.values.map((v, i) => `
@@ -44,17 +56,38 @@ export function MissionPage() {
     </div>
   </section>
 
+  <!-- ============ 올케어가 다른 이유 — AEO 질문-직답형 (strengths 재활용) ============ -->
   <section class="section">
     <div class="container">
-      <div class="grid-2">
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">03</span> Why ALLCARE</span>
+        <h2>올케어치과가 <em>다른 이유</em></h2>
+        <p>규모와 시설을 넘어, 끝까지 잇는 섬세함으로 답합니다.</p>
+      </div>
+      <dl class="aeo-grid">
+        ${raw(CLINIC.strengths.map((s, i) => `
+          <div class="aeo-card reveal reveal-d${(i % 2) + 1}">
+            <span class="aeo-ico"><i class="fa-solid fa-${s.icon}"></i></span>
+            <dt>${s.title}</dt>
+            <dd class="aeo-q">${s.head}</dd>
+            <dd class="aeo-a">${s.desc}</dd>
+          </div>`).join(''))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ 우리가 되고 싶은 모습 + 지표 ============ -->
+  <section class="section" style="background:var(--ivory-2)">
+    <div class="container">
+      <div class="grid-2" style="align-items:center">
         <div class="reveal">
-          <span class="eyebrow">우리가 되고 싶은 모습</span>
-          <h2 style="font-size:clamp(1.7rem,4vw,2.6rem);margin:16px 0 22px">지역 안에서 인정받고<br>오래 머무는 치과</h2>
-          <p class="prose">한때의 유행이 아니라, 동네에서 신뢰로 이어지는 치과. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과. 그것이 올케어치과가 그리는 미래입니다.</p>
-          <ul class="check prose" style="margin-top:20px">
+          <span class="sec-label"><span class="num">04</span> Our Vision</span>
+          <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 22px">지역 안에서 인정받고<br><em>오래 머무는 치과</em></h2>
+          <p class="prose" style="font-size:1.05rem">한때의 유행이 아니라, 동네에서 신뢰로 이어지는 치과. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과. 그것이 올케어치과가 그리는 미래입니다.</p>
+          <ul class="check prose" style="margin-top:22px">
             <li>친절은 기본, 원칙은 약속입니다.</li>
-            <li>과잉 진료 없이, 필요한 진료만 권합니다.</li>
-            <li>2대에 걸친 진료 경험과 섬세함으로 함께합니다.</li>
+            <li>과잉 없이, 필요한 진료만 권합니다.</li>
+            <li>2대(父子)에 걸친 경험과 섬세함으로 함께합니다.</li>
           </ul>
         </div>
         <div class="reveal reveal-d2">
@@ -73,10 +106,13 @@ export function MissionPage() {
   ${ctaBand()}
   `
   return Page({
-    title: '병원소개 | 올케어치과 — 인지·공감·해소의 치과',
-    description: '약수역 올케어치과. 환자의 불편함을 인지하고 공감하고 해소합니다. 지역 안에서 인정받고 오래 머무는 지역 대표 치과를 지향하는 3인 전문의 치과입니다.',
+    title: '병원소개 | 올케어치과 — 2대(父子) 3인 전문의 치과',
+    description: '약수역 올케어치과는 같은 자리에서 2대(父子)에 걸쳐 이어온 치과입니다. 구강악안면외과·통합치의학과·보철과 3인 전문의 협진, 원내 기공실, 수면진료 세팅으로 불편함을 끝까지 책임집니다.',
     path: '/mission',
-    schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '병원소개', url: '/mission' }])],
+    schema: [
+      breadcrumbSchema([{ name: '홈', url: '/' }, { name: '병원소개', url: '/mission' }]),
+      faqSchema(CLINIC.strengths.map(s => ({ q: s.head, a: s.desc }))),
+    ],
   }, body)
 }
 
