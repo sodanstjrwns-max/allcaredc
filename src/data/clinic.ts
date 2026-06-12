@@ -483,6 +483,12 @@ export const TX_IMAGES: Record<string, string> = {
   esthetic: '/static/img/tx-esthetic.webp',
 }
 
+// 추가 FAQ 병합 — 과목당 20개+ 충족
+import { EXTRA_FAQS } from './faqs-extra'
+for (const t of TREATMENTS) {
+  if (EXTRA_FAQS[t.slug]) t.faqs = [...t.faqs, ...EXTRA_FAQS[t.slug]]
+}
+
 export const CORE_TREATMENTS = TREATMENTS.filter(t => t.core)
 export const SUB_TREATMENTS = TREATMENTS.filter(t => !t.core)
 

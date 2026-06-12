@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { Bindings, getAdmin, setAdminSession, clearSession, secret } from '../lib/auth'
 import { verifyToken } from '../lib/auth'
 import { getCookie } from 'hono/cookie'
-import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary } from '../lib/store'
+import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary, getViews } from '../lib/store'
 import {
   AdminLogin, AdminDashboard, AdminReservations, AdminMembers, AdminCases, AdminCaseForm,
   AdminColumns, AdminColumnForm, AdminNotices, AdminNoticeForm,
@@ -70,10 +70,33 @@ admin.get('/members', async (c) => {
   return c.html(AdminMembers(users).toString())
 })
 
+// 조회수 맵 헬퍼
+async function viewsMap(env: Bindings, type: string, items: { id: string }[]): Promise<Record<string, number>> {
+  const entries = await Promise.all(items.map(async i => [i.id, await getViews(env, type, i.id)] as const))
+  return Object.fromEntries(entries)
+}
+
+// ── 에디터 이미지 업로드 (다중 파일 → R2) ──
+admin.post('/upload-image', async (c) => {
+  const form = await c.req.parseBody({ all: true })
+  let files = form['files'] as unknown as File | File[]
+  if (!files) return c.json({ error: 'no files' }, 400)
+  if (!Array.isArray(files)) files = [files]
+  const urls: string[] = []
+  for (const file of files) {
+    if (!file || typeof file !== 'object' || !(file as any).size) continue
+    const ext = (((file as any).name || '').split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
+    const key = `uploads/columns/${uid('img_')}.${ext}`
+    await r2PutBinary(c.env, key, await (file as any).arrayBuffer(), (file as any).type || 'image/jpeg')
+    urls.push(`/${key}`)
+  }
+  return c.json({ urls })
+})
+
 // ── 비포애프터 ──
 admin.get('/cases', async (c) => {
   const items = await listCollection<CaseItem>(c.env, 'cases')
-  return c.html(AdminCases(items).toString())
+  return c.html(AdminCases(items, await viewsMap(c.env, 'case', items)).toString())
 })
 admin.get('/cases/new', (c) => c.html(AdminCaseForm().toString()))
 admin.post('/cases/new', async (c) => {
@@ -107,7 +130,7 @@ admin.post('/cases/:id/delete', async (c) => {
 // ── 칼럼 ──
 admin.get('/columns', async (c) => {
   const items = await listCollection<Column>(c.env, 'columns')
-  return c.html(AdminColumns(items).toString())
+  return c.html(AdminColumns(items, await viewsMap(c.env, 'column', items)).toString())
 })
 admin.get('/columns/new', (c) => c.html(AdminColumnForm().toString()))
 admin.post('/columns/new', async (c) => {
@@ -150,14 +173,23 @@ admin.post('/columns/:id/delete', async (c) => {
 // ── 공지 ──
 admin.get('/notices', async (c) => {
   const items = await listCollection<Notice>(c.env, 'notices')
-  return c.html(AdminNotices(items).toString())
+  return c.html(AdminNotices(items, await viewsMap(c.env, 'notice', items)).toString())
 })
 admin.get('/notices/new', (c) => c.html(AdminNoticeForm().toString()))
 admin.post('/notices/new', async (c) => {
   const form = await c.req.parseBody()
+  let image = String(form.image || '') || undefined
+  // 파일 업로드 우선 — R2에 저장
+  const file = form['imageFile'] as unknown as File
+  if (file && typeof file === 'object' && (file as any).size > 0) {
+    const ext = (((file as any).name || '').split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
+    const key = `uploads/columns/${uid('not_')}.${ext}`
+    await r2PutBinary(c.env, key, await (file as any).arrayBuffer(), (file as any).type || 'image/jpeg')
+    image = `/${key}`
+  }
   await addToCollection<Notice>(c.env, 'notices', {
     id: uid('not_'), title: String(form.title || ''), body: String(form.body || ''),
-    image: String(form.image || '') || undefined, pinned: !!form.pinned, createdAt: Date.now(),
+    image, pinned: !!form.pinned, createdAt: Date.now(),
   })
   return c.redirect('/admin/notices')
 })

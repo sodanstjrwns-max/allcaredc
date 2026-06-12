@@ -88,7 +88,15 @@ app.get('/notice/:id', async (c) => {
   const notices = await listCollection<Notice>(c.env, 'notices')
   const n = notices.find(x => x.id === c.req.param('id'))
   if (!n) return c.notFound()
+  await trackView(c.env, 'notice', n.id, isBot(c.req.header('User-Agent')))
   return c.html(NoticeDetail(n).toString())
+})
+
+// ── 업로드 이미지 서빙 (칼럼 본문 삽입 이미지) ──
+app.get('/uploads/columns/:file', async (c) => {
+  const obj = await r2GetBinary(c.env, `uploads/columns/${c.req.param('file')}`)
+  if (!obj) return c.notFound()
+  return new Response(obj.body as any, { headers: { 'Content-Type': obj.contentType, 'Cache-Control': 'public, max-age=31536000, immutable' } })
 })
 
 // ── 비포애프터 ──
@@ -107,6 +115,7 @@ app.get('/api/case-image/:id/:type', async (c) => {
   if (!item) return c.notFound()
   const key = type === 'after' ? (item.panoAfter || item.intraAfter) : (item.panoBefore || item.intraBefore)
   if (!key) return c.notFound()
+  if (type === 'before') await trackView(c.env, 'case', item.id, isBot(c.req.header('User-Agent')))
   const obj = await r2GetBinary(c.env, key)
   if (!obj) return c.notFound()
   return new Response(obj.body as any, { headers: { 'Content-Type': obj.contentType, 'Cache-Control': 'private, max-age=3600' } })

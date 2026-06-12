@@ -1988,3 +1988,8 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
 .cursor-ring { border-color: rgba(176,141,87,.85); }
 .cursor-dot { background: var(--gold); }
 .cursor-ring.media { background: rgba(176,141,87,.08); border-color: var(--gold); }
+
+/* ── 칼럼 본문 삽입 이미지 (에디터 업로드) ── */
+.prose .column-figure { margin: 32px 0; }
+.prose .column-figure img { width: 100%; border-radius: 14px; display: block; box-shadow: 0 12px 32px rgba(6,39,65,.10); }
+.prose .column-figure figcaption { margin-top: 10px; font-size: 13px; color: var(--gray-600); text-align: center; letter-spacing: .02em; }

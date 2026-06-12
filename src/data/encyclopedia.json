@@ -1,1 +1,3733 @@
-[{"term":"임플란트","en":"Dental Implant","desc":"상실된 치아의 뿌리를 대신해 잇몸뼈에 식립하는 인공 치근입니다.","treatment":"implant","initial":"ㅇ"},{"term":"골이식","en":"Bone Graft","desc":"임플란트 식립에 필요한 잇몸뼈가 부족할 때 뼈를 보충하는 술식입니다.","treatment":"implant","initial":"ㄱ"},{"term":"상악동거상술","en":"Sinus Lift","desc":"윗턱 어금니 부위의 뼈가 부족할 때 상악동을 들어 올려 뼈 공간을 확보하는 수술입니다.","treatment":"implant","initial":"ㅅ"},{"term":"픽스처","en":"Fixture","desc":"임플란트의 치근 역할을 하는 나사 형태의 본체입니다.","treatment":"implant","initial":"ㅍ"},{"term":"어버트먼트","en":"Abutment","desc":"픽스처와 보철물을 연결하는 지대주입니다.","treatment":"implant","initial":"ㅇ"},{"term":"골유착","en":"Osseointegration","desc":"임플란트와 잇몸뼈가 단단히 결합하는 현상입니다.","treatment":"implant","initial":"ㄱ"},{"term":"즉시식립","en":"Immediate Implant","desc":"발치와 동시에 임플란트를 식립하는 방법입니다.","treatment":"implant","initial":"ㅈ"},{"term":"지연식립","en":"Delayed Implant","desc":"발치 후 잇몸이 아문 뒤 임플란트를 식립하는 방법입니다.","treatment":"implant","initial":"ㅈ"},{"term":"임플란트주위염","en":"Peri-implantitis","desc":"임플란트 주위 잇몸과 뼈에 생기는 염증입니다.","treatment":"implant","initial":"ㅇ"},{"term":"네비게이션수술","en":"Guided Surgery","desc":"3D 영상으로 제작한 가이드를 이용해 정밀하게 식립하는 방법입니다.","treatment":"implant","initial":"ㄴ"},{"term":"치조골","en":"Alveolar Bone","desc":"치아를 지지하는 턱뼈 부분입니다.","treatment":"implant","initial":"ㅊ"},{"term":"하치조신경","en":"Inferior Alveolar Nerve","desc":"아래턱을 지나는 주요 신경으로 임플란트 시 손상에 주의해야 합니다.","treatment":"implant","initial":"ㅎ"},{"term":"임플란트보철","en":"Implant Prosthesis","desc":"임플란트 위에 장착하는 인공치아 보철물입니다.","treatment":"implant","initial":"ㅇ"},{"term":"올온포","en":"All-on-4","desc":"네 개의 임플란트로 전체 치아를 회복하는 방법입니다.","treatment":"implant","initial":"ㅇ"},{"term":"차폐막","en":"Membrane","desc":"골이식 시 뼈 형성을 돕기 위해 사용하는 막입니다.","treatment":"implant","initial":"ㅊ"},{"term":"치아교정","en":"Orthodontics","desc":"치아와 턱의 위치를 바르게 하는 치료입니다.","treatment":"ortho","initial":"ㅊ"},{"term":"투명교정","en":"Clear Aligner","desc":"투명하고 탈착 가능한 장치를 이용한 교정입니다.","treatment":"ortho","initial":"ㅌ"},{"term":"메탈교정","en":"Metal Braces","desc":"금속 브라켓을 이용한 전통적인 고정식 교정입니다.","treatment":"ortho","initial":"ㅁ"},{"term":"세라믹교정","en":"Ceramic Braces","desc":"치아색과 유사한 세라믹 브라켓을 사용하는 교정입니다.","treatment":"ortho","initial":"ㅅ"},{"term":"설측교정","en":"Lingual Braces","desc":"치아 안쪽에 장치를 부착해 겉으로 보이지 않는 교정입니다.","treatment":"ortho","initial":"ㅅ"},{"term":"브라켓","en":"Bracket","desc":"치아에 부착해 교정력을 전달하는 장치입니다.","treatment":"ortho","initial":"ㅂ"},{"term":"교정용철사","en":"Archwire","desc":"브라켓을 연결해 치아를 이동시키는 철사입니다.","treatment":"ortho","initial":"ㄱ"},{"term":"유지장치","en":"Retainer","desc":"교정 후 치아가 되돌아가지 않도록 유지하는 장치입니다.","treatment":"ortho","initial":"ㅇ"},{"term":"부정교합","en":"Malocclusion","desc":"위아래 치아가 바르게 맞물리지 않는 상태입니다.","treatment":"ortho","initial":"ㅂ"},{"term":"덧니","en":"Crowding","desc":"치아가 겹쳐 나거나 비뚤어진 상태입니다.","treatment":"ortho","initial":"ㄷ"},{"term":"돌출입","en":"Protrusion","desc":"입이 앞으로 튀어나와 보이는 상태입니다.","treatment":"ortho","initial":"ㄷ"},{"term":"개방교합","en":"Open Bite","desc":"어금니를 물어도 앞니가 닿지 않는 교합입니다.","treatment":"ortho","initial":"ㄱ"},{"term":"과개교합","en":"Deep Bite","desc":"윗니가 아랫니를 과도하게 덮는 교합입니다.","treatment":"ortho","initial":"ㄱ"},{"term":"반대교합","en":"Crossbite","desc":"아랫니가 윗니보다 앞으로 나온 교합입니다.","treatment":"ortho","initial":"ㅂ"},{"term":"미니스크류","en":"Mini-screw","desc":"교정 시 고정원으로 사용하는 작은 나사입니다.","treatment":"ortho","initial":"ㅁ"},{"term":"성장기교정","en":"Growth Modification","desc":"성장기 아동의 턱 성장을 이용한 교정입니다.","treatment":"ortho","initial":"ㅅ"},{"term":"발치교정","en":"Extraction Orthodontics","desc":"공간 확보를 위해 치아를 뽑고 진행하는 교정입니다.","treatment":"ortho","initial":"ㅂ"},{"term":"크라운","en":"Crown","desc":"손상된 치아 전체를 덮어 씌우는 보철물입니다.","treatment":"esthetic","initial":"ㅋ"},{"term":"올세라믹","en":"All-Ceramic","desc":"금속 없이 세라믹만으로 제작한 자연스러운 보철입니다.","treatment":"esthetic","initial":"ㅇ"},{"term":"지르코니아","en":"Zirconia","desc":"강도가 높고 심미적인 세라믹 보철 재료입니다.","treatment":"esthetic","initial":"ㅈ"},{"term":"라미네이트","en":"Laminate Veneer","desc":"치아 표면을 얇게 다듬고 얇은 도재를 붙이는 심미 치료입니다.","treatment":"esthetic","initial":"ㄹ"},{"term":"인레이","en":"Inlay","desc":"충치 부위를 본떠 제작한 보철로 메우는 방법입니다.","treatment":"esthetic","initial":"ㅇ"},{"term":"온레이","en":"Onlay","desc":"인레이보다 넓은 부위를 덮는 보철입니다.","treatment":"esthetic","initial":"ㅇ"},{"term":"브릿지","en":"Bridge","desc":"상실된 치아를 인접 치아에 연결해 수복하는 보철입니다.","treatment":"esthetic","initial":"ㅂ"},{"term":"치아미백","en":"Teeth Whitening","desc":"변색된 치아를 밝게 개선하는 치료입니다.","treatment":"whitening","initial":"ㅊ"},{"term":"보철","en":"Prosthesis","desc":"상실되거나 손상된 치아를 인공물로 회복하는 치료입니다.","treatment":"esthetic","initial":"ㅂ"},{"term":"교합","en":"Occlusion","desc":"위아래 치아가 맞물리는 상태입니다.","treatment":"esthetic","initial":"ㄱ"},{"term":"포스트","en":"Post","desc":"신경치료 후 약해진 치아를 보강하는 기둥입니다.","treatment":"esthetic","initial":"ㅍ"},{"term":"코어","en":"Core","desc":"크라운을 씌우기 위한 토대를 만드는 과정입니다.","treatment":"esthetic","initial":"ㅋ"},{"term":"치은성형","en":"Gingivoplasty","desc":"잇몸선을 다듬어 심미성을 개선하는 치료입니다.","treatment":"esthetic","initial":"ㅊ"},{"term":"충치","en":"Dental Caries","desc":"세균에 의해 치아가 썩는 질환입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"신경치료","en":"Root Canal Treatment","desc":"충치가 신경까지 진행되었을 때 신경을 제거하고 소독하는 치료입니다.","treatment":"conservative","initial":"ㅅ"},{"term":"치수","en":"Pulp","desc":"치아 내부의 신경과 혈관이 있는 조직입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"치수염","en":"Pulpitis","desc":"치수에 생긴 염증입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"레진","en":"Composite Resin","desc":"치아색과 유사한 충전 재료입니다.","treatment":"conservative","initial":"ㄹ"},{"term":"아말감","en":"Amalgam","desc":"과거에 많이 쓰인 금속 충전 재료입니다.","treatment":"conservative","initial":"ㅇ"},{"term":"치근단염","en":"Periapical Periodontitis","desc":"치아 뿌리 끝에 생긴 염증입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"치수괴사","en":"Pulp Necrosis","desc":"치수 조직이 죽은 상태입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"근관","en":"Root Canal","desc":"치아 뿌리 내부의 신경관입니다.","treatment":"conservative","initial":"ㄱ"},{"term":"치아우식증","en":"Caries","desc":"충치를 가리키는 의학 용어입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"지각과민","en":"Dentin Hypersensitivity","desc":"치아가 시리고 예민해지는 증상입니다.","treatment":"conservative","initial":"ㅈ"},{"term":"치주염","en":"Periodontitis","desc":"잇몸과 잇몸뼈에 생기는 만성 염증 질환입니다.","treatment":"gum","initial":"ㅊ"},{"term":"치은염","en":"Gingivitis","desc":"잇몸에 국한된 초기 염증입니다.","treatment":"gum","initial":"ㅊ"},{"term":"치석","en":"Calculus","desc":"치아에 단단하게 굳은 침착물입니다.","treatment":"gum","initial":"ㅊ"},{"term":"치태","en":"Plaque","desc":"치아 표면에 생기는 세균막입니다.","treatment":"gum","initial":"ㅊ"},{"term":"스케일링","en":"Scaling","desc":"치석과 치태를 제거하는 치료입니다.","treatment":"gum","initial":"ㅅ"},{"term":"치주낭","en":"Periodontal Pocket","desc":"잇몸과 치아 사이가 벌어져 깊어진 공간입니다.","treatment":"gum","initial":"ㅊ"},{"term":"치은퇴축","en":"Gingival Recession","desc":"잇몸이 내려앉아 치근이 노출되는 현상입니다.","treatment":"gum","initial":"ㅊ"},{"term":"치주수술","en":"Periodontal Surgery","desc":"진행된 치주염을 치료하는 외과적 처치입니다.","treatment":"gum","initial":"ㅊ"},{"term":"풍치","en":"Periodontal Disease","desc":"잇몸병을 일컫는 일반적인 표현입니다.","treatment":"gum","initial":"ㅍ"},{"term":"치근활택술","en":"Root Planing","desc":"치근 표면을 매끄럽게 다듬는 치주 치료입니다.","treatment":"gum","initial":"ㅊ"},{"term":"사랑니","en":"Wisdom Tooth","desc":"가장 안쪽에 늦게 나는 세 번째 큰 어금니입니다.","treatment":"surgery","initial":"ㅅ"},{"term":"매복치","en":"Impacted Tooth","desc":"잇몸이나 뼈에 묻혀 제대로 나지 못한 치아입니다.","treatment":"surgery","initial":"ㅁ"},{"term":"발치","en":"Extraction","desc":"치아를 뽑는 처치입니다.","treatment":"surgery","initial":"ㅂ"},{"term":"구강악안면외과","en":"Oral and Maxillofacial Surgery","desc":"구강과 턱, 안면 부위의 외과적 질환을 다루는 전문 분야입니다.","treatment":"surgery","initial":"ㄱ"},{"term":"치조골성형술","en":"Alveoloplasty","desc":"발치 후 뼈를 다듬는 처치입니다.","treatment":"surgery","initial":"ㅊ"},{"term":"낭종","en":"Cyst","desc":"턱뼈나 잇몸에 생기는 물혹입니다.","treatment":"surgery","initial":"ㄴ"},{"term":"턱관절장애","en":"TMD","desc":"턱관절과 주변 근육에 생기는 통증·기능 장애입니다.","treatment":"tmj","initial":"ㅌ"},{"term":"이갈이","en":"Bruxism","desc":"수면 중 무의식적으로 이를 가는 습관입니다.","treatment":"tmj","initial":"ㅇ"},{"term":"이악물기","en":"Clenching","desc":"이를 꽉 무는 습관입니다.","treatment":"tmj","initial":"ㅇ"},{"term":"스플린트","en":"Splint","desc":"턱관절을 보호하는 교합안정장치입니다.","treatment":"tmj","initial":"ㅅ"},{"term":"개구장애","en":"Trismus","desc":"입이 잘 벌어지지 않는 증상입니다.","treatment":"tmj","initial":"ㄱ"},{"term":"관절원판","en":"Articular Disc","desc":"턱관절의 충격을 흡수하는 연골판입니다.","treatment":"tmj","initial":"ㄱ"},{"term":"틀니","en":"Denture","desc":"상실된 여러 치아를 회복하는 착탈식 보철입니다.","treatment":"denture","initial":"ㅌ"},{"term":"부분틀니","en":"Partial Denture","desc":"일부 치아가 남아 있을 때 사용하는 틀니입니다.","treatment":"denture","initial":"ㅂ"},{"term":"완전틀니","en":"Complete Denture","desc":"치아가 모두 없을 때 사용하는 틀니입니다.","treatment":"denture","initial":"ㅇ"},{"term":"임플란트틀니","en":"Implant Denture","desc":"임플란트로 고정하는 틀니입니다.","treatment":"denture","initial":"ㅇ"},{"term":"의치상","en":"Denture Base","desc":"틀니의 잇몸에 닿는 부분입니다.","treatment":"denture","initial":"ㅇ"},{"term":"전문가미백","en":"Office Bleaching","desc":"치과에서 시행하는 전문가 미백입니다.","treatment":"whitening","initial":"ㅈ"},{"term":"자가미백","en":"Home Bleaching","desc":"집에서 시행하는 미백입니다.","treatment":"whitening","initial":"ㅈ"},{"term":"에어플로우","en":"Air Flow","desc":"미세 분말로 치아 착색을 제거하는 위생 관리입니다.","treatment":"gum","initial":"ㅇ"},{"term":"파노라마","en":"Panoramic X-ray","desc":"구강 전체를 한 장에 촬영하는 방사선 사진입니다.","treatment":"implant","initial":"ㅍ"},{"term":"CT","en":"Cone Beam CT","desc":"3차원으로 구강 구조를 보는 정밀 촬영입니다.","treatment":"implant","initial":"#"},{"term":"구내촬영","en":"Intraoral X-ray","desc":"특정 치아 부위를 자세히 보는 방사선 사진입니다.","treatment":"conservative","initial":"ㄱ"},{"term":"교합지","en":"Articulating Paper","desc":"치아가 닿는 부위를 표시하는 색지입니다.","treatment":"esthetic","initial":"ㄱ"},{"term":"국소마취","en":"Local Anesthesia","desc":"특정 부위만 마취하는 방법입니다.","treatment":"surgery","initial":"ㄱ"},{"term":"수면진료","en":"Sedation","desc":"진정제를 이용해 편안하게 진료받는 방법입니다.","treatment":"sleep","initial":"ㅅ"},{"term":"불소도포","en":"Fluoride Application","desc":"충치 예방을 위해 불소를 바르는 처치입니다.","treatment":"conservative","initial":"ㅂ"},{"term":"실란트","en":"Sealant","desc":"어금니 홈을 메워 충치를 예방하는 처치입니다.","treatment":"conservative","initial":"ㅅ"},{"term":"법랑질","en":"Enamel","desc":"치아의 가장 바깥을 덮는 단단한 조직입니다.","treatment":"conservative","initial":"ㅂ"},{"term":"상아질","en":"Dentin","desc":"법랑질 안쪽에 있는 치아의 주된 조직입니다.","treatment":"conservative","initial":"ㅅ"},{"term":"백악질","en":"Cementum","desc":"치근 표면을 덮는 조직입니다.","treatment":"gum","initial":"ㅂ"},{"term":"치주인대","en":"Periodontal Ligament","desc":"치아를 잇몸뼈에 연결하는 섬유 조직입니다.","treatment":"gum","initial":"ㅊ"},{"term":"치경부","en":"Cervical Area","desc":"치아의 잇몸 경계 부위입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"치관","en":"Crown(Anatomical)","desc":"잇몸 위로 보이는 치아 부분입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"치근","en":"Root","desc":"잇몸 속에 묻힌 치아 뿌리입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"교두","en":"Cusp","desc":"어금니 씹는 면의 뾰족한 돌출부입니다.","treatment":"esthetic","initial":"ㄱ"},{"term":"절치","en":"Incisor","desc":"음식을 자르는 앞니입니다.","treatment":"ortho","initial":"ㅈ"},{"term":"견치","en":"Canine","desc":"송곳니입니다.","treatment":"ortho","initial":"ㄱ"},{"term":"소구치","en":"Premolar","desc":"작은 어금니입니다.","treatment":"conservative","initial":"ㅅ"},{"term":"대구치","en":"Molar","desc":"큰 어금니입니다.","treatment":"conservative","initial":"ㄷ"},{"term":"유치","en":"Primary Teeth","desc":"어린이의 젖니입니다.","treatment":"conservative","initial":"ㅇ"},{"term":"영구치","en":"Permanent Teeth","desc":"유치가 빠진 뒤 나는 영구적인 치아입니다.","treatment":"conservative","initial":"ㅇ"},{"term":"상악","en":"Maxilla","desc":"윗턱뼈입니다.","treatment":"implant","initial":"ㅅ"},{"term":"하악","en":"Mandible","desc":"아래턱뼈입니다.","treatment":"implant","initial":"ㅎ"},{"term":"구개","en":"Palate","desc":"입천장입니다.","treatment":"surgery","initial":"ㄱ"},{"term":"타액","en":"Saliva","desc":"침으로, 구강 건강에 중요한 역할을 합니다.","treatment":"conservative","initial":"ㅌ"},{"term":"치통","en":"Toothache","desc":"치아의 통증입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"구취","en":"Halitosis","desc":"입냄새를 말합니다.","treatment":"gum","initial":"ㄱ"},{"term":"치아균열","en":"Cracked Tooth","desc":"치아에 금이 간 상태입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"치아파절","en":"Tooth Fracture","desc":"치아가 부러진 상태입니다.","treatment":"surgery","initial":"ㅊ"},{"term":"치아변색","en":"Tooth Discoloration","desc":"치아 색이 변한 상태입니다.","treatment":"whitening","initial":"ㅊ"},{"term":"잇몸출혈","en":"Gum Bleeding","desc":"잇몸에서 피가 나는 증상입니다.","treatment":"gum","initial":"ㅇ"},{"term":"잇몸부종","en":"Gum Swelling","desc":"잇몸이 붓는 증상입니다.","treatment":"gum","initial":"ㅇ"},{"term":"치아동요","en":"Tooth Mobility","desc":"치아가 흔들리는 증상입니다.","treatment":"gum","initial":"ㅊ"},{"term":"교합통","en":"Occlusal Pain","desc":"물 때 느껴지는 통증입니다.","treatment":"tmj","initial":"ㄱ"},{"term":"악관절잡음","en":"Joint Clicking","desc":"턱에서 소리가 나는 증상입니다.","treatment":"tmj","initial":"ㅇ"},{"term":"콤포지트","en":"Composite","desc":"심미 충전에 쓰이는 복합 레진입니다.","treatment":"conservative","initial":"ㅋ"},{"term":"글래스아이오노머","en":"Glass Ionomer","desc":"불소를 방출하는 충전 재료입니다.","treatment":"conservative","initial":"ㄱ"},{"term":"골드크라운","en":"Gold Crown","desc":"금 합금으로 제작한 보철입니다.","treatment":"esthetic","initial":"ㄱ"},{"term":"PFM","en":"Porcelain Fused to Metal","desc":"금속 위에 도재를 입힌 보철입니다.","treatment":"esthetic","initial":"#"},{"term":"엠프레스","en":"Empress","desc":"심미성이 높은 세라믹 보철 재료입니다.","treatment":"esthetic","initial":"ㅇ"},{"term":"디지털스캐너","en":"Intraoral Scanner","desc":"입안을 디지털로 본뜨는 장비입니다.","treatment":"esthetic","initial":"ㄷ"},{"term":"캐드캠","en":"CAD/CAM","desc":"보철을 설계·제작하는 디지털 시스템입니다.","treatment":"esthetic","initial":"ㅋ"},{"term":"러버댐","en":"Rubber Dam","desc":"신경치료 시 치아를 격리하는 고무막입니다.","treatment":"conservative","initial":"ㄹ"},{"term":"임플란트드릴","en":"Implant Drill","desc":"임플란트 식립용 드릴입니다.","treatment":"implant","initial":"ㅇ"},{"term":"힐링어버트먼트","en":"Healing Abutment","desc":"잇몸 형태를 잡아주는 임시 지대주입니다.","treatment":"implant","initial":"ㅎ"},{"term":"치수절제술","en":"Pulpectomy","desc":"치수를 완전히 제거하는 치료입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"치수복조술","en":"Pulp Capping","desc":"노출된 치수를 보호하는 처치입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"치근단절제술","en":"Apicoectomy","desc":"치근 끝의 염증 부위를 외과적으로 제거하는 수술입니다.","treatment":"surgery","initial":"ㅊ"},{"term":"치아재식술","en":"Replantation","desc":"빠진 치아를 다시 심는 처치입니다.","treatment":"surgery","initial":"ㅊ"},{"term":"치관확장술","en":"Crown Lengthening","desc":"보철을 위해 치관 길이를 확보하는 수술입니다.","treatment":"esthetic","initial":"ㅊ"},{"term":"치은절제술","en":"Gingivectomy","desc":"과도한 잇몸을 절제하는 수술입니다.","treatment":"gum","initial":"ㅊ"},{"term":"조직유도재생술","en":"GTR","desc":"잇몸 조직 재생을 유도하는 치주 수술입니다.","treatment":"gum","initial":"ㅈ"},{"term":"골유도재생술","en":"GBR","desc":"뼈 재생을 유도하는 골이식 술식입니다.","treatment":"implant","initial":"ㄱ"},{"term":"연조직이식","en":"Soft Tissue Graft","desc":"잇몸 조직을 이식하는 수술입니다.","treatment":"gum","initial":"ㅇ"},{"term":"교합조정","en":"Occlusal Adjustment","desc":"맞물림을 미세하게 다듬는 처치입니다.","treatment":"tmj","initial":"ㄱ"},{"term":"구강위생","en":"Oral Hygiene","desc":"구강을 청결하게 관리하는 것입니다.","treatment":"gum","initial":"ㄱ"},{"term":"치실","en":"Dental Floss","desc":"치아 사이를 청소하는 실입니다.","treatment":"gum","initial":"ㅊ"},{"term":"치간칫솔","en":"Interdental Brush","desc":"치아 사이를 닦는 작은 칫솔입니다.","treatment":"gum","initial":"ㅊ"},{"term":"정기검진","en":"Regular Checkup","desc":"정기적으로 받는 구강 검사입니다.","treatment":"conservative","initial":"ㅈ"},{"term":"예방치과","en":"Preventive Dentistry","desc":"질환을 미리 막는 치과 분야입니다.","treatment":"conservative","initial":"ㅇ"},{"term":"치아관리","en":"Tooth Care","desc":"치아를 건강하게 유지하는 관리입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"투명교정장치","en":"Aligner","desc":"단계별로 교체하는 투명 교정 장치입니다.","treatment":"ortho","initial":"ㅌ"},{"term":"교정고무줄","en":"Elastics","desc":"교합을 맞추기 위해 거는 고무줄입니다.","treatment":"ortho","initial":"ㄱ"},{"term":"공간유지장치","en":"Space Maintainer","desc":"유치 조기 상실 시 공간을 유지하는 장치입니다.","treatment":"ortho","initial":"ㄱ"},{"term":"악교정수술","en":"Orthognathic Surgery","desc":"턱뼈를 수술로 교정하는 치료입니다.","treatment":"surgery","initial":"ㅇ"},{"term":"정모분석","en":"Cephalometric Analysis","desc":"측면 두부 방사선으로 골격을 분석하는 진단입니다.","treatment":"ortho","initial":"ㅈ"},{"term":"임시보철","en":"Provisional","desc":"최종 보철 전 임시로 사용하는 보철입니다.","treatment":"implant","initial":"ㅇ"},{"term":"인상채득","en":"Impression","desc":"치아 본을 뜨는 과정입니다.","treatment":"esthetic","initial":"ㅇ"},{"term":"교합거상","en":"Bite Raising","desc":"낮아진 교합 높이를 회복하는 처치입니다.","treatment":"esthetic","initial":"ㄱ"},{"term":"디지털가이드","en":"Surgical Guide","desc":"식립 위치를 안내하는 수술 가이드입니다.","treatment":"implant","initial":"ㄷ"},{"term":"발치와보존술","en":"Socket Preservation","desc":"발치 후 뼈 흡수를 막는 처치입니다.","treatment":"implant","initial":"ㅂ"},{"term":"치아발육","en":"Tooth Development","desc":"치아가 형성되고 자라는 과정입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"맹출","en":"Eruption","desc":"치아가 잇몸을 뚫고 나오는 현상입니다.","treatment":"conservative","initial":"ㅁ"},{"term":"치아교환기","en":"Mixed Dentition","desc":"유치와 영구치가 함께 있는 시기입니다.","treatment":"ortho","initial":"ㅊ"},{"term":"소아치과","en":"Pediatric Dentistry","desc":"어린이 구강 건강을 다루는 치과 분야입니다.","treatment":"conservative","initial":"ㅅ"},{"term":"치아외상","en":"Dental Trauma","desc":"넘어짐 등으로 치아가 다친 상태입니다.","treatment":"surgery","initial":"ㅊ"},{"term":"탈구","en":"Luxation","desc":"외상으로 치아가 흔들리거나 빠진 상태입니다.","treatment":"surgery","initial":"ㅌ"},{"term":"함입","en":"Intrusion","desc":"외상으로 치아가 잇몸 속으로 밀려든 상태입니다.","treatment":"surgery","initial":"ㅎ"},{"term":"정출","en":"Extrusion","desc":"외상으로 치아가 빠져나온 상태입니다.","treatment":"surgery","initial":"ㅈ"},{"term":"치근흡수","en":"Root Resorption","desc":"치근이 녹아 흡수되는 현상입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"치아맹출장애","en":"Eruption Disturbance","desc":"치아가 제대로 나지 못하는 상태입니다.","treatment":"ortho","initial":"ㅊ"},{"term":"전치부","en":"Anterior Teeth","desc":"앞니 부위를 말합니다.","treatment":"esthetic","initial":"ㅈ"},{"term":"구치부","en":"Posterior Teeth","desc":"어금니 부위를 말합니다.","treatment":"conservative","initial":"ㄱ"},{"term":"치열궁","en":"Dental Arch","desc":"치아가 배열된 활 모양의 형태입니다.","treatment":"ortho","initial":"ㅊ"},{"term":"중심교합","en":"Centric Occlusion","desc":"치아가 최대로 맞물리는 위치입니다.","treatment":"esthetic","initial":"ㅈ"},{"term":"수직고경","en":"Vertical Dimension","desc":"위아래 턱 사이의 높이입니다.","treatment":"denture","initial":"ㅅ"},{"term":"교합면","en":"Occlusal Surface","desc":"어금니의 씹는 면입니다.","treatment":"conservative","initial":"ㄱ"},{"term":"인접면","en":"Proximal Surface","desc":"이웃한 치아와 맞닿는 면입니다.","treatment":"conservative","initial":"ㅇ"},{"term":"치간이개","en":"Diastema","desc":"치아 사이가 벌어진 상태입니다.","treatment":"esthetic","initial":"ㅊ"},{"term":"총생","en":"Crowding(Severe)","desc":"치아가 심하게 겹쳐 난 상태입니다.","treatment":"ortho","initial":"ㅊ"},{"term":"공극","en":"Spacing","desc":"치아 사이에 틈이 있는 상태입니다.","treatment":"ortho","initial":"ㄱ"},{"term":"치은비대","en":"Gingival Hyperplasia","desc":"잇몸이 과도하게 자란 상태입니다.","treatment":"gum","initial":"ㅊ"},{"term":"치근막염","en":"Pericementitis","desc":"치근막에 생긴 염증입니다.","treatment":"gum","initial":"ㅊ"},{"term":"농양","en":"Abscess","desc":"고름이 차는 염증성 병변입니다.","treatment":"surgery","initial":"ㄴ"},{"term":"누공","en":"Fistula","desc":"고름이 배출되는 통로입니다.","treatment":"surgery","initial":"ㄴ"},{"term":"지치주위염","en":"Pericoronitis","desc":"사랑니 주변 잇몸의 염증입니다.","treatment":"surgery","initial":"ㅈ"},{"term":"건성발치와","en":"Dry Socket","desc":"발치 후 통증이 심해지는 합병증입니다.","treatment":"surgery","initial":"ㄱ"},{"term":"치성상악동염","en":"Odontogenic Sinusitis","desc":"치아 원인으로 생긴 상악동 염증입니다.","treatment":"implant","initial":"ㅊ"},{"term":"보톡스","en":"Botulinum Toxin","desc":"이갈이·사각턱 완화에 쓰이기도 하는 주사입니다.","treatment":"tmj","initial":"ㅂ"},{"term":"관절강세정술","en":"Arthrocentesis","desc":"턱관절 내부를 세척하는 처치입니다.","treatment":"tmj","initial":"ㄱ"},{"term":"교합안정장치","en":"Stabilization Splint","desc":"턱관절을 안정시키는 장치입니다.","treatment":"tmj","initial":"ㄱ"},{"term":"근막동통","en":"Myofascial Pain","desc":"턱 주변 근육의 통증입니다.","treatment":"tmj","initial":"ㄱ"},{"term":"저작근","en":"Masticatory Muscle","desc":"음식을 씹는 근육입니다.","treatment":"tmj","initial":"ㅈ"},{"term":"교근","en":"Masseter","desc":"대표적인 저작근입니다.","treatment":"tmj","initial":"ㄱ"},{"term":"치료계획","en":"Treatment Plan","desc":"진단 후 세우는 치료 계획입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"예후","en":"Prognosis","desc":"치료 후 예상되는 경과입니다.","treatment":"conservative","initial":"ㅇ"},{"term":"진단","en":"Diagnosis","desc":"질환을 판단하는 과정입니다.","treatment":"conservative","initial":"ㅈ"},{"term":"문진","en":"Medical History","desc":"환자의 병력을 묻는 과정입니다.","treatment":"conservative","initial":"ㅁ"},{"term":"비급여","en":"Non-covered","desc":"건강보험이 적용되지 않는 진료입니다.","treatment":"esthetic","initial":"ㅂ"},{"term":"급여","en":"Covered","desc":"건강보험이 적용되는 진료입니다.","treatment":"conservative","initial":"ㄱ"},{"term":"치과보험","en":"Dental Insurance","desc":"치과 진료에 적용되는 보험입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"연령가산","en":"Age Premium","desc":"특정 연령에 적용되는 보험 기준입니다.","treatment":"implant","initial":"ㅇ"},{"term":"임플란트보험","en":"Implant Coverage","desc":"만 65세 이상 적용되는 임플란트 보험입니다.","treatment":"implant","initial":"ㅇ"},{"term":"틀니보험","en":"Denture Coverage","desc":"만 65세 이상 적용되는 틀니 보험입니다.","treatment":"denture","initial":"ㅌ"},{"term":"치주치료보험","en":"Periodontal Coverage","desc":"잇몸치료에 적용되는 보험입니다.","treatment":"gum","initial":"ㅊ"},{"term":"연하","en":"Swallowing","desc":"음식을 삼키는 기능입니다.","treatment":"denture","initial":"ㅇ"},{"term":"저작","en":"Mastication","desc":"음식을 씹는 기능입니다.","treatment":"denture","initial":"ㅈ"},{"term":"발음","en":"Phonetics","desc":"치아·구강과 관련된 발음 기능입니다.","treatment":"esthetic","initial":"ㅂ"},{"term":"심미치과","en":"Esthetic Dentistry","desc":"미적 개선을 다루는 치과 분야입니다.","treatment":"esthetic","initial":"ㅅ"},{"term":"스마일라인","en":"Smile Line","desc":"웃을 때 보이는 치아와 잇몸의 선입니다.","treatment":"esthetic","initial":"ㅅ"},{"term":"거미스마일","en":"Gummy Smile","desc":"웃을 때 잇몸이 많이 보이는 상태입니다.","treatment":"esthetic","initial":"ㄱ"},{"term":"치아성형","en":"Tooth Recontouring","desc":"치아 모양을 다듬는 심미 처치입니다.","treatment":"esthetic","initial":"ㅊ"},{"term":"치간유두","en":"Interdental Papilla","desc":"치아 사이 삼각형 잇몸입니다.","treatment":"gum","initial":"ㅊ"},{"term":"생활치수치료","en":"Vital Pulp Therapy","desc":"살아있는 치수를 보존하는 치료입니다.","treatment":"conservative","initial":"ㅅ"},{"term":"재신경치료","en":"Retreatment","desc":"이전 신경치료를 다시 하는 치료입니다.","treatment":"conservative","initial":"ㅈ"},{"term":"미세현미경치료","en":"Microscopic Endodontics","desc":"현미경을 이용한 정밀 신경치료입니다.","treatment":"conservative","initial":"ㅁ"},{"term":"치근단방사선","en":"Periapical Radiograph","desc":"치근 부위를 촬영하는 방사선 사진입니다.","treatment":"conservative","initial":"ㅊ"},{"term":"교익촬영","en":"Bitewing Radiograph","desc":"인접면 충치 확인용 방사선 사진입니다.","treatment":"conservative","initial":"ㄱ"},{"term":"디지털방사선","en":"Digital Radiography","desc":"디지털 방식의 방사선 촬영입니다.","treatment":"implant","initial":"ㄷ"},{"term":"방사선노출","en":"Radiation Exposure","desc":"촬영 시 방사선에 노출되는 정도입니다.","treatment":"implant","initial":"ㅂ"},{"term":"감염관리","en":"Infection Control","desc":"진료 중 감염을 예방하는 관리입니다.","treatment":"surgery","initial":"ㄱ"},{"term":"멸균","en":"Sterilization","desc":"기구의 미생물을 완전히 제거하는 과정입니다.","treatment":"surgery","initial":"ㅁ"},{"term":"소독","en":"Disinfection","desc":"병원성 미생물을 줄이는 처리입니다.","treatment":"surgery","initial":"ㅅ"}]
+[
+ {
+  "term": "임플란트",
+  "en": "Dental Implant",
+  "desc": "상실된 치아의 뿌리를 대신해 잇몸뼈에 식립하는 인공 치근입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "골이식",
+  "en": "Bone Graft",
+  "desc": "임플란트 식립에 필요한 잇몸뼈가 부족할 때 뼈를 보충하는 술식입니다.",
+  "treatment": "implant",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "상악동거상술",
+  "en": "Sinus Lift",
+  "desc": "윗턱 어금니 부위의 뼈가 부족할 때 상악동을 들어 올려 뼈 공간을 확보하는 수술입니다.",
+  "treatment": "implant",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "픽스처",
+  "en": "Fixture",
+  "desc": "임플란트의 치근 역할을 하는 나사 형태의 본체입니다.",
+  "treatment": "implant",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "어버트먼트",
+  "en": "Abutment",
+  "desc": "픽스처와 보철물을 연결하는 지대주입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "골유착",
+  "en": "Osseointegration",
+  "desc": "임플란트와 잇몸뼈가 단단히 결합하는 현상입니다.",
+  "treatment": "implant",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "즉시식립",
+  "en": "Immediate Implant",
+  "desc": "발치와 동시에 임플란트를 식립하는 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "지연식립",
+  "en": "Delayed Implant",
+  "desc": "발치 후 잇몸이 아문 뒤 임플란트를 식립하는 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "임플란트주위염",
+  "en": "Peri-implantitis",
+  "desc": "임플란트 주위 잇몸과 뼈에 생기는 염증입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "네비게이션수술",
+  "en": "Guided Surgery",
+  "desc": "3D 영상으로 제작한 가이드를 이용해 정밀하게 식립하는 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㄴ"
+ },
+ {
+  "term": "치조골",
+  "en": "Alveolar Bone",
+  "desc": "치아를 지지하는 턱뼈 부분입니다.",
+  "treatment": "implant",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "하치조신경",
+  "en": "Inferior Alveolar Nerve",
+  "desc": "아래턱을 지나는 주요 신경으로 임플란트 시 손상에 주의해야 합니다.",
+  "treatment": "implant",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "임플란트보철",
+  "en": "Implant Prosthesis",
+  "desc": "임플란트 위에 장착하는 인공치아 보철물입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "올온포",
+  "en": "All-on-4",
+  "desc": "네 개의 임플란트로 전체 치아를 회복하는 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "차폐막",
+  "en": "Membrane",
+  "desc": "골이식 시 뼈 형성을 돕기 위해 사용하는 막입니다.",
+  "treatment": "implant",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치아교정",
+  "en": "Orthodontics",
+  "desc": "치아와 턱의 위치를 바르게 하는 치료입니다.",
+  "treatment": "ortho",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "투명교정",
+  "en": "Clear Aligner",
+  "desc": "투명하고 탈착 가능한 장치를 이용한 교정입니다.",
+  "treatment": "ortho",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "메탈교정",
+  "en": "Metal Braces",
+  "desc": "금속 브라켓을 이용한 전통적인 고정식 교정입니다.",
+  "treatment": "ortho",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "세라믹교정",
+  "en": "Ceramic Braces",
+  "desc": "치아색과 유사한 세라믹 브라켓을 사용하는 교정입니다.",
+  "treatment": "ortho",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "설측교정",
+  "en": "Lingual Braces",
+  "desc": "치아 안쪽에 장치를 부착해 겉으로 보이지 않는 교정입니다.",
+  "treatment": "ortho",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "브라켓",
+  "en": "Bracket",
+  "desc": "치아에 부착해 교정력을 전달하는 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "교정용철사",
+  "en": "Archwire",
+  "desc": "브라켓을 연결해 치아를 이동시키는 철사입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "유지장치",
+  "en": "Retainer",
+  "desc": "교정 후 치아가 되돌아가지 않도록 유지하는 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "부정교합",
+  "en": "Malocclusion",
+  "desc": "위아래 치아가 바르게 맞물리지 않는 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "덧니",
+  "en": "Crowding",
+  "desc": "치아가 겹쳐 나거나 비뚤어진 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "돌출입",
+  "en": "Protrusion",
+  "desc": "입이 앞으로 튀어나와 보이는 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "개방교합",
+  "en": "Open Bite",
+  "desc": "어금니를 물어도 앞니가 닿지 않는 교합입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "과개교합",
+  "en": "Deep Bite",
+  "desc": "윗니가 아랫니를 과도하게 덮는 교합입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "반대교합",
+  "en": "Crossbite",
+  "desc": "아랫니가 윗니보다 앞으로 나온 교합입니다.",
+  "treatment": "ortho",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "미니스크류",
+  "en": "Mini-screw",
+  "desc": "교정 시 고정원으로 사용하는 작은 나사입니다.",
+  "treatment": "ortho",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "성장기교정",
+  "en": "Growth Modification",
+  "desc": "성장기 아동의 턱 성장을 이용한 교정입니다.",
+  "treatment": "ortho",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "발치교정",
+  "en": "Extraction Orthodontics",
+  "desc": "공간 확보를 위해 치아를 뽑고 진행하는 교정입니다.",
+  "treatment": "ortho",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "크라운",
+  "en": "Crown",
+  "desc": "손상된 치아 전체를 덮어 씌우는 보철물입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "올세라믹",
+  "en": "All-Ceramic",
+  "desc": "금속 없이 세라믹만으로 제작한 자연스러운 보철입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "지르코니아",
+  "en": "Zirconia",
+  "desc": "강도가 높고 심미적인 세라믹 보철 재료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "라미네이트",
+  "en": "Laminate Veneer",
+  "desc": "치아 표면을 얇게 다듬고 얇은 도재를 붙이는 심미 치료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "인레이",
+  "en": "Inlay",
+  "desc": "충치 부위를 본떠 제작한 보철로 메우는 방법입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "온레이",
+  "en": "Onlay",
+  "desc": "인레이보다 넓은 부위를 덮는 보철입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "브릿지",
+  "en": "Bridge",
+  "desc": "상실된 치아를 인접 치아에 연결해 수복하는 보철입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "치아미백",
+  "en": "Teeth Whitening",
+  "desc": "변색된 치아를 밝게 개선하는 치료입니다.",
+  "treatment": "whitening",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "보철",
+  "en": "Prosthesis",
+  "desc": "상실되거나 손상된 치아를 인공물로 회복하는 치료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "교합",
+  "en": "Occlusion",
+  "desc": "위아래 치아가 맞물리는 상태입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "포스트",
+  "en": "Post",
+  "desc": "신경치료 후 약해진 치아를 보강하는 기둥입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "코어",
+  "en": "Core",
+  "desc": "크라운을 씌우기 위한 토대를 만드는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "치은성형",
+  "en": "Gingivoplasty",
+  "desc": "잇몸선을 다듬어 심미성을 개선하는 치료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "충치",
+  "en": "Dental Caries",
+  "desc": "세균에 의해 치아가 썩는 질환입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "신경치료",
+  "en": "Root Canal Treatment",
+  "desc": "충치가 신경까지 진행되었을 때 신경을 제거하고 소독하는 치료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "치수",
+  "en": "Pulp",
+  "desc": "치아 내부의 신경과 혈관이 있는 조직입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치수염",
+  "en": "Pulpitis",
+  "desc": "치수에 생긴 염증입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "레진",
+  "en": "Composite Resin",
+  "desc": "치아색과 유사한 충전 재료입니다.",
+  "treatment": "conservative",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "아말감",
+  "en": "Amalgam",
+  "desc": "과거에 많이 쓰인 금속 충전 재료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치근단염",
+  "en": "Periapical Periodontitis",
+  "desc": "치아 뿌리 끝에 생긴 염증입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치수괴사",
+  "en": "Pulp Necrosis",
+  "desc": "치수 조직이 죽은 상태입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "근관",
+  "en": "Root Canal",
+  "desc": "치아 뿌리 내부의 신경관입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치아우식증",
+  "en": "Caries",
+  "desc": "충치를 가리키는 의학 용어입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "지각과민",
+  "en": "Dentin Hypersensitivity",
+  "desc": "치아가 시리고 예민해지는 증상입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "치주염",
+  "en": "Periodontitis",
+  "desc": "잇몸과 잇몸뼈에 생기는 만성 염증 질환입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치은염",
+  "en": "Gingivitis",
+  "desc": "잇몸에 국한된 초기 염증입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치석",
+  "en": "Calculus",
+  "desc": "치아에 단단하게 굳은 침착물입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치태",
+  "en": "Plaque",
+  "desc": "치아 표면에 생기는 세균막입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "스케일링",
+  "en": "Scaling",
+  "desc": "치석과 치태를 제거하는 치료입니다.",
+  "treatment": "gum",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "치주낭",
+  "en": "Periodontal Pocket",
+  "desc": "잇몸과 치아 사이가 벌어져 깊어진 공간입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치은퇴축",
+  "en": "Gingival Recession",
+  "desc": "잇몸이 내려앉아 치근이 노출되는 현상입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치주수술",
+  "en": "Periodontal Surgery",
+  "desc": "진행된 치주염을 치료하는 외과적 처치입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "풍치",
+  "en": "Periodontal Disease",
+  "desc": "잇몸병을 일컫는 일반적인 표현입니다.",
+  "treatment": "gum",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "치근활택술",
+  "en": "Root Planing",
+  "desc": "치근 표면을 매끄럽게 다듬는 치주 치료입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "사랑니",
+  "en": "Wisdom Tooth",
+  "desc": "가장 안쪽에 늦게 나는 세 번째 큰 어금니입니다.",
+  "treatment": "surgery",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "매복치",
+  "en": "Impacted Tooth",
+  "desc": "잇몸이나 뼈에 묻혀 제대로 나지 못한 치아입니다.",
+  "treatment": "surgery",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "발치",
+  "en": "Extraction",
+  "desc": "치아를 뽑는 처치입니다.",
+  "treatment": "surgery",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "구강악안면외과",
+  "en": "Oral and Maxillofacial Surgery",
+  "desc": "구강과 턱, 안면 부위의 외과적 질환을 다루는 전문 분야입니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치조골성형술",
+  "en": "Alveoloplasty",
+  "desc": "발치 후 뼈를 다듬는 처치입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "낭종",
+  "en": "Cyst",
+  "desc": "턱뼈나 잇몸에 생기는 물혹입니다.",
+  "treatment": "surgery",
+  "initial": "ㄴ"
+ },
+ {
+  "term": "턱관절장애",
+  "en": "TMD",
+  "desc": "턱관절과 주변 근육에 생기는 통증·기능 장애입니다.",
+  "treatment": "tmj",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "이갈이",
+  "en": "Bruxism",
+  "desc": "수면 중 무의식적으로 이를 가는 습관입니다.",
+  "treatment": "tmj",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "이악물기",
+  "en": "Clenching",
+  "desc": "이를 꽉 무는 습관입니다.",
+  "treatment": "tmj",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "스플린트",
+  "en": "Splint",
+  "desc": "턱관절을 보호하는 교합안정장치입니다.",
+  "treatment": "tmj",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "개구장애",
+  "en": "Trismus",
+  "desc": "입이 잘 벌어지지 않는 증상입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "관절원판",
+  "en": "Articular Disc",
+  "desc": "턱관절의 충격을 흡수하는 연골판입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "틀니",
+  "en": "Denture",
+  "desc": "상실된 여러 치아를 회복하는 착탈식 보철입니다.",
+  "treatment": "denture",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "부분틀니",
+  "en": "Partial Denture",
+  "desc": "일부 치아가 남아 있을 때 사용하는 틀니입니다.",
+  "treatment": "denture",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "완전틀니",
+  "en": "Complete Denture",
+  "desc": "치아가 모두 없을 때 사용하는 틀니입니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "임플란트틀니",
+  "en": "Implant Denture",
+  "desc": "임플란트로 고정하는 틀니입니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "의치상",
+  "en": "Denture Base",
+  "desc": "틀니의 잇몸에 닿는 부분입니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "전문가미백",
+  "en": "Office Bleaching",
+  "desc": "치과에서 시행하는 전문가 미백입니다.",
+  "treatment": "whitening",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "자가미백",
+  "en": "Home Bleaching",
+  "desc": "집에서 시행하는 미백입니다.",
+  "treatment": "whitening",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "에어플로우",
+  "en": "Air Flow",
+  "desc": "미세 분말로 치아 착색을 제거하는 위생 관리입니다.",
+  "treatment": "gum",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "파노라마",
+  "en": "Panoramic X-ray",
+  "desc": "구강 전체를 한 장에 촬영하는 방사선 사진입니다.",
+  "treatment": "implant",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "CT",
+  "en": "Cone Beam CT",
+  "desc": "3차원으로 구강 구조를 보는 정밀 촬영입니다.",
+  "treatment": "implant",
+  "initial": "#"
+ },
+ {
+  "term": "구내촬영",
+  "en": "Intraoral X-ray",
+  "desc": "특정 치아 부위를 자세히 보는 방사선 사진입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "교합지",
+  "en": "Articulating Paper",
+  "desc": "치아가 닿는 부위를 표시하는 색지입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "국소마취",
+  "en": "Local Anesthesia",
+  "desc": "특정 부위만 마취하는 방법입니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "수면진료",
+  "en": "Sedation",
+  "desc": "진정제를 이용해 편안하게 진료받는 방법입니다.",
+  "treatment": "sleep",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "불소도포",
+  "en": "Fluoride Application",
+  "desc": "충치 예방을 위해 불소를 바르는 처치입니다.",
+  "treatment": "conservative",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "실란트",
+  "en": "Sealant",
+  "desc": "어금니 홈을 메워 충치를 예방하는 처치입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "법랑질",
+  "en": "Enamel",
+  "desc": "치아의 가장 바깥을 덮는 단단한 조직입니다.",
+  "treatment": "conservative",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "상아질",
+  "en": "Dentin",
+  "desc": "법랑질 안쪽에 있는 치아의 주된 조직입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "백악질",
+  "en": "Cementum",
+  "desc": "치근 표면을 덮는 조직입니다.",
+  "treatment": "gum",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "치주인대",
+  "en": "Periodontal Ligament",
+  "desc": "치아를 잇몸뼈에 연결하는 섬유 조직입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치경부",
+  "en": "Cervical Area",
+  "desc": "치아의 잇몸 경계 부위입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치관",
+  "en": "Crown(Anatomical)",
+  "desc": "잇몸 위로 보이는 치아 부분입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치근",
+  "en": "Root",
+  "desc": "잇몸 속에 묻힌 치아 뿌리입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "교두",
+  "en": "Cusp",
+  "desc": "어금니 씹는 면의 뾰족한 돌출부입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "절치",
+  "en": "Incisor",
+  "desc": "음식을 자르는 앞니입니다.",
+  "treatment": "ortho",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "견치",
+  "en": "Canine",
+  "desc": "송곳니입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "소구치",
+  "en": "Premolar",
+  "desc": "작은 어금니입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "대구치",
+  "en": "Molar",
+  "desc": "큰 어금니입니다.",
+  "treatment": "conservative",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "유치",
+  "en": "Primary Teeth",
+  "desc": "어린이의 젖니입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "영구치",
+  "en": "Permanent Teeth",
+  "desc": "유치가 빠진 뒤 나는 영구적인 치아입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "상악",
+  "en": "Maxilla",
+  "desc": "윗턱뼈입니다.",
+  "treatment": "implant",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "하악",
+  "en": "Mandible",
+  "desc": "아래턱뼈입니다.",
+  "treatment": "implant",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "구개",
+  "en": "Palate",
+  "desc": "입천장입니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "타액",
+  "en": "Saliva",
+  "desc": "침으로, 구강 건강에 중요한 역할을 합니다.",
+  "treatment": "conservative",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "치통",
+  "en": "Toothache",
+  "desc": "치아의 통증입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "구취",
+  "en": "Halitosis",
+  "desc": "입냄새를 말합니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치아균열",
+  "en": "Cracked Tooth",
+  "desc": "치아에 금이 간 상태입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치아파절",
+  "en": "Tooth Fracture",
+  "desc": "치아가 부러진 상태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치아변색",
+  "en": "Tooth Discoloration",
+  "desc": "치아 색이 변한 상태입니다.",
+  "treatment": "whitening",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "잇몸출혈",
+  "en": "Gum Bleeding",
+  "desc": "잇몸에서 피가 나는 증상입니다.",
+  "treatment": "gum",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "잇몸부종",
+  "en": "Gum Swelling",
+  "desc": "잇몸이 붓는 증상입니다.",
+  "treatment": "gum",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치아동요",
+  "en": "Tooth Mobility",
+  "desc": "치아가 흔들리는 증상입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "교합통",
+  "en": "Occlusal Pain",
+  "desc": "물 때 느껴지는 통증입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "악관절잡음",
+  "en": "Joint Clicking",
+  "desc": "턱에서 소리가 나는 증상입니다.",
+  "treatment": "tmj",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "콤포지트",
+  "en": "Composite",
+  "desc": "심미 충전에 쓰이는 복합 레진입니다.",
+  "treatment": "conservative",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "글래스아이오노머",
+  "en": "Glass Ionomer",
+  "desc": "불소를 방출하는 충전 재료입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "골드크라운",
+  "en": "Gold Crown",
+  "desc": "금 합금으로 제작한 보철입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "PFM",
+  "en": "Porcelain Fused to Metal",
+  "desc": "금속 위에 도재를 입힌 보철입니다.",
+  "treatment": "esthetic",
+  "initial": "#"
+ },
+ {
+  "term": "엠프레스",
+  "en": "Empress",
+  "desc": "심미성이 높은 세라믹 보철 재료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "디지털스캐너",
+  "en": "Intraoral Scanner",
+  "desc": "입안을 디지털로 본뜨는 장비입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "캐드캠",
+  "en": "CAD/CAM",
+  "desc": "보철을 설계·제작하는 디지털 시스템입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "러버댐",
+  "en": "Rubber Dam",
+  "desc": "신경치료 시 치아를 격리하는 고무막입니다.",
+  "treatment": "conservative",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "임플란트드릴",
+  "en": "Implant Drill",
+  "desc": "임플란트 식립용 드릴입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "힐링어버트먼트",
+  "en": "Healing Abutment",
+  "desc": "잇몸 형태를 잡아주는 임시 지대주입니다.",
+  "treatment": "implant",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "치수절제술",
+  "en": "Pulpectomy",
+  "desc": "치수를 완전히 제거하는 치료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치수복조술",
+  "en": "Pulp Capping",
+  "desc": "노출된 치수를 보호하는 처치입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치근단절제술",
+  "en": "Apicoectomy",
+  "desc": "치근 끝의 염증 부위를 외과적으로 제거하는 수술입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치아재식술",
+  "en": "Replantation",
+  "desc": "빠진 치아를 다시 심는 처치입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치관확장술",
+  "en": "Crown Lengthening",
+  "desc": "보철을 위해 치관 길이를 확보하는 수술입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치은절제술",
+  "en": "Gingivectomy",
+  "desc": "과도한 잇몸을 절제하는 수술입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "조직유도재생술",
+  "en": "GTR",
+  "desc": "잇몸 조직 재생을 유도하는 치주 수술입니다.",
+  "treatment": "gum",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "골유도재생술",
+  "en": "GBR",
+  "desc": "뼈 재생을 유도하는 골이식 술식입니다.",
+  "treatment": "implant",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "연조직이식",
+  "en": "Soft Tissue Graft",
+  "desc": "잇몸 조직을 이식하는 수술입니다.",
+  "treatment": "gum",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "교합조정",
+  "en": "Occlusal Adjustment",
+  "desc": "맞물림을 미세하게 다듬는 처치입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "구강위생",
+  "en": "Oral Hygiene",
+  "desc": "구강을 청결하게 관리하는 것입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치실",
+  "en": "Dental Floss",
+  "desc": "치아 사이를 청소하는 실입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치간칫솔",
+  "en": "Interdental Brush",
+  "desc": "치아 사이를 닦는 작은 칫솔입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "정기검진",
+  "en": "Regular Checkup",
+  "desc": "정기적으로 받는 구강 검사입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "예방치과",
+  "en": "Preventive Dentistry",
+  "desc": "질환을 미리 막는 치과 분야입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치아관리",
+  "en": "Tooth Care",
+  "desc": "치아를 건강하게 유지하는 관리입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "투명교정장치",
+  "en": "Aligner",
+  "desc": "단계별로 교체하는 투명 교정 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "교정고무줄",
+  "en": "Elastics",
+  "desc": "교합을 맞추기 위해 거는 고무줄입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "공간유지장치",
+  "en": "Space Maintainer",
+  "desc": "유치 조기 상실 시 공간을 유지하는 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "악교정수술",
+  "en": "Orthognathic Surgery",
+  "desc": "턱뼈를 수술로 교정하는 치료입니다.",
+  "treatment": "surgery",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "정모분석",
+  "en": "Cephalometric Analysis",
+  "desc": "측면 두부 방사선으로 골격을 분석하는 진단입니다.",
+  "treatment": "ortho",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "임시보철",
+  "en": "Provisional",
+  "desc": "최종 보철 전 임시로 사용하는 보철입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "인상채득",
+  "en": "Impression",
+  "desc": "치아 본을 뜨는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "교합거상",
+  "en": "Bite Raising",
+  "desc": "낮아진 교합 높이를 회복하는 처치입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "디지털가이드",
+  "en": "Surgical Guide",
+  "desc": "식립 위치를 안내하는 수술 가이드입니다.",
+  "treatment": "implant",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "발치와보존술",
+  "en": "Socket Preservation",
+  "desc": "발치 후 뼈 흡수를 막는 처치입니다.",
+  "treatment": "implant",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "치아발육",
+  "en": "Tooth Development",
+  "desc": "치아가 형성되고 자라는 과정입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "맹출",
+  "en": "Eruption",
+  "desc": "치아가 잇몸을 뚫고 나오는 현상입니다.",
+  "treatment": "conservative",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "치아교환기",
+  "en": "Mixed Dentition",
+  "desc": "유치와 영구치가 함께 있는 시기입니다.",
+  "treatment": "ortho",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "소아치과",
+  "en": "Pediatric Dentistry",
+  "desc": "어린이 구강 건강을 다루는 치과 분야입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "치아외상",
+  "en": "Dental Trauma",
+  "desc": "넘어짐 등으로 치아가 다친 상태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "탈구",
+  "en": "Luxation",
+  "desc": "외상으로 치아가 흔들리거나 빠진 상태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "함입",
+  "en": "Intrusion",
+  "desc": "외상으로 치아가 잇몸 속으로 밀려든 상태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "정출",
+  "en": "Extrusion",
+  "desc": "외상으로 치아가 빠져나온 상태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "치근흡수",
+  "en": "Root Resorption",
+  "desc": "치근이 녹아 흡수되는 현상입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치아맹출장애",
+  "en": "Eruption Disturbance",
+  "desc": "치아가 제대로 나지 못하는 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "전치부",
+  "en": "Anterior Teeth",
+  "desc": "앞니 부위를 말합니다.",
+  "treatment": "esthetic",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "구치부",
+  "en": "Posterior Teeth",
+  "desc": "어금니 부위를 말합니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치열궁",
+  "en": "Dental Arch",
+  "desc": "치아가 배열된 활 모양의 형태입니다.",
+  "treatment": "ortho",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "중심교합",
+  "en": "Centric Occlusion",
+  "desc": "치아가 최대로 맞물리는 위치입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "수직고경",
+  "en": "Vertical Dimension",
+  "desc": "위아래 턱 사이의 높이입니다.",
+  "treatment": "denture",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "교합면",
+  "en": "Occlusal Surface",
+  "desc": "어금니의 씹는 면입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "인접면",
+  "en": "Proximal Surface",
+  "desc": "이웃한 치아와 맞닿는 면입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치간이개",
+  "en": "Diastema",
+  "desc": "치아 사이가 벌어진 상태입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "총생",
+  "en": "Crowding(Severe)",
+  "desc": "치아가 심하게 겹쳐 난 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "공극",
+  "en": "Spacing",
+  "desc": "치아 사이에 틈이 있는 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치은비대",
+  "en": "Gingival Hyperplasia",
+  "desc": "잇몸이 과도하게 자란 상태입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치근막염",
+  "en": "Pericementitis",
+  "desc": "치근막에 생긴 염증입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "농양",
+  "en": "Abscess",
+  "desc": "고름이 차는 염증성 병변입니다.",
+  "treatment": "surgery",
+  "initial": "ㄴ"
+ },
+ {
+  "term": "누공",
+  "en": "Fistula",
+  "desc": "고름이 배출되는 통로입니다.",
+  "treatment": "surgery",
+  "initial": "ㄴ"
+ },
+ {
+  "term": "지치주위염",
+  "en": "Pericoronitis",
+  "desc": "사랑니 주변 잇몸의 염증입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "건성발치와",
+  "en": "Dry Socket",
+  "desc": "발치 후 통증이 심해지는 합병증입니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치성상악동염",
+  "en": "Odontogenic Sinusitis",
+  "desc": "치아 원인으로 생긴 상악동 염증입니다.",
+  "treatment": "implant",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "보톡스",
+  "en": "Botulinum Toxin",
+  "desc": "이갈이·사각턱 완화에 쓰이기도 하는 주사입니다.",
+  "treatment": "tmj",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "관절강세정술",
+  "en": "Arthrocentesis",
+  "desc": "턱관절 내부를 세척하는 처치입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "교합안정장치",
+  "en": "Stabilization Splint",
+  "desc": "턱관절을 안정시키는 장치입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "근막동통",
+  "en": "Myofascial Pain",
+  "desc": "턱 주변 근육의 통증입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "저작근",
+  "en": "Masticatory Muscle",
+  "desc": "음식을 씹는 근육입니다.",
+  "treatment": "tmj",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "교근",
+  "en": "Masseter",
+  "desc": "대표적인 저작근입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치료계획",
+  "en": "Treatment Plan",
+  "desc": "진단 후 세우는 치료 계획입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "예후",
+  "en": "Prognosis",
+  "desc": "치료 후 예상되는 경과입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "진단",
+  "en": "Diagnosis",
+  "desc": "질환을 판단하는 과정입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "문진",
+  "en": "Medical History",
+  "desc": "환자의 병력을 묻는 과정입니다.",
+  "treatment": "conservative",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "비급여",
+  "en": "Non-covered",
+  "desc": "건강보험이 적용되지 않는 진료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "급여",
+  "en": "Covered",
+  "desc": "건강보험이 적용되는 진료입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치과보험",
+  "en": "Dental Insurance",
+  "desc": "치과 진료에 적용되는 보험입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "연령가산",
+  "en": "Age Premium",
+  "desc": "특정 연령에 적용되는 보험 기준입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "임플란트보험",
+  "en": "Implant Coverage",
+  "desc": "만 65세 이상 적용되는 임플란트 보험입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "틀니보험",
+  "en": "Denture Coverage",
+  "desc": "만 65세 이상 적용되는 틀니 보험입니다.",
+  "treatment": "denture",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "치주치료보험",
+  "en": "Periodontal Coverage",
+  "desc": "잇몸치료에 적용되는 보험입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "연하",
+  "en": "Swallowing",
+  "desc": "음식을 삼키는 기능입니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "저작",
+  "en": "Mastication",
+  "desc": "음식을 씹는 기능입니다.",
+  "treatment": "denture",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "발음",
+  "en": "Phonetics",
+  "desc": "치아·구강과 관련된 발음 기능입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "심미치과",
+  "en": "Esthetic Dentistry",
+  "desc": "미적 개선을 다루는 치과 분야입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "스마일라인",
+  "en": "Smile Line",
+  "desc": "웃을 때 보이는 치아와 잇몸의 선입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "거미스마일",
+  "en": "Gummy Smile",
+  "desc": "웃을 때 잇몸이 많이 보이는 상태입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치아성형",
+  "en": "Tooth Recontouring",
+  "desc": "치아 모양을 다듬는 심미 처치입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치간유두",
+  "en": "Interdental Papilla",
+  "desc": "치아 사이 삼각형 잇몸입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "생활치수치료",
+  "en": "Vital Pulp Therapy",
+  "desc": "살아있는 치수를 보존하는 치료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "재신경치료",
+  "en": "Retreatment",
+  "desc": "이전 신경치료를 다시 하는 치료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "미세현미경치료",
+  "en": "Microscopic Endodontics",
+  "desc": "현미경을 이용한 정밀 신경치료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "치근단방사선",
+  "en": "Periapical Radiograph",
+  "desc": "치근 부위를 촬영하는 방사선 사진입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "교익촬영",
+  "en": "Bitewing Radiograph",
+  "desc": "인접면 충치 확인용 방사선 사진입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "디지털방사선",
+  "en": "Digital Radiography",
+  "desc": "디지털 방식의 방사선 촬영입니다.",
+  "treatment": "implant",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "방사선노출",
+  "en": "Radiation Exposure",
+  "desc": "촬영 시 방사선에 노출되는 정도입니다.",
+  "treatment": "implant",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "감염관리",
+  "en": "Infection Control",
+  "desc": "진료 중 감염을 예방하는 관리입니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "멸균",
+  "en": "Sterilization",
+  "desc": "기구의 미생물을 완전히 제거하는 과정입니다.",
+  "treatment": "surgery",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "소독",
+  "en": "Disinfection",
+  "desc": "병원성 미생물을 줄이는 처리입니다.",
+  "treatment": "surgery",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "임플란트 재수술",
+  "en": "Implant Revision",
+  "desc": "실패한 임플란트를 제거하고 뼈를 회복시킨 뒤 다시 식립하는 치료입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "부러진 픽스처",
+  "en": "Fractured Fixture",
+  "desc": "뼈 속에서 파절된 임플란트 몸체로, 전문적인 제거 수술이 필요합니다.",
+  "treatment": "implant",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "스크류 풀림",
+  "en": "Screw Loosening",
+  "desc": "임플란트 보철을 고정하는 나사가 풀리는 현상으로 재조임 또는 교체로 해결합니다.",
+  "treatment": "implant",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "시멘트 유지형 보철",
+  "en": "Cement-retained Prosthesis",
+  "desc": "접착제로 임플란트 보철을 고정하는 방식입니다.",
+  "treatment": "implant",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "나사 유지형 보철",
+  "en": "Screw-retained Prosthesis",
+  "desc": "나사로 임플란트 보철을 고정해 탈착·수리가 용이한 방식입니다.",
+  "treatment": "implant",
+  "initial": "ㄴ"
+ },
+ {
+  "term": "임플란트 1차 수술",
+  "en": "First-stage Surgery",
+  "desc": "임플란트 픽스처를 잇몸뼈에 식립하는 첫 단계 수술입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "임플란트 2차 수술",
+  "en": "Second-stage Surgery",
+  "desc": "뼈에 붙은 임플란트를 잇몸 위로 노출시키는 단계입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "발치 즉시 식립",
+  "en": "Immediate Placement",
+  "desc": "발치와 동시에 임플란트를 심어 치료 기간을 줄이는 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "골질",
+  "en": "Bone Quality",
+  "desc": "임플란트 식립 부위 뼈의 단단한 정도로, 식립 계획에 영향을 줍니다.",
+  "treatment": "implant",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "골량",
+  "en": "Bone Quantity",
+  "desc": "임플란트를 지지할 수 있는 뼈의 부피를 말합니다.",
+  "treatment": "implant",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "초기 고정",
+  "en": "Primary Stability",
+  "desc": "식립 직후 임플란트가 뼈에 기계적으로 고정된 정도입니다.",
+  "treatment": "implant",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "상악동",
+  "en": "Maxillary Sinus",
+  "desc": "위턱 어금니 위쪽의 빈 공간으로, 임플란트 시 거상술이 필요할 수 있습니다.",
+  "treatment": "implant",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "측방 접근 상악동 거상",
+  "en": "Lateral Window Technique",
+  "desc": "측면 창을 내어 상악동 막을 들어 올리는 뼈이식 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치조정 접근 상악동 거상",
+  "en": "Crestal Approach",
+  "desc": "식립 구멍을 통해 상악동 막을 들어 올리는 보존적 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "자가골 이식",
+  "en": "Autogenous Bone Graft",
+  "desc": "환자 본인의 뼈를 채취해 이식하는 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "동종골",
+  "en": "Allograft",
+  "desc": "사람 기증 뼈를 가공한 골이식재입니다.",
+  "treatment": "implant",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "이종골",
+  "en": "Xenograft",
+  "desc": "동물 유래를 가공·정제한 골이식재입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "합성골",
+  "en": "Synthetic Bone",
+  "desc": "인공적으로 합성한 골이식재입니다.",
+  "treatment": "implant",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "티타늄",
+  "en": "Titanium",
+  "desc": "임플란트 몸체에 쓰이는 생체 친화적 금속입니다.",
+  "treatment": "implant",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "임플란트 표면처리",
+  "en": "Surface Treatment",
+  "desc": "골유착을 촉진하기 위해 임플란트 표면을 가공하는 기술입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "토크",
+  "en": "Torque",
+  "desc": "임플란트를 조이는 회전력 단위로 초기 고정 평가에 사용됩니다.",
+  "treatment": "implant",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "임플란트 식립 가이드",
+  "en": "Surgical Guide",
+  "desc": "계획된 위치·각도로 식립하도록 돕는 수술 보조 장치입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "무절개 임플란트",
+  "en": "Flapless Implant",
+  "desc": "잇몸 절개를 최소화하여 식립하는 방법입니다.",
+  "treatment": "implant",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "임시 임플란트",
+  "en": "Provisional Implant",
+  "desc": "치료 기간 중 임시 보철을 지지하는 보조 임플란트입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "오버덴처",
+  "en": "Overdenture",
+  "desc": "임플란트나 잔존 치근 위에 끼우는 탈착식 틀니입니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "로케이터",
+  "en": "Locator Attachment",
+  "desc": "임플란트 틀니를 연결하는 단추형 연결 장치입니다.",
+  "treatment": "denture",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "바 어태치먼트",
+  "en": "Bar Attachment",
+  "desc": "임플란트들을 막대로 연결해 틀니를 고정하는 장치입니다.",
+  "treatment": "denture",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "임플란트 보험 적용",
+  "en": "Implant Insurance",
+  "desc": "만 65세 이상 평생 2개까지 조건부 건강보험이 적용되는 제도입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "골결손부",
+  "en": "Bone Defect",
+  "desc": "염증이나 발치로 뼈가 소실된 부위를 말합니다.",
+  "treatment": "implant",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치조제 보존술",
+  "en": "Ridge Preservation",
+  "desc": "발치 후 뼈 흡수를 줄이기 위해 발치와에 이식재를 채우는 술식입니다.",
+  "treatment": "implant",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치조제 증대술",
+  "en": "Ridge Augmentation",
+  "desc": "좁아진 잇몸뼈의 폭이나 높이를 늘리는 수술입니다.",
+  "treatment": "implant",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "임플란트 유지관리",
+  "en": "Implant Maintenance",
+  "desc": "임플란트 주위 조직 건강을 위한 정기 점검과 세정 프로그램입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "어태치먼트(교정)",
+  "en": "Attachment",
+  "desc": "투명교정 시 치아 이동을 돕기 위해 붙이는 작은 레진 돌기입니다.",
+  "treatment": "ortho",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "IPR",
+  "en": "Interproximal Reduction",
+  "desc": "치아 사이를 미세하게 갈아 배열 공간을 확보하는 술식입니다.",
+  "treatment": "ortho",
+  "initial": "I"
+ },
+ {
+  "term": "앵커리지",
+  "en": "Anchorage",
+  "desc": "교정에서 치아 이동의 기준이 되는 고정원입니다.",
+  "treatment": "ortho",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "고무줄 걸기",
+  "en": "Elastics",
+  "desc": "위아래 치아에 고무줄을 걸어 교합 관계를 개선하는 방법입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "결찰",
+  "en": "Ligation",
+  "desc": "교정용 철사를 브라켓에 고정하는 과정입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "자가결찰 브라켓",
+  "en": "Self-ligating Bracket",
+  "desc": "뚜껑 구조로 철사를 고정해 마찰을 줄인 브라켓입니다.",
+  "treatment": "ortho",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "투명 유지장치",
+  "en": "Clear Retainer",
+  "desc": "교정 후 투명한 틀 형태로 착용하는 유지장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "고정식 유지장치",
+  "en": "Fixed Retainer",
+  "desc": "앞니 안쪽에 가는 철사를 접착해 유지하는 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "급속 구개 확장",
+  "en": "Rapid Palatal Expansion",
+  "desc": "좁은 위턱을 넓히는 성장기 교정 장치 치료입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "페이스 마스크",
+  "en": "Face Mask",
+  "desc": "위턱 성장을 유도하는 성장기 악정형 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "트윈블록",
+  "en": "Twin Block",
+  "desc": "아래턱 성장을 유도하는 기능성 교정 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "정중선 불일치",
+  "en": "Midline Discrepancy",
+  "desc": "위아래 앞니 중심선이 어긋난 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "크로스바이트",
+  "en": "Crossbite",
+  "desc": "일부 치아의 위아래 교합이 반대로 물리는 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "딥바이트",
+  "en": "Deep Bite",
+  "desc": "위 앞니가 아래 앞니를 과도하게 덮는 교합입니다.",
+  "treatment": "ortho",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "오픈바이트",
+  "en": "Open Bite",
+  "desc": "어금니는 물리는데 앞니가 닿지 않는 교합입니다.",
+  "treatment": "ortho",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "교정 발치",
+  "en": "Extraction for Orthodontics",
+  "desc": "배열 공간 확보를 위해 소구치 등을 발치하는 결정입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "재교정",
+  "en": "Retreatment",
+  "desc": "교정 후 재배열되거나 결과 보완이 필요할 때 다시 하는 교정입니다.",
+  "treatment": "ortho",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "설측 버튼",
+  "en": "Lingual Button",
+  "desc": "치아 안쪽에 붙여 고무줄을 거는 작은 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "교정용 왁스",
+  "en": "Orthodontic Wax",
+  "desc": "장치가 점막을 찌를 때 임시로 덮는 보호 왁스입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치아 이동통",
+  "en": "Tooth Movement Pain",
+  "desc": "장치 조정 후 며칠간 느껴지는 뻐근한 불편감입니다.",
+  "treatment": "ortho",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "블랙 트라이앵글",
+  "en": "Black Triangle",
+  "desc": "치아 사이 잇몸이 채워지지 않아 생기는 삼각형 공간입니다.",
+  "treatment": "ortho",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "디본딩",
+  "en": "Debonding",
+  "desc": "교정 종료 시 브라켓과 접착제를 제거하는 과정입니다.",
+  "treatment": "ortho",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "교정 정밀검사",
+  "en": "Orthodontic Records",
+  "desc": "교정 진단을 위한 영상·모형·사진 종합 검사입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "세팔로 분석",
+  "en": "Cephalometric Analysis",
+  "desc": "측모 두부 방사선으로 골격을 계측·분석하는 방법입니다.",
+  "treatment": "ortho",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "리튬 디실리케이트",
+  "en": "Lithium Disilicate",
+  "desc": "투명도가 우수한 고강도 세라믹 보철 재료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "풀 지르코니아",
+  "en": "Full Zirconia",
+  "desc": "전체를 지르코니아로 제작한 고강도 크라운입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "프렙",
+  "en": "Tooth Preparation",
+  "desc": "보철물을 씌우기 위해 치아를 다듬는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "마진",
+  "en": "Margin",
+  "desc": "보철물과 치아가 만나는 경계선으로 정밀도가 중요합니다.",
+  "treatment": "esthetic",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "셰이드 매칭",
+  "en": "Shade Matching",
+  "desc": "주변 치아와 보철물의 색을 맞추는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "트라이인",
+  "en": "Try-in",
+  "desc": "최종 접착 전 보철물을 시적해 보는 단계입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "본딩",
+  "en": "Bonding",
+  "desc": "보철물·레진을 치아에 화학적으로 접착하는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "비니어",
+  "en": "Veneer",
+  "desc": "치아 앞면에 부착하는 얇은 세라믹 판으로 라미네이트와 같은 의미입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "다이아스테마",
+  "en": "Diastema",
+  "desc": "앞니 사이가 벌어진 상태로 보철·교정으로 개선합니다.",
+  "treatment": "esthetic",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "왁스업",
+  "en": "Wax-up",
+  "desc": "치료 결과를 미리 왁스 모형으로 만들어 보는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "목업",
+  "en": "Mock-up",
+  "desc": "왁스업을 입안에 옮겨 미리 형태를 확인하는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "임시 접착",
+  "en": "Temporary Cementation",
+  "desc": "경과 확인을 위해 보철물을 임시로 붙이는 방법입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "최종 접착",
+  "en": "Definitive Cementation",
+  "desc": "확인이 끝난 보철물을 영구 접착하는 단계입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "교합 채득",
+  "en": "Bite Registration",
+  "desc": "위아래 치아의 물림 관계를 기록하는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "핀레지",
+  "en": "Pin-retained Restoration",
+  "desc": "핀을 이용해 수복물의 유지력을 높이는 방법입니다.",
+  "treatment": "conservative",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "실활치 미백",
+  "en": "Non-vital Bleaching",
+  "desc": "신경치료 후 변색된 치아 내부를 미백하는 방법입니다.",
+  "treatment": "whitening",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "워킹 블리치",
+  "en": "Walking Bleach",
+  "desc": "미백제를 치아 내부에 넣고 일정 기간 두는 실활치 미백법입니다.",
+  "treatment": "whitening",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "개인 트레이",
+  "en": "Custom Tray",
+  "desc": "정밀한 본뜨기를 위해 개인 맞춤 제작한 트레이입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "러버 인상재",
+  "en": "Rubber Impression Material",
+  "desc": "정밀 보철 제작에 쓰는 고무 성분 인상 재료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "스캔 바디",
+  "en": "Scan Body",
+  "desc": "임플란트 위치를 디지털로 기록하기 위한 스캔용 부품입니다.",
+  "treatment": "implant",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "근관 충전",
+  "en": "Canal Obturation",
+  "desc": "소독한 신경관을 충전재로 밀봉하는 신경치료 마지막 단계입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "거타퍼차",
+  "en": "Gutta-percha",
+  "desc": "근관 충전에 사용하는 생체 적합성 충전 재료입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "근관장 측정",
+  "en": "Working Length",
+  "desc": "신경관 길이를 측정해 치료 범위를 정하는 과정입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "파일(근관치료)",
+  "en": "Endodontic File",
+  "desc": "신경관 내부를 넓히고 다듬는 가는 기구입니다.",
+  "treatment": "conservative",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "니켈티타늄 파일",
+  "en": "NiTi File",
+  "desc": "유연성이 높아 휜 신경관도 다듬을 수 있는 전동 파일입니다.",
+  "treatment": "conservative",
+  "initial": "ㄴ"
+ },
+ {
+  "term": "MTA",
+  "en": "Mineral Trioxide Aggregate",
+  "desc": "신경 보존·천공 수리에 쓰는 생체 친화적 시멘트입니다.",
+  "treatment": "conservative",
+  "initial": "M"
+ },
+ {
+  "term": "치수 생활력 검사",
+  "en": "Pulp Vitality Test",
+  "desc": "신경의 생존 여부를 확인하는 검사입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "타진 검사",
+  "en": "Percussion Test",
+  "desc": "치아를 가볍게 두드려 염증 여부를 확인하는 검사입니다.",
+  "treatment": "conservative",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "크랙 투스",
+  "en": "Cracked Tooth",
+  "desc": "눈에 잘 보이지 않는 금이 간 치아로 씹을 때 통증이 특징입니다.",
+  "treatment": "conservative",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "치경부 마모증",
+  "en": "Cervical Abrasion",
+  "desc": "잇몸 경계 치아가 패여 시린 증상을 유발하는 상태입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "교모",
+  "en": "Attrition",
+  "desc": "씹는 면이 마모되어 닳는 현상입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "침식증",
+  "en": "Erosion",
+  "desc": "산성 음식 등으로 치아가 녹는 현상입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "2차 충치",
+  "en": "Secondary Caries",
+  "desc": "기존 수복물 경계에 다시 생기는 충치입니다.",
+  "treatment": "conservative",
+  "initial": "2"
+ },
+ {
+  "term": "초기 충치",
+  "en": "Incipient Caries",
+  "desc": "법랑질 표면에 국한된 초기 단계 충치입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "우식 위험도 평가",
+  "en": "Caries Risk Assessment",
+  "desc": "개인별 충치 발생 위험을 평가해 예방 계획을 세우는 과정입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "베이스(이장재)",
+  "en": "Cavity Liner",
+  "desc": "깊은 충치 치료 시 신경 보호를 위해 까는 재료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "샌드위치 테크닉",
+  "en": "Sandwich Technique",
+  "desc": "글래스아이오노머와 레진을 함께 쓰는 수복 방법입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "코어 빌드업",
+  "en": "Core Build-up",
+  "desc": "크라운을 씌우기 전 부족한 치아 구조를 보강하는 과정입니다.",
+  "treatment": "conservative",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "스톤 모형",
+  "en": "Stone Model",
+  "desc": "본뜨기로 제작한 치아 석고 모형입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "치주 검사",
+  "en": "Periodontal Examination",
+  "desc": "잇몸 주머니 깊이 등을 측정해 치주 상태를 평가하는 검사입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치주낭 측정",
+  "en": "Pocket Probing",
+  "desc": "잇몸 주머니 깊이를 mm 단위로 측정하는 검사입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치은연하 소파술",
+  "en": "Subgingival Curettage",
+  "desc": "잇몸 속 염증 조직과 치석을 제거하는 치료입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치근 분지부 병변",
+  "en": "Furcation Involvement",
+  "desc": "어금니 뿌리 갈림 부위까지 진행된 치주염입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "각화치은",
+  "en": "Keratinized Gingiva",
+  "desc": "치아 주위를 보호하는 단단한 잇몸 조직입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "유리치은 이식",
+  "en": "Free Gingival Graft",
+  "desc": "입천장 조직을 떼어 부족한 잇몸에 이식하는 수술입니다.",
+  "treatment": "gum",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "결합조직 이식",
+  "en": "Connective Tissue Graft",
+  "desc": "잇몸 퇴축 부위를 덮기 위한 연조직 이식술입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치은압배",
+  "en": "Gingival Retraction",
+  "desc": "정밀 본뜨기를 위해 잇몸을 일시적으로 벌리는 과정입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "골연하 결손",
+  "en": "Infrabony Defect",
+  "desc": "치주염으로 뼈가 수직으로 파인 결손 형태입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치주 재생술",
+  "en": "Periodontal Regeneration",
+  "desc": "소실된 치주 조직의 재생을 유도하는 수술입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "에나멜 기질 유도체",
+  "en": "Enamel Matrix Derivative",
+  "desc": "치주 조직 재생을 돕는 생체 재료입니다.",
+  "treatment": "gum",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치주 유지관리",
+  "en": "Periodontal Maintenance",
+  "desc": "치주 치료 후 재발 방지를 위한 정기 관리 프로그램입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "전악 치석제거",
+  "en": "Full-mouth Scaling",
+  "desc": "입안 전체 치석을 제거하는 스케일링입니다.",
+  "treatment": "gum",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "초음파 스케일러",
+  "en": "Ultrasonic Scaler",
+  "desc": "초음파 진동으로 치석을 제거하는 장비입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "수동 스케일러",
+  "en": "Hand Scaler",
+  "desc": "손 기구로 미세한 치석을 제거하는 도구입니다.",
+  "treatment": "gum",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "출혈 지수",
+  "en": "Bleeding Index",
+  "desc": "잇몸 출혈 정도를 수치화한 염증 지표입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치면 세마",
+  "en": "Tooth Polishing",
+  "desc": "치아 표면을 매끄럽게 연마해 치태 부착을 줄이는 과정입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "수평 매복",
+  "en": "Horizontal Impaction",
+  "desc": "사랑니가 옆으로 누워 매복된 형태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "수직 매복",
+  "en": "Vertical Impaction",
+  "desc": "사랑니가 똑바로 서 있으나 잇몸에 묻힌 형태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "완전 매복",
+  "en": "Complete Impaction",
+  "desc": "뼈 속에 완전히 묻혀 있는 매복치입니다.",
+  "treatment": "surgery",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치아 분할 발치",
+  "en": "Tooth Sectioning",
+  "desc": "치아를 분할해 적은 손상으로 발치하는 방법입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "봉합",
+  "en": "Suture",
+  "desc": "절개 부위를 실로 꿰매 닫는 과정입니다.",
+  "treatment": "surgery",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "흡수성 봉합사",
+  "en": "Resorbable Suture",
+  "desc": "시간이 지나면 녹아 제거가 필요 없는 봉합실입니다.",
+  "treatment": "surgery",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "지혈",
+  "en": "Hemostasis",
+  "desc": "출혈을 멈추게 하는 처치입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "하치조신경 손상",
+  "en": "Inferior Alveolar Nerve Injury",
+  "desc": "아래턱 신경 손상으로 인한 감각 이상으로, 사전 영상 평가로 예방합니다.",
+  "treatment": "surgery",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "설신경",
+  "en": "Lingual Nerve",
+  "desc": "혀의 감각을 담당하는 신경으로 사랑니 발치 시 주의 부위입니다.",
+  "treatment": "surgery",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "구강상악동 누공",
+  "en": "Oroantral Fistula",
+  "desc": "발치 후 입과 상악동이 연결된 상태로 폐쇄 처치가 필요합니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "절개 배농",
+  "en": "Incision and Drainage",
+  "desc": "고름집을 절개해 배농시키는 응급 처치입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "봉와직염",
+  "en": "Cellulitis",
+  "desc": "턱 주변으로 퍼진 급성 염증으로 신속한 치료가 필요합니다.",
+  "treatment": "surgery",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "조직검사",
+  "en": "Biopsy",
+  "desc": "병소 조직을 떼어 현미경으로 진단하는 검사입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "백반증",
+  "en": "Leukoplakia",
+  "desc": "입안에 생기는 흰 반점으로 감별 진단이 필요한 병소입니다.",
+  "treatment": "surgery",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "편평태선",
+  "en": "Lichen Planus",
+  "desc": "구강 점막에 그물 모양 병변이 생기는 만성 질환입니다.",
+  "treatment": "surgery",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "구내염",
+  "en": "Stomatitis",
+  "desc": "입안 점막에 생기는 염증과 궤양의 총칭입니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "재발성 아프타",
+  "en": "Recurrent Aphthous Ulcer",
+  "desc": "반복적으로 생기는 둥근 구내 궤양입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "설소대 단축증",
+  "en": "Ankyloglossia",
+  "desc": "혀 밑 인대가 짧아 혀 움직임이 제한되는 상태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "순소대",
+  "en": "Labial Frenum",
+  "desc": "입술과 잇몸을 잇는 인대로 위치 이상 시 수술을 검토합니다.",
+  "treatment": "surgery",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "치성 감염",
+  "en": "Odontogenic Infection",
+  "desc": "치아에서 시작되어 주변으로 퍼지는 감염입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "악골 골절",
+  "en": "Jaw Fracture",
+  "desc": "외상으로 턱뼈가 부러진 상태로 구강악안면외과에서 치료합니다.",
+  "treatment": "surgery",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "티타늄 플레이트",
+  "en": "Titanium Plate",
+  "desc": "턱뼈 고정에 사용하는 금속판입니다.",
+  "treatment": "surgery",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "과잉치",
+  "en": "Supernumerary Tooth",
+  "desc": "정상 개수보다 많이 생긴 치아로 발치를 검토합니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치아종",
+  "en": "Odontoma",
+  "desc": "치아 조직으로 구성된 양성 종양입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "함치성 낭종",
+  "en": "Dentigerous Cyst",
+  "desc": "매복치 주위에 생기는 낭종입니다.",
+  "treatment": "surgery",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "치근단 낭종",
+  "en": "Radicular Cyst",
+  "desc": "치아 뿌리 끝 염증에서 비롯된 낭종입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "골염",
+  "en": "Osteitis",
+  "desc": "턱뼈에 생긴 염증입니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "약물 관련 턱뼈 괴사",
+  "en": "MRONJ",
+  "desc": "골다공증 약 등과 관련된 턱뼈 괴사로 사전 약물 확인이 중요합니다.",
+  "treatment": "surgery",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "측두하악관절",
+  "en": "Temporomandibular Joint",
+  "desc": "머리뼈와 아래턱을 잇는 관절로 턱 운동을 담당합니다.",
+  "treatment": "tmj",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "관절원판 변위",
+  "en": "Disc Displacement",
+  "desc": "관절원판이 제 위치를 벗어나 소리·통증을 유발하는 상태입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "정복성 관절원판 변위",
+  "en": "Disc Displacement with Reduction",
+  "desc": "입을 벌릴 때 원판이 제자리로 돌아오며 소리가 나는 유형입니다.",
+  "treatment": "tmj",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "비정복성 관절원판 변위",
+  "en": "Disc Displacement without Reduction",
+  "desc": "원판이 돌아오지 않아 입벌림이 제한되는 유형입니다.",
+  "treatment": "tmj",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "측두근",
+  "en": "Temporalis Muscle",
+  "desc": "관자놀이 부위 저작근으로 긴장 시 두통과 유사한 통증을 유발합니다.",
+  "treatment": "tmj",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "익돌근",
+  "en": "Pterygoid Muscle",
+  "desc": "턱 깊은 곳의 저작근으로 턱관절 통증과 관련됩니다.",
+  "treatment": "tmj",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "개구량",
+  "en": "Mouth Opening Range",
+  "desc": "입을 최대로 벌린 거리로 턱관절 평가 지표입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "턱관절 탈구",
+  "en": "TMJ Dislocation",
+  "desc": "입을 크게 벌린 뒤 다물어지지 않는 상태로 정복 처치가 필요합니다.",
+  "treatment": "tmj",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "야간 이갈이",
+  "en": "Sleep Bruxism",
+  "desc": "수면 중 무의식적으로 이를 가는 습관입니다.",
+  "treatment": "tmj",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "주간 이악물기",
+  "en": "Awake Clenching",
+  "desc": "깨어 있는 동안 이를 꽉 무는 습관입니다.",
+  "treatment": "tmj",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "근막통증증후군",
+  "en": "Myofascial Pain Syndrome",
+  "desc": "저작근의 통증 유발점으로 인한 만성 통증 상태입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "턱관절 자가관리",
+  "en": "TMJ Self-care",
+  "desc": "온찜질·스트레칭 등 환자 스스로 하는 관리법입니다.",
+  "treatment": "tmj",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "전달마취",
+  "en": "Block Anesthesia",
+  "desc": "신경 줄기 부위에 놓아 넓은 영역을 마취하는 방법입니다.",
+  "treatment": "sleep",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "침윤마취",
+  "en": "Infiltration Anesthesia",
+  "desc": "치료 부위 주변에 직접 놓는 국소마취입니다.",
+  "treatment": "sleep",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "도포마취",
+  "en": "Topical Anesthesia",
+  "desc": "주사 전 점막 표면에 바르는 마취제입니다.",
+  "treatment": "sleep",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "아산화질소 흡입진정",
+  "en": "Nitrous Oxide Sedation",
+  "desc": "웃음가스를 흡입해 가볍게 이완시키는 진정법입니다.",
+  "treatment": "sleep",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "정맥진정",
+  "en": "IV Sedation",
+  "desc": "정맥로로 진정제를 투여하는 의식하진정법입니다.",
+  "treatment": "sleep",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "미다졸람",
+  "en": "Midazolam",
+  "desc": "의식하진정에 흔히 사용되는 진정 약물입니다.",
+  "treatment": "sleep",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "산소포화도 감시",
+  "en": "Pulse Oximetry",
+  "desc": "진정 중 혈중 산소 농도를 지속 관찰하는 안전 장치입니다.",
+  "treatment": "sleep",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "회복실",
+  "en": "Recovery Room",
+  "desc": "진정 후 안정을 취하며 회복하는 공간입니다.",
+  "treatment": "sleep",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "진정 전 평가",
+  "en": "Pre-sedation Assessment",
+  "desc": "전신 상태·복용약을 확인하는 진정 전 안전 평가입니다.",
+  "treatment": "sleep",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "금식 지침",
+  "en": "Fasting Guideline",
+  "desc": "진정 전 일정 시간 음식·물 섭취를 제한하는 안전 수칙입니다.",
+  "treatment": "sleep",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "의치 안정제",
+  "en": "Denture Adhesive",
+  "desc": "틀니 유지력을 보조하는 접착 크림입니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "이장(릴라인)",
+  "en": "Reline",
+  "desc": "틀니 내면을 다시 채워 잇몸에 맞추는 조정술입니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "개상(리베이스)",
+  "en": "Rebase",
+  "desc": "틀니 분홍 몸체 전체를 새로 바꾸는 수리입니다.",
+  "treatment": "denture",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "인공치",
+  "en": "Artificial Teeth",
+  "desc": "틀니에 배열하는 인공 치아입니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "클라스프",
+  "en": "Clasp",
+  "desc": "부분틀니를 남은 치아에 거는 금속 고리입니다.",
+  "treatment": "denture",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "서베이드 크라운",
+  "en": "Surveyed Crown",
+  "desc": "부분틀니 고리가 잘 걸리도록 설계된 크라운입니다.",
+  "treatment": "denture",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "의치성 구내염",
+  "en": "Denture Stomatitis",
+  "desc": "틀니 아래 잇몸에 생기는 염증으로 위생 관리로 예방합니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "플랜지",
+  "en": "Flange",
+  "desc": "틀니 가장자리 날개 부분으로 유지력에 영향을 줍니다.",
+  "treatment": "denture",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "교합제",
+  "en": "Occlusion Rim",
+  "desc": "틀니 제작 중 교합 높이를 정하는 왁스 틀입니다.",
+  "treatment": "denture",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "시적",
+  "en": "Try-in Denture",
+  "desc": "완성 전 틀니 배열을 입안에서 확인하는 단계입니다.",
+  "treatment": "denture",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "즉시의치",
+  "en": "Immediate Denture",
+  "desc": "발치 직후 바로 끼우는 임시 틀니입니다.",
+  "treatment": "denture",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "금속상 틀니",
+  "en": "Metal-based Denture",
+  "desc": "입천장 부분을 얇은 금속으로 만든 틀니입니다.",
+  "treatment": "denture",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "탄성의치",
+  "en": "Flexible Denture",
+  "desc": "유연한 재질로 만들어 금속 고리가 없는 부분틀니입니다.",
+  "treatment": "denture",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "정기 구강검진",
+  "en": "Regular Check-up",
+  "desc": "질환을 조기에 발견하기 위한 주기적 검진입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "구강위생 교육",
+  "en": "Oral Hygiene Instruction",
+  "desc": "개인별 칫솔질·치실 사용법을 교육하는 과정입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "바스법",
+  "en": "Bass Technique",
+  "desc": "잇몸 경계에 칫솔모를 45도로 대고 진동시키는 칫솔질법입니다.",
+  "treatment": "gum",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "회전법",
+  "en": "Rolling Technique",
+  "desc": "잇몸에서 치아 방향으로 쓸어내리는 칫솔질법입니다.",
+  "treatment": "gum",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "전동칫솔",
+  "en": "Electric Toothbrush",
+  "desc": "진동·회전으로 치태 제거를 돕는 칫솔입니다.",
+  "treatment": "gum",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "워터픽",
+  "en": "Water Flosser",
+  "desc": "물줄기로 치아 사이를 세척하는 구강 세정기입니다.",
+  "treatment": "gum",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "혀클리너",
+  "en": "Tongue Cleaner",
+  "desc": "설태를 제거해 입냄새를 줄이는 도구입니다.",
+  "treatment": "gum",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "가글액",
+  "en": "Mouthwash",
+  "desc": "구강 세균을 줄이는 보조 세정제입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "클로르헥시딘",
+  "en": "Chlorhexidine",
+  "desc": "치과에서 처방하는 항균 가글 성분입니다.",
+  "treatment": "gum",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "자일리톨",
+  "en": "Xylitol",
+  "desc": "충치균 활동을 억제하는 천연 감미료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "불소치약",
+  "en": "Fluoride Toothpaste",
+  "desc": "법랑질을 강화해 충치를 예방하는 치약입니다.",
+  "treatment": "conservative",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "치아 홈 메우기",
+  "en": "Pit and Fissure Sealant",
+  "desc": "어금니 골짜기를 메워 충치를 예방하는 실란트의 다른 이름입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "우유병 우식증",
+  "en": "Baby Bottle Caries",
+  "desc": "수유 습관과 관련된 유아기 다발성 충치입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "유치 발치",
+  "en": "Primary Tooth Extraction",
+  "desc": "흔들리거나 문제가 있는 젖니를 빼는 처치입니다.",
+  "treatment": "surgery",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "맹출 장애",
+  "en": "Eruption Disturbance",
+  "desc": "치아가 제때 나오지 못하는 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "선천 결손치",
+  "en": "Congenitally Missing Tooth",
+  "desc": "태어날 때부터 치아 싹이 없는 경우입니다.",
+  "treatment": "implant",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "왜소치",
+  "en": "Microdontia",
+  "desc": "정상보다 작게 형성된 치아입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치아 끼임",
+  "en": "Food Impaction",
+  "desc": "치아 사이에 음식물이 끼는 증상으로 원인 치료가 필요합니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "구강건조증",
+  "en": "Xerostomia",
+  "desc": "침 분비가 줄어 입이 마르는 증상입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "구강작열감",
+  "en": "Burning Mouth Syndrome",
+  "desc": "입안이 화끈거리는 만성 감각 이상입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "입냄새 측정",
+  "en": "Halimeter Test",
+  "desc": "구취 원인 가스를 측정하는 검사입니다.",
+  "treatment": "gum",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "콘빔CT",
+  "en": "CBCT",
+  "desc": "치과용 3차원 CT로 뼈·신경 위치를 입체적으로 확인합니다.",
+  "treatment": "implant",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "구강스캐너",
+  "en": "Intraoral Scanner",
+  "desc": "본뜨기 없이 치아를 3D 스캔하는 디지털 장비입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "3D 프린팅",
+  "en": "3D Printing",
+  "desc": "수술 가이드·모형 등을 출력하는 디지털 제작 기술입니다.",
+  "treatment": "implant",
+  "initial": "3"
+ },
+ {
+  "term": "디지털 교합 분석",
+  "en": "Digital Occlusal Analysis",
+  "desc": "씹는 힘 분포를 디지털로 측정하는 검사입니다.",
+  "treatment": "tmj",
+  "initial": "ㄷ"
+ },
+ {
+  "term": "치근단 촬영",
+  "en": "Periapical Radiograph",
+  "desc": "치아 1~2개를 정밀하게 보는 소형 방사선 사진입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "교익 촬영",
+  "en": "Bitewing Radiograph",
+  "desc": "치아 사이 충치 확인에 유용한 촬영법입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "파노라마 촬영",
+  "en": "Panoramic Radiograph",
+  "desc": "턱 전체를 한 장에 담는 기본 방사선 검사입니다.",
+  "treatment": "implant",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "방사선 방어",
+  "en": "Radiation Protection",
+  "desc": "납 방어복 등으로 방사선 노출을 최소화하는 수칙입니다.",
+  "treatment": "conservative",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "구강 카메라",
+  "en": "Intraoral Camera",
+  "desc": "입안 상태를 화면으로 보여주는 소형 카메라입니다.",
+  "treatment": "conservative",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치과용 현미경",
+  "en": "Dental Microscope",
+  "desc": "미세 근관치료 등에 사용하는 고배율 현미경입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "레이저 치료",
+  "en": "Dental Laser",
+  "desc": "연조직 처치·살균 등에 활용하는 레이저 장비입니다.",
+  "treatment": "gum",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "전기 치수검사",
+  "en": "Electric Pulp Test",
+  "desc": "미세 전류로 신경 생활력을 확인하는 검사입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "멸균 소독 시스템",
+  "en": "Sterilization System",
+  "desc": "기구를 고압 증기 등으로 멸균하는 감염관리 체계입니다.",
+  "treatment": "surgery",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "에어샤워",
+  "en": "Air Shower",
+  "desc": "수술실 입장 전 공기로 먼지를 제거하는 감염관리 설비입니다.",
+  "treatment": "surgery",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "개인 맞춤 트레이",
+  "en": "Custom Impression Tray",
+  "desc": "정밀 인상을 위해 환자 맞춤 제작한 본뜨기 틀입니다.",
+  "treatment": "denture",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "기공물",
+  "en": "Dental Lab Work",
+  "desc": "기공실에서 제작하는 보철물·장치의 총칭입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "원내 기공실",
+  "en": "In-house Dental Lab",
+  "desc": "병원 안에 기공사가 상주하는 제작 시설로 빠른 조정이 가능합니다.",
+  "treatment": "esthetic",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "캐드캠 밀링",
+  "en": "CAD/CAM Milling",
+  "desc": "디지털 설계로 보철물을 깎아 제작하는 방식입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "시린이",
+  "en": "Tooth Sensitivity",
+  "desc": "찬 자극에 치아가 짜릿한 증상으로 원인별 치료가 다릅니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "욱신거림",
+  "en": "Throbbing Pain",
+  "desc": "맥박처럼 욱신거리는 통증으로 신경 염증을 시사할 수 있습니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "자발통",
+  "en": "Spontaneous Pain",
+  "desc": "자극 없이 저절로 생기는 통증으로 진행된 치수염의 신호입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "야간통",
+  "en": "Nocturnal Pain",
+  "desc": "밤에 심해지는 치통으로 치수염 감별이 필요합니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "방산통",
+  "en": "Referred Pain",
+  "desc": "원인 치아와 다른 부위에서 느껴지는 통증입니다.",
+  "treatment": "tmj",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "치은 증식",
+  "en": "Gingival Hyperplasia",
+  "desc": "약물 등으로 잇몸이 과도하게 자라는 상태입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치아 착색",
+  "en": "Tooth Staining",
+  "desc": "음식·흡연 등으로 치아 표면에 색이 배는 현상입니다.",
+  "treatment": "whitening",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "테트라사이클린 변색",
+  "en": "Tetracycline Staining",
+  "desc": "항생제 영향으로 생긴 회색조 변색입니다.",
+  "treatment": "whitening",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "불소증",
+  "en": "Fluorosis",
+  "desc": "과량 불소로 법랑질에 흰 반점이 생긴 상태입니다.",
+  "treatment": "whitening",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "법랑질 형성부전",
+  "en": "Enamel Hypoplasia",
+  "desc": "법랑질이 불완전하게 형성된 상태입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "치아 매복",
+  "en": "Tooth Impaction",
+  "desc": "치아가 뼈나 잇몸에 묻혀 나오지 못한 상태입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "유착치",
+  "en": "Ankylosed Tooth",
+  "desc": "치아가 뼈와 직접 붙어 움직이지 않는 상태입니다.",
+  "treatment": "ortho",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "이소맹출",
+  "en": "Ectopic Eruption",
+  "desc": "치아가 정상 위치를 벗어나 나는 현상입니다.",
+  "treatment": "ortho",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치간 이개술",
+  "en": "Tooth Separation",
+  "desc": "치아 사이를 일시적으로 벌리는 술식입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "교합성 외상",
+  "en": "Occlusal Trauma",
+  "desc": "과도한 교합력으로 치주 조직이 손상되는 상태입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "긴장성 두통",
+  "en": "Tension Headache",
+  "desc": "저작근 긴장과 관련될 수 있는 두통 유형입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "연하곤란",
+  "en": "Dysphagia",
+  "desc": "삼키기 어려운 증상으로 구강 기능 평가가 필요할 수 있습니다.",
+  "treatment": "denture",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "저작 효율",
+  "en": "Masticatory Efficiency",
+  "desc": "음식을 씹어 부수는 능력의 지표입니다.",
+  "treatment": "denture",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "발음 적응",
+  "en": "Phonetic Adaptation",
+  "desc": "틀니·교정장치 착용 후 발음에 익숙해지는 과정입니다.",
+  "treatment": "denture",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "심미 분석",
+  "en": "Esthetic Analysis",
+  "desc": "얼굴·입술·치아 비율을 분석해 심미 치료를 설계하는 과정입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "골격성 부정교합",
+  "en": "Skeletal Malocclusion",
+  "desc": "턱뼈 위치 이상에서 비롯된 부정교합입니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "치성 부정교합",
+  "en": "Dental Malocclusion",
+  "desc": "치아 배열 이상에서 비롯된 부정교합입니다.",
+  "treatment": "ortho",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "전치부 외상",
+  "en": "Anterior Tooth Trauma",
+  "desc": "넘어짐 등으로 앞니가 다친 외상입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "치아 파편 재부착",
+  "en": "Fragment Reattachment",
+  "desc": "부러진 치아 조각을 다시 붙이는 치료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "스플린팅(치아고정)",
+  "en": "Tooth Splinting",
+  "desc": "흔들리는 치아를 옆 치아와 묶어 고정하는 처치입니다.",
+  "treatment": "gum",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "자가치아 이식",
+  "en": "Autotransplantation",
+  "desc": "본인의 치아(주로 사랑니)를 빈자리에 옮겨 심는 수술입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "의도적 재식술",
+  "en": "Intentional Replantation",
+  "desc": "치아를 빼서 처치 후 다시 심는 치료입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "치근 절제술",
+  "en": "Root Resection",
+  "desc": "여러 뿌리 중 문제 뿌리만 제거하는 수술입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "편측 저작",
+  "en": "Unilateral Chewing",
+  "desc": "한쪽으로만 씹는 습관으로 턱관절·치아에 부담을 줍니다.",
+  "treatment": "tmj",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "구호흡",
+  "en": "Mouth Breathing",
+  "desc": "입으로 숨 쉬는 습관으로 구강 건조와 부정교합의 원인이 됩니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "손가락 빨기",
+  "en": "Thumb Sucking",
+  "desc": "장기화되면 앞니 돌출 등 부정교합을 유발하는 습관입니다.",
+  "treatment": "ortho",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "혀 내밀기 습관",
+  "en": "Tongue Thrusting",
+  "desc": "삼킬 때 혀로 앞니를 미는 습관으로 개방교합과 관련됩니다.",
+  "treatment": "ortho",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "악습관 차단 장치",
+  "en": "Habit Breaker",
+  "desc": "구강 악습관을 차단하는 교정 보조 장치입니다.",
+  "treatment": "ortho",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "기능성 반대교합",
+  "en": "Functional Crossbite",
+  "desc": "턱 위치 변화로 생긴 반대교합으로 조기 개선이 유리합니다.",
+  "treatment": "ortho",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "터너 치아",
+  "en": "Turner's Tooth",
+  "desc": "유치 염증이 영구치 형성에 영향을 준 변색·결함 치아입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "신생선",
+  "en": "Neonatal Line",
+  "desc": "출생 전후 형성된 법랑질 성장선입니다.",
+  "treatment": "conservative",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "제3대구치",
+  "en": "Third Molar",
+  "desc": "사랑니의 정식 명칭입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "제2대구치",
+  "en": "Second Molar",
+  "desc": "사랑니 앞 큰어금니입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "제1대구치",
+  "en": "First Molar",
+  "desc": "6세경 나는 첫 영구 어금니로 평생 교합의 기준이 됩니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "측절치",
+  "en": "Lateral Incisor",
+  "desc": "중절치 옆 앞니입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "중절치",
+  "en": "Central Incisor",
+  "desc": "정중앙 앞니로 심미의 핵심 치아입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "치식",
+  "en": "Tooth Numbering",
+  "desc": "치아 위치를 숫자로 표기하는 체계입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "FDI 표기법",
+  "en": "FDI Notation",
+  "desc": "국제 표준 치아 번호 표기법입니다.",
+  "treatment": "conservative",
+  "initial": "F"
+ },
+ {
+  "term": "교합기",
+  "en": "Articulator",
+  "desc": "턱 움직임을 재현해 보철물을 제작하는 기공 장비입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "페이스보우",
+  "en": "Facebow",
+  "desc": "턱관절 기준으로 상악 위치를 기록하는 장치입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "센트릭",
+  "en": "Centric Relation",
+  "desc": "하악의 기준 위치로 보철·교합 치료의 출발점입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "가이드 교합",
+  "en": "Anterior Guidance",
+  "desc": "앞니가 턱 운동을 유도하는 교합 방식입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "균형 교합",
+  "en": "Balanced Occlusion",
+  "desc": "틀니에서 양측이 고르게 닿도록 설계한 교합입니다.",
+  "treatment": "denture",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "조기 접촉",
+  "en": "Premature Contact",
+  "desc": "일부 치아가 먼저 닿아 교합을 방해하는 접촉점입니다.",
+  "treatment": "tmj",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "교합 간섭",
+  "en": "Occlusal Interference",
+  "desc": "턱 운동을 방해하는 비정상 접촉입니다.",
+  "treatment": "tmj",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "프리미엄 임플란트",
+  "en": "Premium Implant",
+  "desc": "장기 임상 데이터를 갖춘 글로벌 브랜드 임플란트를 이르는 말입니다.",
+  "treatment": "implant",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "국산 임플란트",
+  "en": "Domestic Implant",
+  "desc": "국내 제조 임플란트로 임상 신뢰도가 확보된 제품군입니다.",
+  "treatment": "implant",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "멤브레인",
+  "en": "Membrane",
+  "desc": "골이식 부위를 덮어 재생을 유도하는 차폐막입니다.",
+  "treatment": "implant",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "티슈 펀치",
+  "en": "Tissue Punch",
+  "desc": "무절개 식립 시 잇몸을 원형으로 제거하는 기구입니다.",
+  "treatment": "implant",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "커버 스크류",
+  "en": "Cover Screw",
+  "desc": "1차 수술 후 임플란트 상단을 덮는 보호 나사입니다.",
+  "treatment": "implant",
+  "initial": "ㅋ"
+ },
+ {
+  "term": "임프레션 코핑",
+  "en": "Impression Coping",
+  "desc": "임플란트 위치를 본뜨기로 옮기는 부품입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "어버트먼트 스크류",
+  "en": "Abutment Screw",
+  "desc": "어버트먼트를 픽스처에 고정하는 나사입니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "맞춤형 어버트먼트",
+  "en": "Custom Abutment",
+  "desc": "환자 잇몸 형태에 맞춰 제작한 연결 기둥입니다.",
+  "treatment": "implant",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "티타늄 베이스",
+  "en": "Ti-base",
+  "desc": "지르코니아 보철과 임플란트를 연결하는 티타늄 부품입니다.",
+  "treatment": "implant",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "프로비저널",
+  "en": "Provisional Restoration",
+  "desc": "최종 보철 전 사용하는 임시 보철물입니다.",
+  "treatment": "esthetic",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "이머전스 프로파일",
+  "en": "Emergence Profile",
+  "desc": "잇몸에서 보철물이 올라오는 형태로 심미에 중요합니다.",
+  "treatment": "implant",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "핑크 포세린",
+  "en": "Pink Porcelain",
+  "desc": "잇몸 색을 재현하는 도재로 심미 보완에 사용합니다.",
+  "treatment": "esthetic",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "림 처짐",
+  "en": "Ridge Resorption",
+  "desc": "발치 후 잇몸뼈가 흡수되어 낮아지는 현상입니다.",
+  "treatment": "denture",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "플리퍼",
+  "en": "Flipper",
+  "desc": "앞니 빈자리를 임시로 채우는 간이 틀니입니다.",
+  "treatment": "denture",
+  "initial": "ㅍ"
+ },
+ {
+  "term": "마우스가드",
+  "en": "Mouthguard",
+  "desc": "운동 중 치아·턱 손상을 막는 보호 장치입니다.",
+  "treatment": "tmj",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "스포츠 치의학",
+  "en": "Sports Dentistry",
+  "desc": "운동 관련 구강 외상 예방·치료 분야입니다.",
+  "treatment": "surgery",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "금연 상담",
+  "en": "Smoking Cessation Counseling",
+  "desc": "구강 건강을 위한 금연 지원 상담입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "타액선",
+  "en": "Salivary Gland",
+  "desc": "침을 분비하는 샘으로 구강 건강에 중요한 역할을 합니다.",
+  "treatment": "surgery",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "타석증",
+  "en": "Sialolithiasis",
+  "desc": "침샘 관에 돌이 생겨 붓고 아픈 질환입니다.",
+  "treatment": "surgery",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "이하선",
+  "en": "Parotid Gland",
+  "desc": "귀 앞쪽의 가장 큰 침샘입니다.",
+  "treatment": "surgery",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "악하선",
+  "en": "Submandibular Gland",
+  "desc": "턱 아래 침샘으로 타석이 잘 생기는 부위입니다.",
+  "treatment": "surgery",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "구강암 검진",
+  "en": "Oral Cancer Screening",
+  "desc": "구강 점막을 정기적으로 살펴 조기 발견하는 검진입니다.",
+  "treatment": "surgery",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "HPV와 구강",
+  "en": "HPV in Oral Cavity",
+  "desc": "일부 구인두암과 관련이 알려진 바이러스입니다.",
+  "treatment": "surgery",
+  "initial": "H"
+ },
+ {
+  "term": "방사선 치료 후 구강관리",
+  "en": "Post-radiation Oral Care",
+  "desc": "방사선 치료 환자의 구강건조·충치 예방 관리입니다.",
+  "treatment": "conservative",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "항응고제와 발치",
+  "en": "Anticoagulants in Extraction",
+  "desc": "피를 묽게 하는 약 복용자의 발치 전 확인 사항입니다.",
+  "treatment": "surgery",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "비스포스포네이트",
+  "en": "Bisphosphonate",
+  "desc": "골다공증 약 성분으로 턱뼈 수술 전 확인이 필요합니다.",
+  "treatment": "surgery",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "임산부 치과진료",
+  "en": "Dental Care in Pregnancy",
+  "desc": "임신 중기 중심으로 안전하게 진행하는 치과 진료 원칙입니다.",
+  "treatment": "conservative",
+  "initial": "ㅇ"
+ },
+ {
+  "term": "소아 진정치료",
+  "en": "Pediatric Sedation",
+  "desc": "협조가 어려운 어린이를 위한 진정 하 치료입니다.",
+  "treatment": "sleep",
+  "initial": "ㅅ"
+ },
+ {
+  "term": "행동 조절",
+  "en": "Behavior Management",
+  "desc": "어린이 치과 공포를 줄이는 심리적 접근법입니다.",
+  "treatment": "sleep",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "티엘 검사",
+  "en": "Tell-Show-Do",
+  "desc": "설명-시연-시행 순서로 아이의 불안을 줄이는 기법입니다.",
+  "treatment": "sleep",
+  "initial": "ㅌ"
+ },
+ {
+  "term": "치과 공포증",
+  "en": "Dental Phobia",
+  "desc": "치과 치료에 대한 과도한 불안으로 진정법이 도움이 됩니다.",
+  "treatment": "sleep",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "화이트 스폿",
+  "en": "White Spot Lesion",
+  "desc": "법랑질 초기 탈회로 생긴 흰 반점입니다.",
+  "treatment": "ortho",
+  "initial": "ㅎ"
+ },
+ {
+  "term": "레진 침투법",
+  "en": "Resin Infiltration",
+  "desc": "화이트 스폿에 레진을 침투시켜 개선하는 치료입니다.",
+  "treatment": "esthetic",
+  "initial": "ㄹ"
+ },
+ {
+  "term": "치아 우식 활성검사",
+  "en": "Caries Activity Test",
+  "desc": "충치 유발 세균 활성도를 측정하는 검사입니다.",
+  "treatment": "conservative",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치면 착색제",
+  "en": "Disclosing Agent",
+  "desc": "치태를 물들여 칫솔질 상태를 확인하는 약제입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "전문가 치면세정",
+  "en": "Professional Mechanical Tooth Cleaning",
+  "desc": "전문 기구로 치태·착색을 제거하는 관리입니다.",
+  "treatment": "gum",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "치은열구액",
+  "en": "Gingival Crevicular Fluid",
+  "desc": "잇몸 틈새에서 나오는 체액으로 염증 지표가 됩니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "바이오필름",
+  "en": "Biofilm",
+  "desc": "치아 표면에 형성되는 세균막으로 치태의 본질입니다.",
+  "treatment": "gum",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "치주병원균",
+  "en": "Periodontal Pathogen",
+  "desc": "치주염을 일으키는 주요 세균군입니다.",
+  "treatment": "gum",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "구강 마이크로바이옴",
+  "en": "Oral Microbiome",
+  "desc": "입안에 사는 미생물 생태계 전체를 이르는 말입니다.",
+  "treatment": "gum",
+  "initial": "ㄱ"
+ },
+ {
+  "term": "전신질환과 치주",
+  "en": "Systemic Disease and Periodontitis",
+  "desc": "당뇨·심혈관 질환과 잇몸병의 연관성을 다루는 영역입니다.",
+  "treatment": "gum",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "치과 마취 부작용",
+  "en": "Anesthesia Side Effects",
+  "desc": "드물게 나타나는 마취 후 증상으로 대부분 일시적입니다.",
+  "treatment": "sleep",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "무통 마취기",
+  "en": "Computer-controlled Anesthesia",
+  "desc": "주입 속도를 제어해 통증을 줄이는 마취 장비입니다.",
+  "treatment": "sleep",
+  "initial": "ㅁ"
+ },
+ {
+  "term": "치료 동의서",
+  "en": "Informed Consent",
+  "desc": "치료 내용·대안·주의사항을 설명하고 동의받는 절차입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "진료기록부",
+  "en": "Dental Record",
+  "desc": "진료 내용을 기록·보존하는 법정 문서입니다.",
+  "treatment": "conservative",
+  "initial": "ㅈ"
+ },
+ {
+  "term": "비급여 진료비 고지",
+  "en": "Non-covered Fee Disclosure",
+  "desc": "비급여 항목 비용을 사전 게시하는 제도입니다.",
+  "treatment": "conservative",
+  "initial": "ㅂ"
+ },
+ {
+  "term": "치과 응급상황",
+  "en": "Dental Emergency",
+  "desc": "외상·급성 통증·출혈 등 신속 대응이 필요한 상황입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "치아 보관액",
+  "en": "Tooth Preservation Medium",
+  "desc": "빠진 치아를 살리기 위해 담가 오는 보존액(우유 대체 가능)입니다.",
+  "treatment": "surgery",
+  "initial": "ㅊ"
+ },
+ {
+  "term": "재플란테이션 골든타임",
+  "en": "Replantation Golden Time",
+  "desc": "빠진 치아를 다시 심을 수 있는 최적 시간(1시간 이내)입니다.",
+  "treatment": "surgery",
+  "initial": "ㅈ"
+ }
+]

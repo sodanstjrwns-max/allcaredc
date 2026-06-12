@@ -138,16 +138,17 @@ export function AdminMembers(users: any[]) {
 }
 
 // ── 비포애프터 관리 ──
-export function AdminCases(items: any[]) {
+export function AdminCases(items: any[], views: Record<string, number> = {}) {
   return adminShell('cases', '비포애프터', html`
     <div class="admin-head"><h1>비포애프터</h1><a href="/admin/cases/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 사례</a></div>
     <div class="admin-card">
       ${items.length === 0 ? html`<p style="color:var(--gray-600);text-align:center;padding:40px">등록된 사례가 없습니다.</p>` : html`
-      <table><thead><tr><th>등록일</th><th>제목</th><th>진료</th><th>나이/성별</th><th>담당</th><th>관리</th></tr></thead><tbody>
+      <table><thead><tr><th>등록일</th><th>제목</th><th>진료</th><th>나이/성별</th><th>담당</th><th>조회수</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(c => `<tr>
         <td>${new Date(c.createdAt).toLocaleDateString('ko-KR')}</td>
         <td><strong>${c.title}</strong></td><td>${TREATMENTS.find(t=>t.slug===c.category)?.name||c.category}</td>
         <td>${c.ageGroup || '-'} ${c.gender || ''}</td><td>${DOCTORS.find(d=>d.slug===c.doctor)?.name||'-'}</td>
+        <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
         <td><form method="POST" action="/admin/cases/${c.id}/delete" style="display:inline" onsubmit="return confirm('삭제하시겠습니까?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form></td></tr>`).join(''))}
       </tbody></table>`}
     </div>
@@ -191,15 +192,16 @@ export function AdminCaseForm() {
 }
 
 // ── 칼럼 관리 ──
-export function AdminColumns(items: any[]) {
+export function AdminColumns(items: any[], views: Record<string, number> = {}) {
   return adminShell('columns', '원장 칼럼', html`
     <div class="admin-head"><h1>원장 칼럼</h1><a href="/admin/columns/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 칼럼</a></div>
     <div class="admin-card">
-      <table><thead><tr><th>작성일</th><th>제목</th><th>진료</th><th>작성자</th><th>상태</th><th>관리</th></tr></thead><tbody>
+      <table><thead><tr><th>작성일</th><th>제목</th><th>진료</th><th>작성자</th><th>조회수</th><th>상태</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(c => `<tr>
         <td>${new Date(c.createdAt).toLocaleDateString('ko-KR')}</td>
         <td><strong>${c.title}</strong></td><td>${TREATMENTS.find(t=>t.slug===c.category)?.name||'-'}</td>
         <td>${DOCTORS.find(d=>d.slug===c.author)?.name||'-'}</td>
+        <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
         <td><span class="badge ${c.published?'new':'done'}">${c.published?'게시':'임시'}</span></td>
         <td><a href="/admin/columns/${c.id}/edit" class="btn-sm btn-outline">수정</a> <form method="POST" action="/admin/columns/${c.id}/delete" style="display:inline" onsubmit="return confirm('삭제?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form></td></tr>`).join(''))}
       </tbody></table>
@@ -224,23 +226,84 @@ export function AdminColumnForm(col?: any) {
           <div class="field"><label>썸네일 이미지 URL</label><input name="thumbnail" value="${c.thumbnail || ''}" placeholder="(선택)"></div>
         </div>
         <div class="field"><label>요약</label><input name="excerpt" value="${c.excerpt || ''}" placeholder="목록에 표시될 한 줄 요약"></div>
-        <div class="field"><label>본문 (HTML — H2/H3, &lt;p&gt;, &lt;div class="answer-box"&gt; 등 사용 가능) <span class="req">*</span></label><textarea name="body" required style="min-height:300px;font-family:monospace;font-size:13px">${c.body || '<p>여기에 본문을 작성하세요.</p>\n<h2>소제목</h2>\n<p>내용...</p>\n<div class="answer-box">핵심 답변 박스</div>'}</textarea></div>
+        <div class="field">
+          <label>본문 (HTML — H2/H3, &lt;p&gt;, &lt;div class="answer-box"&gt; 등 사용 가능) <span class="req">*</span></label>
+          <div id="bodyDrop" style="border:2px dashed var(--gray-100);border-radius:12px;transition:.2s">
+            <textarea id="bodyEditor" name="body" required style="min-height:340px;font-family:monospace;font-size:13px;border:none;width:100%;background:transparent">${c.body || '<p>여기에 본문을 작성하세요.</p>\n<h2>소제목</h2>\n<p>내용...</p>\n<div class="answer-box">핵심 답변 박스</div>'}</textarea>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap">
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;margin:0"><i class="fa-solid fa-images"></i> 사진 여러 장 업로드
+              <input type="file" id="imgPicker" accept="image/*" multiple style="display:none">
+            </label>
+            <span id="upStatus" style="font-size:13px;color:var(--gray-600)">사진을 에디터 위로 끌어다 놓으면 커서 위치에 자동 삽입됩니다.</span>
+          </div>
+        </div>
         <div class="field"><label class="checkbox-row"><input type="checkbox" name="published" ${c.published !== false ? 'checked' : ''}> <span>즉시 게시</span></label></div>
         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
         <a href="/admin/columns" class="btn btn-outline" style="margin-left:8px">취소</a>
       </form>
     </div>
+    <script>
+    (function(){
+      var ta = document.getElementById('bodyEditor');
+      var drop = document.getElementById('bodyDrop');
+      var picker = document.getElementById('imgPicker');
+      var status = document.getElementById('upStatus');
+      if (!ta || !drop) return;
+      function insertAtCursor(text){
+        var s = ta.selectionStart || ta.value.length, e = ta.selectionEnd || s;
+        ta.value = ta.value.slice(0, s) + text + ta.value.slice(e);
+        var pos = s + text.length;
+        ta.selectionStart = ta.selectionEnd = pos;
+        ta.focus();
+      }
+      function upload(files){
+        var imgs = Array.prototype.filter.call(files, function(f){ return f && f.type && f.type.indexOf('image/') === 0; });
+        if (!imgs.length) return;
+        status.textContent = '업로드 중... (' + imgs.length + '장)';
+        var fd = new FormData();
+        imgs.forEach(function(f){ fd.append('files', f); });
+        fetch('/admin/upload-image', { method: 'POST', body: fd })
+          .then(function(r){ if(!r.ok) throw new Error('upload failed'); return r.json(); })
+          .then(function(j){
+            var tags = (j.urls || []).map(function(u, i){
+              return '\\n<figure class="column-figure"><img src="' + u + '" alt="이미지 설명을 입력하세요" loading="lazy"><figcaption>사진 설명 (선택)</figcaption></figure>\\n';
+            }).join('');
+            insertAtCursor(tags);
+            status.textContent = (j.urls || []).length + '장 삽입 완료. alt 텍스트를 꼭 채워주세요 (SEO).';
+          })
+          .catch(function(){ status.textContent = '업로드 실패 — 다시 시도해 주세요.'; });
+      }
+      ['dragenter','dragover'].forEach(function(ev){
+        drop.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); drop.style.borderColor = 'var(--brand-accent)'; drop.style.background = 'rgba(176,141,87,.06)'; });
+      });
+      ['dragleave','drop'].forEach(function(ev){
+        drop.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); drop.style.borderColor = ''; drop.style.background = ''; });
+      });
+      drop.addEventListener('drop', function(e){ if (e.dataTransfer && e.dataTransfer.files) upload(e.dataTransfer.files); });
+      if (picker) picker.addEventListener('change', function(){ upload(picker.files); picker.value = ''; });
+      // 클립보드 이미지 붙여넣기 지원
+      ta.addEventListener('paste', function(e){
+        var items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        var files = [];
+        for (var i = 0; i < items.length; i++) if (items[i].kind === 'file') { var f = items[i].getAsFile(); if (f) files.push(f); }
+        if (files.length) { e.preventDefault(); upload(files); }
+      });
+    })();
+    </script>
   `)
 }
 
 // ── 공지 관리 ──
-export function AdminNotices(items: any[]) {
+export function AdminNotices(items: any[], views: Record<string, number> = {}) {
   return adminShell('notices', '공지사항', html`
     <div class="admin-head"><h1>공지사항</h1><a href="/admin/notices/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 공지</a></div>
     <div class="admin-card">
-      <table><thead><tr><th>작성일</th><th>제목</th><th>고정</th><th>관리</th></tr></thead><tbody>
+      <table><thead><tr><th>작성일</th><th>제목</th><th>조회수</th><th>고정</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(n => `<tr>
         <td>${new Date(n.createdAt).toLocaleDateString('ko-KR')}</td><td><strong>${n.title}</strong></td>
+        <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[n.id] || 0}</td>
         <td>${n.pinned ? '<span class="badge new">고정</span>' : '-'}</td>
         <td><form method="POST" action="/admin/notices/${n.id}/delete" style="display:inline" onsubmit="return confirm('삭제?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form></td></tr>`).join(''))}
       </tbody></table>
@@ -252,10 +315,11 @@ export function AdminNoticeForm() {
   return adminShell('notices', '공지 작성', html`
     <div class="admin-head"><h1>공지 작성</h1></div>
     <div class="admin-card">
-      <form method="POST" action="/admin/notices/new">
+      <form method="POST" action="/admin/notices/new" enctype="multipart/form-data">
         <div class="field"><label>제목 <span class="req">*</span></label><input name="title" required></div>
         <div class="field"><label>내용 <span class="req">*</span></label><textarea name="body" required style="min-height:200px"></textarea></div>
-        <div class="field"><label>이미지 URL</label><input name="image" placeholder="(선택)"></div>
+        <div class="field"><label>이미지 업로드</label><input type="file" name="imageFile" accept="image/*"></div>
+        <div class="field"><label>또는 이미지 URL</label><input name="image" placeholder="(선택)"></div>
         <div class="field"><label class="checkbox-row"><input type="checkbox" name="pinned"> <span>상단 고정 (대표 공지)</span></label></div>
         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
         <a href="/admin/notices" class="btn btn-outline" style="margin-left:8px">취소</a>
