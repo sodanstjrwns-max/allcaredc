@@ -924,3 +924,23 @@
     update();
   })();
 })();
+
+/* ---------- v9.5: 브라스 스크롤 프로그레스 헤어라인 ---------- */
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var bar = document.createElement('div');
+  bar.className = 'scroll-progress';
+  bar.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(bar);
+  var raf = null;
+  function update() {
+    raf = null;
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+  }
+  window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  window.addEventListener('resize', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  update();
+})();

@@ -17,7 +17,10 @@ function chapterHead(no: string, eng: string, title: string, lead?: string) {
   <header class="chapter-head reveal">
     <div class="ch-row">
       <span class="ch-no disp">${no}</span>
-      <div class="ch-line" aria-hidden="true"></div>
+      <svg class="ch-orna" viewBox="0 0 100 10" preserveAspectRatio="none" fill="none" aria-hidden="true">
+        <line class="co-line" pathLength="1" x1="0" y1="5" x2="100" y2="5" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <i class="hh-diamond co-dia" aria-hidden="true"></i>
       <span class="ch-eng">${eng}</span>
     </div>
     <h2 class="ch-title split-rise">${title}</h2>
@@ -40,6 +43,10 @@ export function HomePage() {
   <!-- ============ PROLOGUE — Heritage 에디토리얼 오프닝 (웜베이지+딥네이비) ============ -->
   <section class="hero hero--heritage" id="prologue">
     <div class="hh-panel" aria-hidden="true"></div>
+    <svg class="hh-ring" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <path class="hr-arc" pathLength="1" d="M 78.8 21.2 A 41 41 0 1 0 91 50" vector-effect="non-scaling-stroke"/>
+      <circle class="hr-dot" cx="88" cy="14" r="2.2"/>
+    </svg>
     <div class="hero-top hh-top">
       <span>ALLCARE DENTAL — A PATIENT'S STORY</span>
       <span class="hero-coord">37.5547°N · 127.0107°E</span>
@@ -65,6 +72,9 @@ export function HomePage() {
       </div>
       <figure class="hh-figure reveal reveal-d2">
         <div class="hh-frame">
+          <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
+            <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
+          </svg>
           <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" fetchpriority="high" />
         </div>
         <figcaption class="hh-caption"><span class="hh-cap-eng disp">Inside ALLCARE</span> 약수역 5번 출구, 더그레이스빌딩 4층</figcaption>
@@ -248,6 +258,11 @@ export function HomePage() {
     <div class="container">
       <div class="ch-band-head reveal">
         <span class="ch-no-light disp">Chapter 04</span>
+        <svg class="cb-orna" viewBox="0 0 120 12" fill="none" aria-hidden="true">
+          <line class="co-line" pathLength="1" x1="0" y1="6" x2="48" y2="6"/>
+          <path class="cb-dia" d="M60 1 L65 6 L60 11 L55 6 Z"/>
+          <line class="co-line co-line2" pathLength="1" x1="72" y1="6" x2="120" y2="6"/>
+        </svg>
         <h2>회복의 기록</h2>
         <p>먼저 다녀간 분들의 이야기가 쌓여갑니다.</p>
       </div>
@@ -308,6 +323,10 @@ export function HomePage() {
   <section class="section" style="padding-top:0" id="epilogue">
     <div class="container">
       <div class="cta-band reveal epilogue-band">
+        <svg class="cta-ring" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path class="cr-arc" pathLength="1" d="M 78.8 21.2 A 41 41 0 1 0 91 50" vector-effect="non-scaling-stroke"/>
+          <circle class="cr-dot" cx="88" cy="14" r="2.2"/>
+        </svg>
         <span class="kicker" style="color:var(--gold-300);display:block;margin-bottom:18px">Epilogue — 그리고, 당신의 차례</span>
         <h2>다음 이야기의 주인공은<br>당신입니다</h2>
         <p>작은 불편이 더 큰 이야기가 되기 전에. 첫 페이지를 함께 펼쳐보세요.</p>

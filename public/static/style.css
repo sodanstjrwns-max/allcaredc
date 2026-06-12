@@ -250,7 +250,7 @@ em, .italic { font-style: normal; color: var(--mint); }
 .btn-primary:hover { background: var(--navy-900); transform: translateY(-2px); box-shadow: 0 16px 34px -16px rgba(18,32,54,.6); }
 
 .btn-accent { background: var(--mint); color: #fffeee; }
-.btn-accent:hover { background: var(--mint-600); transform: translateY(-2px); box-shadow: 0 16px 34px -16px rgba(47,138,160,.6); }
+.btn-accent:hover { background: var(--mint-600); transform: translateY(-2px); box-shadow: 0 16px 34px -16px rgba(6,39,65,.5); }
 
 .btn-gold { background: var(--gold); color: var(--navy-900); }
 .btn-gold:hover { background: var(--gold-600); color: #fffeee; transform: translateY(-2px); }
@@ -291,7 +291,7 @@ em, .italic { font-style: normal; color: var(--mint); }
 }
 .hero-bg::before {
   content: ''; position: absolute; inset: 0; z-index: 1;
-  background: radial-gradient(60% 50% at 78% 18%, rgba(86,176,196,.22), transparent 70%);
+  background: radial-gradient(60% 50% at 78% 18%, rgba(176,141,87,.22), transparent 70%);
   mix-blend-mode: screen;
 }
 /* v7: 살아 숨쉬는 그라데이션 메시 캔버스 (이미지 위 · 콘텐츠 아래) */
@@ -375,14 +375,14 @@ em, .italic { font-style: normal; color: var(--mint); }
 .hero-live { display: inline-flex; align-items: center; gap: 9px; }
 .hero-live .dot {
   width: 7px; height: 7px; border-radius: 50%; background: #6b7280;
-  box-shadow: 0 0 0 0 rgba(86,176,196,.6);
+  box-shadow: 0 0 0 0 rgba(176,141,87,.6);
 }
 .hero-live.open .dot { background: var(--mint-400); animation: livePulse 2.4s var(--ease) infinite; }
 .hero-live.closed .dot { background: var(--gold-300); }
 @keyframes livePulse {
-  0% { box-shadow: 0 0 0 0 rgba(86,176,196,.5); }
-  70% { box-shadow: 0 0 0 8px rgba(86,176,196,0); }
-  100% { box-shadow: 0 0 0 0 rgba(86,176,196,0); }
+  0% { box-shadow: 0 0 0 0 rgba(176,141,87,.5); }
+  70% { box-shadow: 0 0 0 8px rgba(176,141,87,0); }
+  100% { box-shadow: 0 0 0 0 rgba(176,141,87,0); }
 }
 .hero-now { font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) {
@@ -507,7 +507,7 @@ em, .italic { font-style: normal; color: var(--mint); }
 .philo-sticky::before {
   content: ''; position: absolute; inset: 0;
   background:
-    radial-gradient(55% 45% at 78% 28%, rgba(86,176,196,.16), transparent 70%),
+    radial-gradient(55% 45% at 78% 28%, rgba(176,141,87,.16), transparent 70%),
     radial-gradient(50% 40% at 18% 78%, rgba(194,160,106,.08), transparent 72%);
   pointer-events: none;
 }
@@ -560,9 +560,9 @@ em, .italic { font-style: normal; color: var(--mint); }
 .philo-step .ps-ico {
   display: inline-flex; align-items: center; justify-content: center;
   width: 68px; height: 68px; border-radius: 50%;
-  background: rgba(86,176,196,.10);
-  border: 1px solid rgba(86,176,196,.28);
-  box-shadow: 0 0 0 6px rgba(86,176,196,.05), inset 0 1px 0 rgba(255,255,255,.08);
+  background: rgba(176,141,87,.10);
+  border: 1px solid rgba(176,141,87,.28);
+  box-shadow: 0 0 0 6px rgba(176,141,87,.05), inset 0 1px 0 rgba(255,255,255,.08);
   -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
   color: var(--mint-400); font-size: 1.5rem; margin-bottom: 26px;
 }
@@ -640,7 +640,7 @@ em, .italic { font-style: normal; color: var(--mint); }
 .stats-band { background: var(--navy-900); color: #fffeee; position: relative; overflow: hidden; }
 .stats-band::before {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(50% 70% at 80% 0%, rgba(86,176,196,.16), transparent 70%);
+  background: radial-gradient(50% 70% at 80% 0%, rgba(176,141,87,.16), transparent 70%);
 }
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; position: relative; z-index: 2; }
 .stat { text-align: center; }
@@ -710,7 +710,7 @@ em, .italic { font-style: normal; color: var(--mint); }
 }
 .cta-band::before {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(60% 90% at 50% 0%, rgba(86,176,196,.2), transparent 60%);
+  background: radial-gradient(60% 90% at 50% 0%, rgba(176,141,87,.14), transparent 60%);
 }
 .cta-band > * { position: relative; z-index: 2; }
 .cta-band h2 { color: #fffeee; font-size: clamp(2rem, 4.5vw, 3.4rem); margin-bottom: 16px; }
@@ -761,7 +761,7 @@ em, .italic { font-style: normal; color: var(--mint); }
   background: var(--navy-900); color: #fffeee; padding: clamp(130px, 16vw, 200px) 0 clamp(50px, 7vw, 84px);
   position: relative; overflow: hidden;
 }
-.page-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(50% 80% at 85% 10%, rgba(86,176,196,.18), transparent 65%); }
+.page-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(50% 80% at 85% 10%, rgba(176,141,87,.12), transparent 65%); }
 .page-hero .container { position: relative; z-index: 2; }
 .breadcrumb { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,.55); margin-bottom: 22px; font-family: var(--font-disp); letter-spacing: .04em; }
 .breadcrumb a:hover { color: var(--gold-300); }
@@ -1058,7 +1058,7 @@ em, .italic { font-style: normal; color: var(--mint); }
   background: rgba(14,27,48,.7); backdrop-filter: blur(4px);
 }
 .ba-label.before { left: 12px; }
-.ba-label.after { right: 12px; background: rgba(47,138,160,.85); }
+.ba-label.after { right: 12px; background: rgba(6,39,65,.85); }
 .ba-handle {
   position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; z-index: 5;
   background: #fffeee; transform: translateX(-1px); pointer-events: none;
@@ -1219,7 +1219,7 @@ body::after {
 }
 .kinetic::before {
   content: ""; position: absolute; inset: 0; opacity: .14;
-  background: radial-gradient(60% 80% at 20% 30%, rgba(86,176,196,.5), transparent 60%),
+  background: radial-gradient(60% 80% at 20% 30%, rgba(176,141,87,.5), transparent 60%),
               radial-gradient(50% 70% at 85% 70%, rgba(221,199,155,.35), transparent 60%);
 }
 .kinetic-track {
@@ -1240,7 +1240,7 @@ body::after {
 .cta-band, .stats-band { position: relative; overflow: hidden; }
 .cta-band::after, .stats-band::after {
   content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
-  background: radial-gradient(50% 60% at 80% 10%, rgba(86,176,196,.18), transparent 60%);
+  background: radial-gradient(50% 60% at 80% 10%, rgba(176,141,87,.12), transparent 60%);
 }
 
 /* ---- 6. media reveal mask (image clip-in on scroll) ---- */
@@ -1548,7 +1548,7 @@ body::after {
 .sn-link strong i { font-size: 12px; color: var(--mint); transition: transform .3s var(--spring); }
 .sn-link:hover { border-color: var(--mint); background: #fffeee; transform: translateX(4px); }
 .sn-link:hover strong i { transform: translateX(4px); }
-.sn-link.main { background: var(--mint-tint); border-color: rgba(47,138,160,.3); }
+.sn-link.main { background: var(--mint-tint); border-color: rgba(176,141,87,.35); }
 .sn-link.main strong { color: var(--mint-600); }
 .sn-cta { justify-content: center; margin-top: 6px; }
 @media (max-width: 860px) {
@@ -1816,4 +1816,166 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
   .hero--heritage .hh-top .hero-coord { display: none; }
   .hh-meta { flex-wrap: wrap; gap: 22px; }
   .hh-rule { margin: 0 12px; }
+}
+
+/* ============================================================
+   ★★★★★ v9.5 — VECTOR MOTION LAYER (헤리티지 드로잉 문법)
+   브라스 헤어라인이 "만년필로 긋듯" 그려지는 SVG 모션
+   pathLength=1 정규화 → dasharray/dashoffset 드로잉
+   ============================================================ */
+
+/* ---- 공용: 드로잉 라인 기본 ---- */
+.co-line, .hr-arc, .hfd-rect, .cr-arc {
+  stroke: var(--gold); stroke-width: 1; fill: none;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+}
+
+/* ---- HERO 케어 링 (로고 모티프 대형 아크 — 베이지 패널 위) ---- */
+.hh-ring {
+  position: absolute; z-index: 1; pointer-events: none;
+  top: 50%; right: max(-90px, -6vw); transform: translateY(-50%);
+  width: clamp(380px, 42vw, 660px); aspect-ratio: 1; opacity: .5;
+}
+.hh-ring .hr-arc {
+  animation: hhDraw 2.2s cubic-bezier(.6,.04,.25,1) .5s forwards;
+}
+.hh-ring .hr-dot {
+  fill: var(--gold); opacity: 0; transform-origin: 88px 14px; transform: scale(.2);
+  animation: hhDotIn .8s var(--ease) 2.4s forwards;
+}
+@keyframes hhDraw { to { stroke-dashoffset: 0; } }
+@keyframes hhDotIn { to { opacity: .9; transform: scale(1); } }
+
+/* ---- HERO 액자: 브라스 오프셋 프레임이 그려진다 ---- */
+.hh-frame-draw {
+  position: absolute; z-index: -1; pointer-events: none;
+  top: 14px; left: -14px; right: 14px; bottom: -14px;
+  width: auto; height: auto; overflow: visible;
+}
+.hh-frame-draw .hfd-rect {
+  opacity: .7;
+  animation: hhDraw 2s cubic-bezier(.6,.04,.25,1) .9s forwards;
+}
+.hh-frame::before { display: none; } /* 정적 프레임 → SVG 드로잉으로 대체 */
+.hh-frame { animation: hhFrameIn 1.2s var(--ease) .4s backwards; }
+@keyframes hhFrameIn { from { border-color: transparent; box-shadow: none; } }
+
+/* ---- HERO 메타: 상단 헤어라인이 좌→우로 그어진다 ---- */
+.hh-meta { border-top: none; position: relative; }
+.hh-meta::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--line) 55%, var(--line) 100%);
+  transform: scaleX(0); transform-origin: left;
+  animation: hhRuleX 1.4s cubic-bezier(.6,.04,.25,1) 1.5s forwards;
+}
+@keyframes hhRuleX { to { transform: scaleX(1); } }
+
+/* ---- HERO 아이브로 다이아: 잉크 점이 찍히듯 ---- */
+.hh-eyebrow .hh-diamond {
+  animation: diaInk .7s var(--ease) .3s backwards;
+}
+@keyframes diaInk {
+  from { transform: rotate(45deg) scale(0); opacity: 0; }
+  60% { transform: rotate(45deg) scale(1.5); }
+  to { transform: rotate(45deg) scale(1); opacity: 1; }
+}
+
+/* ---- 챕터 헤드 오너먼트: reveal 시 라인 드로잉 + 다이아 ---- */
+.chapter-head .ch-orna {
+  flex: 0 0 64px; height: 10px; align-self: center; overflow: visible;
+}
+.chapter-head .co-dia {
+  align-self: center; width: 5px; height: 5px; opacity: 0;
+  transform: rotate(45deg) scale(0); transition: all .6s var(--ease) 1s;
+}
+.chapter-head .co-line { transition: stroke-dashoffset 1.3s cubic-bezier(.6,.04,.25,1) .25s; }
+.chapter-head.in .co-line { stroke-dashoffset: 0; }
+.chapter-head.in .co-dia { opacity: 1; transform: rotate(45deg) scale(1); }
+
+/* ---- 스탯 밴드 오너먼트 (네이비 위 브라스) ---- */
+.cb-orna { width: 120px; height: 12px; margin: 18px auto 22px; display: block; overflow: visible; }
+.cb-orna .co-line { transition: stroke-dashoffset 1.2s cubic-bezier(.6,.04,.25,1) .3s; }
+.cb-orna .co-line2 { transition-delay: .5s; }
+.cb-orna .cb-dia {
+  fill: var(--gold); opacity: 0; transform-origin: 60px 6px; transform: scale(0);
+  transition: all .6s var(--ease) .9s;
+}
+.ch-band-head.in .co-line { stroke-dashoffset: 0; }
+.ch-band-head.in .cb-dia { opacity: 1; transform: scale(1); }
+
+/* ---- 에필로그 케어 링 (네이비 밴드 위 브라스 아크) ---- */
+.cta-ring {
+  position: absolute; z-index: 1; pointer-events: none;
+  top: 50%; right: -8%; transform: translateY(-50%);
+  width: clamp(300px, 34vw, 520px); aspect-ratio: 1; opacity: .35;
+}
+.cta-ring .cr-arc { transition: stroke-dashoffset 2.4s cubic-bezier(.6,.04,.25,1) .4s; }
+.cta-ring .cr-dot { fill: var(--gold); opacity: 0; transition: opacity .8s var(--ease) 2.6s; }
+.epilogue-band.in .cr-arc { stroke-dashoffset: 0; }
+.epilogue-band.in .cr-dot { opacity: .9; }
+
+/* ---- 브라스 스크롤 프로그레스 헤어라인 (JS 생성) ---- */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 1000;
+  background: linear-gradient(90deg, var(--gold), var(--gold-600));
+  transform: scaleX(0); transform-origin: left; pointer-events: none;
+}
+
+/* ---- 닥터 카드: 브라스 코너 틱 (호버 시 모서리가 그려짐) ---- */
+.doc-card { position: relative; }
+.doc-card::before, .doc-card::after {
+  content: ''; position: absolute; width: 22px; height: 22px; z-index: 3;
+  pointer-events: none; opacity: 0; transition: all .5s var(--ease);
+}
+.doc-card::before {
+  top: 10px; left: 10px;
+  border-top: 1px solid var(--gold); border-left: 1px solid var(--gold);
+  transform: translate(6px, 6px);
+}
+.doc-card::after {
+  bottom: 10px; right: 10px;
+  border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold);
+  transform: translate(-6px, -6px);
+}
+.doc-card:hover::before, .doc-card:hover::after { opacity: 1; transform: translate(0, 0); }
+
+/* ---- 통계 숫자: 브라스 베이스라인 틱 ---- */
+.stats-band .stat { position: relative; padding-bottom: 14px; }
+.stats-band .stat::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) scaleX(0);
+  width: 28px; height: 1px; background: var(--gold); transition: transform .8s var(--ease) .5s;
+}
+.stats-band .stat.in::after { transform: translateX(-50%) scaleX(1); }
+
+/* ---- 버튼 마이크로: 브라스 언더 헤어라인 ---- */
+.btn-primary::after, .btn-accent::after {
+  content: ''; position: absolute; left: 14px; right: 14px; bottom: 7px; height: 1px;
+  background: var(--gold-300); opacity: 0; transform: scaleX(.3); transform-origin: left;
+  transition: all .45s var(--ease);
+}
+.btn-primary:hover::after, .btn-accent:hover::after { opacity: .8; transform: scaleX(1); }
+
+/* ---- sn-chip 선택: 다이아 잉크 포인트 ---- */
+.sn-chip { position: relative; }
+.sn-chip.on::after {
+  content: ''; position: absolute; top: -3px; right: -3px; width: 6px; height: 6px;
+  background: var(--gold); transform: rotate(45deg);
+  animation: diaInk .5s var(--ease) both;
+}
+
+/* ---- 반응형 / 모션 감소 ---- */
+@media (max-width: 1024px) {
+  .hh-ring { top: auto; bottom: -4%; right: -14%; width: 360px; opacity: .35; }
+  .cta-ring { right: -22%; }
+}
+@media (max-width: 640px) {
+  .hh-ring { display: none; }
+  .hh-frame-draw { top: 10px; left: -10px; right: 10px; bottom: -10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .co-line, .hr-arc, .hfd-rect, .cr-arc { stroke-dashoffset: 0 !important; }
+  .hh-ring .hr-dot, .cta-ring .cr-dot, .cb-orna .cb-dia, .chapter-head .co-dia { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .hh-meta::before { transform: scaleX(1); animation: none; }
+  .hh-frame, .hh-eyebrow .hh-diamond { animation: none; }
+  .scroll-progress { display: none; }
 }
