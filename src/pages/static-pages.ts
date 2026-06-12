@@ -121,6 +121,7 @@ export function DirectionsPage() {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '오시는 길', url: '/directions' }],
+    chapter: 'Chapter 05 — Back to Daily Life',
     title: '오시는 길',
     desc: CLINIC.directions,
   })}
@@ -172,6 +173,7 @@ export function PricingPage() {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '비용 안내', url: '/pricing' }],
+    chapter: 'Honest Notes',
     title: '비급여 진료비 안내',
     desc: '주요 비급여 항목을 안내해 드립니다. 정확한 비용은 진단 후 치료 계획과 함께 설명드립니다.',
   })}

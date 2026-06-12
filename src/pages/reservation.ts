@@ -6,7 +6,8 @@ export function ReservationPage() {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '예약 문의', url: '/reservation' }],
-    title: '예약 문의',
+    chapter: 'Your First Page',
+    title: '나의 이야기 시작하기',
     desc: '원하시는 날짜와 시간을 남겨주시면, 진료시간에 맞춰 확인 후 연락드리겠습니다.',
   })}
   <section class="section">

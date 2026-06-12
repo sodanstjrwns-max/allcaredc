@@ -1406,3 +1406,179 @@ body::after {
   .cursor-label { display: none !important; }
   .zoom-media > img, .zoom-media .zm-img { transform: none !important; }
 }
+
+/* ============================================================
+   FABLE STORY LAYER v8 — 챕터 내러티브 시스템
+   책 메타포: 챕터 레일(책갈피) + 챕터 헤드 + 스토리 네비게이터
+   ============================================================ */
+
+/* ---- 챕터 레일 (우측 고정 책갈피) ---- */
+.chapter-rail {
+  position: fixed; right: 22px; top: 50%; transform: translateY(-50%);
+  z-index: 60; display: flex; flex-direction: column; gap: 6px;
+  opacity: 0; pointer-events: none; transition: opacity .5s var(--ease);
+}
+.chapter-rail.show { opacity: 1; pointer-events: auto; }
+.cr-item {
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  padding: 4px 0; position: relative;
+}
+.cr-item .cr-no {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
+  color: var(--gray-400); transition: color .3s var(--ease);
+  order: 1;
+}
+.cr-item .cr-label {
+  font-size: 11.5px; font-weight: 600; color: var(--ink-soft);
+  background: rgba(255,255,255,.92); padding: 4px 10px; border-radius: 2px;
+  border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+  opacity: 0; transform: translateX(6px); transition: opacity .3s var(--ease), transform .3s var(--ease);
+  pointer-events: none; white-space: nowrap; order: 0;
+}
+.cr-item .cr-tick {
+  width: 16px; height: 2px; background: var(--line); border-radius: 1px;
+  transition: width .35s var(--spring), background .3s var(--ease); order: 2;
+}
+.cr-item:hover .cr-label { opacity: 1; transform: none; }
+.cr-item:hover .cr-tick { background: var(--gray-400); }
+.cr-item.on .cr-tick { width: 30px; background: var(--mint); }
+.cr-item.on .cr-no { color: var(--mint); }
+.chapter-rail.dark .cr-item .cr-tick { background: rgba(255,255,255,.25); }
+.chapter-rail.dark .cr-item.on .cr-tick { background: var(--mint-400); }
+.chapter-rail.dark .cr-item .cr-no { color: rgba(255,255,255,.5); }
+.chapter-rail.dark .cr-item.on .cr-no { color: var(--mint-400); }
+@media (max-width: 1100px) { .chapter-rail { display: none; } }
+
+/* ---- 챕터 헤드 (책 페이지 상단) ---- */
+.chapter-head { margin-bottom: clamp(40px, 6vw, 64px); max-width: 760px; }
+.chapter-head .ch-row {
+  display: flex; align-items: baseline; gap: 16px; margin-bottom: 18px;
+}
+.chapter-head .ch-no {
+  font-size: clamp(2.6rem, 5vw, 4rem); font-weight: 300; line-height: 1;
+  color: var(--gold); font-style: italic;
+}
+.chapter-head .ch-line { flex: 0 0 56px; height: 1px; background: var(--gold-300); align-self: center; }
+.chapter-head .ch-eng {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gray-600);
+}
+.chapter-head .ch-title { font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.2; }
+.chapter-head .ch-lead { margin-top: 16px; color: var(--gray-600); font-size: 1.05rem; max-width: 560px; }
+
+/* 히어로 배지 챕터 라벨 */
+.hero-badge .hb-chapter {
+  font-family: var(--font-disp); font-style: italic; font-weight: 400;
+  color: var(--gold-300); margin-right: 10px; padding-right: 10px;
+  border-right: 1px solid rgba(255,255,255,.25);
+}
+
+/* ---- CHAPTER 00 — 스토리 네비게이터 ---- */
+.story-nav { position: relative; }
+.story-nav::before {
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-300), transparent);
+}
+.sn-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 34px; }
+.sn-chip {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 12px 20px; border-radius: 999px;
+  border: 1px solid var(--line); background: #fff; color: var(--ink-soft);
+  font-size: 14.5px; font-weight: 600; letter-spacing: -.01em;
+  transition: all .35s var(--spring); cursor: pointer;
+}
+.sn-chip i { color: var(--mint); font-size: 13px; transition: color .3s; }
+.sn-chip:hover { border-color: var(--mint); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.sn-chip.on {
+  background: var(--navy-800); color: #fff; border-color: var(--navy-800);
+  box-shadow: 0 10px 26px -12px rgba(18,32,54,.45);
+}
+.sn-chip.on i { color: var(--mint-400); }
+
+.sn-stage { position: relative; min-height: 380px; }
+.sn-card {
+  position: absolute; inset: 0; display: grid;
+  grid-template-columns: 1.4fr 1fr; gap: clamp(28px, 4vw, 56px);
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: clamp(28px, 4vw, 48px);
+  opacity: 0; transform: translateY(18px); pointer-events: none; visibility: hidden;
+  transition: opacity .45s var(--ease), transform .55s var(--spring), visibility 0s .45s;
+  box-shadow: var(--shadow);
+}
+.sn-card.active {
+  position: relative; opacity: 1; transform: none; pointer-events: auto; visibility: visible;
+  transition: opacity .5s var(--ease) .08s, transform .6s var(--spring) .08s, visibility 0s;
+}
+.sn-card .sn-tag {
+  font-size: 13px; color: var(--gold-600); letter-spacing: .04em;
+  display: inline-block; margin-bottom: 16px;
+}
+.sn-card .sn-empathy {
+  font-family: var(--font-head); font-weight: 800;
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem); line-height: 1.5;
+  color: var(--ink); margin-bottom: 16px; word-break: keep-all;
+}
+.sn-card .sn-guide { color: var(--gray-600); line-height: 1.75; margin-bottom: 22px; }
+.sn-card .sn-faq {
+  background: var(--ivory-2); border-left: 3px solid var(--mint);
+  border-radius: var(--radius); padding: 16px 20px; font-size: 14.5px;
+}
+.sn-card .sn-faq .q { display: block; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.sn-card .sn-faq .q i { color: var(--mint); margin-right: 6px; }
+.sn-card .sn-faq .a { color: var(--gray-600); line-height: 1.65; }
+
+.sn-links { display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+.sn-link {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--ivory); transition: all .3s var(--ease);
+}
+.sn-link .t { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--gray-400); }
+.sn-link strong { font-size: 15.5px; color: var(--ink); display: flex; align-items: center; justify-content: space-between; }
+.sn-link strong i { font-size: 12px; color: var(--mint); transition: transform .3s var(--spring); }
+.sn-link:hover { border-color: var(--mint); background: #fff; transform: translateX(4px); }
+.sn-link:hover strong i { transform: translateX(4px); }
+.sn-link.main { background: var(--mint-tint); border-color: rgba(47,138,160,.3); }
+.sn-link.main strong { color: var(--mint-600); }
+.sn-cta { justify-content: center; margin-top: 6px; }
+@media (max-width: 860px) {
+  .sn-card { grid-template-columns: 1fr; }
+  .sn-stage { min-height: 0; }
+  .sn-chip { font-size: 13px; padding: 10px 15px; }
+}
+
+/* ---- CHAPTER 04 밴드 헤드 ---- */
+.ch-band-head { text-align: center; margin-bottom: 44px; }
+.ch-band-head .ch-no-light {
+  font-size: 14px; letter-spacing: .1em; color: var(--gold-300);
+  display: block; margin-bottom: 12px;
+}
+.ch-band-head h2 { color: #fff; font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin-bottom: 10px; }
+.ch-band-head p { color: rgba(255,255,255,.6); font-size: 1rem; }
+
+/* ---- EPILOGUE ---- */
+.epilogue-band { position: relative; overflow: hidden; }
+.epilogue-band::after {
+  content: 'Fin.'; position: absolute; right: clamp(20px, 6vw, 80px); bottom: -10px;
+  font-family: var(--font-disp); font-style: italic; font-weight: 300;
+  font-size: clamp(5rem, 12vw, 10rem); color: rgba(255,255,255,.05);
+  line-height: 1; pointer-events: none;
+}
+
+/* ---- 케이스: 미니 우화 포맷 ---- */
+.case-card .case-story-no {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--gold-600); display: block; margin-bottom: 6px;
+}
+.case-card .case-story-line {
+  font-family: var(--font-head); font-weight: 800; font-size: 1.05rem;
+  color: var(--ink); line-height: 1.5; word-break: keep-all;
+}
+
+/* ---- 서브페이지 챕터 모티프 (page-hero 확장) ---- */
+.page-hero .ph-chapter {
+  font-family: var(--font-disp); font-style: italic; font-weight: 300;
+  font-size: 15px; letter-spacing: .06em; color: var(--gold-300);
+  display: inline-flex; align-items: center; gap: 12px; margin-bottom: 14px;
+}
+.page-hero .ph-chapter::after { content: ''; width: 44px; height: 1px; background: var(--gold-300); opacity: .6; }

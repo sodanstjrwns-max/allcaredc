@@ -846,3 +846,81 @@
     }, { passive: true });
   })();
 })();
+
+/* ============================================================
+   FABLE STORY LAYER v8 — 프론트 인터랙션
+   스토리 네비게이터(증상 분기) + 챕터 레일 스크롤스파이
+   ============================================================ */
+(function () {
+  'use strict';
+
+  // ---------- Chapter 00: 스토리 네비게이터 ----------
+  (function () {
+    var chips = document.querySelectorAll('.sn-chip');
+    var cards = document.querySelectorAll('.sn-card');
+    if (!chips.length || !cards.length) return;
+
+    function activate(id) {
+      chips.forEach(function (c) {
+        var on = c.getAttribute('data-branch') === id;
+        c.classList.toggle('on', on);
+        c.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      cards.forEach(function (card) {
+        card.classList.toggle('active', card.getAttribute('data-branch-card') === id);
+      });
+    }
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        activate(chip.getAttribute('data-branch'));
+      });
+    });
+  })();
+
+  // ---------- 챕터 레일 (책갈피 스크롤스파이) ----------
+  (function () {
+    var rail = document.getElementById('chapterRail');
+    if (!rail) return;
+    var items = rail.querySelectorAll('.cr-item');
+    var ids = Array.prototype.map.call(items, function (a) { return a.getAttribute('data-ch'); });
+    var sections = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    if (!sections.length) return;
+
+    // 부드러운 앵커 이동
+    items.forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var el = document.getElementById(a.getAttribute('data-ch'));
+        if (el) {
+          e.preventDefault();
+          window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+        }
+      });
+    });
+
+    var raf = 0;
+    function update() {
+      raf = 0;
+      var y = window.scrollY;
+      // 레일 표시: 히어로 절반 지난 뒤
+      rail.classList.toggle('show', y > window.innerHeight * 0.45);
+
+      // 현재 챕터 판정: 뷰포트 40% 라인 기준
+      var line = y + window.innerHeight * 0.4;
+      var current = sections[0];
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].getBoundingClientRect().top + y <= line) current = sections[i];
+      }
+      var curId = current ? current.id : '';
+      items.forEach(function (a) {
+        a.classList.toggle('on', a.getAttribute('data-ch') === curId);
+      });
+
+      // 어두운 섹션 위에서는 레일 다크 모드
+      rail.classList.toggle('dark', curId === 'ch-empathy' || curId === 'ch-recovery' || curId === 'prologue');
+    }
+    function onScroll() { if (!raf) raf = requestAnimationFrame(update); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  })();
+})();

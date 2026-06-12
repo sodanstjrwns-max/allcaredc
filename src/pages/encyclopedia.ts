@@ -24,6 +24,7 @@ export function EncyclopediaPage() {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '치과 백과사전', url: '/encyclopedia' }],
+    chapter: 'Glossary of Stories',
     title: '치과 백과사전',
     desc: `임플란트부터 잇몸치료까지, 치과 진료에서 자주 쓰이는 용어 ${TERMS.length}개를 알기 쉽게 정리했습니다.`,
   })}

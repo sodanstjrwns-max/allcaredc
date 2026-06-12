@@ -10,6 +10,7 @@ export function DoctorsIndex() {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }],
+    chapter: 'Chapter 03 — The People',
     title: '의료진 소개',
     desc: '입안 전체를 하나의 그림으로 보는 협진. 분야별 전문의가 환자 한 분을 끝까지 함께합니다.',
   })}
@@ -64,6 +65,7 @@ export function DoctorDetail(slug: string) {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }, { name: d.name + ' ' + d.role, url: `/doctors/${slug}` }],
+    chapter: 'The People — Profile',
     title: `${d.name} ${d.role}`,
     desc: d.titleLine,
   })}

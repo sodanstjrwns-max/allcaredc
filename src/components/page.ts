@@ -18,8 +18,8 @@ export function Page(meta: Meta, body: any) {
 </html>`
 }
 
-// 페이지 히어로 (서브페이지 공통)
-export function PageHero(opts: { crumb: { name: string; url: string }[]; title: string; desc?: string }) {
+// 페이지 히어로 (서브페이지 공통) — chapter: 페이블 챕터 라벨 (영문 모티프)
+export function PageHero(opts: { crumb: { name: string; url: string }[]; title: string; desc?: string; chapter?: string }) {
   return html`
   <section class="page-hero">
     <div class="container">
@@ -30,6 +30,7 @@ export function PageHero(opts: { crumb: { name: string; url: string }[]; title: 
             : `<span>${c.name}</span>`
         ).join(''))}
       </nav>
+      ${opts.chapter ? html`<span class="ph-chapter">${opts.chapter}</span>` : ''}
       <h1>${opts.title}</h1>
       ${opts.desc ? html`<p>${opts.desc}</p>` : ''}
     </div>

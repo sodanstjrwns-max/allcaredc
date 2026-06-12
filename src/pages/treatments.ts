@@ -18,8 +18,9 @@ export function TreatmentsIndex() {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }],
+    chapter: 'Chapter 02 — The Meeting',
     title: '진료안내',
-    desc: '구강악안면외과·통합치의학과·보철과 전문의가 함께하는 올케어치과의 진료 영역입니다.',
+    desc: '불편이 해답을 만나는 자리. 구강악안면외과·통합치의학과·보철과 전문의가 함께하는 올케어치과의 진료 영역입니다.',
   })}
 
   <section class="section">
@@ -92,6 +93,7 @@ export function TreatmentDetail(slug: string) {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }, { name: t.name, url: `/treatments/${slug}` }],
+    chapter: `A Story of ${t.name}`,
     title: t.name,
     desc: t.hero,
   })}

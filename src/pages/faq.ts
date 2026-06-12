@@ -19,6 +19,7 @@ export function FaqPage() {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '자주 묻는 질문', url: '/faq' }],
+    chapter: 'Questions, Answered',
     title: '자주 묻는 질문',
     desc: '진료 전 궁금하신 점을 모았습니다. 더 궁금한 점은 언제든 문의해 주세요.',
   })}

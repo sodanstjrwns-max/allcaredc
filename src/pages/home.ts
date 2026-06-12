@@ -2,40 +2,64 @@ import { html, raw } from 'hono/html'
 import { Page } from '../components/page'
 import { organizationSchema, faqSchema } from '../components/layout'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../data/clinic'
+import { STORY_BRANCHES, HOME_CHAPTERS } from '../data/story'
 
-// 핵심 진료별 영문 캐치프레이즈 (seoulof 톤 → 매거진 업그레이드)
+// 핵심 진료별 영문 캐치프레이즈
 const TX_ENG: Record<string, string> = {
   implant: 'Expert-Level Implant.',
   ortho: 'A Balanced Bite.',
   esthetic: 'Art, not alteration.',
 }
 
+// 챕터 헤드 (책 페이지 메타포) — 페이블 모티프 공통 컴포넌트
+function chapterHead(no: string, eng: string, title: string, lead?: string) {
+  return `
+  <header class="chapter-head reveal">
+    <div class="ch-row">
+      <span class="ch-no disp">${no}</span>
+      <div class="ch-line" aria-hidden="true"></div>
+      <span class="ch-eng">${eng}</span>
+    </div>
+    <h2 class="ch-title split-rise">${title}</h2>
+    ${lead ? `<p class="ch-lead">${lead}</p>` : ''}
+  </header>`
+}
+
 export function HomePage() {
   const body = html`
-  <!-- ============ HERO — 시네마틱 매거진 표지 (v7: WebGL 메시) ============ -->
-  <section class="hero cinema">
+  <!-- ============ 챕터 레일 (책갈피 내비) ============ -->
+  <nav class="chapter-rail" id="chapterRail" aria-label="페이지 챕터">
+    ${raw(HOME_CHAPTERS.map(c => `
+      <a href="#${c.id}" data-ch="${c.id}" class="cr-item">
+        <span class="cr-no">${c.no}</span>
+        <span class="cr-label">${c.label}</span>
+        <span class="cr-tick" aria-hidden="true"></span>
+      </a>`).join(''))}
+  </nav>
+
+  <!-- ============ PROLOGUE — 환자 1인칭 서사 오프닝 ============ -->
+  <section class="hero cinema" id="prologue">
     <div class="hero-bg">
       <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" fetchpriority="high" />
     </div>
-    <!-- v7: 살아 숨쉬는 그라데이션 메시 + 노이즈 (Canvas, 차분한 의료 톤) -->
     <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
     <div class="hero-top">
-      <span>ALLCARE DENTAL — SEOUL</span>
+      <span>ALLCARE DENTAL — A PATIENT'S STORY</span>
       <span class="hero-coord">37.5547°N · 127.0107°E</span>
       <span>EST. 2023 · 약수역</span>
     </div>
     <div class="hero-inner">
-      <span class="hero-badge">약수역 5번 출구 · 3인 전문의 진료</span>
+      <span class="hero-badge"><span class="hb-chapter">Prologue</span> 어느 날, 작은 불편이 시작되었다</span>
       <h1 class="hero-mega" data-morph>
-        <span class="line-mask"><span class="morph-line">Care for</span></span>
-        <span class="line-mask"><span class="accent disp morph-line">every detail.</span></span>
+        <span class="line-mask"><span class="morph-line">Every smile</span></span>
+        <span class="line-mask"><span class="accent disp morph-line">has a story.</span></span>
       </h1>
       <div class="hero-row">
         <div>
-          <p class="lead reveal reveal-d2">불편함을 끝까지 책임지는 한 곳. 진단부터 회복까지, 흩어지지 않는 진료를 약수동에서 이어갑니다.</p>
+          <p class="lead reveal reveal-d2">시린 이 하나, 미뤄둔 사랑니 하나에서 이야기는 시작됩니다.<br>이 이야기의 주인공은 병원이 아니라, <strong style="color:#fff">당신</strong>입니다.</p>
           <div class="hero-actions reveal reveal-d3">
-            <a href="/reservation" class="btn btn-accent">예약 문의 <i class="fa-solid fa-arrow-right"></i></a>
-            <a href="/treatments" class="btn btn-ghost">진료 안내 보기</a>
+            <a href="#your-story" class="btn btn-accent">나의 이야기 시작하기 <i class="fa-solid fa-arrow-down"></i></a>
+            <a href="/reservation" class="btn btn-ghost">바로 예약 문의</a>
           </div>
         </div>
         <div class="hero-meta reveal reveal-d4">
@@ -49,7 +73,7 @@ export function HomePage() {
       <span class="hero-live" id="heroLive"><span class="dot"></span><span class="txt">상태 확인 중</span></span>
       <span class="hero-now" id="heroClock">--:--:-- KST</span>
     </div>
-    <div class="scroll-ind"><span>SCROLL</span><span class="line"></span></div>
+    <div class="scroll-ind"><span>이야기 펼치기</span><span class="line"></span></div>
   </section>
 
   <!-- ============ 신뢰 마퀴 띠 ============ -->
@@ -62,29 +86,57 @@ export function HomePage() {
     </div>
   </div>
 
-  <!-- ============ 키네틱 디스플레이 띠 (2026) ============ -->
-  <section class="kinetic" aria-hidden="true">
-    <div class="kinetic-track">
-      <span class="lit">Expert-Level&nbsp;Care.</span><span class="out">Expert-Level&nbsp;Care.</span>
-      <span class="lit">Expert-Level&nbsp;Care.</span><span class="out">Expert-Level&nbsp;Care.</span>
+  <!-- ============ CHAPTER 00 — 당신의 이야기 (스토리 네비게이터) ============ -->
+  <section class="section story-nav" id="your-story">
+    <div class="container">
+      ${raw(chapterHead('00', 'Where does your story begin?', '당신의 이야기는 <em>어디쯤</em>인가요?',
+    '불편을 골라주세요. 그 자리에서 이야기를 이어가겠습니다.'))}
+      <div class="sn-chips reveal reveal-d2" role="tablist" aria-label="불편 증상 선택">
+        ${raw(STORY_BRANCHES.map((b, i) => `
+          <button class="sn-chip${i === 0 ? ' on' : ''}" data-branch="${b.id}" role="tab" aria-selected="${i === 0}">
+            <i class="fa-solid fa-${b.icon}"></i> ${b.chip}
+          </button>`).join(''))}
+      </div>
+      <div class="sn-stage reveal reveal-d3">
+        ${raw(STORY_BRANCHES.map((b, i) => `
+          <article class="sn-card${i === 0 ? ' active' : ''}" data-branch-card="${b.id}" role="tabpanel">
+            <div class="sn-body">
+              <span class="sn-tag disp">Chapter for you</span>
+              <p class="sn-empathy">"${b.empathy}"</p>
+              <p class="sn-guide">${b.guide}</p>
+              <div class="sn-faq">
+                <span class="q"><i class="fa-solid fa-circle-question"></i> ${b.faq.q}</span>
+                <span class="a">${b.faq.a}</span>
+              </div>
+            </div>
+            <div class="sn-links">
+              <a href="/treatments/${b.treatment}" class="sn-link main">
+                <span class="t">이어지는 진료 이야기</span>
+                <strong>${b.treatmentName} <i class="fa-solid fa-arrow-right"></i></strong>
+              </a>
+              <a href="/doctors/${b.doctor}" class="sn-link">
+                <span class="t">함께할 사람</span>
+                <strong>${b.doctorName} <i class="fa-solid fa-arrow-right"></i></strong>
+              </a>
+              <a href="/cases?cat=${b.treatment}" class="sn-link">
+                <span class="t">먼저 다녀간 이야기</span>
+                <strong>진료사례 보기 <i class="fa-solid fa-arrow-right"></i></strong>
+              </a>
+              <a href="/reservation" class="btn btn-accent sn-cta">이 이야기로 상담 예약 <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>`).join(''))}
+      </div>
     </div>
-    <div class="kinetic-track">
-      <span class="out">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span><span class="lit">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span>
-      <span class="out">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span><span class="lit">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span>
-    </div>
-    <p class="kinetic-sub">진단부터 회복까지, 흩어지지 않는 한 곳의 진료</p>
   </section>
 
-  <!-- ============ 철학 — v7 핀드 스토리 시퀀스 (인지→공감→해소→원칙) ============ -->
-  <section class="philo-pin" id="philosophy" data-philo-pin>
+  <!-- ============ CHAPTER 01 — 공감 (철학 핀드 시퀀스) ============ -->
+  <section class="philo-pin" id="ch-empathy" data-philo-pin>
     <div class="philo-sticky">
       <div class="container philo-grid">
-        <!-- 좌: 고정 타이틀 + 진행 인덱스 -->
         <div class="philo-aside">
-          <span class="sec-label"><span class="num">01</span> Our Philosophy</span>
+          <span class="sec-label"><span class="num">Chapter 01</span> Empathy, First</span>
           <h2 class="philo-h2">치료 이전에,<br><em>불편을 먼저</em> 읽습니다</h2>
           <p class="philo-lead">${CLINIC.philosophy}</p>
-          <!-- SVG 진행 path (스크롤 드로잉) -->
           <svg class="philo-path" viewBox="0 0 4 200" preserveAspectRatio="none" aria-hidden="true">
             <line x1="2" y1="0" x2="2" y2="200" class="philo-path-bg"/>
             <line x1="2" y1="0" x2="2" y2="200" class="philo-path-fg" id="philoPathFg"/>
@@ -93,7 +145,6 @@ export function HomePage() {
             ${raw(CLINIC.values.map((v, i) => `<li data-i="${i}"><span class="pi-no">0${i + 1}</span> ${v.title}</li>`).join(''))}
           </ol>
         </div>
-        <!-- 우: 스택된 스텝 카드 (스크롤에 따라 active 전환) -->
         <div class="philo-stage">
           ${raw(CLINIC.values.map((v, i) => `
             <article class="philo-step${i === 0 ? ' active' : ''}" data-step="${i}">
@@ -105,44 +156,74 @@ export function HomePage() {
         </div>
       </div>
     </div>
-    <!-- 스크롤 길이 확보용 트랙 (스텝 수 × 1화면) -->
     <div class="philo-track" data-steps="${CLINIC.values.length}"></div>
   </section>
 
-  <!-- ============ 핵심 진료 TOP3 — 기사형 큐레이션 ============ -->
-  <section class="section" style="background:var(--ivory-2)" id="core-treatments">
+  <!-- ============ CHAPTER 02 — 만남 (핵심 진료) ============ -->
+  <section class="section" style="background:var(--ivory-2)" id="ch-meeting">
     <div class="container">
-      <div class="section-head reveal">
-        <span class="sec-label"><span class="num">02</span> Signature Care</span>
-        <h2 class="split-rise">깊이 있게, 끝까지 책임지는 <em>세 가지 진료</em></h2>
-        <p>분야별 전문의가 진단부터 마무리까지 일관되게 맡습니다.</p>
-      </div>
+      ${raw(chapterHead('02', 'The Meeting', '불편이 <em>해답을 만나는</em> 자리',
+    '분야별 전문의가 진단부터 마무리까지 일관되게 맡습니다. 세 가지 깊은 이야기.'))}
       <div class="tx-feature">
         ${raw(CORE_TREATMENTS.map((t, i) => `
           <article class="tx-article reveal">
-            <a href="/treatments/${t.slug}" class="tx-art-media tilt media-mask zoom-media" data-cursor-label="VIEW" aria-label="${t.name} 자세히 보기">
-              <span class="tag">0${i + 1} · ${t.name}</span>
+            <a href="/treatments/${t.slug}" class="tx-art-media tilt media-mask zoom-media" data-cursor-label="READ" aria-label="${t.name} 자세히 보기">
+              <span class="tag">Story 0${i + 1} · ${t.name}</span>
               <img src="${TX_IMAGES[t.slug] || '/static/img/interior.webp'}" alt="${t.name} 진료" loading="lazy">
               <span class="zm-label"><span class="zm-t">${TX_ENG[t.slug] || t.name}</span><span class="zm-go"><i class="fa-solid fa-arrow-right"></i></span></span>
             </a>
             <div class="tx-art-body">
-              <span class="tx-no">No. 0${i + 1}</span>
+              <span class="tx-no">Story 0${i + 1}</span>
               <span class="tx-eng disp">${TX_ENG[t.slug] || ''}</span>
               <h3>${t.hero}</h3>
               <p>${t.intro.slice(0, 130)}…</p>
-              <a href="/treatments/${t.slug}" class="link-arrow">자세히 보기 <i class="fa-solid fa-arrow-right"></i></a>
+              <a href="/treatments/${t.slug}" class="link-arrow">이 이야기 읽기 <i class="fa-solid fa-arrow-right"></i></a>
             </div>
           </article>`).join(''))}
       </div>
     </div>
   </section>
 
-  <!-- ============ 차별점 (sticky split) ============ -->
-  <section class="section" id="difference">
+  <!-- ============ 키네틱 디스플레이 띠 ============ -->
+  <section class="kinetic" aria-hidden="true">
+    <div class="kinetic-track">
+      <span class="lit">Every&nbsp;smile&nbsp;has&nbsp;a&nbsp;story.</span><span class="out">Every&nbsp;smile&nbsp;has&nbsp;a&nbsp;story.</span>
+      <span class="lit">Every&nbsp;smile&nbsp;has&nbsp;a&nbsp;story.</span><span class="out">Every&nbsp;smile&nbsp;has&nbsp;a&nbsp;story.</span>
+    </div>
+    <div class="kinetic-track">
+      <span class="out">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span><span class="lit">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span>
+      <span class="out">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span><span class="lit">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span>
+    </div>
+    <p class="kinetic-sub">진단부터 회복까지, 흩어지지 않는 한 곳의 진료</p>
+  </section>
+
+  <!-- ============ CHAPTER 03 — 사람들 (의료진) ============ -->
+  <section class="section" id="ch-people">
     <div class="container">
-      <div class="grid-2">
+      ${raw(chapterHead('03', 'The People', '이야기를 <em>함께 쓰는</em> 사람들',
+    '입안 전체를 하나의 그림으로 보는 협진. 환자 한 분을 여러 과로 나누지 않습니다.'))}
+      <div class="doc-grid">
+        ${raw(DOCTORS.map((d, i) => `
+          <a href="/doctors/${d.slug}" class="doc-card reveal reveal-d${i + 1}">
+            <div class="doc-photo">
+              <div class="ph"><i class="fa-solid fa-user-doctor"></i></div>
+            </div>
+            <div class="doc-body">
+              <span class="role">${d.role}</span>
+              <h3>${d.name}</h3>
+              <p class="title-line">${d.titleLine}</p>
+              <p class="doc-career">${d.career[0]}</p>
+              <div class="doc-tags">
+                ${d.specialties.slice(0, 3).map(s => `<span>${({ implant: '임플란트', surgery: '구강외과', tmj: '턱관절', conservative: '보존치료', prosthetics: '보철', gum: '잇몸', esthetic: '심미보철', denture: '틀니' } as any)[s] || s}</span>`).join('')}
+              </div>
+            </div>
+          </a>`).join(''))}
+      </div>
+
+      <!-- 차별점 (sticky split) -->
+      <div class="grid-2" style="margin-top:90px">
         <div class="reveal">
-          <span class="sec-label"><span class="num">03</span> Why ALLCARE</span>
+          <span class="sec-label"><span class="num">03-1</span> Why ALLCARE</span>
           <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 26px">규모와 시설, 그리고<br><em>끝까지 잇는 섬세함</em></h2>
           <dl class="aeo-list">
             ${raw(CLINIC.strengths.map(s => `
@@ -161,53 +242,32 @@ export function HomePage() {
     </div>
   </section>
 
-  <!-- ============ STATS 카운트업 ============ -->
-  <section class="section-sm stats-band">
+  <!-- ============ CHAPTER 04 — 회복 (사례·숫자) ============ -->
+  <section class="section-sm stats-band" id="ch-recovery">
     <div class="container">
+      <div class="ch-band-head reveal">
+        <span class="ch-no-light disp">Chapter 04</span>
+        <h2>회복의 기록</h2>
+        <p>먼저 다녀간 분들의 이야기가 쌓여갑니다.</p>
+      </div>
       <div class="stats-grid">
         <div class="stat reveal"><div class="num"><span data-count="3">3</span></div><div class="lbl">분야별 전문의</div></div>
         <div class="stat reveal reveal-d1"><div class="num"><span data-count="1">1</span></div><div class="lbl">원내 기공실 (상주 기공사)</div></div>
         <div class="stat reveal reveal-d2"><div class="num"><span data-count="20" data-suffix=":30">20:30</span></div><div class="lbl">야간진료 마감 (월·화·목)</div></div>
         <div class="stat reveal reveal-d3"><div class="num"><span data-count="2023">2023</span></div><div class="lbl">개원 연도</div></div>
       </div>
-    </div>
-  </section>
-
-  <!-- ============ 의료진 ============ -->
-  <section class="section" id="doctors">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="sec-label"><span class="num">04</span> Our Specialists</span>
-        <h2>각 분야의 <em>전문의</em>가 함께합니다</h2>
-        <p>입안 전체를 하나의 그림으로 보는 협진. 환자 한 분을 여러 과로 나누지 않습니다.</p>
-      </div>
-      <div class="doc-grid">
-        ${raw(DOCTORS.map((d, i) => `
-          <a href="/doctors/${d.slug}" class="doc-card reveal reveal-d${i + 1}">
-            <div class="doc-photo">
-              <div class="ph"><i class="fa-solid fa-user-doctor"></i></div>
-            </div>
-            <div class="doc-body">
-              <span class="role">${d.role}</span>
-              <h3>${d.name}</h3>
-              <p class="title-line">${d.titleLine}</p>
-              <p class="doc-career">${d.career[0]}</p>
-              <div class="doc-tags">
-                ${d.specialties.slice(0, 3).map(s => `<span>${({ implant: '임플란트', surgery: '구강외과', tmj: '턱관절', conservative: '보존치료', prosthetics: '보철', gum: '잇몸', esthetic: '심미보철', denture: '틀니' } as any)[s] || s}</span>`).join('')}
-              </div>
-            </div>
-          </a>`).join(''))}
+      <div class="reveal reveal-d3" style="text-align:center;margin-top:42px">
+        <a href="/cases" class="btn btn-ghost">비포 / 애프터 이야기 보기 <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
   </section>
 
-  <!-- ============ 일반 진료 (sub) ============ -->
-  <section class="section-sm" style="background:var(--ivory-2)">
+  <!-- ============ CHAPTER 05 — 일상 (진료시간 / 오시는 길 + 일반 진료) ============ -->
+  <section class="section" id="ch-daily">
     <div class="container">
-      <div class="section-head reveal">
-        <span class="sec-label"><span class="num">05</span> Everyday Dentistry</span>
-        <h2>일상의 <em>모든 치과 진료</em></h2>
-      </div>
+      ${raw(chapterHead('05', 'Back to Daily Life', '다시, <em>아무렇지 않은</em> 일상으로',
+    '치료의 끝은 병원이 아니라 당신의 식탁과 웃음입니다. 일상의 모든 진료가 곁에 있습니다.'))}
+
       <div class="tx-sub-grid">
         ${raw(SUB_TREATMENTS.map((t, i) => `
           <a href="/treatments/${t.slug}" class="tx-sub reveal reveal-d${(i % 3) + 1}">
@@ -215,15 +275,10 @@ export function HomePage() {
             <span><strong>${t.name}</strong><br><span>${t.short.slice(0, 26)}…</span></span>
           </a>`).join(''))}
       </div>
-    </div>
-  </section>
 
-  <!-- ============ 진료시간 / 오시는길 요약 ============ -->
-  <section class="section" id="info">
-    <div class="container">
-      <div class="grid-2" style="align-items:start">
+      <div class="grid-2" style="align-items:start;margin-top:80px">
         <div class="reveal">
-          <span class="sec-label"><span class="num">06</span> Visit Us</span>
+          <span class="sec-label"><span class="num">05-1</span> Visit Us</span>
           <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:18px 0 24px">언제 오시면 되나요?</h2>
           <div style="background:#fff;border-radius:var(--radius-lg);border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow-sm)">
             ${raw(CLINIC.hours.map(h => `
@@ -235,7 +290,7 @@ export function HomePage() {
           <p style="margin-top:14px;font-size:14px;color:var(--gray-600)"><i class="fa-solid fa-circle-info text-mint"></i> ${CLINIC.hoursNote} · 점심시간은 전화로 문의해 주세요.</p>
         </div>
         <div class="reveal reveal-d2">
-          <span class="sec-label"><span class="num">07</span> Directions</span>
+          <span class="sec-label"><span class="num">05-2</span> Directions</span>
           <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:18px 0 24px">${CLINIC.directions}</h2>
           <div class="inlink-box" style="background:var(--navy-900);color:#fff">
             <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-location-dot" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div><strong style="display:block;font-size:17px;margin-bottom:4px">${CLINIC.name}</strong>${CLINIC.address}</div></div>
@@ -248,15 +303,15 @@ export function HomePage() {
     </div>
   </section>
 
-  <!-- ============ CTA ============ -->
-  <section class="section" style="padding-top:0">
+  <!-- ============ EPILOGUE — CTA ============ -->
+  <section class="section" style="padding-top:0" id="epilogue">
     <div class="container">
-      <div class="cta-band reveal">
-        <span class="kicker" style="color:var(--gold-300);display:block;margin-bottom:18px">Start your care</span>
-        <h2>불편한 곳이 있으신가요?</h2>
-        <p>지금 상담을 예약하시면, 진료시간에 맞춰 친절히 안내해 드리겠습니다.</p>
+      <div class="cta-band reveal epilogue-band">
+        <span class="kicker" style="color:var(--gold-300);display:block;margin-bottom:18px">Epilogue — 그리고, 당신의 차례</span>
+        <h2>다음 이야기의 주인공은<br>당신입니다</h2>
+        <p>작은 불편이 더 큰 이야기가 되기 전에. 첫 페이지를 함께 펼쳐보세요.</p>
         <div class="actions">
-          <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 온라인 예약 문의</a>
+          <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 나의 이야기 시작하기</a>
           <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost"><i class="fa-solid fa-phone"></i> ${CLINIC.phone}</a>
         </div>
       </div>
@@ -268,10 +323,12 @@ export function HomePage() {
     title: '올케어치과 | 약수역 임플란트·교정·심미보철 3인 전문의 치과',
     description: '약수역 5번 출구 올케어치과. 구강악안면외과·통합치의학과·보철과 3인 전문의가 임플란트, 치아교정, 심미보철을 진단부터 책임집니다. 수면진료·원내 기공실·야간진료(월·화·목 20:30).',
     path: '/',
-    // AEO: 강점을 질문-직답형 FAQPage 스키마로 노출 → AI 답변엔진 인용 유도
     schema: [
       organizationSchema(),
-      faqSchema(CLINIC.strengths.map(s => ({ q: s.head, a: s.desc }))),
+      faqSchema([
+        ...CLINIC.strengths.map(s => ({ q: s.head, a: s.desc })),
+        ...STORY_BRANCHES.slice(0, 4).map(b => b.faq),
+      ]),
     ],
   }
   return Page(meta, body)

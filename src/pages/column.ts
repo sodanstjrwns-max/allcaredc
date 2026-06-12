@@ -28,6 +28,7 @@ export function ColumnIndex(columns: Column[]) {
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }],
+    chapter: 'Notes from the Clinic',
     title: '원장 칼럼',
     desc: '진료실에서 자주 받는 질문, 알아두면 좋은 치과 이야기를 의료진이 직접 씁니다.',
   })}

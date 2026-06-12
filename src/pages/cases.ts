@@ -35,8 +35,9 @@ export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: 
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '진료사례', url: '/cases' }],
-    title: '비포 / 애프터',
-    desc: '치료 전후의 변화를 확인하실 수 있습니다. 치료 결과는 개인의 상태에 따라 차이가 있을 수 있습니다.',
+    chapter: 'Stories of Recovery',
+    title: '먼저 다녀간 이야기',
+    desc: '한 사람의 불편이 회복으로 바뀌는 과정의 기록입니다. 치료 결과는 개인의 상태에 따라 차이가 있을 수 있습니다.',
   })}
 
   <section class="section">
@@ -88,6 +89,7 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
 
   return `
   <article class="case-card reveal reveal-d${(i % 3) + 1}">
+    
     <div class="ba-slider${loggedIn ? '' : ' locked'}">
       ${beforeSrc ? `<img src="${beforeSrc}" alt="${c.title} 치료 전" loading="lazy">` : `<div style="position:absolute;inset:0;display:grid;place-items:center;color:var(--gray-400);background:var(--gray-100)"><i class="fa-solid fa-image" style="font-size:32px"></i></div>`}
       <span class="ba-label before">Before</span>
@@ -107,8 +109,8 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
       `}
     </div>
     <div class="case-meta">
-      <span class="cat">${catName(c.category)}</span>
-      <h4>${c.title}</h4>
+      <span class="case-story-no">Story ${String(i + 1).padStart(2, '0')} · ${catName(c.category)}</span>
+      <h4 class="case-story-line">${storyLine(c)}</h4>
       <p style="font-size:14px;color:var(--gray-600);margin-bottom:8px">${c.description}</p>
       <div class="tags">
         ${c.ageGroup ? `<i class="fa-solid fa-user"></i> ${c.ageGroup} ${c.gender || ''} · ` : ''}
@@ -120,12 +122,19 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
   </article>`
 }
 
+// 미니 우화 한 줄: "옥수동 50대 K님의 4개월" 식의 스토리 타이틀 (§B: 사실 정보만 조합)
+function storyLine(c: CaseItem): string {
+  const who = [c.region, c.ageGroup, c.gender ? c.gender + '님' : '님'].filter(Boolean).join(' ')
+  const span = c.period ? `의 ${c.period}` : '의 이야기'
+  return who ? `${who}${span}` : c.title
+}
+
 function ctaBand() {
   return html`
   <section class="section" style="padding-top:0">
     <div class="container">
-      <div class="cta-band reveal">
-        <h2>나의 경우는 어떨까요?</h2>
+      <div class="cta-band reveal epilogue-band">
+        <h2>다음 이야기는, 당신의 차례입니다</h2>
         <p>정확한 진단은 직접 상담을 통해 받아보실 수 있습니다.</p>
         <div class="actions">
           <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
