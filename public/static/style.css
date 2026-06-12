@@ -1643,7 +1643,7 @@ body::after {
   font-family: var(--font-mono); font-size: 12px; letter-spacing: .2em;
   text-transform: uppercase; color: var(--gold-600); margin-bottom: 30px;
 }
-.hh-title {
+.hero--heritage .hh-title, .hh-title {
   color: var(--navy-800);
   font-size: clamp(3.2rem, 8.6vw, 7.6rem); line-height: .96; letter-spacing: -.035em;
   margin-bottom: 0;
@@ -1979,3 +1979,12 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
   .hh-frame, .hh-eyebrow .hh-diamond { animation: none; }
   .scroll-progress { display: none; }
 }
+
+/* ---- v9.5.1 핫픽스: 라이트 히어로에서 구버전 .hero h1 잉크 무력화 ---- */
+.hero--heritage h1, .hero--heritage .hh-title { color: var(--navy-800); }
+.hero--heritage .hh-title .hh-italic { color: var(--navy-600); }
+/* 커스텀 커서: difference 블렌드 제거 → 브라스 헤어라인 커서 (라이트/다크 양쪽 안정) */
+.cursor-ring, .cursor-dot { mix-blend-mode: normal; }
+.cursor-ring { border-color: rgba(176,141,87,.85); }
+.cursor-dot { background: var(--gold); }
+.cursor-ring.media { background: rgba(176,141,87,.08); border-color: var(--gold); }
