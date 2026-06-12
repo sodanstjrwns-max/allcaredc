@@ -916,7 +916,7 @@
       });
 
       // 어두운 섹션 위에서는 레일 다크 모드
-      rail.classList.toggle('dark', curId === 'ch-empathy' || curId === 'ch-recovery' || curId === 'prologue');
+      rail.classList.toggle('dark', curId === 'ch-empathy' || curId === 'ch-recovery');
     }
     function onScroll() { if (!raf) raf = requestAnimationFrame(update); }
     window.addEventListener('scroll', onScroll, { passive: true });

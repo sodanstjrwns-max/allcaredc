@@ -37,43 +37,44 @@ export function HomePage() {
       </a>`).join(''))}
   </nav>
 
-  <!-- ============ PROLOGUE — 환자 1인칭 서사 오프닝 ============ -->
-  <section class="hero cinema" id="prologue">
-    <div class="hero-bg">
-      <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" fetchpriority="high" />
-    </div>
-    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
-    <div class="hero-top">
+  <!-- ============ PROLOGUE — Heritage 에디토리얼 오프닝 (웜베이지+딥네이비) ============ -->
+  <section class="hero hero--heritage" id="prologue">
+    <div class="hh-panel" aria-hidden="true"></div>
+    <div class="hero-top hh-top">
       <span>ALLCARE DENTAL — A PATIENT'S STORY</span>
       <span class="hero-coord">37.5547°N · 127.0107°E</span>
       <span>EST. 2023 · 약수역</span>
     </div>
-    <div class="hero-inner">
-      <span class="hero-badge"><span class="hb-chapter">Prologue</span> 어느 날, 작은 불편이 시작되었다</span>
-      <h1 class="hero-mega" data-morph>
-        <span class="line-mask"><span class="morph-line">Every smile</span></span>
-        <span class="line-mask"><span class="accent disp morph-line">has a story.</span></span>
-      </h1>
-      <div class="hero-row">
-        <div>
-          <p class="lead reveal reveal-d2">시린 이 하나, 미뤄둔 사랑니 하나에서 이야기는 시작됩니다.<br>이 이야기의 주인공은 병원이 아니라, <strong style="color:#fffeee">당신</strong>입니다.</p>
-          <div class="hero-actions reveal reveal-d3">
-            <a href="#your-story" class="btn btn-accent">나의 이야기 시작하기 <i class="fa-solid fa-arrow-down"></i></a>
-            <a href="/reservation" class="btn btn-ghost">바로 예약 문의</a>
-          </div>
+    <div class="hero-inner hh-grid">
+      <div class="hh-copy">
+        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> Prologue — 어느 날, 작은 불편이 시작되었다</span>
+        <h1 class="hh-title" data-morph>
+          <span class="line-mask"><span class="morph-line">Every smile</span></span>
+          <span class="line-mask"><span class="hh-italic disp morph-line">has a story.</span></span>
+        </h1>
+        <p class="hh-lead reveal reveal-d2">시린 이 하나, 미뤄둔 사랑니 하나에서 이야기는 시작됩니다.<br>이 이야기의 주인공은 병원이 아니라, <strong>당신</strong>입니다.</p>
+        <div class="hero-actions reveal reveal-d3">
+          <a href="#your-story" class="btn btn-primary">나의 이야기 시작하기 <i class="fa-solid fa-arrow-down"></i></a>
+          <a href="/reservation" class="btn btn-outline">바로 예약 문의</a>
         </div>
-        <div class="hero-meta reveal reveal-d4">
+        <div class="hh-meta reveal reveal-d4">
           <div class="item"><span class="num"><span data-count="3">3</span></span><span class="lbl">분야별 전문의</span></div>
           <div class="item"><span class="num"><span data-count="10" data-suffix="+">10+</span></span><span class="lbl">진료 영역</span></div>
           <div class="item"><span class="num"><span data-count="20" data-suffix=":30">20:30</span></span><span class="lbl">야간진료 (월·화·목)</span></div>
         </div>
       </div>
+      <figure class="hh-figure reveal reveal-d2">
+        <div class="hh-frame">
+          <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" fetchpriority="high" />
+        </div>
+        <figcaption class="hh-caption"><span class="hh-cap-eng disp">Inside ALLCARE</span> 약수역 5번 출구, 더그레이스빌딩 4층</figcaption>
+      </figure>
     </div>
-    <div class="hero-foot">
+    <div class="hero-foot hh-foot">
       <span class="hero-live" id="heroLive"><span class="dot"></span><span class="txt">상태 확인 중</span></span>
+      <span class="hh-rule" aria-hidden="true"><i class="hh-diamond"></i></span>
       <span class="hero-now" id="heroClock">--:--:-- KST</span>
     </div>
-    <div class="scroll-ind"><span>이야기 펼치기</span><span class="line"></span></div>
   </section>
 
   <!-- ============ 신뢰 마퀴 띠 ============ -->
