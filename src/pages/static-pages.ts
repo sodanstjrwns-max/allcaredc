@@ -24,16 +24,40 @@ export function MissionPage() {
     </div>
   </section>
 
-  <!-- ============ 우리의 시작 — 2대(父子) 서사 (인테이크 기반) ============ -->
+  <!-- ============ 우리의 시작 — 2대(父子) 진료 연속성 서사 (2차 전달문 기반, 서브 컸셉) ============ -->
   <section class="section">
     <div class="container" style="max-width:860px">
       <div class="reveal" style="text-align:center">
         <span class="sec-label" style="justify-content:center"><span class="num">01</span> Our Story</span>
-        <h2 class="split-rise" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 34px">같은 자리에서, <em>2대(父子)</em>에 걸쳐</h2>
+        <h2 class="split-rise" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 14px">아버지의 경험에 이어,<br><em>아들의 섬세함</em>을 더하다</h2>
       </div>
       <div class="prose reveal reveal-d1" style="font-size:1.13rem;line-height:1.95">
-        <p>올케어치과는 한 지역을 오래 지켜온 치과입니다. 아버지가 진료하던 그 자리에서, 아들이 다시 가운을 입었습니다. 2대(父子)에 걸쳐 같은 동네를 지킨다는 것은, 한 번의 진료로 끝나는 관계가 아니라 시간을 두고 신뢰를 쌓아간다는 약속입니다.</p>
+        <p>아버지는 고려대병원에서 구강외과 교수로 약 30년, 이후 약수역 인근에서 약 13년간 진료를 이어왔습니다. 그리고 2026년 4월, 올케어치과에서 아버지와 아들이 함께 진료를 시작했습니다. 오랜 기간 아버지께 진료받아 온 환자분들은 기존 진료 기록과 치료 이력을 바탕으로, 보다 쿠적한 환경에서 구강건강 관리를 이어가시고 있습니다.</p>
+        <p>저희가 가장 중요하게 생각하는 가치는 단순히 “부자가 함께 진료한다”는 사실 자체가 아닙니다. 오랜 기간 한 원장님을 믿고 다녀오신 환자분들이 낯선 병원으로 흩어지지 않고, 아들이 책임감을 가지고 이어서 케어해드릴 수 있다는 점 — 진료의 연속성입니다.</p>
         <p>그래서 화려한 약속보다 환자 한 분 한 분의 불편함을 끝까지 들여다보는 일을 먼저 합니다. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과 — 그것이 지역 안에서 인정받고 오래 머무는 길이라 믿습니다.</p>
+      </div>
+      <div class="reveal reveal-d2" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:34px">
+        ${raw(CLINIC.familyStory.points.map(p => `
+          <span style="display:inline-flex;align-items:center;gap:9px;background:var(--ivory-2);border:1px solid var(--line);border-radius:999px;padding:10px 20px;font-size:.92rem;color:var(--ink-soft)"><i class="fa-solid fa-circle-check" style="color:var(--gold)"></i>${p}</span>`).join(''))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 약수 생활권 커뮤니티 ============ -->
+  <section class="section" style="background:var(--navy-800)">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="sec-label" style="color:var(--gold-300)"><span class="num" style="color:var(--gold-300)">&middot;</span> With Yaksu</span>
+        <h2 style="color:#fffeee">약수 생활권과 <em style="color:var(--gold-300)">함께</em></h2>
+        <p style="color:rgba(255,254,238,.65)">멀리 어렵게 찾는 치과가 아니라, 우리 동네에서 믿고 편하게 갈 수 있는 치과.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px">
+        ${raw(CLINIC.community.map((cm, i) => `
+          <article class="reveal reveal-d${(i % 3) + 1}" style="background:rgba(255,254,238,.05);border:1px solid rgba(176,141,87,.3);border-radius:var(--radius-lg);padding:28px 24px">
+            <div style="width:42px;height:42px;display:grid;place-items:center;background:rgba(176,141,87,.15);color:var(--gold-300);border-radius:50%;margin-bottom:16px"><i class="fa-solid fa-${cm.icon}"></i></div>
+            <h3 style="color:#fffeee;font-size:1.05rem;margin-bottom:8px">${cm.name}</h3>
+            <p style="color:rgba(255,254,238,.62);font-size:.9rem;line-height:1.7">${cm.desc}</p>
+          </article>`).join(''))}
       </div>
     </div>
   </section>
@@ -87,7 +111,7 @@ export function MissionPage() {
           <ul class="check prose" style="margin-top:22px">
             <li>친절은 기본, 원칙은 약속입니다.</li>
             <li>과잉 없이, 필요한 진료만 권합니다.</li>
-            <li>2대(父子)에 걸친 경험과 섬세함으로 함께합니다.</li>
+            <li>아버지의 경험에 이어, 아들의 섬세함을 더합니다.</li>
           </ul>
         </div>
         <div class="reveal reveal-d2">
@@ -106,8 +130,8 @@ export function MissionPage() {
   ${ctaBand()}
   `
   return Page({
-    title: '병원소개 | 올케어치과 — 2대(父子) 3인 전문의 치과',
-    description: '약수역 올케어치과는 같은 자리에서 2대(父子)에 걸쳐 이어온 치과입니다. 구강악안면외과·통합치의학과·보철과 3인 전문의 협진, 원내 기공실, 수면진료 세팅으로 불편함을 끝까지 책임집니다.',
+    title: '병원소개 | 올케어치과 — 약수역 3인 전문의 통합진료 치과',
+    description: '약수역 올케어치과는 구강악안면외과·통합치의학과·보철과 3인 전문의 통합진료 치과입니다. 고난도 임플란트 수술 역량, 의식하진정법 병행, 원내 기공실로 불편함을 끝까지 책임집니다.',
     path: '/mission',
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '병원소개', url: '/mission' }]),
@@ -144,11 +168,11 @@ export function DirectionsPage() {
           </div>
         </div>
         <aside class="reveal reveal-d2">
-          <div class="inlink-box" style="background:var(--brand);color:#fff;margin-bottom:20px">
-            <h4 style="color:#fff"><i class="fa-solid fa-location-dot text-mint"></i> 주소</h4>
+          <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
+            <h4 style="color:#fffeee"><i class="fa-solid fa-location-dot text-mint"></i> 주소</h4>
             <p style="margin-bottom:18px">${CLINIC.address}</p>
-            <h4 style="color:#fff"><i class="fa-solid fa-phone text-mint"></i> 전화</h4>
-            <a href="tel:${CLINIC.phoneRaw}" style="font-size:1.5rem;font-weight:800;color:#fff;display:block">${CLINIC.phone}</a>
+            <h4 style="color:#fffeee"><i class="fa-solid fa-phone text-mint"></i> 전화</h4>
+            <a href="tel:${CLINIC.phoneRaw}" style="font-size:1.5rem;font-weight:800;color:#fffeee;display:block">${CLINIC.phone}</a>
             <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:24px">예약 문의</a>
           </div>
           <div class="inlink-box">
@@ -182,7 +206,7 @@ export function PricingPage() {
       <div class="reveal" style="background:var(--beige-soft);border-radius:var(--radius);padding:24px;margin-bottom:30px">
         <p style="font-size:14.5px;color:var(--ink-soft)"><i class="fa-solid fa-circle-info text-mint"></i> 비급여 진료비는 환자분의 구강 상태, 사용 재료, 치료 범위에 따라 달라집니다. 아래는 일반적인 안내이며, 정확한 비용은 정밀 진단 후 상담을 통해 안내해 드립니다.</p>
       </div>
-      <div class="reveal" style="background:#fff;border-radius:var(--radius);border:1px solid var(--gray-100);overflow:hidden;box-shadow:var(--shadow-sm)">
+      <div class="reveal" style="background:#fffeee;border-radius:var(--radius);border:1px solid var(--gray-100);overflow:hidden;box-shadow:var(--shadow-sm)">
         ${raw([
           ['임플란트', '사용 재료(픽스처·보철)와 골이식 여부에 따라 상이', '상담 시 안내'],
           ['치아교정', '교정 방식(메탈·세라믹·투명)과 난도에 따라 상이', '상담 시 안내'],

@@ -25,7 +25,7 @@ export function LoginPage(next = '/', error?: string) {
       <i class="fa-brands fa-google" style="color:#ea4335"></i> Google 계정으로 로그인
     </a>
     <div style="text-align:center;color:var(--gray-400);font-size:13px;margin:18px 0;position:relative">
-      <span style="background:#fff;padding:0 12px;position:relative;z-index:1">또는 이메일로</span>
+      <span style="background:#fffeee;padding:0 12px;position:relative;z-index:1">또는 이메일로</span>
       <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--gray-200)"></div>
     </div>
     <form method="POST" action="/auth/login">
@@ -46,7 +46,7 @@ export function RegisterPage(next = '/', error?: string) {
       <i class="fa-brands fa-google" style="color:#ea4335"></i> Google 계정으로 시작하기
     </a>
     <div style="text-align:center;color:var(--gray-400);font-size:13px;margin:18px 0;position:relative">
-      <span style="background:#fff;padding:0 12px;position:relative;z-index:1">또는 이메일로</span>
+      <span style="background:#fffeee;padding:0 12px;position:relative;z-index:1">또는 이메일로</span>
       <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--gray-200)"></div>
     </div>
     <form method="POST" action="/auth/register">

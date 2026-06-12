@@ -70,7 +70,7 @@ export function Header() {
   <header class="site-header" id="siteHeader">
     <div class="header-inner">
       <a href="/" class="logo" aria-label="${CLINIC.name} 홈">
-        <span class="mark"><i class="fa-solid fa-tooth"></i></span>
+        <span class="mark"><img src="/static/img/logo-symbol-ivory.svg" alt="" class="mark-img mark-ivory" width="26" height="26"/><img src="/static/img/logo-symbol.svg" alt="" class="mark-img mark-navy" width="26" height="26"/></span>
         <span>올케어치과</span>
       </a>
       <nav aria-label="주메뉴">
@@ -164,7 +164,7 @@ export function Footer() {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <div class="footer-logo"><span class="mark"><i class="fa-solid fa-tooth"></i></span> 올케어치과</div>
+          <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory.svg" alt="" width="24" height="24" style="display:block"/></span> 올케어치과</div>
           <p style="line-height:1.7">${CLINIC.philosophy}<br>약수동에서 오래도록 곁을 지키는 치과를 만듭니다.</p>
           <div class="footer-sns">
             ${CLINIC.sns.instagram ? raw(`<a href="${CLINIC.sns.instagram}" aria-label="인스타그램" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>`) : raw('<a href="#" aria-label="인스타그램"><i class="fa-brands fa-instagram"></i></a>')}

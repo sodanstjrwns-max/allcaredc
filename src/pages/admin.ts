@@ -22,16 +22,16 @@ function adminShell(active: string, title: string, content: any) {
 <style>
   body{background:var(--gray-100)}
   .admin-wrap{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
-  .admin-side{background:var(--brand-deep);color:#fff;padding:24px 0}
+  .admin-side{background:var(--brand-deep);color:#fffeee;padding:24px 0}
   .admin-side .brand{padding:0 24px 24px;font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:16px}
   .admin-side a{display:flex;align-items:center;gap:12px;padding:13px 24px;color:rgba(255,255,255,.7);font-weight:600;transition:.25s}
-  .admin-side a:hover,.admin-side a.active{background:rgba(255,255,255,.07);color:#fff;border-right:3px solid var(--brand-accent)}
+  .admin-side a:hover,.admin-side a.active{background:rgba(255,255,255,.07);color:#fffeee;border-right:3px solid var(--brand-accent)}
   .admin-main{padding:36px 40px}
   .admin-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
   .admin-head h1{font-size:1.8rem}
-  .admin-card{background:#fff;border-radius:16px;padding:28px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-100);margin-bottom:24px}
+  .admin-card{background:#fffeee;border-radius:16px;padding:28px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-100);margin-bottom:24px}
   .stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:30px}
-  .stat-box{background:#fff;border-radius:16px;padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-100)}
+  .stat-box{background:#fffeee;border-radius:16px;padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-100)}
   .stat-box .n{font-size:2.2rem;font-weight:800;color:var(--brand)}
   .stat-box .l{color:var(--gray-600);font-size:14px}
   table{width:100%;border-collapse:collapse}

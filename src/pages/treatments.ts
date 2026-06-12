@@ -144,8 +144,8 @@ export function TreatmentDetail(slug: string) {
 
         <!-- 사이드바 (인링크) -->
         <aside class="reveal reveal-d2">
-          <div class="inlink-box" style="background:var(--brand);color:#fff;margin-bottom:20px">
-            <h4 style="color:#fff">상담이 필요하신가요?</h4>
+          <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
+            <h4 style="color:#fffeee">상담이 필요하신가요?</h4>
             <p style="font-size:14px;color:rgba(255,255,255,.8);margin-bottom:18px">${t.name}에 대해 더 궁금한 점은 편하게 문의해 주세요.</p>
             <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin-bottom:10px">예약 문의</a>
             <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center">${CLINIC.phone}</a>

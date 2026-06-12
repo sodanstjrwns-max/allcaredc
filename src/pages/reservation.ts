@@ -51,9 +51,9 @@ export function ReservationPage() {
           </div>
         </div>
         <aside class="reveal reveal-d2">
-          <div class="inlink-box" style="background:var(--brand);color:#fff;margin-bottom:20px">
-            <h4 style="color:#fff"><i class="fa-solid fa-phone text-mint"></i> 바로 전화 예약</h4>
-            <a href="tel:${CLINIC.phoneRaw}" style="font-size:1.6rem;font-weight:800;color:#fff;display:block;margin:10px 0 6px">${CLINIC.phone}</a>
+          <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
+            <h4 style="color:#fffeee"><i class="fa-solid fa-phone text-mint"></i> 바로 전화 예약</h4>
+            <a href="tel:${CLINIC.phoneRaw}" style="font-size:1.6rem;font-weight:800;color:#fffeee;display:block;margin:10px 0 6px">${CLINIC.phone}</a>
             <p style="font-size:13px;color:rgba(255,255,255,.75)">진료시간 내 전화 주시면 바로 안내해 드립니다.</p>
           </div>
           <div class="inlink-box">

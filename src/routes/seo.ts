@@ -153,8 +153,8 @@ export function AreaPage(combo: string) {
           <p style="margin-top:24px"><a href="/treatments/${tx.slug}" class="btn btn-primary">${tx.name} 자세히 보기 <i class="fa-solid fa-arrow-right"></i></a></p>
         </article>
         <aside class="reveal reveal-d2">
-          <div class="inlink-box" style="background:var(--brand);color:#fff;margin-bottom:20px">
-            <h4 style="color:#fff">${area.name} ${tx.name} 상담</h4>
+          <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
+            <h4 style="color:#fffeee">${area.name} ${tx.name} 상담</h4>
             <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin:14px 0 10px">예약 문의</a>
             <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center">${CLINIC.phone}</a>
           </div>

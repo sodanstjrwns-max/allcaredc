@@ -102,7 +102,7 @@ export function ColumnDetail(col: Column, views: number) {
 
           ${author ? html`
             <div style="background:var(--beige-soft);border-radius:var(--radius);padding:24px;margin-top:40px;display:flex;gap:16px;align-items:center">
-              <div style="width:60px;height:60px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:24px;flex-shrink:0"><i class="fa-solid fa-user-doctor"></i></div>
+              <div style="width:60px;height:60px;border-radius:50%;background:var(--brand);color:#fffeee;display:grid;place-items:center;font-size:24px;flex-shrink:0"><i class="fa-solid fa-user-doctor"></i></div>
               <div>
                 <p style="font-size:13px;color:var(--gray-600)">이 글을 작성·감수한 의료진</p>
                 <a href="/doctors/${author.slug}" style="font-weight:800;font-size:1.1rem;color:var(--brand)">${author.name} ${author.role}</a>
@@ -121,8 +121,8 @@ export function ColumnDetail(col: Column, views: number) {
               <a href="/cases?cat=${related.slug}"><span>${related.name} 진료사례</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
             </div>
           ` : ''}
-          <div class="inlink-box" style="background:var(--brand);color:#fff">
-            <h4 style="color:#fff">상담이 필요하신가요?</h4>
+          <div class="inlink-box" style="background:var(--brand);color:#fffeee">
+            <h4 style="color:#fffeee">상담이 필요하신가요?</h4>
             <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin:14px 0 10px">예약 문의</a>
             <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center">${CLINIC.phone}</a>
           </div>

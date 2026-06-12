@@ -56,7 +56,7 @@ export function HomePage() {
       </h1>
       <div class="hero-row">
         <div>
-          <p class="lead reveal reveal-d2">시린 이 하나, 미뤄둔 사랑니 하나에서 이야기는 시작됩니다.<br>이 이야기의 주인공은 병원이 아니라, <strong style="color:#fff">당신</strong>입니다.</p>
+          <p class="lead reveal reveal-d2">시린 이 하나, 미뤄둔 사랑니 하나에서 이야기는 시작됩니다.<br>이 이야기의 주인공은 병원이 아니라, <strong style="color:#fffeee">당신</strong>입니다.</p>
           <div class="hero-actions reveal reveal-d3">
             <a href="#your-story" class="btn btn-accent">나의 이야기 시작하기 <i class="fa-solid fa-arrow-down"></i></a>
             <a href="/reservation" class="btn btn-ghost">바로 예약 문의</a>
@@ -280,10 +280,10 @@ export function HomePage() {
         <div class="reveal">
           <span class="sec-label"><span class="num">05-1</span> Visit Us</span>
           <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:18px 0 24px">언제 오시면 되나요?</h2>
-          <div style="background:#fff;border-radius:var(--radius-lg);border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow-sm)">
+          <div style="background:#fffeee;border-radius:var(--radius-lg);border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow-sm)">
             ${raw(CLINIC.hours.map(h => `
               <div style="display:flex;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--line-soft)">
-                <span style="font-weight:600;color:${h.night ? 'var(--mint)' : 'var(--ink-soft)'}">${h.day}${h.night ? ' <span style="font-size:11px;background:var(--mint);color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px">야간</span>' : ''}</span>
+                <span style="font-weight:600;color:${h.night ? 'var(--mint)' : 'var(--ink-soft)'}">${h.day}${h.night ? ' <span style="font-size:11px;background:var(--mint);color:#fffeee;padding:2px 8px;border-radius:999px;margin-left:6px">야간</span>' : ''}</span>
                 <span style="color:var(--gray-600);font-family:var(--font-disp)">${h.time}</span>
               </div>`).join(''))}
           </div>
@@ -292,7 +292,7 @@ export function HomePage() {
         <div class="reveal reveal-d2">
           <span class="sec-label"><span class="num">05-2</span> Directions</span>
           <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:18px 0 24px">${CLINIC.directions}</h2>
-          <div class="inlink-box" style="background:var(--navy-900);color:#fff">
+          <div class="inlink-box" style="background:var(--navy-900);color:#fffeee">
             <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-location-dot" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div><strong style="display:block;font-size:17px;margin-bottom:4px">${CLINIC.name}</strong>${CLINIC.address}</div></div>
             <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-train-subway" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div>${CLINIC.subway}</div></div>
             <div style="display:flex;gap:14px"><i class="fa-solid fa-phone" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><a href="tel:${CLINIC.phoneRaw}" style="font-weight:700;font-size:18px;font-family:var(--font-disp)">${CLINIC.phone}</a></div>

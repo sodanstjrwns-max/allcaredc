@@ -44,9 +44,9 @@ export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: 
     <div class="container">
       <!-- 필터 -->
       <div class="reveal" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:36px">
-        <a href="/cases" class="tag-pill" style="${!filter.cat ? 'background:var(--brand);color:#fff' : ''}">전체</a>
+        <a href="/cases" class="tag-pill" style="${!filter.cat ? 'background:var(--brand);color:#fffeee' : ''}">전체</a>
         ${raw(TREATMENTS.filter(t => t.core).map(t => `
-          <a href="/cases?cat=${t.slug}" class="tag-pill" style="${filter.cat === t.slug ? 'background:var(--brand);color:#fff' : ''}">${t.name}</a>`).join(''))}
+          <a href="/cases?cat=${t.slug}" class="tag-pill" style="${filter.cat === t.slug ? 'background:var(--brand);color:#fffeee' : ''}">${t.name}</a>`).join(''))}
       </div>
 
       ${!loggedIn ? html`
