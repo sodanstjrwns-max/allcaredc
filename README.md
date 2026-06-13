@@ -65,20 +65,25 @@
 3. **관리자**: `/admin/login` (기본 PW `allcare2026`) → 예약/회원/케이스/칼럼/공지 관리, 조회수 확인.
 
 ## 미구현 / 향후 과제 (Not Yet Implemented & Next Steps)
-- ⏳ 백과사전 용어 **500+ 확장** (현재 실제 용어 220개 — 품질 우선, 추가 확장 가능)
-- ⏳ 실제 Resend API 키 / Google OAuth 클라이언트 ID·시크릿 / 운영 R2 버킷 시크릿 주입 (`wrangler secret put`)
-- ⏳ 관리자 칼럼 리치 에디터 고도화 (현재 SEO 메타 + 본문 입력)
+- ✅ 백과사전 용어 **533개** (가이드 기준 500+ 충족)
+- ✅ 진료과목별 FAQ **전 과목 20개+** (implant 24 / ortho 23 / esthetic 22 / 나머지 20)
+- ✅ 칼럼 에디터: 다중 이미지 업로드 + 드래그&드롭/붙여넣기 삽입 (R2 `uploads/columns/`)
+- ✅ 관리자 목록(칼럼·공지·케이스) 조회수 컬럼 (봇 제외 휴먼 카운트)
+- ✅ Genspark 호스팅 Cloudflare Workers 운영 배포
+- ⏳ 실제 Resend API 키 / Google OAuth 클라이언트 ID·시크릿 주입
 - ⏳ 케이스 이미지 최적화(WebP 변환) 자동화
-- ⏳ GitHub 푸시 / Cloudflare Pages 운영 배포 (사용자 확인 후 진행)
+- ⏳ GitHub 푸시 (프로젝트 #github 탭에서 저장소 연동 필요)
+- ⏳ 실도메인(allcaredental.kr) 연결 + GA4/서치콘솔/네이버 서치어드바이저 등록
 
 ## 배포 (Deployment)
-- **플랫폼**: Cloudflare Pages (Hono v4 + Workers)
-- **상태**: ✅ 로컬 개발 서버 동작 중 (PM2 + wrangler pages dev :3000)
+- **플랫폼**: Cloudflare Workers (Genspark 호스팅, Workers for Platforms)
+- **운영 URL**: https://c82cb18e-9219-492a-9f94-ad21081dd1ef.vip.gensparksite.com
+- **상태**: ✅ 운영 배포 완료 (R2 바인딩 포함) + 로컬 개발 서버 (PM2 :3000)
 - **기술 스택**: Hono v4 (TypeScript, `hono/html` SSR) + Cloudflare Workers/Pages + R2 + Web Crypto(HMAC/PBKDF2) + Resend + Google OAuth + Vite
 - **빌드**: `npm run build` → `dist/_worker.js`
 - **시작**: `pm2 start ecosystem.config.cjs`
 - **운영 배포 전 필요 시크릿**: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL`
-- **최종 업데이트**: 2026-06-12 (2차 전달문 반영 — 컬러 확정판 + 신규 로고 1차 + 뾰족함/2대 서사 정정)
+- **최종 업데이트**: 2026-06-13 (제작 가이드 100% 충족 + 운영 배포)
 
 ## 스크립트
 ```bash
