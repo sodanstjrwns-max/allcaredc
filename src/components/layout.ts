@@ -15,7 +15,7 @@ export function organizationSchema() {
     telephone: CLINIC.phone,
     email: CLINIC.email,
     image: `https://${CLINIC.domain}/static/img/og.jpg`,
-    logo: `https://${CLINIC.domain}/static/img/logo.png`,
+    logo: `https://${CLINIC.domain}/static/img/logo-horizontal.svg`,
     priceRange: '₩₩',
     address: {
       '@type': 'PostalAddress',

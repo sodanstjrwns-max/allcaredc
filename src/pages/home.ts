@@ -75,7 +75,7 @@ export function HomePage() {
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img src="/static/img/hero.webp" alt="올케어치과 진료 공간" fetchpriority="high" />
+          <img src="/static/img/hero.webp" alt="올케어치과 진료 공간 — 약수역 임플란트·교정·심미보철 전문의 치과" width="1200" height="1500" fetchpriority="high" />
         </div>
         <figcaption class="hh-caption"><span class="hh-cap-eng disp">Inside ALLCARE</span> 약수역 5번 출구, 더그레이스빌딩 4층</figcaption>
       </figure>
