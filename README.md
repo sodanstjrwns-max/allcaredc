@@ -76,14 +76,18 @@
 - ⏳ 실도메인(allcaredental.kr) 연결 + GA4/서치콘솔/네이버 서치어드바이저 등록
 
 ## 배포 (Deployment)
-- **플랫폼**: Cloudflare Workers (Genspark 호스팅, Workers for Platforms)
-- **운영 URL**: https://c82cb18e-9219-492a-9f94-ad21081dd1ef.vip.gensparksite.com
-- **상태**: ✅ 운영 배포 완료 (R2 바인딩 포함) + 로컬 개발 서버 (PM2 :3000)
-- **기술 스택**: Hono v4 (TypeScript, `hono/html` SSR) + Cloudflare Workers/Pages + R2 + Web Crypto(HMAC/PBKDF2) + Resend + Google OAuth + Vite
+- **플랫폼**: Cloudflare Pages (원장님 본인 Cloudflare 계정 / BYOK)
+- **운영 URL**: https://allcare-dental.pages.dev
+- **Cloudflare 프로젝트명**: `allcare-dental`
+- **R2 버킷**: `allcare-dental` (예약/회원/케이스/칼럼/공지 JSON + 이미지 바이너리)
+- **상태**: ✅ 운영 배포 완료 — R2 쓰기 검증 통과(예약 접수 → R2 영속 확인) + 로컬 개발 서버(PM2 :3000)
+- **기술 스택**: Hono v4 (TypeScript, `hono/html` SSR) + Cloudflare Pages/Workers + R2 + Web Crypto(HMAC/PBKDF2) + Resend + Google OAuth + Vite
 - **빌드**: `npm run build` → `dist/_worker.js`
-- **시작**: `pm2 start ecosystem.config.cjs`
-- **운영 배포 전 필요 시크릿**: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL`
-- **최종 업데이트**: 2026-06-13 (제작 가이드 100% 충족 + 운영 배포)
+- **시작(로컬)**: `pm2 start ecosystem.config.cjs`
+- **배포**: `npm run build && npx wrangler pages deploy dist --project-name allcare-dental`
+- **운영 시크릿(미설정, 추후 주입 예정)**: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL` → `wrangler pages secret put <KEY> --project-name allcare-dental`
+- **남은 작업**: 실도메인(allcaredental.kr) 연결, 운영 시크릿 주입, GA4/서치콘솔/네이버 등록
+- **최종 업데이트**: 2026-06-14 (BYOK Cloudflare Pages 운영 배포 + R2 검증 완료)
 
 ## 스크립트
 ```bash
