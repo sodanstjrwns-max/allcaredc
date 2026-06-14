@@ -114,7 +114,7 @@ export const CLINIC = {
     bizNumber: '상담 시 안내',
     openDate: '2023.07',
   },
-  domain: 'allcaredental.kr',
+  domain: 'allcaredc.kr',
 }
 
 // ============================================================
