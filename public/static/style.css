@@ -1203,6 +1203,12 @@ em, .italic { font-style: normal; color: var(--mint); }
   font-size: 1.05rem; color: var(--navy-800); margin-bottom: 14px;
   padding-bottom: 10px; border-bottom: 1px solid var(--line-soft);
 }
+.enc-inline-link {
+  color: var(--navy-700); font-weight: 600; text-decoration: none;
+  border-bottom: 1px solid var(--accent, #c9a24b); padding-bottom: 1px;
+  transition: color .15s, border-color .15s;
+}
+.enc-inline-link:hover { color: var(--accent, #c9a24b); border-bottom-color: var(--navy-700); }
 .enc-related { list-style: none; margin: 0; padding: 0; }
 .enc-related li { border-bottom: 1px solid var(--line-soft); }
 .enc-related li:last-child { border-bottom: none; }

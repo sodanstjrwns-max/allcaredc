@@ -158,4 +158,52 @@ export function suggestInternalLinks(text: string, currentPath: string, max = 5)
   return found
 }
 
+// ── 5b. 본문 인라인 자동 링크 주입 (AEO: 시맨틱 엔티티 연결) ──
+// 이미 HTML escape 된 본문에서 다른 용어/진료명을 탐지해 <a> 링크로 치환.
+// 같은 키워드는 페이지 전체에서 첫 1회만 링크(스팸 방지), currentPath 자기 자신은 제외.
+// HTML escape 된 문자열을 받으므로 키워드도 escape 해서 매칭한다.
+function escHtml(s: string) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+export function autoLinkBody(escapedHtml: string, currentPath: string, opts?: { maxLinks?: number; linkedSet?: Set<string> }): string {
+  const maxLinks = opts?.maxLinks ?? 8
+  const linked = opts?.linkedSet ?? new Set<string>()
+  let out = escapedHtml
+  let count = 0
+  for (const d of LINK_DICT) {
+    if (count >= maxLinks) break
+    if (d.url === currentPath) continue
+    if (linked.has(d.url)) continue
+    const kw = escHtml(d.kw)
+    if (kw.length < 2) continue
+    // 이미 <a> 안에 들어간 텍스트는 건드리지 않도록, 태그 밖 텍스트에서만 첫 1회 치환
+    const idx = findOutsideAnchor(out, kw)
+    if (idx === -1) continue
+    const a = `<a href="${d.url}" class="enc-inline-link">${kw}</a>`
+    out = out.slice(0, idx) + a + out.slice(idx + kw.length)
+    linked.add(d.url)
+    count++
+  }
+  return out
+}
+
+// <a>...</a> 내부가 아닌 곳에서 kw 의 첫 등장 위치를 찾는다. 없으면 -1.
+function findOutsideAnchor(haystack: string, kw: string): number {
+  let from = 0
+  while (true) {
+    const i = haystack.indexOf(kw, from)
+    if (i === -1) return -1
+    // i 이전에서 마지막으로 열린 <a 와 닫힌 </a> 위치 비교
+    const lastOpen = haystack.lastIndexOf('<a ', i)
+    const lastClose = haystack.lastIndexOf('</a>', i)
+    const insideAnchor = lastOpen > lastClose
+    // 태그 자체(<...>) 안에 걸치는지도 방지
+    const lastLt = haystack.lastIndexOf('<', i)
+    const lastGt = haystack.lastIndexOf('>', i)
+    const insideTag = lastLt > lastGt
+    if (!insideAnchor && !insideTag) return i
+    from = i + kw.length
+  }
+}
+
 export { BASE, TERMS }

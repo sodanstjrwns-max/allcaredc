@@ -5,7 +5,7 @@ import {
   CLINIC, TREATMENTS, CORE_TREATMENTS, SUB_TREATMENTS, TX_IMAGES,
   getTreatment, doctorsForTreatment, Treatment,
 } from '../data/clinic'
-import { speakableSchema } from '../lib/seo-engine'
+import { speakableSchema, autoLinkBody } from '../lib/seo-engine'
 
 const SPEC_LABEL: Record<string, string> = {
   implant: '임플란트', surgery: '구강외과', tmj: '턱관절', conservative: '보존치료',
@@ -108,10 +108,14 @@ export function TreatmentDetail(slug: string) {
 
           <p class="tx-intro-lead" style="font-size:1.2rem;color:var(--ink);font-weight:500">${t.intro}</p>
 
-          ${raw(t.sections.map(s => `
+          ${(() => {
+            const curPath = `/treatments/${slug}`
+            const linkedSet = new Set<string>()
+            return raw(t.sections.map(s => `
             <h2 class="split-rise">${s.h}</h2>
-            <p>${s.p}</p>
-          `).join(''))}
+            <p>${autoLinkBody(s.p, curPath, { maxLinks: 3, linkedSet })}</p>
+          `).join(''))
+          })()}
 
           ${t.steps ? html`
             <h2 class="split-rise">진료는 <em>이렇게</em> 진행됩니다</h2>

@@ -3,7 +3,7 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, schemaTag } from '../components/layout'
 import { CLINIC, TREATMENTS } from '../data/clinic'
 import encData from '../data/encyclopedia.json'
-import { speakableSchema } from '../lib/seo-engine'
+import { speakableSchema, autoLinkBody, suggestInternalLinks } from '../lib/seo-engine'
 
 type Section = { h: string; p: string }
 type Faq = { q: string; a: string }
@@ -98,11 +98,28 @@ export function EncyclopediaDetailPage(slug: string) {
   if (!term || !term.content) return null
   const c = term.content
 
-  // 같은 진료과목 내 관련 용어 (상세 있는 것 우선, 최대 6개)
-  const related = TERMS
+  const curPath = `/encyclopedia/${term.slug}`
+
+  // 본문 인라인 자동 링크용: 페이지 전체에서 키워드 중복 링크 방지 공유 Set
+  const linkedSet = new Set<string>()
+
+  // 본문 전체 텍스트(맥락) — 내부링크 추천에 사용
+  const bodyText = c.intro + ' ' + c.sections.map((s: Section) => s.h + ' ' + s.p).join(' ') + ' ' + c.faq.map((f: Faq) => f.q + ' ' + f.a).join(' ')
+  // 1순위: 본문에서 실제 언급된 관련 페이지(맥락 링크) — AEO 시맨틱 연결
+  const contextual = suggestInternalLinks(bodyText, curPath, 6)
+    .filter(l => l.url.startsWith('/encyclopedia/'))
+  // 2순위: 같은 진료과목 내 관련 용어로 6개까지 보충
+  const sameCat = TERMS
     .filter(t => t.treatment === term.treatment && t.slug !== term.slug && t.content)
     .sort((a, b) => a.term.localeCompare(b.term, 'ko'))
-    .slice(0, 6)
+    .map(t => ({ url: `/encyclopedia/${t.slug}`, label: t.term }))
+  const seen = new Set<string>(contextual.map(l => l.url))
+  const related: { url: string; label: string }[] = [...contextual]
+  for (const r of sameCat) {
+    if (related.length >= 6) break
+    if (seen.has(r.url)) continue
+    related.push(r); seen.add(r.url)
+  }
 
   const crumb = [
     { name: '홈', url: '/' },
@@ -148,7 +165,7 @@ export function EncyclopediaDetailPage(slug: string) {
         ${raw(c.sections.map(s => `
           <div class="enc-section">
             <h2>${esc(s.h)}</h2>
-            <p>${esc(s.p)}</p>
+            <p>${autoLinkBody(esc(s.p), curPath, { maxLinks: 3, linkedSet })}</p>
           </div>`).join(''))}
 
         <div class="enc-faq">
@@ -176,7 +193,7 @@ export function EncyclopediaDetailPage(slug: string) {
           <h3>관련 용어</h3>
           ${related.length
             ? raw('<ul class="enc-related">' + related.map(r =>
-                `<li><a href="/encyclopedia/${r.slug}">${esc(r.term)}</a></li>`).join('') + '</ul>')
+                `<li><a href="${r.url}">${esc(r.label)}</a></li>`).join('') + '</ul>')
             : html`<p style="color:var(--gray-600);font-size:14px">관련 용어를 준비 중입니다.</p>`}
           <a href="/encyclopedia" class="enc-back"><i class="fa-solid fa-arrow-left"></i> 백과사전 전체보기</a>
         </div>
