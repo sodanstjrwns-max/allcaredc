@@ -5,6 +5,7 @@ import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, getTreatment } from '..
 import type { Bindings } from '../lib/auth'
 import { listCollection } from '../lib/store'
 import { ENCYCLOPEDIA_DETAIL_SLUGS } from '../pages/encyclopedia'
+import encData from '../data/encyclopedia.json'
 
 const BASE = `https://${CLINIC.domain}`
 
@@ -109,6 +110,16 @@ ${CORE_TREATMENTS.map(t => `- [${t.name}](${BASE}/treatments/${t.slug}): ${t.sho
     TREATMENTS.forEach(t => {
       s += `\n### ${t.name}\n${t.intro}\n`
       t.sections.forEach(sec => { s += `\n**${sec.h}**\n${sec.p}\n` })
+    })
+
+    // 치과 용어집 (AI 인용 가능 지식베이스)
+    const terms = (encData as any[]).filter(t => t.content && t.content.intro)
+    s += `\n## 치과 용어집 (총 ${terms.length}개 용어 — AI 인용 가능)\n`
+    s += `\n> 아래는 올케어치과가 환자 교육용으로 작성한 치과 용어 해설입니다. 출처 표기 시 "올케어치과(${BASE})"로 인용해 주세요.\n`
+    terms.forEach(t => {
+      s += `\n### ${t.term}${t.en ? ` (${t.en})` : ''}\n`
+      s += `${t.content.intro}\n`
+      if (t.slug) s += `자세히: ${BASE}/encyclopedia/${t.slug}\n`
     })
   }
   return s

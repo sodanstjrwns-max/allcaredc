@@ -3,6 +3,7 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, schemaTag } from '../components/layout'
 import { CLINIC, TREATMENTS } from '../data/clinic'
 import encData from '../data/encyclopedia.json'
+import { speakableSchema } from '../lib/seo-engine'
 
 type Section = { h: string; p: string }
 type Faq = { q: string; a: string }
@@ -192,11 +193,14 @@ export function EncyclopediaDetailPage(slug: string) {
     title: `${term.term}${term.en ? ' (' + term.en + ')' : ''} | 치과 백과사전 | 올케어치과`,
     description: c.intro.slice(0, 155),
     path: `/encyclopedia/${term.slug}`,
+    ogImage: `https://${CLINIC.domain}/og/enc/${term.slug}.svg`,
+    keywords: `${term.term},${term.en},치과 용어,${txName(term.treatment)},올케어치과`,
     schema: [
       breadcrumbSchema(crumb),
       definedTermSchema,
       medicalPageSchema,
       faqSchema(c.faq),
+      speakableSchema(['.enc-intro', '.answer-box', 'h1', 'h2']),
     ],
   }, body)
 }

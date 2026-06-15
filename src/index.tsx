@@ -11,12 +11,14 @@ import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
 import { ColumnIndex, ColumnDetail, Column } from './pages/column'
 import { NoticeIndex, NoticeDetail, Notice } from './pages/notice'
 import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
+import { SeoHealthPage } from './pages/seo-health'
 import { Page } from './components/page'
 import { Bindings, getMember, setMemberSession, clearSession, hashPassword, verifyPassword, isBot } from './lib/auth'
 import { listCollection, addToCollection, uid, r2GetBinary, trackView, getViews } from './lib/store'
 import { CLINIC } from './data/clinic'
 import { admin, ensureSeed } from './routes/admin'
 import { sitemap, robotsTxt, llmsTxt, AreaPage } from './routes/seo'
+import { aiTxt, ogImageSvg, resolveOg } from './lib/seo-engine'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
@@ -35,6 +37,20 @@ app.get('/sitemap.xml', async (c) => c.body(await sitemap(c.env), 200, { 'Conten
 app.get('/robots.txt', (c) => c.body(robotsTxt(), 200, { 'Content-Type': 'text/plain' }))
 app.get('/llms.txt', (c) => c.body(llmsTxt(), 200, { 'Content-Type': 'text/plain' }))
 app.get('/llms-full.txt', (c) => c.body(llmsTxt(true), 200, { 'Content-Type': 'text/plain' }))
+app.get('/ai.txt', (c) => c.body(aiTxt(), 200, { 'Content-Type': 'text/plain; charset=utf-8' }))
+
+// 동적 OG 이미지 (edge SVG 생성) — /og/treatment/implant.svg, /og/enc/dental-implant.svg
+app.get('/og/:type/:file', (c) => {
+  const type = c.req.param('type')
+  const slug = c.req.param('file').replace(/\.svg$/, '')
+  const data = resolveOg(type, slug)
+  if (!data) return c.notFound()
+  const svg = ogImageSvg(data.theme, data.title, data.subtitle)
+  return c.body(svg, 200, { 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'public, max-age=86400' })
+})
+
+// SEO/AEO 슈퍼머신 자가진단 대시보드
+app.get('/seo-health', (c) => c.html(SeoHealthPage().toString()))
 
 // ════════════════ 공개 페이지 ════════════════
 app.get('/', (c) => c.html(HomePage().toString()))

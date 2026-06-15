@@ -3,6 +3,7 @@ import { Page } from '../components/page'
 import { organizationSchema, faqSchema } from '../components/layout'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../data/clinic'
 import { STORY_BRANCHES, HOME_CHAPTERS } from '../data/story'
+import { speakableSchema } from '../lib/seo-engine'
 
 // 핵심 진료별 영문 캐치프레이즈
 const TX_ENG: Record<string, string> = {
@@ -343,12 +344,15 @@ export function HomePage() {
     title: '올케어치과 | 약수역 임플란트·교정·심미보철 3인 전문의 치과',
     description: '약수역 5번 출구 올케어치과. 구강악안면외과·통합치의학과·보철과 3인 전문의가 임플란트, 치아교정, 심미보철을 진단부터 책임집니다. 수면진료·원내 기공실·야간진료(월·화·목 20:30).',
     path: '/',
+    ogImage: `https://${CLINIC.domain}/og/home/main.svg`,
+    keywords: '약수역 치과,약수역 임플란트,약수역 교정,약수역 심미보철,올케어치과,약수동 치과,중구 치과',
     schema: [
       organizationSchema(),
       faqSchema([
         ...CLINIC.strengths.map(s => ({ q: s.head, a: s.desc })),
         ...STORY_BRANCHES.slice(0, 4).map(b => b.faq),
       ]),
+      speakableSchema(['.answer-box', 'h1', 'h2']),
     ],
   }
   return Page(meta, body)

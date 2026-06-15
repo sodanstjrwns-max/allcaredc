@@ -237,7 +237,10 @@ export type Meta = {
   description: string
   path: string
   ogImage?: string
+  ogType?: string
   schema?: any[]
+  noindex?: boolean
+  keywords?: string
 }
 
 export function headTags(meta: Meta) {
@@ -248,13 +251,17 @@ export function headTags(meta: Meta) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>${meta.title}</title>
     <meta name="description" content="${meta.description}" />
+    ${meta.keywords ? raw(`<meta name="keywords" content="${meta.keywords}" />`) : ''}
+    ${meta.noindex ? raw('<meta name="robots" content="noindex, nofollow" />') : raw('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />')}
     <link rel="canonical" href="${url}" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="${meta.ogType || 'website'}" />
     <meta property="og:site_name" content="${CLINIC.name}" />
     <meta property="og:title" content="${meta.title}" />
     <meta property="og:description" content="${meta.description}" />
     <meta property="og:url" content="${url}" />
     <meta property="og:image" content="${og}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="ko_KR" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${meta.title}" />

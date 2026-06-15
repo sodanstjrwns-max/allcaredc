@@ -5,6 +5,7 @@ import {
   CLINIC, TREATMENTS, CORE_TREATMENTS, SUB_TREATMENTS, TX_IMAGES,
   getTreatment, doctorsForTreatment, Treatment,
 } from '../data/clinic'
+import { speakableSchema } from '../lib/seo-engine'
 
 const SPEC_LABEL: Record<string, string> = {
   implant: '임플란트', surgery: '구강외과', tmj: '턱관절', conservative: '보존치료',
@@ -185,9 +186,12 @@ export function TreatmentDetail(slug: string) {
     title: `${t.name} | 약수역 ${t.name} - 올케어치과`,
     description: `약수역 올케어치과 ${t.name}. ${t.short} ${docNames ? docNames + ' 전문의가 진료합니다.' : ''}`.slice(0, 158),
     path: `/treatments/${slug}`,
+    ogImage: `https://${CLINIC.domain}/og/treatment/${slug}.svg`,
+    keywords: `${t.name},약수역 ${t.name},약수역 치과,올케어치과,${docNames}`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }, { name: t.name, url: `/treatments/${slug}` }]),
       procedureSchema, medWebPage, faqSchema(t.faqs),
+      speakableSchema(['.answer-box', 'h1', 'h2']),
     ],
   }, body)
 }
