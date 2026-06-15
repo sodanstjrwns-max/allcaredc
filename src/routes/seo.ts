@@ -4,6 +4,7 @@ import { breadcrumbSchema, faqSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, getTreatment } from '../data/clinic'
 import type { Bindings } from '../lib/auth'
 import { listCollection } from '../lib/store'
+import { ENCYCLOPEDIA_DETAIL_SLUGS } from '../pages/encyclopedia'
 
 const BASE = `https://${CLINIC.domain}`
 
@@ -30,6 +31,8 @@ export async function sitemap(env: Bindings): Promise<string> {
   ;['kwon-minsu', 'doctor-integrated', 'doctor-prostho'].forEach(s => urls.push({ loc: `/doctors/${s}`, pri: '0.7', freq: 'monthly' }))
   // 지역 SEO (지역 × 핵심진료)
   SEO_AREAS.forEach(a => CORE_TREATMENTS.forEach(t => urls.push({ loc: `/area/${a.slug}-${t.slug}`, pri: '0.6', freq: 'monthly' })))
+  // 용어 백과 상세
+  ENCYCLOPEDIA_DETAIL_SLUGS.forEach(s => urls.push({ loc: `/encyclopedia/${s}`, pri: '0.5', freq: 'monthly' }))
   // 칼럼 (동적)
   try {
     const cols = await listCollection<any>(env, 'columns')

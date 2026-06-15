@@ -1129,6 +1129,94 @@ em, .italic { font-style: normal; color: var(--mint); }
 .enc-item .links a:hover { color: var(--mint); }
 .enc-item .links i { color: var(--mint); font-size: 11px; }
 .enc-item[hidden] { display: none; }
+.enc-item.has-detail { border-color: var(--line); }
+.enc-item.has-detail:hover { border-color: var(--gold); }
+.enc-term-link { color: var(--navy-800); transition: color .2s var(--ease); }
+.enc-term-link:hover { color: var(--gold-600); }
+
+/* ============================================================
+   ENCYCLOPEDIA DETAIL  /encyclopedia/:slug
+   ============================================================ */
+.enc-detail-grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; align-items: start;
+}
+.enc-article { min-width: 0; }
+.enc-intro {
+  font-size: 1.18rem; line-height: 1.85; color: var(--ink); font-weight: 500;
+  padding: 26px 28px; background: var(--paper); border: 1px solid var(--line);
+  border-left: 3px solid var(--gold); border-radius: var(--radius-lg); margin-bottom: 40px;
+}
+.enc-section { margin-bottom: 38px; }
+.enc-section h2 {
+  font-size: 1.4rem; color: var(--navy-800); margin-bottom: 14px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--line-soft);
+  display: flex; align-items: center; gap: 10px;
+}
+.enc-section h2::before {
+  content: ''; width: 8px; height: 8px; background: var(--gold);
+  transform: rotate(45deg); flex: none;
+}
+.enc-section p { font-size: 1.02rem; line-height: 1.95; color: var(--ink-soft); }
+
+.enc-faq { margin: 48px 0 40px; }
+.enc-faq > h2 {
+  font-size: 1.4rem; color: var(--navy-800); margin-bottom: 18px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--line-soft);
+}
+.enc-faq-item {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--paper); margin-bottom: 12px; overflow: hidden;
+  transition: border-color .25s var(--ease);
+}
+.enc-faq-item[open] { border-color: var(--gold-300); }
+.enc-faq-item summary {
+  cursor: pointer; padding: 18px 22px; font-weight: 600; font-size: 1.02rem;
+  color: var(--navy-800); list-style: none; position: relative; padding-right: 48px;
+}
+.enc-faq-item summary::-webkit-details-marker { display: none; }
+.enc-faq-item summary::after {
+  content: '+'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+  font-size: 1.4rem; color: var(--gold-600); font-weight: 400; transition: transform .25s var(--ease);
+}
+.enc-faq-item[open] summary::after { content: '\2212'; }
+.enc-faq-item p {
+  padding: 0 22px 20px; font-size: .98rem; line-height: 1.85; color: var(--ink-soft); margin: 0;
+}
+
+.enc-disclaimer {
+  display: flex; gap: 12px; align-items: flex-start;
+  font-size: 13.5px; line-height: 1.7; color: var(--gray-600);
+  background: var(--line-soft); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 32px;
+}
+.enc-disclaimer i { color: var(--gold-600); margin-top: 2px; flex: none; }
+
+.enc-cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn-navy { background: var(--navy-800); color: #fffeee; }
+.btn-navy:hover { background: var(--navy-900); color: #fffeee; transform: translateY(-2px); }
+
+.enc-aside { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 20px; }
+.enc-aside-card {
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 24px 22px; background: var(--paper);
+}
+.enc-aside-card h3 {
+  font-size: 1.05rem; color: var(--navy-800); margin-bottom: 14px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--line-soft);
+}
+.enc-related { list-style: none; margin: 0; padding: 0; }
+.enc-related li { border-bottom: 1px solid var(--line-soft); }
+.enc-related li:last-child { border-bottom: none; }
+.enc-related a {
+  display: block; padding: 11px 0; font-size: 14.5px; color: var(--navy-700);
+  transition: color .2s var(--ease), padding-left .2s var(--ease);
+}
+.enc-related a:hover { color: var(--gold-600); padding-left: 6px; }
+.enc-back {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 16px;
+  font-size: 13.5px; font-weight: 600; color: var(--navy-600);
+}
+.enc-back:hover { color: var(--gold-600); }
+.enc-aside-contact p { font-size: 14px; line-height: 1.7; color: var(--gray-600); margin-bottom: 16px; }
 
 /* notice list */
 .notice-list { border-top: 1px solid var(--line); }
@@ -1151,6 +1239,8 @@ em, .italic { font-style: normal; color: var(--mint); }
   .tx-grid { grid-template-columns: 1fr 1fr; }
   .case-grid { grid-template-columns: 1fr 1fr; }
   .enc-grid { grid-template-columns: 1fr 1fr; }
+  .enc-detail-grid { grid-template-columns: 1fr; gap: 40px; }
+  .enc-aside { position: static; }
 }
 @media (max-width: 820px) {
   .gnb, .header-tel { display: none; }

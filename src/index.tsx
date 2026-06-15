@@ -7,7 +7,7 @@ import { DoctorsIndex, DoctorDetail } from './pages/doctors'
 import { CasesPage, CaseItem } from './pages/cases'
 import { LoginPage, RegisterPage, MyPage } from './pages/auth'
 import { ReservationPage } from './pages/reservation'
-import { EncyclopediaPage } from './pages/encyclopedia'
+import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
 import { ColumnIndex, ColumnDetail, Column } from './pages/column'
 import { NoticeIndex, NoticeDetail, Notice } from './pages/notice'
 import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
@@ -44,6 +44,10 @@ app.get('/pricing', (c) => c.html(PricingPage().toString()))
 app.get('/faq', (c) => c.html(FaqPage().toString()))
 app.get('/reservation', (c) => c.html(ReservationPage().toString()))
 app.get('/encyclopedia', (c) => c.html(EncyclopediaPage().toString()))
+app.get('/encyclopedia/:slug', (c) => {
+  const page = EncyclopediaDetailPage(c.req.param('slug'))
+  return page ? c.html(page.toString()) : c.notFound()
+})
 
 // 진료
 app.get('/treatments', (c) => c.html(TreatmentsIndex().toString()))
