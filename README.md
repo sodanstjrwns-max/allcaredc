@@ -21,7 +21,7 @@
 - ✅ **회원 인증**: 회원가입(개인정보+마케팅 동의), 이메일/전화, **Google OAuth**, HMAC 세션(회원 30일/관리자 24시간), PBKDF2 비밀번호 해싱
 - ✅ **관리자 패널**: 대시보드, 예약 관리(상태 변경), 회원, 케이스(이미지 업로드/삭제), 칼럼, 공지, 조회수(`trackView`, 봇 제외)
 - ✅ **원장 칼럼**: SEO 에디터, `Article`/`MedicalWebPage` 스키마, E-E-A-T 저자 박스, 조회수, 시드 3건
-- ✅ **백과사전**: 실제 치과 용어 220개, 검색 + 초성 필터, `DefinedTermSet` 스키마, 진료·케이스 인링크
+- ✅ **백과사전**: 실제 치과 용어 **533개**(검색 + 초성 필터, `DefinedTermSet` 스키마) + **선별 203개 용어별 상세페이지**(`/encyclopedia/:slug`, 평균 912자, 700자 미만 0개, 용어별 `DefinedTerm`/`MedicalWebPage`/`FAQPage`/`BreadcrumbList` 스키마, 리스트↔상세 상호링크)
 - ✅ **공지사항**: 대표 고정, 이미지, 시드 2건
 - ✅ **예약**: R2 저장 + Resend 이메일 알림 훅 + 관리자 상태 변경
 - ✅ **정적 페이지**: 미션, 오시는 길(Google Maps 임베드), 비용 안내(비급여 "상담 시 안내")
@@ -39,7 +39,8 @@
 | `/cases` | 비포애프터 (After 로그인 필요) | `?category=&region=` |
 | `/column` `/column/:slug` | 원장 칼럼 | slug |
 | `/notice` `/notice/:slug` | 공지 | slug |
-| `/encyclopedia` | 치과 백과사전 | `?q=&initial=` |
+| `/encyclopedia` | 치과 백과사전 목록 | `?q=&initial=` |
+| `/encyclopedia/:slug` | 용어 상세(203개, 1000자급) | slug: dental-implant, bone-graft 등 |
 | `/faq` | 통합/진료별 FAQ | — |
 | `/reservation` | 예약 | — |
 | `/directions` | 오시는 길 | — |
@@ -65,19 +66,21 @@
 3. **관리자**: `/admin/login` (기본 PW `allcare2026`) → 예약/회원/케이스/칼럼/공지 관리, 조회수 확인.
 
 ## 미구현 / 향후 과제 (Not Yet Implemented & Next Steps)
-- ✅ 백과사전 용어 **533개** (가이드 기준 500+ 충족)
+- ✅ 백과사전 용어 **533개** + 선별 **203개 상세페이지**(1000자급) 완성
 - ✅ 진료과목별 FAQ **전 과목 20개+** (implant 24 / ortho 23 / esthetic 22 / 나머지 20)
 - ✅ 칼럼 에디터: 다중 이미지 업로드 + 드래그&드롭/붙여넣기 삽입 (R2 `uploads/columns/`)
 - ✅ 관리자 목록(칼럼·공지·케이스) 조회수 컬럼 (봇 제외 휴먼 카운트)
 - ✅ Genspark 호스팅 Cloudflare Workers 운영 배포
 - ⏳ 실제 Resend API 키 / Google OAuth 클라이언트 ID·시크릿 주입
 - ⏳ 케이스 이미지 최적화(WebP 변환) 자동화
-- ⏳ GitHub 푸시 (프로젝트 #github 탭에서 저장소 연동 필요)
-- ⏳ 실도메인(allcaredental.kr) 연결 + GA4/서치콘솔/네이버 서치어드바이저 등록
+- ✅ GitHub 푸시 완료 (https://github.com/sodanstjrwns-max/allcaredc)
+- ✅ 실도메인 **allcaredc.kr** 연결 완료 (가비아 도메인 + Cloudflare NS, 라이브 확인)
+- ⏳ GA4/서치콘솔/네이버 서치어드바이저 등록
 
 ## 배포 (Deployment)
 - **플랫폼**: Cloudflare Pages (원장님 본인 Cloudflare 계정 / BYOK)
-- **운영 URL**: https://allcare-dental.pages.dev
+- **운영 URL(실도메인)**: https://allcaredc.kr ✅ 라이브
+- **운영 URL(Pages)**: https://allcare-dental.pages.dev
 - **Cloudflare 프로젝트명**: `allcare-dental`
 - **R2 버킷**: `allcare-dental` (예약/회원/케이스/칼럼/공지 JSON + 이미지 바이너리)
 - **상태**: ✅ 운영 배포 완료 — R2 쓰기 검증 통과(예약 접수 → R2 영속 확인) + 로컬 개발 서버(PM2 :3000)
@@ -86,8 +89,8 @@
 - **시작(로컬)**: `pm2 start ecosystem.config.cjs`
 - **배포**: `npm run build && npx wrangler pages deploy dist --project-name allcare-dental`
 - **운영 시크릿(미설정, 추후 주입 예정)**: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL` → `wrangler pages secret put <KEY> --project-name allcare-dental`
-- **남은 작업**: 실도메인(allcaredental.kr) 연결, 운영 시크릿 주입, GA4/서치콘솔/네이버 등록
-- **최종 업데이트**: 2026-06-14 (BYOK Cloudflare Pages 운영 배포 + R2 검증 완료)
+- **남은 작업**: 운영 시크릿 주입(ADMIN_PASSWORD 등), GA4/서치콘솔/네이버 등록
+- **최종 업데이트**: 2026-06-16 (백과사전 203개 상세페이지 완성 + 실도메인 allcaredc.kr 라이브)
 
 ## 스크립트
 ```bash
