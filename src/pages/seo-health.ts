@@ -142,7 +142,7 @@ export function SeoHealthPage() {
           </div>
           <div style="flex:1;min-width:240px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px">
             <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.pagesWithInlinks}<span style="font-size:14px;color:#aaa">/${lc.totalNodes}</span></div><div style="font-size:12.5px;color:#888">링크 그물에 들어온 페이지</div></div>
-            <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.totalLinks.toLocaleString()}</div><div style="font-size:12.5px;color:#888">생성되는 내부링크 총수</div></div>
+            <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.totalLinks.toLocaleString()}</div><div style="font-size:12.5px;color:#888">내부링크 총수 <span style="color:#aaa">(본문 ${lc.bodyLinks.toLocaleString()}·사이드바 ${lc.sidebarLinks.toLocaleString()})</span></div></div>
             <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.pagesWithOutlinks}<span style="font-size:14px;color:#aaa">/${lc.pagesAnalyzed}</span></div><div style="font-size:12.5px;color:#888">아웃링크 보유 페이지</div></div>
             <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.treatmentNodes}+${lc.termNodes}</div><div style="font-size:12.5px;color:#888">진료+백과 노드</div></div>
           </div>
