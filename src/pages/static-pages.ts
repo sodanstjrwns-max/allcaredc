@@ -2,6 +2,28 @@ import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema } from '../components/layout'
 import { CLINIC, TREATMENTS } from '../data/clinic'
+import { speakableSchema } from '../lib/seo-engine'
+
+const BASE = `https://${CLINIC.domain}`
+const DAY_CODE: Record<string, string> = { '월': 'Monday', '화': 'Tuesday', '수': 'Wednesday', '목': 'Thursday', '금': 'Friday', '토': 'Saturday', '일': 'Sunday' }
+
+// 진료시간 → openingHoursSpecification 변환 (요일별 1줄 포맷: '월요일' / '09:30 - 20:30')
+function openingHoursSpec() {
+  return CLINIC.hours
+    .map(h => {
+      const dayCode = DAY_CODE[h.day.charAt(0)]            // '월요일' → '월' → 'Monday'
+      const m = h.time.match(/(\d{1,2}):(\d{2})\s*[~\-]\s*(\d{1,2}):(\d{2})/)
+      if (!dayCode || !m) return null                       // '공휴일'·시간 미파싱 제외
+      if (/격주|예약|휴진|휴무/.test(h.time)) return null    // 비정기 진료 제외
+      return {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: dayCode,
+        opens: `${m[1].padStart(2, '0')}:${m[2]}`,
+        closes: `${m[3].padStart(2, '0')}:${m[4]}`,
+      }
+    })
+    .filter(Boolean)
+}
 
 // ════════════════ 병원소개 / 미션 ════════════════
 export function MissionPage() {
@@ -142,6 +164,46 @@ export function MissionPage() {
 
 // ════════════════ 오시는 길 ════════════════
 export function DirectionsPage() {
+  const pageUrl = `${BASE}/directions`
+
+  // ── Dentist + Place 부가티급: 좌표·주소·진료시간·교통 + 지역 SEO ──
+  const placeSchema: any = {
+    '@context': 'https://schema.org',
+    '@type': ['Dentist', 'LocalBusiness'],
+    '@id': `${BASE}/#clinic`,
+    name: CLINIC.name,
+    url: `${BASE}/`,
+    telephone: CLINIC.phone,
+    image: `${BASE}/og/home/home.svg`,
+    priceRange: '₩₩',
+    currenciesAccepted: 'KRW',
+    paymentAccepted: '현금, 카드, 계좌이체',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: CLINIC.address,
+      addressLocality: CLINIC.region.district,
+      addressRegion: CLINIC.region.city,
+      addressCountry: 'KR',
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: CLINIC.geo.lat, longitude: CLINIC.geo.lng },
+    hasMap: `https://maps.google.com/maps?q=${encodeURIComponent(CLINIC.address)}`,
+    publicAccess: true,
+    areaServed: [
+      { '@type': 'City', name: '서울특별시 중구' },
+      { '@type': 'Place', name: '약수역' }, { '@type': 'Place', name: '신당동' },
+      { '@type': 'Place', name: '청구역' }, { '@type': 'Place', name: '동대입구역' },
+    ],
+    publicTransportClosenessRating: 5,
+    openingHoursSpecification: openingHoursSpec(),
+    availableService: TREATMENTS.map(t => ({ '@type': 'MedicalProcedure', name: t.name, url: `${BASE}/treatments/${t.slug}` })),
+  }
+
+  const directionsFaqs = [
+    { q: '올케어치과는 약수역에서 얼마나 걸리나요?', a: `${CLINIC.subway}입니다. 5번 출구로 나오시면 스타벅스가 있는 건물 4층입니다.` },
+    { q: '주차가 가능한가요?', a: '건물 주차장 이용이 가능합니다. 자세한 주차 안내는 내원 전 전화로 문의해 주세요.' },
+    { q: '야간 진료를 하나요?', a: `${CLINIC.hoursNote}` },
+  ]
+
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '오시는 길', url: '/directions' }],
@@ -159,12 +221,17 @@ export function DirectionsPage() {
           </div>
           <div style="margin-top:30px" class="prose">
             <h2>교통 안내</h2>
+            <p class="answer-box">올케어치과는 <strong>${CLINIC.subway}</strong> 거리에 있습니다. 3·6호선 환승역인 약수역과 바로 연결되어, 신당동·청구·동대입구·옥수 생활권 어디에서나 편하게 오실 수 있습니다.</p>
             <h3><i class="fa-solid fa-train-subway text-mint"></i> 지하철</h3>
-            <p>${CLINIC.subway}. 5번 출구로 나오시면 스타벅스가 있는 건물 4층입니다.</p>
+            <p><strong>3·6호선 약수역 5번 출구 도보 1분.</strong> 5번 출구로 나오시면 스타벅스가 있는 건물(더그레이스빌딩) 4층입니다. 3·6호선 환승역이라 강남·종로·은평 방면에서도 환승 한 번으로 닿습니다.</p>
+            <h3><i class="fa-solid fa-person-walking text-mint"></i> 인근 지역에서</h3>
+            <p>신당동·청구역·동대입구역·옥수동 생활권에서 가까워, 동네에서 믿고 편하게 다니실 수 있는 거리입니다. 약수역 인근 직장·학교에서도 점심·퇴근 시간을 활용해 방문하기 좋습니다.</p>
             <h3><i class="fa-solid fa-bus text-mint"></i> 버스</h3>
-            <p>약수역 정류장 하차 후 도보로 이동하실 수 있습니다.</p>
+            <p>약수역 정류장 하차 후 도보로 이동하실 수 있습니다. 마을버스·간선버스 모두 약수역 인근에 정차합니다.</p>
             <h3><i class="fa-solid fa-car text-mint"></i> 자가용</h3>
-            <p>건물 주차장 이용이 가능합니다. 자세한 주차 안내는 내원 전 전화로 문의해 주세요.</p>
+            <p>건물 주차장 이용이 가능합니다. 주차 공간이 한정되어 있어, 자세한 주차 안내는 내원 전 전화(<a href="tel:${CLINIC.phoneRaw}">${CLINIC.phone}</a>)로 문의해 주세요.</p>
+            <h3><i class="fa-solid fa-clock text-mint"></i> 진료시간 안내</h3>
+            <p>${CLINIC.hoursNote} 진료시간은 변동될 수 있으니, 방문 전 전화로 확인해 주시면 정확히 안내해 드립니다.</p>
           </div>
         </div>
         <aside class="reveal reveal-d2">
@@ -182,18 +249,78 @@ export function DirectionsPage() {
           </div>
         </aside>
       </div>
+
+      <!-- 자주 묻는 질문 (AEO: FAQ 본문-스키마 일치) -->
+      <div class="reveal" style="max-width:820px;margin:60px auto 0">
+        <h2 style="text-align:center;margin-bottom:24px">자주 묻는 질문</h2>
+        <dl class="faq-list">
+          ${raw(directionsFaqs.map(f => `
+            <div class="faq-item">
+              <dt class="answer-box"><i class="fa-solid fa-circle-question text-mint"></i> ${f.q}</dt>
+              <dd>${f.a}</dd>
+            </div>`).join(''))}
+        </dl>
+      </div>
     </div>
   </section>`
   return Page({
-    title: '오시는 길 | 약수역 5번 출구 올케어치과',
-    description: `올케어치과 오시는 길. ${CLINIC.address}. ${CLINIC.subway}. 전화 ${CLINIC.phone}.`,
+    title: '오시는 길 | 약수역 5번 출구 도보 1분 올케어치과',
+    description: `올케어치과 오시는 길. ${CLINIC.address}. ${CLINIC.subway}. 신당동·청구·동대입구 생활권. 주차·야간진료 안내. 전화 ${CLINIC.phone}.`,
     path: '/directions',
-    schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '오시는 길', url: '/directions' }])],
+    keywords: `약수역 치과,약수역 5번 출구 치과,신당동 치과,중구 치과,약수역 치과 위치,약수역 치과 주차,올케어치과 오시는길`,
+    schema: [
+      breadcrumbSchema([{ name: '홈', url: '/' }, { name: '오시는 길', url: '/directions' }]),
+      placeSchema,
+      faqSchema(directionsFaqs),
+      speakableSchema(['.answer-box', 'h1', 'h2']),
+    ],
   }, body)
 }
 
 // ════════════════ 비용 안내 ════════════════
 export function PricingPage() {
+  const pageUrl = `${BASE}/pricing`
+  const priceItems = [
+    ['임플란트', '사용 재료(픽스처·보철)와 골이식 여부에 따라 상이', 'implant'],
+    ['치아교정', '교정 방식(메탈·세라믹·투명)과 난도에 따라 상이', 'ortho'],
+    ['심미보철(올세라믹/지르코니아)', '재료와 부위에 따라 상이', 'esthetic'],
+    ['라미네이트', '범위와 재료에 따라 상이', 'esthetic'],
+    ['치아미백', '방식(전문가/자가)에 따라 상이', 'whitening'],
+    ['틀니(비급여)', '종류와 재료에 따라 상이', 'denture'],
+  ]
+
+  // ── 비급여 진료비 고지 부가티급: OfferCatalog + WebPage (금액 미명시·법규 준수) ──
+  const offerSchema: any = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    name: '비급여 진료비 안내',
+    url: pageUrl,
+    inLanguage: 'ko',
+    description: '약수역 올케어치과 비급여 진료비 안내. 정확한 비용은 정밀 진단 후 상담을 통해 안내합니다.',
+    isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website` },
+    about: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
+    mainEntity: {
+      '@type': 'OfferCatalog',
+      name: '비급여 진료 항목',
+      provider: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
+      itemListElement: priceItems.map(([n, d, slug]) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'MedicalProcedure', name: n, url: `${BASE}/treatments/${slug}` },
+        description: d as string,
+        priceCurrency: 'KRW',
+        priceSpecification: { '@type': 'PriceSpecification', priceCurrency: 'KRW', valueAddedTaxIncluded: true },
+        availability: 'https://schema.org/InStock',
+        areaServed: { '@type': 'City', name: '서울특별시 중구' },
+      })),
+    },
+  }
+
+  const pricingFaqs = [
+    { q: '비급여 진료비는 왜 상담 후 안내되나요?', a: '비급여 진료비는 환자분의 구강 상태, 사용 재료, 치료 범위에 따라 달라지기 때문에, 정밀 진단 후 치료 계획과 함께 정확히 안내해 드립니다.' },
+    { q: '건강보험이 적용되나요?', a: '치료 항목에 따라 건강보험 적용 여부가 다릅니다. 보험 적용 가능 여부와 정확한 진료비는 내원 후 진단을 통해 안내받으실 수 있습니다.' },
+  ]
+
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '비용 안내', url: '/pricing' }],
@@ -207,29 +334,40 @@ export function PricingPage() {
         <p style="font-size:14.5px;color:var(--ink-soft)"><i class="fa-solid fa-circle-info text-mint"></i> 비급여 진료비는 환자분의 구강 상태, 사용 재료, 치료 범위에 따라 달라집니다. 아래는 일반적인 안내이며, 정확한 비용은 정밀 진단 후 상담을 통해 안내해 드립니다.</p>
       </div>
       <div class="reveal" style="background:#fffeee;border-radius:var(--radius);border:1px solid var(--gray-100);overflow:hidden;box-shadow:var(--shadow-sm)">
-        ${raw([
-          ['임플란트', '사용 재료(픽스처·보철)와 골이식 여부에 따라 상이', '상담 시 안내'],
-          ['치아교정', '교정 방식(메탈·세라믹·투명)과 난도에 따라 상이', '상담 시 안내'],
-          ['심미보철(올세라믹/지르코니아)', '재료와 부위에 따라 상이', '상담 시 안내'],
-          ['라미네이트', '범위와 재료에 따라 상이', '상담 시 안내'],
-          ['치아미백', '방식(전문가/자가)에 따라 상이', '상담 시 안내'],
-          ['틀니(비급여)', '종류와 재료에 따라 상이', '상담 시 안내'],
-        ].map(([n, d, p]) => `
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--gray-100);gap:16px">
+        ${raw(priceItems.map(([n, d, slug]) => `
+          <a href="/treatments/${slug}" style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--gray-100);gap:16px;text-decoration:none;color:inherit">
             <div><strong style="font-size:1.05rem">${n}</strong><br><span style="font-size:13px;color:var(--gray-600)">${d}</span></div>
-            <span style="color:var(--brand-accent);font-weight:700;white-space:nowrap">${p}</span>
-          </div>`).join(''))}
+            <span style="color:var(--brand-accent);font-weight:700;white-space:nowrap">상담 시 안내 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></span>
+          </a>`).join(''))}
       </div>
       <p style="font-size:13px;color:var(--gray-400);margin-top:20px">※ 위 내용은 의료법 및 비급여 진료비 고지 규정에 따른 일반 안내입니다. 건강보험 적용 여부, 정확한 진료비는 내원 후 진단을 통해 안내받으실 수 있습니다.</p>
+
+      <!-- 자주 묻는 질문 -->
+      <div class="reveal" style="margin-top:50px">
+        <h2 style="text-align:center;margin-bottom:24px">자주 묻는 질문</h2>
+        <dl class="faq-list">
+          ${raw(pricingFaqs.map(f => `
+            <div class="faq-item">
+              <dt class="answer-box"><i class="fa-solid fa-circle-question text-mint"></i> ${f.q}</dt>
+              <dd>${f.a}</dd>
+            </div>`).join(''))}
+        </dl>
+      </div>
     </div>
   </section>
   ${ctaBand()}
   `
   return Page({
-    title: '비급여 진료비 안내 | 올케어치과',
-    description: '약수역 올케어치과 비급여 진료비 안내. 임플란트, 교정, 심미보철 등 주요 비급여 항목 안내. 정확한 비용은 진단 후 상담을 통해 안내드립니다.',
+    title: '비급여 진료비 안내 | 약수역 올케어치과',
+    description: '약수역 올케어치과 비급여 진료비 안내. 임플란트·교정·심미보철·라미네이트·미백·틀니 등 주요 비급여 항목 안내. 정확한 비용은 진단 후 상담을 통해 안내드립니다.',
     path: '/pricing',
-    schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '비용 안내', url: '/pricing' }])],
+    keywords: `약수역 치과 비용,올케어치과 비급여,임플란트 비용,치아교정 비용,중구 치과 진료비,비급여 진료비 고지`,
+    schema: [
+      breadcrumbSchema([{ name: '홈', url: '/' }, { name: '비용 안내', url: '/pricing' }]),
+      offerSchema,
+      faqSchema(pricingFaqs),
+      speakableSchema(['.answer-box', 'h1', 'h2']),
+    ],
   }, body)
 }
 

@@ -1,4 +1,4 @@
-import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS } from '../data/clinic'
+import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS } from '../data/clinic'
 import encData from '../data/encyclopedia.json'
 
 const BASE = `https://${CLINIC.domain}`
@@ -87,6 +87,11 @@ export function resolveOg(type: string, slug: string): { theme: string; title: s
     const term = TERMS.find(t => t.slug === slug)
     if (!term) return null
     return { theme: 'enc', title: term.term, subtitle: term.en || '치과 백과사전' }
+  }
+  if (type === 'doctor') {
+    const d = DOCTORS.find(x => x.slug === slug)
+    if (!d) return null
+    return { theme: 'default', title: `${d.name} ${d.role}`, subtitle: d.titleLine || '약수역 올케어치과' }
   }
   if (type === 'home') {
     return { theme: 'default', title: '올케어치과', subtitle: '약수역 3인 전문의 협진 치과' }

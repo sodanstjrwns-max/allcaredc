@@ -2,6 +2,7 @@ import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
 import { CLINIC, DOCTORS, getDoctor, treatmentsForDoctor } from '../data/clinic'
+import { speakableSchema } from '../lib/seo-engine'
 
 // ============================================================
 // 의료진 목록 /doctors
@@ -51,15 +52,33 @@ export function DoctorDetail(slug: string) {
   const d = getDoctor(slug)
   if (!d) return null
   const txs = treatmentsForDoctor(slug)
+  const BASE = `https://${CLINIC.domain}`
+  const pageUrl = `${BASE}/doctors/${slug}`
+  const specName: Record<string, string> = {
+    implant: 'OralAndMaxillofacialSurgery', surgery: 'OralAndMaxillofacialSurgery',
+    tmj: 'Dentistry', conservative: 'Dentistry', prosthetics: 'Prosthodontics',
+    gum: 'Periodontics', esthetic: 'Prosthodontics', denture: 'Prosthodontics', ortho: 'Orthodontic',
+  }
 
-  const personSchema = {
+  // ── Physician (부가티급: 의료 전문 타입 + 전문분야·소속·진료 연결) ──
+  const personSchema: any = {
     '@context': 'https://schema.org',
-    '@type': 'Person',
+    '@type': ['Physician', 'Person'],
+    '@id': `${pageUrl}#physician`,
     name: d.name,
-    jobTitle: d.role + ' / ' + d.titleLine,
-    worksFor: { '@type': 'Dentist', name: CLINIC.name },
-    alumniOf: d.education.map(e => ({ '@type': 'EducationalOrganization', name: e })),
+    jobTitle: `${d.role} / ${d.titleLine}`,
     description: d.intro,
+    url: pageUrl,
+    image: `${BASE}/og/doctor/${slug}.svg`,
+    worksFor: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name, url: `${BASE}/` },
+    workLocation: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
+    alumniOf: d.education.map(e => ({ '@type': 'EducationalOrganization', name: e })),
+    medicalSpecialty: [...new Set(d.specialties.map(s => specName[s]).filter(Boolean))],
+    knowsAbout: txs.map(t => t.name),
+    availableService: txs.map(t => ({
+      '@type': 'MedicalProcedure', name: t.name, url: `${BASE}/treatments/${t.slug}`,
+    })),
+    knowsLanguage: 'ko',
   }
 
   const body = html`
@@ -125,13 +144,16 @@ export function DoctorDetail(slug: string) {
   </section>
   ${ctaBand()}
   `
+  const txNames = txs.map(t => t.name).slice(0, 4).join('·')
   return Page({
-    title: `${d.name} ${d.role} | ${d.titleLine} | 올케어치과`,
-    description: `올케어치과 ${d.name} ${d.role}. ${d.titleLine}. ${d.intro.slice(0, 90)}`,
+    title: `${d.name} ${d.role} | ${d.titleLine} | 약수역 올케어치과`,
+    description: `약수역 올케어치과 ${d.name} ${d.role}. ${d.titleLine}.${txNames ? ` ${txNames} 진료.` : ''} ${d.intro.slice(0, 80)}`.slice(0, 158),
     path: `/doctors/${slug}`,
+    keywords: `${d.name},올케어치과 ${d.name},약수역 치과 ${d.role}${txNames ? ',' + txNames.replace(/·/g, ',') : ''}`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }, { name: d.name, url: `/doctors/${slug}` }]),
       personSchema,
+      speakableSchema(['.answer-box', 'h1', 'h2']),
     ],
   }, body)
 }

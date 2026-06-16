@@ -1,8 +1,64 @@
 import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
+import { breadcrumbSchema } from '../components/layout'
 import { CLINIC, TREATMENTS } from '../data/clinic'
+import { speakableSchema } from '../lib/seo-engine'
+
+// 진료시간 → schema.org openingHours 코드 변환
+const DAY_CODE: Record<string, string> = { '월': 'Mo', '화': 'Tu', '수': 'We', '목': 'Th', '금': 'Fr', '토': 'Sa', '일': 'Su' }
 
 export function ReservationPage() {
+  const BASE = `https://${CLINIC.domain}`
+  const pageUrl = `${BASE}/reservation`
+
+  // ── ReservationPage 부가티급: ReserveAction + Dentist + ContactPoint ──
+  const reserveSchema: any = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    name: '예약 문의',
+    description: `약수역 올케어치과 온라인 예약 문의. 원하시는 날짜·시간을 남겨주시면 진료시간에 맞춰 연락드립니다.`,
+    url: pageUrl,
+    inLanguage: 'ko',
+    isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website` },
+    about: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
+    primaryImageOfPage: `${BASE}/og/home/home.svg`,
+    potentialAction: {
+      '@type': 'ReserveAction',
+      name: '예약 문의하기',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: pageUrl,
+        inLanguage: 'ko',
+        actionPlatform: ['http://schema.org/DesktopWebPlatform', 'http://schema.org/MobileWebPlatform'],
+      },
+      result: { '@type': 'Reservation', name: '치과 진료 예약 문의' },
+      provider: {
+        '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name, telephone: CLINIC.phone,
+        url: `${BASE}/`,
+        address: {
+          '@type': 'PostalAddress', streetAddress: CLINIC.address,
+          addressLocality: CLINIC.region.district, addressRegion: CLINIC.region.city, addressCountry: 'KR',
+        },
+      },
+    },
+  }
+
+  const contactSchema: any = {
+    '@context': 'https://schema.org',
+    '@type': 'Dentist',
+    '@id': `${BASE}/#clinic`,
+    name: CLINIC.name,
+    url: `${BASE}/`,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: CLINIC.phone,
+      contactType: 'reservations',
+      areaServed: 'KR',
+      availableLanguage: ['ko'],
+    },
+  }
+
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '예약 문의', url: '/reservation' }],
@@ -66,8 +122,15 @@ export function ReservationPage() {
     </div>
   </section>`
   return Page({
-    title: '예약 문의 | 약수역 올케어치과',
-    description: '약수역 올케어치과 온라인 예약 문의. 원하시는 날짜·시간을 남겨주시면 진료시간에 맞춰 연락드립니다. 전화 02-2232-2911.',
+    title: '예약 문의 | 약수역 올케어치과 온라인 예약',
+    description: `약수역 올케어치과 온라인 예약 문의. 원하시는 날짜·시간을 남겨주시면 진료시간에 맞춰 연락드립니다. ${CLINIC.subway}. 전화 ${CLINIC.phone}.`,
     path: '/reservation',
+    keywords: `약수역 치과 예약,올케어치과 예약,약수역 치과 야간진료,중구 치과 예약,온라인 예약`,
+    schema: [
+      breadcrumbSchema([{ name: '홈', url: '/' }, { name: '예약 문의', url: '/reservation' }]),
+      reserveSchema,
+      contactSchema,
+      speakableSchema(['h1', '.form-card label', 'h4']),
+    ],
   }, body)
 }
