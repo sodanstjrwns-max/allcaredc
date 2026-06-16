@@ -74,21 +74,71 @@ export function TreatmentDetail(slug: string) {
   if (!t) return null
   const docs = doctorsForTreatment(slug)
   const related = TREATMENTS.filter(x => x.slug !== slug).slice(0, 5)
+  const BASE = `https://${CLINIC.domain}`
+  const pageUrl = `${BASE}/treatments/${slug}`
 
-  const procedureSchema = {
+  // ── MedicalProcedure (부가티급: 시술 분류·신체부위·준비·예후·세부시술 연결) ──
+  const procTypeMap: Record<string, string> = {
+    implant: 'SurgicalProcedure', surgery: 'SurgicalProcedure', gum: 'TherapeuticProcedure',
+    conservative: 'TherapeuticProcedure', sleep: 'TherapeuticProcedure', tmj: 'TherapeuticProcedure',
+  }
+  const procedureSchema: any = {
     '@context': 'https://schema.org',
     '@type': 'MedicalProcedure',
+    '@id': `${pageUrl}#procedure`,
     name: t.name,
+    alternateName: (t.keywords || []).slice(0, 3),
     description: t.intro,
-    howPerformed: (t.steps || []).map(s => s.t).join(' → '),
-    provider: { '@type': 'Dentist', name: CLINIC.name, telephone: CLINIC.phone },
+    url: pageUrl,
+    procedureType: procTypeMap[slug]
+      ? { '@type': 'MedicalProcedureType', name: procTypeMap[slug] }
+      : { '@type': 'MedicalProcedureType', name: 'NoninvasiveProcedure' },
+    howPerformed: (t.steps || []).map(s => `${s.t}: ${s.d}`).join(' / '),
+    // 세부 시술을 MedicalProcedure 하위 항목으로 연결 (지식그래프 강화)
+    potentialAction: (t.subProcedures || []).map(sp => ({
+      '@type': 'MedicalProcedure', name: sp.name, description: sp.desc,
+    })),
+    bodyLocation: '구강·치아·잇몸',
+    preparation: (t.steps && t.steps[0]) ? `${t.steps[0].t} — ${t.steps[0].d}` : '정밀 진단 및 상담',
+    followup: '정기 점검 및 유지관리 (개인별 상태에 따라 안내)',
+    relevantSpecialty: { '@type': 'MedicalSpecialty', name: SPEC_LABEL[slug] || '치과' },
+    provider: {
+      '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name,
+      telephone: CLINIC.phone, url: `${BASE}/`,
+    },
   }
-  const medWebPage = {
+
+  // ── HowTo (구글 리치결과 + AI 단계형 답변): 진료 진행 단계 ──
+  const howToSchema = (t.steps && t.steps.length) ? {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: `${t.name} 진료는 이렇게 진행됩니다`,
+    description: `${CLINIC.name}의 ${t.name} 진료 진행 단계 안내.`,
+    totalTime: undefined,
+    step: t.steps.map((s, i) => ({
+      '@type': 'HowToStep', position: i + 1, name: s.t, text: s.d,
+      url: `${pageUrl}#step-${i + 1}`,
+    })),
+  } : null
+
+  // ── MedicalWebPage (about·mainEntity·관련 링크·신뢰 신호 강화) ──
+  const medWebPage: any = {
     '@context': 'https://schema.org',
     '@type': 'MedicalWebPage',
+    '@id': `${pageUrl}#webpage`,
     name: `${t.name} - ${CLINIC.name}`,
+    url: pageUrl,
+    description: t.short,
+    inLanguage: 'ko',
     lastReviewed: '2026-05-20',
-    reviewedBy: docs.length ? { '@type': 'Person', name: docs[0].name + ' ' + docs[0].role } : undefined,
+    reviewedBy: docs.length
+      ? { '@type': 'Physician', name: docs[0].name, medicalSpecialty: (docs[0] as any).titleLine || docs[0].role }
+      : { '@type': 'Organization', name: CLINIC.name },
+    about: { '@id': `${pageUrl}#procedure` },
+    mainEntity: { '@id': `${pageUrl}#procedure` },
+    isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website`, name: CLINIC.name },
+    significantLink: related.map(r => `${BASE}/treatments/${r.slug}`),
+    audience: { '@type': 'MedicalAudience', name: 'Patient', geographicArea: { '@type': 'AdministrativeArea', name: '서울특별시 중구' } },
   }
 
   const body = html`
@@ -121,7 +171,7 @@ export function TreatmentDetail(slug: string) {
             <h2 class="split-rise">진료는 <em>이렇게</em> 진행됩니다</h2>
             <div class="steps">
               ${raw(t.steps.map((s, i) => `
-                <div class="step">
+                <div class="step" id="step-${i + 1}">
                   <div class="n">${i + 1}</div>
                   <h4>${s.t}</h4>
                   <p>${s.d}</p>
@@ -186,16 +236,20 @@ export function TreatmentDetail(slug: string) {
   `
 
   const docNames = docs.map(d => d.name).join('·')
+  const subNames = (t.subProcedures || []).map(sp => sp.name).slice(0, 4).join('·')
+  const metaDesc = `약수역 5번 출구 1분, 올케어치과 ${t.name}. ${t.short}${docNames ? ` ${docNames} 전문의가 진단부터 진행합니다.` : ''}${subNames ? ` ${subNames} 등 안내.` : ''}`.slice(0, 158)
   return Page({
-    title: `${t.name} | 약수역 ${t.name} - 올케어치과`,
-    description: `약수역 올케어치과 ${t.name}. ${t.short} ${docNames ? docNames + ' 전문의가 진료합니다.' : ''}`.slice(0, 158),
+    title: `${t.name} | 약수역 ${t.name} 치과 - 올케어치과`,
+    description: metaDesc,
     path: `/treatments/${slug}`,
     ogImage: `https://${CLINIC.domain}/og/treatment/${slug}.svg`,
-    keywords: `${t.name},약수역 ${t.name},약수역 치과,올케어치과,${docNames}`,
+    keywords: `${t.name},약수역 ${t.name},약수역 치과,신당동 ${t.name},중구 치과,올케어치과${docNames ? ',' + docNames : ''}${subNames ? ',' + subNames.replace(/·/g, ',') : ''}`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }, { name: t.name, url: `/treatments/${slug}` }]),
-      procedureSchema, medWebPage, faqSchema(t.faqs),
-      speakableSchema(['.answer-box', 'h1', 'h2']),
+      procedureSchema,
+      ...(howToSchema ? [howToSchema] : []),
+      medWebPage, faqSchema(t.faqs),
+      speakableSchema(['.tx-intro-lead', '.answer-box', 'h1', 'h2']),
     ],
   }, body)
 }

@@ -29,8 +29,8 @@ function buildInventory(): Row[] {
   rows.push({ group: '진료', path: '/treatments', schema: ['MedicalWebPage', 'BreadcrumbList'], aeo: [] })
   TREATMENTS.forEach(t => rows.push({
     group: '진료', path: `/treatments/${t.slug}`,
-    schema: ['MedicalProcedure', 'FAQPage', 'BreadcrumbList'],
-    aeo: t.core ? ['FAQ', 'Speakable', 'OG동적'] : ['FAQ'],
+    schema: ['MedicalProcedure', 'HowTo', 'MedicalWebPage', 'FAQPage', 'BreadcrumbList'],
+    aeo: t.core ? ['FAQ', 'HowTo단계', 'Speakable', 'OG동적'] : ['FAQ', 'HowTo단계', 'Speakable'],
     note: t.core ? '핵심' : undefined,
   }))
 
@@ -103,6 +103,8 @@ export function SeoHealthPage() {
     { label: 'canonical + OG + Twitter', ok: true, detail: '전 페이지 자동' },
     { label: '의료광고법 면책 고지', ok: true, detail: '푸터 + 백과 disclaimer' },
     { label: '본문 내부링크 그물', ok: lc.coveragePct >= 80, detail: `${lc.pagesWithInlinks}/${lc.totalNodes} 페이지 연결 (${lc.coveragePct}%)` },
+    { label: 'HowTo 단계형 스키마', ok: true, detail: `진료 ${TREATMENTS.length}종 진행 단계 → 구글·AI 단계 답변` },
+    { label: 'MedicalProcedure 지식그래프', ok: true, detail: '시술분류·신체부위·세부시술·관련진료 연결' },
   ]
   const passed = checks.filter(c => c.ok).length
 
