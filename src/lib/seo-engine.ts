@@ -134,12 +134,33 @@ export type SeoRoute = {
 }
 
 // ── 5. 내부링크 자동 추천 엔진 ──
-// 본문 텍스트에서 진료/용어 키워드를 탐지해 관련 페이지 링크를 제안
+// 본문 텍스트에서 진료/용어 키워드를 탐지해 관련 페이지 링크를 제안.
+// kw = 매칭에 사용할 키워드(별칭 포함), label = 화면에 표시할 정식 명칭.
+// 진료명에 '·'/공백이 섞여 본문에 그대로 안 나오는 경우를 위해 분해한 별칭을 추가한다.
 const LINK_DICT: { kw: string; url: string; label: string }[] = (() => {
   const dict: { kw: string; url: string; label: string }[] = []
-  TREATMENTS.forEach(t => dict.push({ kw: t.name, url: `/treatments/${t.slug}`, label: t.name }))
-  TERMS.filter(t => t.content).forEach(t => dict.push({ kw: t.term, url: `/encyclopedia/${t.slug}`, label: t.term }))
-  // 긴 키워드 우선 매칭
+  const seenKw = new Set<string>()
+  const add = (kw: string, url: string, label: string) => {
+    kw = (kw || '').trim()
+    if (kw.length < 2) return
+    const key = kw + '→' + url
+    if (seenKw.has(key)) return
+    seenKw.add(key)
+    dict.push({ kw, url, label })
+  }
+  TREATMENTS.forEach(t => {
+    const url = `/treatments/${t.slug}`
+    add(t.name, url, t.name)
+    // '구강외과·사랑니' → '구강외과', '사랑니' / '충치·신경치료' → '충치', '신경치료' 같은 부분명도 매칭
+    t.name.split(/[·・/]/).forEach(part => add(part.trim(), url, t.name))
+  })
+  TERMS.filter(t => t.content).forEach(t => {
+    const url = `/encyclopedia/${t.slug}`
+    add(t.term, url, t.term)
+    // 용어명에 공백/가운뎃점이 있으면 핵심 명사 부분도 별칭으로 (단, 너무 짧은 건 제외)
+    t.term.split(/[·・/\s]/).forEach(part => { if (part.trim().length >= 3) add(part.trim(), url, t.term) })
+  })
+  // 긴 키워드 우선 매칭 (부분 매칭으로 인한 오링크 방지)
   return dict.sort((a, b) => b.kw.length - a.kw.length)
 })()
 
@@ -217,7 +238,9 @@ export type LinkCoverage = {
   pagesAnalyzed: number     // 본문을 분석한 페이지 수
   pagesWithOutlinks: number // 1개 이상 아웃링크가 생기는 페이지 수
   pagesWithInlinks: number  // 1회 이상 다른 페이지에서 링크받는(인링크) 노드 수
-  totalLinks: number        // 생성되는 내부링크 총 개수
+  totalLinks: number        // 생성되는 내부링크 총 개수 (본문 + 사이드바)
+  bodyLinks: number         // 본문 자동 인라인 링크 수
+  sidebarLinks: number      // 사이드바 카테고리 관련어 링크 수
   coveragePct: number       // 링크 그물에 연결된 페이지 비율(%)
   isolatedPages: { url: string; label: string }[] // 인링크가 0인 고립 노드
 }
@@ -243,8 +266,9 @@ export function linkCoverage(): LinkCoverage {
 
   const inlinkTargets = new Set<string>()
   let pagesWithOutlinks = 0
-  let totalLinks = 0
+  let bodyLinks = 0
 
+  // ① 본문 자동 인라인 링크 (autoLinkBody 와 동일한 키워드 매칭)
   for (const doc of docs) {
     const outs = new Set<string>()
     for (const d of LINK_DICT) {
@@ -256,13 +280,31 @@ export function linkCoverage(): LinkCoverage {
       }
     }
     if (outs.size > 0) pagesWithOutlinks++
-    totalLinks += outs.size
+    bodyLinks += outs.size
   }
 
-  // 고립 노드: 어떤 페이지에서도 링크받지 못한 노드
-  const allNodeUrls = LINK_DICT.map(d => d.url)
+  // ② 사이드바 "관련 용어" 링크 (encyclopedia 상세: 같은 진료 카테고리끼리 상호 연결)
+  //    같은 treatment 카테고리에 본인 외 다른 글이 1개라도 있으면 그 글의 사이드바에서 인링크를 받는다.
+  let sidebarLinks = 0
+  const contentTerms = TERMS.filter(t => t.content)
+  const catCount: Record<string, number> = {}
+  contentTerms.forEach(t => { catCount[t.treatment] = (catCount[t.treatment] || 0) + 1 })
+  contentTerms.forEach(t => {
+    const url = `/encyclopedia/${t.slug}`
+    if ((catCount[t.treatment] || 0) >= 2) {
+      inlinkTargets.add(url)            // 같은 카테고리 다른 글의 사이드바에서 링크받음
+      sidebarLinks += Math.min(catCount[t.treatment] - 1, 6)  // 사이드바 최대 6개
+    }
+    // 해당 카테고리의 대표 진료 페이지도 사이드바 상단에서 연결됨
+    const tx = TREATMENTS.find(x => x.slug === t.treatment)
+    if (tx) inlinkTargets.add(`/treatments/${tx.slug}`)
+  })
+
+  // 고립 노드: 본문·사이드바 어디서도 링크받지 못한 노드 (url 기준 중복 제거)
+  const seenIso = new Set<string>()
   const isolatedPages = LINK_DICT
     .filter(d => !inlinkTargets.has(d.url))
+    .filter(d => { if (seenIso.has(d.url)) return false; seenIso.add(d.url); return true })
     .map(d => ({ url: d.url, label: d.label }))
 
   const pagesWithInlinks = inlinkTargets.size
@@ -273,7 +315,9 @@ export function linkCoverage(): LinkCoverage {
     pagesAnalyzed: docs.length,
     pagesWithOutlinks,
     pagesWithInlinks,
-    totalLinks,
+    totalLinks: bodyLinks + sidebarLinks,
+    bodyLinks,
+    sidebarLinks,
     coveragePct,
     isolatedPages,
   }
