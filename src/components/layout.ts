@@ -1,22 +1,30 @@
 import { html, raw } from 'hono/html'
-import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, TREATMENTS } from '../data/clinic'
+import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, TREATMENTS, DOCTORS } from '../data/clinic'
 
 // ============================================================
 // JSON-LD 스키마 빌더 (§G-2)
 // ============================================================
 export function organizationSchema() {
+  const BASE = `https://${CLINIC.domain}`
   return {
     '@context': 'https://schema.org',
     '@type': ['Dentist', 'LocalBusiness', 'MedicalBusiness'],
-    '@id': `https://${CLINIC.domain}/#clinic`,
+    '@id': `${BASE}/#clinic`,
     name: CLINIC.name,
     alternateName: CLINIC.nameEn,
-    url: `https://${CLINIC.domain}/`,
+    url: `${BASE}/`,
     telephone: CLINIC.phone,
     email: CLINIC.email,
-    image: `https://${CLINIC.domain}/static/img/og.jpg`,
-    logo: `https://${CLINIC.domain}/static/img/logo-horizontal.svg`,
+    image: [`${BASE}/static/img/og.jpg`, `${BASE}/og/home/main.svg`],
+    logo: `${BASE}/static/img/logo-horizontal.svg`,
+    description: '약수역 5번 출구 1분, 구강악안면외과·보철과·통합치의학과 3인 전문의가 진단부터 회복까지 책임지는 동네 치과. 고난도 임플란트·수면치료(의식하진정법)·치아교정·심미보철·잇몸·사랑니·턱관절 진료.',
+    slogan: CLINIC.tagline,
     priceRange: '₩₩',
+    currenciesAccepted: 'KRW',
+    paymentAccepted: '현금, 카드, 계좌이체',
+    availableLanguage: ['ko'],
+    publicAccess: true,
+    foundingDate: '2023-07',
     address: {
       '@type': 'PostalAddress',
       streetAddress: '동호로 171 더그레이스빌딩 4층',
@@ -26,13 +34,38 @@ export function organizationSchema() {
       addressCountry: 'KR',
     },
     geo: { '@type': 'GeoCoordinates', latitude: CLINIC.geo.lat, longitude: CLINIC.geo.lng },
+    hasMap: `https://map.naver.com/p/search/${encodeURIComponent(CLINIC.name + ' ' + CLINIC.address)}`,
+    // 지역 타겟팅 (로컬 검색 강화) — 약수역 생활권
+    areaServed: [
+      { '@type': 'City', name: '서울특별시 중구' },
+      { '@type': 'Place', name: '약수역' },
+      { '@type': 'Place', name: '신당동' },
+      { '@type': 'Place', name: '동대문구 신당' },
+      { '@type': 'Place', name: '성동구 금호동' },
+      { '@type': 'Place', name: '용산구 한남동' },
+    ],
+    // 대중교통 접근성 (로컬 SEO)
+    publicTransportClosestTo: { '@type': 'TrainStation', name: '약수역 (3·6호선)', description: CLINIC.subway },
     openingHoursSpecification: [
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Thursday'], opens: '09:30', closes: '20:30' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Thursday'], opens: '09:30', closes: '20:30', description: '야간진료' },
       { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Wednesday', 'Friday'], opens: '09:30', closes: '18:30' },
       { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Saturday'], opens: '09:30', closes: '14:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday'], opens: '09:30', closes: '14:00', description: '격주 진료 — 내원 전 확인 권장' },
     ],
     medicalSpecialty: ['Dentistry', 'OralAndMaxillofacialSurgery', 'Orthodontic', 'Prosthodontics'],
-    availableService: TREATMENTS.map(t => ({ '@type': 'MedicalProcedure', name: t.name })),
+    availableService: TREATMENTS.map(t => ({
+      '@type': 'MedicalProcedure',
+      name: t.name,
+      url: `${BASE}/treatments/${t.slug}`,
+    })),
+    // 진료 의료진 (E-E-A-T 신뢰 신호)
+    employee: (DOCTORS || []).map(d => ({
+      '@type': 'Physician',
+      name: d.name,
+      medicalSpecialty: d.titleLine || d.role,
+    })),
+    knowsAbout: ['임플란트', '치아교정', '심미보철', '충치치료', '신경치료', '잇몸치료', '사랑니발치', '턱관절치료', '수면치료'],
+    sameAs: [CLINIC.sns.instagram, CLINIC.sns.blog, CLINIC.sns.youtube].filter(Boolean),
   }
 }
 

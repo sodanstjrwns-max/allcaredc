@@ -206,4 +206,77 @@ function findOutsideAnchor(haystack: string, kw: string): number {
   }
 }
 
+// ── 5c. 내부링크 커버리지 분석 (대시보드용) ──
+// 사이트의 모든 콘텐츠 페이지(진료+백과 상세)를 노드로 보고,
+// 각 페이지 본문에서 다른 페이지로 나가는 자동 내부링크가 몇 개 생성되는지 계산해
+// "링크 그물(link web)"에 들어온 페이지 비율을 산출한다.
+export type LinkCoverage = {
+  totalNodes: number       // 링크 사전(LINK_DICT)에 등록된 전체 노드 수
+  treatmentNodes: number   // 진료 노드 수
+  termNodes: number        // 백과 노드 수
+  pagesAnalyzed: number     // 본문을 분석한 페이지 수
+  pagesWithOutlinks: number // 1개 이상 아웃링크가 생기는 페이지 수
+  pagesWithInlinks: number  // 1회 이상 다른 페이지에서 링크받는(인링크) 노드 수
+  totalLinks: number        // 생성되는 내부링크 총 개수
+  coveragePct: number       // 링크 그물에 연결된 페이지 비율(%)
+  isolatedPages: { url: string; label: string }[] // 인링크가 0인 고립 노드
+}
+
+export function linkCoverage(): LinkCoverage {
+  // 노드(=링크 대상 페이지) 목록
+  const treatmentNodes = TREATMENTS.length
+  const termNodes = TERMS.filter(t => t.content).length
+  const totalNodes = treatmentNodes + termNodes
+
+  // 분석 대상 페이지: 본문 텍스트를 가진 진료 + 백과 상세
+  type Doc = { url: string; label: string; text: string }
+  const docs: Doc[] = []
+  TREATMENTS.forEach(t => {
+    const text = [t.intro || '', ...(t.sections || []).map(s => `${s.h} ${s.p}`)].join(' ')
+    docs.push({ url: `/treatments/${t.slug}`, label: t.name, text })
+  })
+  TERMS.filter(t => t.content).forEach(t => {
+    const c = t.content as any
+    const text = [c?.intro || '', ...((c?.sections || []).map((s: any) => `${s.h} ${s.p}`))].join(' ')
+    docs.push({ url: `/encyclopedia/${t.slug}`, label: t.term, text })
+  })
+
+  const inlinkTargets = new Set<string>()
+  let pagesWithOutlinks = 0
+  let totalLinks = 0
+
+  for (const doc of docs) {
+    const outs = new Set<string>()
+    for (const d of LINK_DICT) {
+      if (d.url === doc.url) continue
+      if (outs.has(d.url)) continue
+      if (doc.text.includes(d.kw)) {
+        outs.add(d.url)
+        inlinkTargets.add(d.url)  // 이 노드는 어딘가로부터 인링크를 받음
+      }
+    }
+    if (outs.size > 0) pagesWithOutlinks++
+    totalLinks += outs.size
+  }
+
+  // 고립 노드: 어떤 페이지에서도 링크받지 못한 노드
+  const allNodeUrls = LINK_DICT.map(d => d.url)
+  const isolatedPages = LINK_DICT
+    .filter(d => !inlinkTargets.has(d.url))
+    .map(d => ({ url: d.url, label: d.label }))
+
+  const pagesWithInlinks = inlinkTargets.size
+  const coveragePct = totalNodes ? Math.round((pagesWithInlinks / totalNodes) * 100) : 0
+
+  return {
+    totalNodes, treatmentNodes, termNodes,
+    pagesAnalyzed: docs.length,
+    pagesWithOutlinks,
+    pagesWithInlinks,
+    totalLinks,
+    coveragePct,
+    isolatedPages,
+  }
+}
+
 export { BASE, TERMS }

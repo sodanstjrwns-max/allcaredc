@@ -1,7 +1,7 @@
 import { html, raw } from 'hono/html'
 import { Page } from '../components/page'
 import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS } from '../data/clinic'
-import { BASE, TERMS } from '../lib/seo-engine'
+import { BASE, TERMS, linkCoverage } from '../lib/seo-engine'
 
 // ════════════════════════════════════════════════════════════
 // SEO/AEO 슈퍼머신 — 자가진단 대시보드 (/seo-health)
@@ -87,6 +87,7 @@ function countUrls(): { total: number; breakdown: { label: string; n: number }[]
 export function SeoHealthPage() {
   const rows = buildInventory()
   const { total, breakdown } = countUrls()
+  const lc = linkCoverage()
 
   // 점검 지표
   const schemaCount = new Set(rows.flatMap(r => r.schema)).size
@@ -101,6 +102,7 @@ export function SeoHealthPage() {
     { label: 'AI 지식베이스', ok: true, detail: 'llms-full.txt + ai.txt' },
     { label: 'canonical + OG + Twitter', ok: true, detail: '전 페이지 자동' },
     { label: '의료광고법 면책 고지', ok: true, detail: '푸터 + 백과 disclaimer' },
+    { label: '본문 내부링크 그물', ok: lc.coveragePct >= 80, detail: `${lc.pagesWithInlinks}/${lc.totalNodes} 페이지 연결 (${lc.coveragePct}%)` },
   ]
   const passed = checks.filter(c => c.ok).length
 
@@ -124,6 +126,35 @@ export function SeoHealthPage() {
         <div class="seo-stat"><span class="num">${total.toLocaleString()}</span><span class="lbl">색인 대상 URL</span></div>
         <div class="seo-stat"><span class="num">${schemaCount}</span><span class="lbl">스키마 타입</span></div>
         <div class="seo-stat"><span class="num">${aeoFiles.length}</span><span class="lbl">AI/봇 기계가독 파일</span></div>
+        <div class="seo-stat"><span class="num">${lc.coveragePct}%</span><span class="lbl">내부링크 커버리지</span></div>
+      </div>
+
+      <!-- 내부링크 커버리지 -->
+      <h2 style="font-size:24px;margin:0 0 6px"><i class="fa-solid fa-diagram-project" style="color:#7fb3a8;margin-right:8px"></i>내부링크 그물 커버리지</h2>
+      <p style="color:var(--gray-600,#666);margin:0 0 20px;font-size:14px">진료·백과 본문에서 다른 페이지로 자동 연결되는 내부링크(autoLinkBody) 분석. 링크 그물에 연결될수록 검색엔진·AI가 페이지 간 의미 관계를 더 잘 이해합니다.</p>
+      <div style="border:1px solid #e6e2d6;border-radius:16px;background:#fffdf8;padding:24px;margin-bottom:48px">
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px">
+          <div style="flex:0 0 auto;width:104px;height:104px;border-radius:50%;background:conic-gradient(#7fb3a8 ${lc.coveragePct * 3.6}deg,#eee 0);display:flex;align-items:center;justify-content:center">
+            <div style="width:78px;height:78px;border-radius:50%;background:#fffdf8;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <span style="font-size:24px;font-weight:800;font-family:'Nanum Myeongjo',serif;color:#122036">${lc.coveragePct}%</span>
+              <span style="font-size:10px;color:#999">연결됨</span>
+            </div>
+          </div>
+          <div style="flex:1;min-width:240px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px">
+            <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.pagesWithInlinks}<span style="font-size:14px;color:#aaa">/${lc.totalNodes}</span></div><div style="font-size:12.5px;color:#888">링크 그물에 들어온 페이지</div></div>
+            <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.totalLinks.toLocaleString()}</div><div style="font-size:12.5px;color:#888">생성되는 내부링크 총수</div></div>
+            <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.pagesWithOutlinks}<span style="font-size:14px;color:#aaa">/${lc.pagesAnalyzed}</span></div><div style="font-size:12.5px;color:#888">아웃링크 보유 페이지</div></div>
+            <div><div style="font-size:26px;font-weight:800;color:#122036">${lc.treatmentNodes}+${lc.termNodes}</div><div style="font-size:12.5px;color:#888">진료+백과 노드</div></div>
+          </div>
+        </div>
+        <div style="height:10px;background:#eee;border-radius:5px;overflow:hidden;margin-bottom:8px">
+          <div style="height:100%;width:${lc.coveragePct}%;background:linear-gradient(90deg,#7fb3a8,#5a9488)"></div>
+        </div>
+        ${lc.isolatedPages.length
+          ? raw(`<details style="margin-top:14px"><summary style="cursor:pointer;font-size:13.5px;color:#c0392b"><i class="fa-solid fa-link-slash" style="margin-right:6px"></i>아직 어떤 본문에서도 링크받지 못한 고립 페이지 ${lc.isolatedPages.length}개 보기</summary>
+            <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">${lc.isolatedPages.map(p => `<a href="${p.url}" target="_blank" style="padding:3px 10px;border:1px solid #f0d9d4;border-radius:8px;font-size:12px;color:#a04a3a;text-decoration:none;background:#fdf3f1">${p.label}</a>`).join('')}</div></details>`)
+          : raw(`<p style="margin-top:12px;font-size:13.5px;color:#2e9e6b"><i class="fa-solid fa-circle-check" style="margin-right:6px"></i>모든 진료·백과 페이지가 내부링크 그물에 연결되어 있습니다.</p>`)
+        }
       </div>
 
       <!-- 체크리스트 -->
