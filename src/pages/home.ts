@@ -249,6 +249,40 @@ export function HomePage() {
           <span class="zm-label"><span class="zm-t">Inside ALLCARE</span></span>
         </div>
       </div>
+
+      <!-- 원내 디지털 기공실 — '상주 기공사' 주장을 실제 장비로 증명 (§L: 자료1.docx 원내 기공실 강점) -->
+      <div class="lab-gallery reveal" style="margin-top:90px">
+        <div style="text-align:center;margin-bottom:38px">
+          <span class="sec-label" style="justify-content:center"><span class="num">03-2</span> In-House Digital Lab</span>
+          <h2 style="font-size:clamp(1.8rem,3.4vw,2.7rem);margin:18px 0 14px">원내 디지털 기공실</h2>
+          <p style="max-width:620px;margin:0 auto;color:var(--ink-soft,#5a6b78);line-height:1.75">
+            보철물을 외부에 맡기지 않습니다. 상주 기공사가 CAD 설계부터 밀링·소성·3D 프린팅까지
+            원내에서 직접 제작해, 환자의 입에 맞을 때까지 빠르게 다듬습니다.
+          </p>
+        </div>
+        <div class="lab-grid">
+          <figure class="lab-cell lab-cell--wide">
+            <img src="/static/img/lab-cad.webp" alt="원내 기공실 CAD 보철 설계 모니터 — 3Shape 디지털 디자인" loading="lazy">
+            <figcaption>CAD 보철 설계 — 디지털 디자인</figcaption>
+          </figure>
+          <figure class="lab-cell">
+            <img src="/static/img/lab-mill.webp" alt="원내 기공실 지르코니아 밀링 머신" loading="lazy">
+            <figcaption>지르코니아 밀링</figcaption>
+          </figure>
+          <figure class="lab-cell">
+            <img src="/static/img/lab-furnace.webp" alt="원내 기공실 포세린 소성 가마" loading="lazy">
+            <figcaption>포세린 소성 가마</figcaption>
+          </figure>
+          <figure class="lab-cell">
+            <img src="/static/img/lab-printer.webp" alt="원내 기공실 치과용 3D 프린터" loading="lazy">
+            <figcaption>3D 프린팅</figcaption>
+          </figure>
+          <figure class="lab-cell">
+            <img src="/static/img/lab-scan.webp" alt="원내 기공실 디지털 스캐너" loading="lazy">
+            <figcaption>디지털 스캔</figcaption>
+          </figure>
+        </div>
+      </div>
     </div>
   </section>
 
