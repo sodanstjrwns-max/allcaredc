@@ -29,7 +29,7 @@ export async function sitemap(env: Bindings): Promise<string> {
   // 진료
   TREATMENTS.forEach(t => urls.push({ loc: `/treatments/${t.slug}`, pri: t.core ? '0.9' : '0.6', freq: 'monthly' }))
   // 의료진
-  ;['kwon-minsu', 'doctor-integrated', 'doctor-prostho'].forEach(s => urls.push({ loc: `/doctors/${s}`, pri: '0.7', freq: 'monthly' }))
+  ;['kwon-minsu', 'kwon-jongjin', 'bae-suhyeon'].forEach(s => urls.push({ loc: `/doctors/${s}`, pri: '0.7', freq: 'monthly' }))
   // 지역 SEO (지역 × 핵심진료)
   SEO_AREAS.forEach(a => CORE_TREATMENTS.forEach(t => urls.push({ loc: `/area/${a.slug}-${t.slug}`, pri: '0.6', freq: 'monthly' })))
   // 용어 백과 상세

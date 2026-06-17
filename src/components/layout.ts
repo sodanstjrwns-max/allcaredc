@@ -65,7 +65,7 @@ export function organizationSchema() {
       medicalSpecialty: d.titleLine || d.role,
     })),
     knowsAbout: ['임플란트', '치아교정', '심미보철', '충치치료', '신경치료', '잇몸치료', '사랑니발치', '턱관절치료', '수면치료'],
-    sameAs: [CLINIC.sns.instagram, CLINIC.sns.blog, CLINIC.sns.youtube].filter(Boolean),
+    sameAs: [CLINIC.sns.instagram, CLINIC.sns.blog, CLINIC.sns.kakao, CLINIC.sns.youtube].filter(Boolean),
   }
 }
 
@@ -200,8 +200,9 @@ export function Footer() {
           <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="" width="30" height="30" style="display:block"/></span> 올케어치과</div>
           <p style="line-height:1.7">${CLINIC.philosophy}<br>약수동에서 오래도록 곁을 지키는 치과를 만듭니다.</p>
           <div class="footer-sns">
-            ${CLINIC.sns.instagram ? raw(`<a href="${CLINIC.sns.instagram}" aria-label="인스타그램" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>`) : raw('<a href="#" aria-label="인스타그램"><i class="fa-brands fa-instagram"></i></a>')}
-            ${CLINIC.sns.blog ? raw(`<a href="${CLINIC.sns.blog}" aria-label="블로그" target="_blank" rel="noopener"><i class="fa-solid fa-blog"></i></a>`) : ''}
+            ${CLINIC.sns.instagram ? raw(`<a href="${CLINIC.sns.instagram}" aria-label="인스타그램" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>`) : ''}
+            ${CLINIC.sns.blog ? raw(`<a href="${CLINIC.sns.blog}" aria-label="네이버 블로그" target="_blank" rel="noopener"><i class="fa-solid fa-blog"></i></a>`) : ''}
+            ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" aria-label="카카오톡 상담" target="_blank" rel="noopener"><i class="fa-solid fa-comment"></i></a>`) : ''}
             ${CLINIC.sns.youtube ? raw(`<a href="${CLINIC.sns.youtube}" aria-label="유튜브" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i></a>`) : ''}
           </div>
         </div>

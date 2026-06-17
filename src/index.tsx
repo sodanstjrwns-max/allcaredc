@@ -73,9 +73,16 @@ app.get('/treatments/:slug', (c) => {
 })
 
 // 의료진
+const DOCTOR_SLUG_REDIRECTS: Record<string, string> = {
+  'doctor-integrated': 'kwon-jongjin', // 통합치의학과 placeholder → 권종진 명예원장
+  'doctor-prostho': 'bae-suhyeon',     // 보철과 placeholder → 배수현 보철과 원장
+}
 app.get('/doctors', (c) => c.html(DoctorsIndex().toString()))
 app.get('/doctors/:slug', (c) => {
-  const page = DoctorDetail(c.req.param('slug'))
+  const slug = c.req.param('slug')
+  const moved = DOCTOR_SLUG_REDIRECTS[slug]
+  if (moved) return c.redirect(`/doctors/${moved}`, 301)
+  const page = DoctorDetail(slug)
   return page ? c.html(page.toString()) : c.notFound()
 })
 
