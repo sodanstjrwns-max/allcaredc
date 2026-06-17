@@ -217,9 +217,7 @@ export function HomePage() {
       <div class="doc-grid">
         ${raw(DOCTORS.map((d, i) => `
           <a href="/doctors/${d.slug}" class="doc-card reveal reveal-d${i + 1}">
-            <div class="doc-photo">
-              <div class="ph"><i class="fa-solid fa-user-doctor"></i></div>
-            </div>
+            <div class="doc-photo"><img src="${d.photo}" alt="${d.name} ${d.role}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center"></div>
             <div class="doc-body">
               <span class="role">${d.role}</span>
               <h3>${d.name}</h3>
