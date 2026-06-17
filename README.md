@@ -90,7 +90,7 @@
 - **배포**: `npm run build && npx wrangler pages deploy dist --project-name allcare-dental`
 - **운영 시크릿(미설정, 추후 주입 예정)**: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL` → `wrangler pages secret put <KEY> --project-name allcare-dental`
 - **남은 작업**: 운영 시크릿 주입(ADMIN_PASSWORD 등), GA4/서치콘솔/네이버 등록
-- **최종 업데이트**: 2026-06-16 (백과사전 203개 상세페이지 완성 + 실도메인 allcaredc.kr 라이브)
+- **최종 업데이트**: 2026-06-17 (의료진 검증가능 자격 보강 + 원내 디지털 기공실 갤러리 5컷 추가 / 브랜드 BI 색상 일치 검증 완료)
 
 ## 스크립트
 ```bash
