@@ -254,6 +254,7 @@ export function Footer() {
 
   <!-- floating CTA -->
   <div class="float-cta">
+    ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" class="kakao" target="_blank" rel="noopener" aria-label="카카오톡 상담"><i class="fa-solid fa-comment"></i><span class="tip">카카오톡 상담</span></a>`) : ''}
     <a href="tel:${CLINIC.phoneRaw}" class="tel" aria-label="전화 상담"><i class="fa-solid fa-phone"></i><span class="tip">전화 상담</span></a>
     <a href="/reservation" class="book" aria-label="예약 문의"><i class="fa-solid fa-calendar-check"></i><span class="tip">예약 문의</span></a>
   </div>

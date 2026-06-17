@@ -770,6 +770,7 @@ em, .italic { font-style: normal; color: var(--mint); }
 .float-cta { position: fixed; right: 22px; bottom: 22px; z-index: 800; display: flex; flex-direction: column; gap: 12px; }
 .float-cta a { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; color: var(--ivory); font-size: 20px; box-shadow: var(--shadow); position: relative; transition: transform .3s; }
 .float-cta a:hover { transform: scale(1.08); }
+.float-cta .kakao { background: #FEE500; color: #1A1A1A; }
 .float-cta .tel { background: var(--gold); color: var(--navy-900); }
 .float-cta .book { background: var(--mint); }
 .float-cta .tip { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); background: var(--navy-900); color: var(--ivory); font-size: 12px; padding: 6px 12px; border-radius: var(--radius); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .25s; }
