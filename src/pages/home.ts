@@ -246,8 +246,8 @@ export function HomePage() {
           <a href="/mission" class="btn btn-outline" style="margin-top:30px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
         </div>
         <div class="media-mask zoom-media reveal reveal-d2" data-drift="34" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)">
-          <img src="/static/img/interior.webp" alt="올케어치과 진료 공간" style="aspect-ratio:4/5;object-fit:cover;width:100%" loading="lazy">
-          <span class="zm-label"><span class="zm-t">Inside ALLCARE</span></span>
+          <img src="/static/img/interior.webp" alt="올케어치과 통합진료센터 진료실 — OSSTEM 진료 유닛체어" style="aspect-ratio:4/5;object-fit:cover;width:100%" loading="lazy">
+          <span class="zm-label"><span class="zm-t">통합진료센터 진료실</span></span>
         </div>
       </div>
 
