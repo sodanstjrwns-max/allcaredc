@@ -73,19 +73,13 @@ export function HomePage() {
         </div>
       </div>
       <figure class="hh-figure reveal reveal-d2">
-        <div class="hh-frame hh-frame--video">
+        <div class="hh-frame">
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <video class="hh-video" autoplay muted loop playsinline preload="metadata"
-                 poster="/static/img/hero-video-poster.webp"
-                 aria-label="올케어치과 원내 디지털 기공실 — 5축 밀링머신 작동 영상">
-            <source src="/static/video/hero.webm" type="video/webm" />
-            <source src="/static/video/hero.mp4" type="video/mp4" />
-          </video>
-          <span class="hh-video-badge"><i class="fa-solid fa-circle-play" aria-hidden="true"></i> 원내 디지털 기공실</span>
+          <img src="/static/img/hero.webp" alt="올케어치과 진료 공간 — 약수역 임플란트·교정·심미보철 전문의 치과" width="1200" height="1500" fetchpriority="high" />
         </div>
-        <figcaption class="hh-caption"><span class="hh-cap-eng disp">Inside ALLCARE</span> 실제 원내 기공실 — 보철물을 당일 제작합니다</figcaption>
+        <figcaption class="hh-caption"><span class="hh-cap-eng disp">Inside ALLCARE</span> 약수역 5번 출구, 더그레이스빌딩 4층</figcaption>
       </figure>
     </div>
     <div class="hero-foot hh-foot">

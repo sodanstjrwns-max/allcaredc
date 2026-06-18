@@ -1814,23 +1814,6 @@ body::after {
   width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;
   filter: saturate(.96) contrast(1.02);
 }
-/* 히어로 — 실제 원내 기공실 영상 */
-.hh-frame--video { overflow: hidden; }
-.hh-video {
-  width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;
-  filter: saturate(.98) contrast(1.03); background: var(--navy-800);
-}
-.hh-video-badge {
-  position: absolute; left: clamp(16px, 2vw, 22px); bottom: clamp(16px, 2vw, 22px);
-  z-index: 3; display: inline-flex; align-items: center; gap: 7px;
-  padding: 7px 13px; background: rgba(6,39,65,.82); color: var(--ivory);
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em;
-  border: 1px solid rgba(176,141,87,.5); backdrop-filter: blur(4px);
-}
-.hh-video-badge i { color: var(--gold); }
-@media (max-width: 768px) {
-  .hh-video { aspect-ratio: 16/11; }
-}
 .hh-caption {
   display: flex; align-items: baseline; gap: 14px; margin-top: 16px;
   font-size: 13px; color: var(--gray-600);
