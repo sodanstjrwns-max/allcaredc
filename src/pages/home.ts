@@ -77,7 +77,7 @@ export function HomePage() {
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img src="/static/img/hero.webp" alt="올케어치과 진료 공간 — 약수역 임플란트·교정·심미보철 전문의 치과" width="1200" height="1500" fetchpriority="high" />
+          <img src="/static/img/hero.webp" alt="올케어치과 인포메이션 데스크 — 약수역 임플란트·교정·심미보철 전문의 치과" width="1600" height="1067" fetchpriority="high" />
         </div>
         <figcaption class="hh-caption"><span class="hh-cap-eng disp">Inside ALLCARE</span> 약수역 5번 출구, 더그레이스빌딩 4층</figcaption>
       </figure>
@@ -246,8 +246,8 @@ export function HomePage() {
           <a href="/mission" class="btn btn-outline" style="margin-top:30px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
         </div>
         <div class="media-mask zoom-media reveal reveal-d2" data-drift="34" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)">
-          <img src="/static/img/interior.webp" alt="올케어치과 통합진료센터 진료실 — OSSTEM 진료 유닛체어" style="aspect-ratio:4/5;object-fit:cover;width:100%" loading="lazy">
-          <span class="zm-label"><span class="zm-t">통합진료센터 진료실</span></span>
+          <img src="/static/img/interior.webp" alt="올케어치과 대기 라운지 — 약수역 더그레이스빌딩 4층" style="aspect-ratio:3/2;object-fit:cover;width:100%" loading="lazy">
+          <span class="zm-label"><span class="zm-t">대기 라운지</span></span>
         </div>
       </div>
 
