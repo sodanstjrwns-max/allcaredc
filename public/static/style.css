@@ -2167,3 +2167,60 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
   .lab-cell--wide { grid-column: span 2; }
   .lab-cell figcaption { font-size: .78rem; padding: 10px 12px 9px; }
 }
+
+/* ============================================================
+   MOBILE 최적화 — 터치 타겟 · 가독성 · 넘침 방지 (통합)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* 이미지 넘침 방지 (mission 등 405px img) */
+  img { max-width: 100%; height: auto; }
+
+  /* 푸터 링크 터치 영역 확대 (44px 목표) */
+  .footer-links li { margin-bottom: 2px; }
+  .footer-links a {
+    display: inline-block;
+    padding: 11px 2px;
+    font-size: 15px;
+    min-height: 44px;
+    line-height: 1.4;
+  }
+  .footer-contact li { padding: 8px 0; align-items: center; }
+
+  /* 푸터 SNS 아이콘 터치 영역 (이미 40px → 44px) */
+  .footer-sns a { width: 44px; height: 44px; }
+
+  /* 헤더 로고 터치 영역 */
+  .footer-logo { font-size: 20px; }
+
+  /* 푸터 하단 legal 링크 터치 영역 (개인정보/이용약관) */
+  .footer-bottom .legal { gap: 8px; flex-wrap: wrap; }
+  .footer-bottom .legal a { display: inline-block; padding: 10px 4px; min-height: 40px; line-height: 1.4; }
+  /* 푸터 연락처 전화/이메일 링크 터치 영역 (li가 flex이므로 li에 높이) */
+  .footer-contact a { display: inline-flex; align-items: center; min-height: 40px; }
+}
+
+@media (max-width: 560px) {
+  /* 본문 폰트 가독성 — 너무 크지 않게 */
+  body { font-size: 16px; }
+
+  /* 섹션 좌우 여백 일관 */
+  .container, .wrap, main > section { padding-left: 20px; padding-right: 20px; }
+
+  /* 푸터 그리드 1열 정렬 + 충분한 간격 */
+  .footer-grid { gap: 32px; }
+
+  /* 마퀴 폰트 축소 (모바일에서 너무 빠르게 안 보이게) */
+  .marquee-track span { font-size: 13px; }
+
+  /* 버튼 풀폭 + 충분한 높이 (모바일 CTA) */
+  .btn { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
+
+  /* 플로팅 CTA 위치 — 하단 안전영역 고려 */
+  .float-cta { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); gap: 10px; }
+  .float-cta a { width: 52px; height: 52px; font-size: 19px; }
+}
+
+/* iOS 입력 줌 방지 — input/select/textarea 16px 이상 */
+@media (max-width: 768px) {
+  input, select, textarea { font-size: 16px; }
+}
