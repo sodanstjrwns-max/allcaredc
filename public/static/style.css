@@ -125,6 +125,8 @@ body {
   /* 한국어 줄바꿈: 어절(띄어쓰기) 단위로 끊고, 긴 영문/URL만 강제 분리해 넘침 방지 */
   word-break: keep-all;
   overflow-wrap: break-word;
+  /* 기울임체 합성 방지 — 브라우저가 가짜 이탤릭을 만들어내지 않도록 */
+  font-synthesis: none;
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
@@ -140,6 +142,10 @@ h1,h2,h3,h4,h5,h6 {
   color: var(--ink);
 }
 em, .italic { font-style: normal; color: var(--mint); }
+
+/* 기울임체(이탤릭) 전체 제거 — 어떤 폰트/태그도 기울지 않도록 강제 정체(upright) */
+em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
+[style*="italic"] { font-style: normal !important; }
 
 /* 영문 디스플레이 유틸 */
 .disp { font-family: var(--font-disp); font-weight: 340; font-style: normal; letter-spacing: -.01em; }
