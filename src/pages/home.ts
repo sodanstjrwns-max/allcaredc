@@ -4,6 +4,7 @@ import { organizationSchema, faqSchema } from '../components/layout'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../data/clinic'
 import { STORY_BRANCHES, HOME_CHAPTERS } from '../data/story'
 import { speakableSchema } from '../lib/seo-engine'
+import { truncate } from '../lib/text'
 
 // 핵심 진료별 영문 캐치프레이즈
 const TX_ENG: Record<string, string> = {
@@ -188,7 +189,7 @@ export function HomePage() {
               <span class="tx-no">Story 0${i + 1}</span>
               <span class="tx-eng disp">${TX_ENG[t.slug] || ''}</span>
               <h3>${t.hero}</h3>
-              <p>${t.intro.slice(0, 130)}…</p>
+              <p>${truncate(t.intro, 130)}</p>
               <a href="/treatments/${t.slug}" class="link-arrow">이 이야기 읽기 <i class="fa-solid fa-arrow-right"></i></a>
             </div>
           </article>`).join(''))}
@@ -234,7 +235,7 @@ export function HomePage() {
       <div class="grid-2" style="margin-top:90px">
         <div class="reveal">
           <span class="sec-label"><span class="num">03-1</span> Why ALLCARE</span>
-          <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 26px">규모와 시설, 그리고<br><em>끝까지 잇는 섬세함</em></h2>
+          <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 26px">규모와 시설, 그리고 <br><em>끝까지 잇는 섬세함</em></h2>
           <dl class="aeo-list">
             ${raw(CLINIC.strengths.map(s => `
               <div class="aeo-item">
@@ -321,7 +322,7 @@ export function HomePage() {
         ${raw(SUB_TREATMENTS.map((t, i) => `
           <a href="/treatments/${t.slug}" class="tx-sub reveal reveal-d${(i % 3) + 1}">
             <span class="ico"><i class="fa-solid fa-${t.icon}"></i></span>
-            <span><strong>${t.name}</strong><br><span>${t.short.slice(0, 26)}…</span></span>
+            <span><strong>${t.name}</strong><br><span>${truncate(t.short, 26)}</span></span>
           </a>`).join(''))}
       </div>
 
@@ -361,7 +362,7 @@ export function HomePage() {
           <circle class="cr-dot" cx="88" cy="14" r="2.2"/>
         </svg>
         <span class="kicker" style="color:var(--gold-300);display:block;margin-bottom:18px">Epilogue — 그리고, 당신의 차례</span>
-        <h2>다음 이야기의 주인공은<br>당신입니다</h2>
+        <h2>다음 이야기의 주인공은 당신입니다</h2>
         <p>작은 불편이 더 큰 이야기가 되기 전에. 첫 페이지를 함께 펼쳐보세요.</p>
         <div class="actions">
           <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 나의 이야기 시작하기</a>

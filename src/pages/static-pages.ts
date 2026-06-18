@@ -128,7 +128,7 @@ export function MissionPage() {
       <div class="grid-2" style="align-items:center">
         <div class="reveal">
           <span class="sec-label"><span class="num">04</span> Our Vision</span>
-          <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 22px">지역 안에서 인정받고<br><em>오래 머무는 치과</em></h2>
+          <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 22px">지역 안에서 인정받고 <br><em>오래 머무는 치과</em></h2>
           <p class="prose" style="font-size:1.05rem">한때의 유행이 아니라, 동네에서 신뢰로 이어지는 치과. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과. 그것이 올케어치과가 그리는 미래입니다.</p>
           <ul class="check prose" style="margin-top:22px">
             <li>친절은 기본, 원칙은 약속입니다.</li>

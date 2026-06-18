@@ -122,6 +122,9 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  /* 한국어 줄바꿈: 어절(띄어쓰기) 단위로 끊고, 긴 영문/URL만 강제 분리해 넘침 방지 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }

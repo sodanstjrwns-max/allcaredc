@@ -6,6 +6,7 @@ import {
   getTreatment, doctorsForTreatment, Treatment,
 } from '../data/clinic'
 import { speakableSchema, autoLinkBody } from '../lib/seo-engine'
+import { truncate } from '../lib/text'
 
 const SPEC_LABEL: Record<string, string> = {
   implant: '임플란트', surgery: '구강외과', tmj: '턱관절', conservative: '보존치료',
@@ -51,7 +52,7 @@ export function TreatmentsIndex() {
         ${raw(SUB_TREATMENTS.map((t, i) => `
           <a href="/treatments/${t.slug}" class="tx-sub reveal reveal-d${(i % 3) + 1}">
             <span class="ico"><i class="fa-solid fa-${t.icon}"></i></span>
-            <span><strong>${t.name}</strong><br><span>${t.short.slice(0, 28)}…</span></span>
+            <span><strong>${t.name}</strong><br><span>${truncate(t.short, 28)}</span></span>
           </a>`).join(''))}
       </div>
     </div>
