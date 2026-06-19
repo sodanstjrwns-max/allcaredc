@@ -174,8 +174,10 @@ export function TreatmentDetail(slug: string) {
               ${raw(t.steps.map((s, i) => `
                 <div class="step" id="step-${i + 1}">
                   <div class="n">${i + 1}</div>
-                  <h4>${s.t}</h4>
-                  <p>${s.d}</p>
+                  <div class="step-body">
+                    <h4>${s.t}</h4>
+                    <p>${s.d}</p>
+                  </div>
                 </div>`).join(''))}
             </div>
           ` : ''}

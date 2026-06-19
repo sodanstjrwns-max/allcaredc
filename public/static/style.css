@@ -1041,13 +1041,14 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 /* steps */
 .steps { display: grid; gap: 2px; margin: 18px 0 36px; border-top: 1px solid var(--line); }
 .step {
-  display: grid; grid-template-columns: 54px 1fr; gap: 18px;
+  display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 18px;
   align-items: start; padding: 22px 4px; border-bottom: 1px solid var(--line);
 }
 .step .n {
   font-family: var(--font-disp); font-style: normal; font-size: 1.9rem;
-  font-weight: 700; color: var(--mint); line-height: 1; padding-top: 2px;
+  font-weight: 700; color: var(--gold); line-height: 1; padding-top: 2px;
 }
+.step .step-body { min-width: 0; }
 .step h4 { font-size: 1.05rem; margin-bottom: 5px; color: var(--navy-800); }
 .step p { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
 
