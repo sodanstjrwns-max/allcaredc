@@ -2224,3 +2224,53 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
 @media (max-width: 768px) {
   input, select, textarea { font-size: 16px; }
 }
+
+/* ============ 비급여 수가표 (Pricing) ============ */
+.price-block { }
+.price-cat {
+  font-family: var(--font-serif, 'Nanum Myeongjo', serif);
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem); color: var(--navy-800);
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: 12px; margin-bottom: 0;
+  border-bottom: 2px solid var(--navy-800);
+}
+.price-cat i { color: var(--gold); font-size: .8em; }
+.price-cat-note {
+  font-size: 13px; color: var(--gray-600); margin: 10px 0 0;
+  letter-spacing: .01em;
+}
+.price-table { margin-top: 6px; }
+.price-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 15px 4px; border-bottom: 1px solid var(--line);
+}
+.price-row:last-child { border-bottom: none; }
+.price-name { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; min-width: 0; }
+.price-item { font-size: 1.02rem; color: var(--navy-800); font-weight: 600; }
+.price-type {
+  font-size: 12.5px; color: var(--gray-600);
+  padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--ivory); white-space: nowrap;
+}
+.price-value {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.12rem; font-weight: 700; color: var(--navy-800);
+  white-space: nowrap; text-align: right; letter-spacing: -.01em;
+}
+.price-value .price-won { font-size: .72em; font-weight: 500; color: var(--gray-600); margin-left: 3px; }
+.price-value.is-text { font-family: inherit; font-size: .96rem; font-weight: 600; color: var(--gold); }
+.price-notes {
+  list-style: none; padding: 22px 24px; margin: 8px 0 0;
+  background: var(--ivory); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.price-notes li {
+  font-size: 13.5px; color: var(--ink-soft, var(--gray-600)); line-height: 1.6;
+  display: flex; gap: 9px; align-items: flex-start;
+}
+.price-notes li + li { margin-top: 9px; }
+.price-notes li i { color: var(--gold); font-size: 9px; margin-top: 6px; flex-shrink: 0; }
+@media (max-width: 560px) {
+  .price-row { padding: 13px 2px; }
+  .price-item { font-size: .96rem; }
+  .price-value { font-size: 1.02rem; }
+}

@@ -1,7 +1,7 @@
 import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema } from '../components/layout'
-import { CLINIC, TREATMENTS } from '../data/clinic'
+import { CLINIC, TREATMENTS, PRICE_TABLE, PRICE_NOTES } from '../data/clinic'
 import { speakableSchema } from '../lib/seo-engine'
 
 const BASE = `https://${CLINIC.domain}`
@@ -280,16 +280,11 @@ export function DirectionsPage() {
 // ════════════════ 비용 안내 ════════════════
 export function PricingPage() {
   const pageUrl = `${BASE}/pricing`
-  const priceItems = [
-    ['임플란트', '사용 재료(픽스처·보철)와 골이식 여부에 따라 상이', 'implant'],
-    ['치아교정', '교정 방식(메탈·세라믹·투명)과 난도에 따라 상이', 'ortho'],
-    ['심미보철(올세라믹/지르코니아)', '재료와 부위에 따라 상이', 'esthetic'],
-    ['라미네이트', '범위와 재료에 따라 상이', 'esthetic'],
-    ['치아미백', '방식(전문가/자가)에 따라 상이', 'whitening'],
-    ['틀니(비급여)', '종류와 재료에 따라 상이', 'denture'],
-  ]
 
-  // ── 비급여 진료비 고지 부가티급: OfferCatalog + WebPage (금액 미명시·법규 준수) ──
+  const isNumeric = (p: string) => /^[0-9,]+$/.test(p.replace(/\s/g, ''))
+  const lowPrice = (p: string) => p.replace(/[^0-9,]/g, '').split('~')[0].replace(/,/g, '')
+
+  // ── 비급여 진료비 고지: OfferCatalog + WebPage (실제 수가 명시 · 비급여 고지 규정 준수) ──
   const offerSchema: any = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -297,53 +292,77 @@ export function PricingPage() {
     name: '비급여 진료비 안내',
     url: pageUrl,
     inLanguage: 'ko',
-    description: '약수역 올케어치과 비급여 진료비 안내. 정확한 비용은 정밀 진단 후 상담을 통해 안내합니다.',
+    description: '약수역 올케어치과 비급여 진료 수가표. 레진·보철·임플란트·교정·턱관절·미백 등 주요 비급여 항목 비용 안내.',
     isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website` },
     about: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
     mainEntity: {
       '@type': 'OfferCatalog',
-      name: '비급여 진료 항목',
+      name: '비급여 진료 수가표',
       provider: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
-      itemListElement: priceItems.map(([n, d, slug]) => ({
-        '@type': 'Offer',
-        itemOffered: { '@type': 'MedicalProcedure', name: n, url: `${BASE}/treatments/${slug}` },
-        description: d as string,
-        priceCurrency: 'KRW',
-        priceSpecification: { '@type': 'PriceSpecification', priceCurrency: 'KRW', valueAddedTaxIncluded: true },
-        availability: 'https://schema.org/InStock',
-        areaServed: { '@type': 'City', name: '서울특별시 중구' },
-      })),
+      itemListElement: PRICE_TABLE.flatMap((g) =>
+        g.rows.map((r) => {
+          const procName = r.type ? `${g.category} · ${r.item} (${r.type})` : `${g.category} · ${r.item}`
+          const offer: any = {
+            '@type': 'Offer',
+            itemOffered: { '@type': 'MedicalProcedure', name: procName },
+            priceCurrency: 'KRW',
+            availability: 'https://schema.org/InStock',
+            areaServed: { '@type': 'City', name: '서울특별시 중구' },
+          }
+          if (isNumeric(r.price)) {
+            offer.price = lowPrice(r.price)
+            offer.priceSpecification = { '@type': 'PriceSpecification', priceCurrency: 'KRW', price: lowPrice(r.price), valueAddedTaxIncluded: true }
+          } else {
+            offer.description = r.price
+          }
+          return offer
+        })
+      ),
     },
   }
 
   const pricingFaqs = [
-    { q: '비급여 진료비는 왜 상담 후 안내되나요?', a: '비급여 진료비는 환자분의 구강 상태, 사용 재료, 치료 범위에 따라 달라지기 때문에, 정밀 진단 후 치료 계획과 함께 정확히 안내해 드립니다.' },
-    { q: '건강보험이 적용되나요?', a: '치료 항목에 따라 건강보험 적용 여부가 다릅니다. 보험 적용 가능 여부와 정확한 진료비는 내원 후 진단을 통해 안내받으실 수 있습니다.' },
+    { q: '표에 나온 금액이 최종 비용인가요?', a: "위 수가표는 표준 기준 금액입니다. 실제 진료비는 환자분의 구강 상태, 사용 재료, 치료 범위에 따라 달라지며, 정밀 진단 후 치료 계획과 함께 정확히 안내해 드립니다. 또한 '본인부담금'으로 표기된 항목은 건강보험 급여가 적용되어 본인부담률에 따라 산정됩니다." },
+    { q: 'VAT(부가가치세)는 포함된 금액인가요?', a: '대부분의 항목은 VAT가 포함된 금액입니다. 다만 라미네이트와 1Day 전문가 미백은 부가세 10%가 별도로 부과됩니다.' },
+    { q: '건강보험이 적용되나요?', a: '치료 항목에 따라 건강보험 적용 여부가 다릅니다. 보험 임플란트·보험 틀니·물리치료 등은 급여 적용 항목으로 본인부담금만 부담하시며, 정확한 적용 여부는 내원 후 진단을 통해 안내받으실 수 있습니다.' },
   ]
 
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '비용 안내', url: '/pricing' }],
     chapter: 'Honest Notes',
-    title: '비급여 진료비 안내',
-    desc: '주요 비급여 항목을 안내해 드립니다. 정확한 비용은 진단 후 치료 계획과 함께 설명드립니다.',
+    title: '비급여 진료 수가표',
+    desc: '주요 비급여 항목의 진료비를 투명하게 안내해 드립니다. 정확한 비용은 정밀 진단 후 치료 계획과 함께 확정됩니다.',
   })}
   <section class="section">
-    <div class="container" style="max-width:820px">
-      <div class="reveal" style="background:var(--beige-soft);border-radius:var(--radius);padding:24px;margin-bottom:30px">
-        <p style="font-size:14.5px;color:var(--ink-soft)"><i class="fa-solid fa-circle-info text-mint"></i> 비급여 진료비는 환자분의 구강 상태, 사용 재료, 치료 범위에 따라 달라집니다. 아래는 일반적인 안내이며, 정확한 비용은 정밀 진단 후 상담을 통해 안내해 드립니다.</p>
+    <div class="container" style="max-width:880px">
+      <div class="reveal" style="background:var(--beige-soft);border-radius:var(--radius);padding:22px 24px;margin-bottom:34px">
+        <p style="font-size:14.5px;color:var(--ink-soft);margin:0"><i class="fa-solid fa-circle-info text-mint"></i> 단위: 원 / VAT 포함 (별도 표기 항목 제외). 아래는 표준 기준 금액이며, 실제 진료비는 환자분의 구강 상태와 치료 범위에 따라 정밀 진단 후 확정됩니다.</p>
       </div>
-      <div class="reveal" style="background:#fffeee;border-radius:var(--radius);border:1px solid var(--gray-100);overflow:hidden;box-shadow:var(--shadow-sm)">
-        ${raw(priceItems.map(([n, d, slug]) => `
-          <a href="/treatments/${slug}" style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--gray-100);gap:16px;text-decoration:none;color:inherit">
-            <div><strong style="font-size:1.05rem">${n}</strong><br><span style="font-size:13px;color:var(--gray-600)">${d}</span></div>
-            <span style="color:var(--brand-accent);font-weight:700;white-space:nowrap">상담 시 안내 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></span>
-          </a>`).join(''))}
-      </div>
-      <p style="font-size:13px;color:var(--gray-400);margin-top:20px">※ 위 내용은 의료법 및 비급여 진료비 고지 규정에 따른 일반 안내입니다. 건강보험 적용 여부, 정확한 진료비는 내원 후 진단을 통해 안내받으실 수 있습니다.</p>
+
+      ${raw(PRICE_TABLE.map((g) => `
+        <div class="reveal price-block" style="margin-bottom:34px">
+          <h2 class="price-cat"><i class="fa-solid fa-${g.icon}"></i> ${g.category}</h2>
+          ${g.note ? `<p class="price-cat-note">${g.note}</p>` : ''}
+          <div class="price-table">
+            ${g.rows.map((r) => `
+              <div class="price-row">
+                <div class="price-name">
+                  <span class="price-item">${r.item}</span>
+                  ${r.type ? `<span class="price-type">${r.type}</span>` : ''}
+                </div>
+                <div class="price-value${isNumeric(r.price) ? '' : ' is-text'}">${isNumeric(r.price) ? r.price + '<span class="price-won">원</span>' : r.price}</div>
+              </div>`).join('')}
+          </div>
+        </div>`).join(''))}
+
+      <ul class="price-notes reveal">
+        ${raw(PRICE_NOTES.map((n) => `<li><i class="fa-solid fa-asterisk"></i> ${n}</li>`).join(''))}
+      </ul>
+      <p style="font-size:13px;color:var(--gray-400);margin-top:18px">※ 본 수가표는 의료법 및 비급여 진료비용 고지 규정에 따른 안내입니다. 건강보험 적용 여부와 최종 진료비는 내원 후 진단을 통해 확정됩니다.</p>
 
       <!-- 자주 묻는 질문 -->
-      <div class="reveal" style="margin-top:50px">
+      <div class="reveal" style="margin-top:54px">
         <h2 style="text-align:center;margin-bottom:24px">자주 묻는 질문</h2>
         <dl class="faq-list">
           ${raw(pricingFaqs.map(f => `
@@ -358,10 +377,10 @@ export function PricingPage() {
   ${ctaBand()}
   `
   return Page({
-    title: '비급여 진료비 안내 | 약수역 올케어치과',
-    description: '약수역 올케어치과 비급여 진료비 안내. 임플란트·교정·심미보철·라미네이트·미백·틀니 등 주요 비급여 항목 안내. 정확한 비용은 진단 후 상담을 통해 안내드립니다.',
+    title: '비급여 진료 수가표 | 약수역 올케어치과',
+    description: '약수역 올케어치과 비급여 진료 수가표. 레진·지르코니아 크라운·임플란트(오스템·IBS·스트라우만)·투명교정·라미네이트·미백·틀니·턱관절 비용을 투명하게 안내합니다.',
     path: '/pricing',
-    keywords: `약수역 치과 비용,올케어치과 비급여,임플란트 비용,치아교정 비용,중구 치과 진료비,비급여 진료비 고지`,
+    keywords: `약수역 치과 비용,올케어치과 수가표,임플란트 비용,투명교정 비용,라미네이트 비용,지르코니아 크라운 가격,중구 치과 진료비,비급여 진료비 고지`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '비용 안내', url: '/pricing' }]),
       offerSchema,

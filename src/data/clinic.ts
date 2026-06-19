@@ -108,12 +108,12 @@ export const CLINIC = {
     youtube: '', // 미운영 — 비노출
     kakao: 'https://pf.kakao.com/_AmxkqG', // 상담/문의 채널 (운영 중)
   },
-  // 사업자 정보 (푸터)
+  // 사업자 정보 (푸터) — 사업자등록증 기준
   business: {
     owner: '권민수',
-    bizName: '올케어치과의원',
-    bizNumber: '상담 시 안내',
-    openDate: '2023.07',
+    bizName: '365올케어치과의원',
+    bizNumber: '822-45-00944',
+    openDate: '2023.05.16',
   },
   domain: 'allcaredc.kr',
 }
@@ -642,6 +642,93 @@ export const TX_IMAGES: Record<string, string> = {
   ortho: '/static/img/tx-ortho.webp',
   esthetic: '/static/img/tx-esthetic.webp',
 }
+
+// ── 비급여 진료 수가표 (사업자 제출 자료 기준 · 단위: 원, VAT 포함 / 별도 표기 항목 제외) ──
+export interface PriceRow { item: string; type?: string; price: string }
+export interface PriceGroup { category: string; icon: string; note?: string; rows: PriceRow[] }
+export const PRICE_TABLE: PriceGroup[] = [
+  {
+    category: '보존치료', icon: 'tooth',
+    rows: [
+      { item: '레진', type: 'pit', price: '50,000' },
+      { item: '레진', type: '치경부', price: '70,000' },
+      { item: '레진', type: '1급', price: '100,000' },
+      { item: '레진', type: '2급', price: '150,000' },
+      { item: '레진', type: 'Diastema(심미)', price: '250,000' },
+      { item: '인레이', type: '간접수복', price: '300,000' },
+      { item: '온레이', type: '간접수복', price: '350,000' },
+      { item: '치아기둥', type: '레진코어', price: '50,000' },
+      { item: '치아기둥', type: '치아기둥', price: '150,000' },
+    ],
+  },
+  {
+    category: '보철치료', icon: 'crown',
+    rows: [
+      { item: '크라운(구치부)', type: '지르코니아', price: '500,000' },
+      { item: '크라운(전치부)', type: '지르코니아', price: '600,000' },
+      { item: '크라운(전치부)', type: 'PFZ', price: '600,000' },
+      { item: '라미네이트', type: '베이직 (VAT 별도)', price: '500,000' },
+      { item: '라미네이트', type: '프리미엄 (VAT 별도)', price: '600,000' },
+      { item: '틀니', type: '보험 틀니', price: '본인부담금' },
+      { item: '틀니', type: '완전 틀니', price: '2,000,000' },
+      { item: '틀니', type: '부분 틀니', price: '1,800,000' },
+      { item: '틀니', type: '임시 틀니', price: '400,000' },
+    ],
+  },
+  {
+    category: '임플란트', icon: 'screwdriver-wrench',
+    note: '임플란트 + 맞춤형 지대주 + 크라운 기준',
+    rows: [
+      { item: '보험 임플란트', type: '', price: '본인부담금' },
+      { item: '오스템 CA', type: '', price: '800,000' },
+      { item: '오스템 SOI', type: '', price: '1,000,000' },
+      { item: 'IBS', type: '', price: '1,200,000' },
+      { item: '스트라우만', type: '', price: '2,000,000' },
+    ],
+  },
+  {
+    category: '외과처치', icon: 'syringe',
+    rows: [
+      { item: '골이식술', type: '', price: '150,000 ~ 1,000,000' },
+    ],
+  },
+  {
+    category: '교정치료', icon: 'teeth',
+    rows: [
+      { item: '투명교정', type: '세라핀', price: '4,000,000 ~' },
+      { item: '투명교정', type: '인비절라인', price: '4,500,000 ~' },
+      { item: '유지장치', type: '', price: '500,000' },
+      { item: '정밀진단비용', type: '', price: '200,000' },
+    ],
+  },
+  {
+    category: '턱관절치료', icon: 'head-side-cough',
+    rows: [
+      { item: '물리치료', type: '', price: '본인부담금' },
+      { item: '보톡스', type: '', price: '100,000' },
+      { item: '교합안정·이갈이 장치', type: '', price: '450,000 ~ 500,000' },
+      { item: '프롤로 증식 주사치료', type: '1회', price: '150,000' },
+    ],
+  },
+  {
+    category: '심미치료', icon: 'wand-magic-sparkles',
+    rows: [
+      { item: '1Day 전문가 미백', type: 'VAT 별도', price: '300,000' },
+    ],
+  },
+  {
+    category: '진정요법 / 마취', icon: 'bed-pulse',
+    rows: [
+      { item: '의식하진정요법', type: '', price: '300,000 ~ 500,000' },
+    ],
+  },
+]
+export const PRICE_NOTES = [
+  '상시 수가는 내원 당일 이벤트에 따라 상이할 수 있습니다.',
+  "'본인부담금'은 건강보험 급여 적용 항목으로, 환자 본인부담률에 따라 산정됩니다.",
+  'VAT 별도 표기 항목(라미네이트, 1Day 미백)은 부가세 10%가 별도로 부과됩니다.',
+  '실제 진료비는 환자분의 구강 상태와 치료 범위에 따라 정밀 진단 후 확정됩니다.',
+]
 
 // 추가 FAQ 병합 — 과목당 20개+ 충족
 import { EXTRA_FAQS } from './faqs-extra'
