@@ -1780,6 +1780,8 @@ body::after {
 }
 .hh-title .line-mask { display: block; overflow: hidden; }
 .hh-title .line-mask > span { display: block; }
+/* 영문 디스플레이 헤드라인 — 단어 중간 줄바꿈 금지 (Every smil/e 같은 깨짐 방지) */
+.hh-title .morph-line { white-space: nowrap; }
 .hh-title .hh-italic { font-style: normal; font-weight: 380; color: var(--navy-600); }
 .hh-lead {
   color: var(--ink-soft); font-size: clamp(1.02rem, 1.5vw, 1.16rem);
