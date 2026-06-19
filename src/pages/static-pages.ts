@@ -48,19 +48,58 @@ export function MissionPage() {
 
   <!-- ============ 우리의 시작 — 2대(父子) 진료 연속성 서사 (2차 전달문 기반, 서브 컸셉) ============ -->
   <section class="section">
-    <div class="container" style="max-width:860px">
-      <div class="reveal" style="text-align:center">
-        <span class="sec-label" style="justify-content:center"><span class="num">01</span> Our Story</span>
-        <h2 class="split-rise" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 14px">아버지의 경험에 이어,<br><em>아들의 섬세함</em>을 더하다</h2>
+    <div class="container">
+      <div class="grid-2" style="align-items:center;gap:clamp(36px,5vw,72px)">
+        <figure class="reveal about-figure">
+          <img src="/static/img/about-exterior.webp" alt="약수역 365올케어치과의원 외관 — 4층 통유리 건물의 치과 간판" width="1200" height="795" loading="lazy">
+          <figcaption>약수역 5번 출구 도보 1분 · 365올케어치과의원</figcaption>
+        </figure>
+        <div class="reveal reveal-d1">
+          <span class="sec-label"><span class="num">01</span> Our Story</span>
+          <h2 class="split-rise" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 18px">아버지의 경험에 이어,<br><em>아들의 섬세함</em>을 더하다</h2>
+          <div class="prose" style="font-size:1.05rem;line-height:1.9">
+            <p>아버지는 고려대병원에서 구강외과 교수로 약 30년, 이후 약수역 인근에서 약 13년간 진료를 이어왔습니다. 그리고 2026년 4월, 올케어치과에서 아버지와 아들이 함께 진료를 시작했습니다. 오랜 기간 아버지께 진료받아 온 환자분들은 기존 진료 기록과 치료 이력을 바탕으로, 보다 쾌적한 환경에서 구강건강 관리를 이어가시고 있습니다.</p>
+            <p>저희가 가장 중요하게 생각하는 가치는 단순히 “부자가 함께 진료한다”는 사실 자체가 아닙니다. 오랜 기간 한 원장님을 믿고 다녀오신 환자분들이 낯선 병원으로 흩어지지 않고, 아들이 책임감을 가지고 이어서 케어해드릴 수 있다는 점 — 진료의 연속성입니다.</p>
+            <p>그래서 화려한 약속보다 환자 한 분 한 분의 불편함을 끝까지 들여다보는 일을 먼저 합니다. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과 — 그것이 지역 안에서 인정받고 오래 머무는 길이라 믿습니다.</p>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px">
+            ${raw(CLINIC.familyStory.points.map(p => `
+              <span style="display:inline-flex;align-items:center;gap:9px;background:var(--ivory-2);border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:.9rem;color:var(--ink-soft)"><i class="fa-solid fa-circle-check" style="color:var(--gold)"></i>${p}</span>`).join(''))}
+          </div>
+        </div>
       </div>
-      <div class="prose reveal reveal-d1" style="font-size:1.13rem;line-height:1.95">
-        <p>아버지는 고려대병원에서 구강외과 교수로 약 30년, 이후 약수역 인근에서 약 13년간 진료를 이어왔습니다. 그리고 2026년 4월, 올케어치과에서 아버지와 아들이 함께 진료를 시작했습니다. 오랜 기간 아버지께 진료받아 온 환자분들은 기존 진료 기록과 치료 이력을 바탕으로, 보다 쿠적한 환경에서 구강건강 관리를 이어가시고 있습니다.</p>
-        <p>저희가 가장 중요하게 생각하는 가치는 단순히 “부자가 함께 진료한다”는 사실 자체가 아닙니다. 오랜 기간 한 원장님을 믿고 다녀오신 환자분들이 낯선 병원으로 흩어지지 않고, 아들이 책임감을 가지고 이어서 케어해드릴 수 있다는 점 — 진료의 연속성입니다.</p>
-        <p>그래서 화려한 약속보다 환자 한 분 한 분의 불편함을 끝까지 들여다보는 일을 먼저 합니다. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과 — 그것이 지역 안에서 인정받고 오래 머무는 길이라 믿습니다.</p>
+    </div>
+  </section>
+
+  <!-- ============ 공간 둘러보기 — 시설 사진 갤러리 ============ -->
+  <section class="section" style="background:var(--ivory-2)">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">·</span> Our Space</span>
+        <h2>공간으로 <em>먼저 인사</em>드립니다</h2>
+        <p>진단부터 회복까지, 흩어지지 않도록 한 층에 담은 진료 공간을 미리 둘러보세요.</p>
       </div>
-      <div class="reveal reveal-d2" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:34px">
-        ${raw(CLINIC.familyStory.points.map(p => `
-          <span style="display:inline-flex;align-items:center;gap:9px;background:var(--ivory-2);border:1px solid var(--line);border-radius:999px;padding:10px 20px;font-size:.92rem;color:var(--ink-soft)"><i class="fa-solid fa-circle-check" style="color:var(--gold)"></i>${p}</span>`).join(''))}
+      <div class="space-gallery reveal">
+        <figure class="sg-item sg-wide">
+          <img src="/static/img/about-reception.webp" alt="올케어치과 인포메이션 데스크 — 환자를 가장 먼저 맞이하는 응대 공간" width="1200" height="800" loading="lazy">
+          <figcaption><span class="sg-cap">인포메이션</span><span class="sg-sub">처음 만나는 자리</span></figcaption>
+        </figure>
+        <figure class="sg-item">
+          <img src="/static/img/about-lounge.webp" alt="올케어치과 대기 라운지 — 편안한 소파와 밝은 채광의 휴식 공간" width="1200" height="800" loading="lazy">
+          <figcaption><span class="sg-cap">대기 라운지</span><span class="sg-sub">기다림도 편안하게</span></figcaption>
+        </figure>
+        <figure class="sg-item">
+          <img src="/static/img/about-consult.webp" alt="올케어치과 치료계획 상담실 — 창가의 밝은 1:1 상담 공간" width="1200" height="800" loading="lazy">
+          <figcaption><span class="sg-cap">치료계획 상담실</span><span class="sg-sub">충분히 설명드립니다</span></figcaption>
+        </figure>
+        <figure class="sg-item">
+          <img src="/static/img/about-chairs.webp" alt="올케어치과 진료실 — 분야별로 구분된 진료 체어 공간" width="1200" height="800" loading="lazy">
+          <figcaption><span class="sg-cap">진료실</span><span class="sg-sub">분야별 전문 진료</span></figcaption>
+        </figure>
+        <figure class="sg-item">
+          <img src="/static/img/about-powder.webp" alt="올케어치과 파우더룸 — 진료 전후 단장할 수 있는 세면 공간" width="1200" height="800" loading="lazy">
+          <figcaption><span class="sg-cap">파우더룸</span><span class="sg-sub">진료 전후 단장 공간</span></figcaption>
+        </figure>
       </div>
     </div>
   </section>
