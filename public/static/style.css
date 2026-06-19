@@ -598,9 +598,21 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 }
 .philo-step h3 {
   font-family: var(--font-head); font-weight: 800;
-  font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1; color: var(--ivory); margin-bottom: 20px;
+  font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1; color: var(--ivory); margin-bottom: 18px;
 }
-.philo-step p { color: rgba(255,255,255,.74); font-size: clamp(1.05rem, 1.6vw, 1.3rem); line-height: 1.65; max-width: 460px; }
+.philo-step p { max-width: 480px; }
+/* 핵심 한 문장 — 강조 */
+.philo-step .ps-lead {
+  color: var(--ivory);
+  font-size: clamp(1.12rem, 1.7vw, 1.4rem); line-height: 1.5; font-weight: 500;
+  letter-spacing: -.01em; margin-bottom: 16px;
+}
+/* 공감 본문 — 따뜻하고 부드럽게 */
+.philo-step .ps-body {
+  color: rgba(255,255,255,.66);
+  font-size: clamp(.98rem, 1.25vw, 1.08rem); line-height: 1.78;
+  padding-left: 16px; border-left: 2px solid var(--gold);
+}
 /* 스크롤 길이 트랙: 스텝당 1화면 (JS가 data-steps 읽어 높이 설정) */
 .philo-track { height: 0; }
 

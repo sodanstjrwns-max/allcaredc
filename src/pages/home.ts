@@ -164,7 +164,8 @@ export function HomePage() {
               <span class="ps-no">0${i + 1}<span class="ps-total">/ 0${CLINIC.values.length}</span></span>
               <span class="ps-ico"><i class="fa-solid fa-${v.icon}"></i></span>
               <h3>${v.title}</h3>
-              <p>${v.desc}</p>
+              <p class="ps-lead">${v.lead}</p>
+              <p class="ps-body">${v.desc}</p>
             </article>`).join(''))}
         </div>
       </div>
