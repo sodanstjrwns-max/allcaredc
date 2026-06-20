@@ -300,30 +300,66 @@ export function AdminNotices(items: any[], views: Record<string, number> = {}) {
   return adminShell('notices', '공지사항', html`
     <div class="admin-head"><h1>공지사항</h1><a href="/admin/notices/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 공지</a></div>
     <div class="admin-card">
-      <table><thead><tr><th>작성일</th><th>제목</th><th>조회수</th><th>고정</th><th>관리</th></tr></thead><tbody>
-      ${raw(items.map(n => `<tr>
+      <table><thead><tr><th>작성일</th><th>제목</th><th>조회수</th><th>고정</th><th>팝업</th><th>관리</th></tr></thead><tbody>
+      ${raw(items.map(n => {
+        const today = new Date().toISOString().slice(0, 10)
+        const popupLive = n.popup && (!n.popupUntil || n.popupUntil >= today)
+        const popupExpired = n.popup && n.popupUntil && n.popupUntil < today
+        const popupCell = popupLive
+          ? `<span class="badge new" style="background:#1f7a4d">노출중${n.popupUntil ? ` <span style="opacity:.8">~${n.popupUntil}</span>` : ''}</span>`
+          : popupExpired ? `<span class="badge" style="background:#aaa;color:#fff">만료</span>` : '-'
+        return `<tr>
         <td>${new Date(n.createdAt).toLocaleDateString('ko-KR')}</td><td><strong>${n.title}</strong></td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[n.id] || 0}</td>
         <td>${n.pinned ? '<span class="badge new">고정</span>' : '-'}</td>
-        <td><form method="POST" action="/admin/notices/${n.id}/delete" style="display:inline" onsubmit="return confirm('삭제?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form></td></tr>`).join(''))}
+        <td>${popupCell}</td>
+        <td>
+          <a href="/admin/notices/${n.id}/edit" class="btn-sm" style="color:var(--gold,#b08d57)">수정</a>
+          <form method="POST" action="/admin/notices/${n.id}/delete" style="display:inline" onsubmit="return confirm('삭제?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form>
+        </td></tr>`
+      }).join(''))}
       </tbody></table>
     </div>
   `)
 }
 
-export function AdminNoticeForm() {
-  return adminShell('notices', '공지 작성', html`
-    <div class="admin-head"><h1>공지 작성</h1></div>
+export function AdminNoticeForm(n?: any) {
+  const edit = !!n
+  const action = edit ? `/admin/notices/${n.id}/edit` : '/admin/notices/new'
+  const esc = (s: string) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  return adminShell('notices', edit ? '공지 수정' : '공지 작성', html`
+    <div class="admin-head"><h1>${edit ? '공지 수정' : '공지 작성'}</h1></div>
     <div class="admin-card">
-      <form method="POST" action="/admin/notices/new" enctype="multipart/form-data">
-        <div class="field"><label>제목 <span class="req">*</span></label><input name="title" required></div>
-        <div class="field"><label>내용 <span class="req">*</span></label><textarea name="body" required style="min-height:200px"></textarea></div>
-        <div class="field"><label>이미지 업로드</label><input type="file" name="imageFile" accept="image/*"></div>
-        <div class="field"><label>또는 이미지 URL</label><input name="image" placeholder="(선택)"></div>
-        <div class="field"><label class="checkbox-row"><input type="checkbox" name="pinned"> <span>상단 고정 (대표 공지)</span></label></div>
-        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+      <form method="POST" action="${action}" enctype="multipart/form-data">
+        <div class="field"><label>제목 <span class="req">*</span></label><input name="title" required value="${raw(esc(n?.title))}"></div>
+        <div class="field"><label>내용 <span class="req">*</span></label><textarea name="body" required style="min-height:200px">${raw(esc(n?.body))}</textarea></div>
+        <div class="field"><label>이미지 업로드</label><input type="file" name="imageFile" accept="image/*">
+          ${edit && n.image ? html`<div style="margin-top:8px"><img src="${n.image}" alt="" style="max-height:90px;border-radius:6px;border:1px solid var(--line)"></div>` : ''}
+        </div>
+        <div class="field"><label>또는 이미지 URL</label><input name="image" placeholder="(선택)" value="${raw(esc(n?.image))}"></div>
+        <div class="field"><label class="checkbox-row"><input type="checkbox" name="pinned" ${n?.pinned ? 'checked' : ''}> <span>상단 고정 (대표 공지)</span></label></div>
+
+        <div class="field popup-box" style="background:var(--ivory-2,#f6f1e8);border:1px solid var(--line);border-radius:8px;padding:18px 18px 14px;margin-top:6px">
+          <label class="checkbox-row" style="font-weight:700">
+            <input type="checkbox" name="popup" id="popupToggle" ${n?.popup ? 'checked' : ''}>
+            <span><i class="fa-solid fa-bell" style="color:var(--gold,#b08d57);margin-right:6px"></i>홈 화면 팝업으로 띄우기</span>
+          </label>
+          <p style="margin:8px 0 12px;font-size:13px;color:var(--gray-600,#777)">체크하면 메인 페이지 방문 시 이 공지가 팝업 창으로 표시됩니다. (동시에 1건만 노출 — 여러 건이면 고정·최신 공지 우선)</p>
+          <div id="popupOpts" style="${n?.popup ? '' : 'display:none'}">
+            <label style="font-size:13px;color:var(--gray-600,#777)">팝업 종료일 <span style="opacity:.6">(비우면 무기한 노출)</span></label>
+            <input type="date" name="popupUntil" value="${raw(esc(n?.popupUntil))}" style="margin-top:6px;max-width:220px">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top:8px"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
         <a href="/admin/notices" class="btn btn-outline" style="margin-left:8px">취소</a>
       </form>
     </div>
+    <script>
+      (function(){
+        var t = document.getElementById('popupToggle'), o = document.getElementById('popupOpts');
+        if (t && o) t.addEventListener('change', function(){ o.style.display = t.checked ? '' : 'none'; });
+      })();
+    </script>
   `)
 }

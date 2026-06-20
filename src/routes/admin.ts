@@ -190,7 +190,34 @@ admin.post('/notices/new', async (c) => {
   await addToCollection<Notice>(c.env, 'notices', {
     id: uid('not_'), title: String(form.title || ''), body: String(form.body || ''),
     image, pinned: !!form.pinned, createdAt: Date.now(),
+    popup: !!form.popup, popupUntil: String(form.popupUntil || '').trim() || undefined,
   })
+  return c.redirect('/admin/notices')
+})
+admin.get('/notices/:id/edit', async (c) => {
+  const items = await listCollection<Notice>(c.env, 'notices')
+  const n = items.find(x => x.id === c.req.param('id'))
+  if (!n) return c.notFound()
+  return c.html(AdminNoticeForm(n).toString())
+})
+admin.post('/notices/:id/edit', async (c) => {
+  const form = await c.req.parseBody()
+  const patch: Partial<Notice> = {
+    title: String(form.title || ''), body: String(form.body || ''),
+    pinned: !!form.pinned,
+    popup: !!form.popup, popupUntil: String(form.popupUntil || '').trim() || undefined,
+  }
+  // 새 파일 업로드 시에만 이미지 교체, 없으면 URL 입력값 반영
+  const file = form['imageFile'] as unknown as File
+  if (file && typeof file === 'object' && (file as any).size > 0) {
+    const ext = (((file as any).name || '').split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
+    const key = `uploads/columns/${uid('not_')}.${ext}`
+    await r2PutBinary(c.env, key, await (file as any).arrayBuffer(), (file as any).type || 'image/jpeg')
+    patch.image = `/${key}`
+  } else if (form.image !== undefined) {
+    patch.image = String(form.image || '') || undefined
+  }
+  await updateInCollection<Notice>(c.env, 'notices', c.req.param('id'), patch)
   return c.redirect('/admin/notices')
 })
 admin.post('/notices/:id/delete', async (c) => {

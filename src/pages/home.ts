@@ -30,8 +30,53 @@ function chapterHead(no: string, eng: string, title: string, lead?: string) {
   </header>`
 }
 
-export function HomePage() {
+export function HomePage(popup?: { id: string; title: string; body: string; image?: string } | null) {
+  const popupHtml = popup ? `
+  <!-- ============ 공지 팝업 (관리자 설정) ============ -->
+  <div class="notice-pop" id="noticePop" data-pop-id="${popup.id}" role="dialog" aria-modal="true" aria-label="공지사항" hidden>
+    <div class="np-backdrop" data-np-close></div>
+    <div class="np-card" role="document">
+      <button type="button" class="np-x" data-np-close aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
+      ${popup.image ? `<a href="/notice/${popup.id}" class="np-img"><img src="${popup.image}" alt="${popup.title.replace(/"/g, '&quot;')}" loading="lazy"></a>` : ''}
+      <div class="np-body">
+        <span class="np-label"><i class="fa-solid fa-bullhorn"></i> 공지사항</span>
+        <h3 class="np-title">${popup.title}</h3>
+        <p class="np-text">${popup.body.replace(/</g, '&lt;').slice(0, 140)}${popup.body.length > 140 ? '…' : ''}</p>
+        <a href="/notice/${popup.id}" class="btn btn-primary np-more">자세히 보기 <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="np-foot">
+        <label class="np-dismiss"><input type="checkbox" id="npDismiss"> <span>오늘 하루 보지 않기</span></label>
+        <button type="button" class="np-close-text" data-np-close>닫기</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var pop = document.getElementById('noticePop');
+      if (!pop) return;
+      var id = pop.getAttribute('data-pop-id');
+      var key = 'np_dismiss_' + id;
+      try {
+        var until = localStorage.getItem(key);
+        if (until && Date.now() < parseInt(until, 10)) return; // 아직 숨김 기간
+      } catch(e){}
+      pop.hidden = false;
+      document.body.style.overflow = 'hidden';
+      function close(){
+        pop.hidden = true;
+        document.body.style.overflow = '';
+        var cb = document.getElementById('npDismiss');
+        if (cb && cb.checked) {
+          try { localStorage.setItem(key, String(Date.now() + 86400000)); } catch(e){}
+        }
+      }
+      pop.querySelectorAll('[data-np-close]').forEach(function(el){ el.addEventListener('click', close); });
+      document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !pop.hidden) close(); });
+    })();
+  </script>` : ''
+
   const body = html`
+  ${raw(popupHtml)}
   <!-- ============ 챕터 레일 (책갈피 내비) ============ -->
   <nav class="chapter-rail" id="chapterRail" aria-label="페이지 챕터">
     ${raw(HOME_CHAPTERS.map(c => `
@@ -232,24 +277,32 @@ export function HomePage() {
           </a>`).join(''))}
       </div>
 
-      <!-- 차별점 (sticky split) -->
-      <div class="grid-2" style="margin-top:90px">
-        <div class="reveal">
-          <span class="sec-label"><span class="num">03-1</span> Why ALLCARE</span>
-          <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 26px">규모와 시설, 그리고 <br><em>끝까지 잇는 섬세함</em></h2>
-          <dl class="aeo-list">
-            ${raw(CLINIC.strengths.map(s => `
-              <div class="aeo-item">
-                <dt><i class="fa-solid fa-${s.icon}"></i> ${s.title}</dt>
-                <dd>${s.desc}</dd>
-              </div>`).join(''))}
-          </dl>
-          <a href="/mission" class="btn btn-outline" style="margin-top:30px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
+      <!-- 차별점 (옵션 B: 헤더 좌우 분할 + 강점 3×2 카드 그리드) -->
+      <div class="why-allcare" style="margin-top:90px">
+        <div class="why-head grid-2">
+          <div class="reveal">
+            <span class="sec-label"><span class="num">03-1</span> Why ALLCARE</span>
+            <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 22px">규모와 시설, 그리고 <br><em>끝까지 잇는 섬세함</em></h2>
+            <p style="color:var(--ink-soft,#5a6b78);line-height:1.8;max-width:460px">
+              겉으로 드러나는 규모와 장비를 넘어, 진단부터 회복까지 한 사람의 치아를
+              끝까지 책임지는 여섯 가지 약속으로 답합니다.
+            </p>
+            <a href="/mission" class="btn btn-outline" style="margin-top:28px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="media-mask zoom-media reveal reveal-d2" data-drift="34" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)">
+            <img src="/static/img/interior.webp" alt="올케어치과 대기 라운지 — 약수역 더그레이스빌딩 4층" style="aspect-ratio:3/2;object-fit:cover;width:100%" loading="lazy">
+            <span class="zm-label"><span class="zm-t">대기 라운지</span></span>
+          </div>
         </div>
-        <div class="media-mask zoom-media reveal reveal-d2" data-drift="34" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)">
-          <img src="/static/img/interior.webp" alt="올케어치과 대기 라운지 — 약수역 더그레이스빌딩 4층" style="aspect-ratio:3/2;object-fit:cover;width:100%" loading="lazy">
-          <span class="zm-label"><span class="zm-t">대기 라운지</span></span>
-        </div>
+        <dl class="why-grid reveal reveal-d1">
+          ${raw(CLINIC.strengths.map((s, i) => `
+            <div class="why-card">
+              <span class="why-no">0${i + 1}</span>
+              <span class="why-ico"><i class="fa-solid fa-${s.icon}"></i></span>
+              <dt>${s.title}</dt>
+              <dd>${s.desc}</dd>
+            </div>`).join(''))}
+        </dl>
       </div>
 
       <!-- 원내 디지털 기공실 — '상주 기공사' 주장을 실제 장비로 증명 (§L: 자료1.docx 원내 기공실 강점) -->

@@ -9,7 +9,7 @@ import { LoginPage, RegisterPage, MyPage } from './pages/auth'
 import { ReservationPage } from './pages/reservation'
 import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
 import { ColumnIndex, ColumnDetail, Column } from './pages/column'
-import { NoticeIndex, NoticeDetail, Notice } from './pages/notice'
+import { NoticeIndex, NoticeDetail, Notice, activePopupNotice } from './pages/notice'
 import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
 import { SeoHealthPage } from './pages/seo-health'
 import { Page } from './components/page'
@@ -53,7 +53,11 @@ app.get('/og/:type/:file', (c) => {
 app.get('/seo-health', (c) => c.html(SeoHealthPage().toString()))
 
 // ════════════════ 공개 페이지 ════════════════
-app.get('/', (c) => c.html(HomePage().toString()))
+app.get('/', async (c) => {
+  const notices = await listCollection<Notice>(c.env, 'notices')
+  const pop = activePopupNotice(notices)
+  return c.html(HomePage(pop ? { id: pop.id, title: pop.title, body: pop.body, image: pop.image } : null).toString())
+})
 app.get('/mission', (c) => c.html(MissionPage().toString()))
 app.get('/directions', (c) => c.html(DirectionsPage().toString()))
 app.get('/pricing', (c) => c.html(PricingPage().toString()))

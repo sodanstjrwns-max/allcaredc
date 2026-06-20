@@ -10,6 +10,19 @@ export type Notice = {
   pinned: boolean
   image?: string
   createdAt: number
+  /** 홈 히어로 위에 팝업으로 노출할지 여부 */
+  popup?: boolean
+  /** 팝업 노출 종료일(YYYY-MM-DD). 비우면 무기한 */
+  popupUntil?: string
+}
+
+/** 현재 활성 팝업 공지 1건 반환 (popup=true, 만료 전, 최신 우선) */
+export function activePopupNotice(notices: Notice[]): Notice | null {
+  const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD (UTC 기준 충분)
+  const live = notices.filter(n => n.popup && (!n.popupUntil || n.popupUntil >= today))
+  if (live.length === 0) return null
+  live.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.createdAt - a.createdAt)
+  return live[0]
 }
 
 export function NoticeIndex(notices: Notice[]) {

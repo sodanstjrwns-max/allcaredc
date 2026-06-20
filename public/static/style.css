@@ -676,6 +676,99 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 .aeo-card .aeo-a { color: var(--ink-soft); line-height: 1.78; font-size: .95rem; }
 @media (max-width: 720px) { .aeo-grid { grid-template-columns: 1fr; } }
 
+/* Why ALLCARE — 강점 3×2 카드 그리드 (옵션 B) */
+.why-allcare .why-head { margin-bottom: clamp(40px, 5vw, 64px); }
+.why-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 2vw, 26px); margin: 0;
+}
+.why-card {
+  position: relative; min-width: 0;
+  background: var(--ivory); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); padding: 34px 30px 30px;
+  transition: transform .5s var(--spring), box-shadow .5s var(--ease), border-color .4s var(--ease);
+}
+.why-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: var(--gold); }
+.why-no {
+  position: absolute; top: 22px; right: 26px;
+  font-family: var(--font-mono); font-size: .82rem; letter-spacing: .04em;
+  color: var(--gold); opacity: .55;
+}
+.why-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 50px; height: 50px; border-radius: 50%;
+  background: var(--ivory-2); color: var(--gold); font-size: 1.2rem; margin-bottom: 18px;
+}
+.why-card dt {
+  font-family: 'Nanum Myeongjo', serif; font-weight: 800;
+  font-size: 1.12rem; line-height: 1.45; color: var(--ink); margin-bottom: 11px;
+}
+.why-card dd { margin: 0; color: var(--ink-soft); line-height: 1.78; font-size: .93rem; }
+@media (max-width: 900px) { .why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .why-grid { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   공지 팝업 (관리자 설정 → 홈 노출)
+   ============================================================ */
+.notice-pop[hidden] { display: none; }
+.notice-pop {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.np-backdrop {
+  position: absolute; inset: 0; background: rgba(6, 39, 65, .62);
+  backdrop-filter: blur(3px); animation: npFade .25s var(--ease, ease);
+}
+.np-card {
+  position: relative; width: 100%; max-width: 420px;
+  background: var(--ivory, #fffeee); border-radius: var(--radius-lg, 4px);
+  box-shadow: 0 24px 60px rgba(6, 39, 65, .4); overflow: hidden;
+  animation: npRise .38s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes npFade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes npRise { from { opacity: 0; transform: translateY(18px) scale(.97) } to { opacity: 1; transform: none } }
+.np-x {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(6, 39, 65, .5); color: #fff; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center; transition: background .25s;
+}
+.np-x:hover { background: rgba(6, 39, 65, .82); }
+.np-img { display: block; }
+.np-img img { display: block; width: 100%; max-height: 240px; object-fit: cover; }
+.np-body { padding: 26px 28px 18px; }
+.np-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono, monospace); font-size: .72rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--gold, #b08d57); margin-bottom: 12px;
+}
+.np-title {
+  font-family: 'Nanum Myeongjo', serif; font-weight: 800;
+  font-size: 1.32rem; line-height: 1.4; color: var(--navy-800, #062741); margin: 0 0 10px;
+}
+.np-text { margin: 0 0 18px; color: var(--ink-soft, #5a6b78); line-height: 1.7; font-size: .94rem; }
+.np-more { width: 100%; justify-content: center; }
+.np-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 28px 16px; border-top: 1px solid var(--line, #e2d8c4);
+}
+.np-dismiss {
+  display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
+  font-size: .85rem; color: var(--ink-soft, #5a6b78);
+}
+.np-dismiss input { width: 15px; height: 15px; accent-color: var(--gold, #b08d57); }
+.np-close-text {
+  background: none; border: none; cursor: pointer;
+  font-size: .85rem; color: var(--navy-800, #062741); font-weight: 600; padding: 4px 6px;
+}
+.np-close-text:hover { text-decoration: underline; }
+@media (max-width: 480px) {
+  .np-card { max-width: 100%; }
+  .np-img img { max-height: 180px; }
+  .np-body { padding: 22px 22px 14px; }
+  .np-foot { padding: 12px 22px 14px; }
+}
+
 /* ============================================================
    STATS BAND — 카운트업
    ============================================================ */
