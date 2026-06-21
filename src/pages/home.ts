@@ -95,25 +95,25 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
       <circle class="hr-dot" cx="88" cy="14" r="2.2"/>
     </svg>
     <div class="hero-top hh-top">
-      <span>ALLCARE DENTAL — A PATIENT'S STORY</span>
+      <span>ALLCARE DENTAL — ORAL & MAXILLOFACIAL SURGERY</span>
       <span class="hero-coord">37.5547°N · 127.0107°E</span>
       <span>EST. 2023 · 약수역</span>
     </div>
     <div class="hero-inner hh-grid">
       <div class="hh-copy">
-        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> Prologue — 어느 날, 작은 불편이 시작되었다</span>
-        <h1 class="hh-title" data-morph>
-          <span class="line-mask"><span class="morph-line">Every smile</span></span>
-          <span class="line-mask"><span class="hh-italic disp morph-line">has a story.</span></span>
+        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 전문의 · 의식하진정법(수면치료) 병행</span>
+        <h1 class="hh-title hh-title--ko">
+          <span class="line-mask"><span class="hh-ko-line">다른 곳에서 어렵다고 한</span></span>
+          <span class="line-mask"><span class="hh-italic disp hh-ko-line">그 케이스, 끝까지 해결합니다</span></span>
         </h1>
-        <p class="hh-lead reveal reveal-d2">시린 이 하나, 미뤄둔 사랑니 하나에서 이야기는 시작됩니다.<br>이 이야기의 주인공은 병원이 아니라, <strong>당신</strong>입니다.</p>
+        <p class="hh-lead reveal reveal-d2">심한 뼈 소실, 실패한 임플란트, 부러진 픽스처, 상악동 거상술이 필요한 복합 케이스까지.<br>단순 식립을 넘어, <strong>정확한 진단과 수술 계획으로 끝까지 책임지는</strong> 구강악안면외과 전문의 진료.</p>
         <div class="hero-actions reveal reveal-d3">
-          <a href="#your-story" class="btn btn-primary">나의 이야기 시작하기 <i class="fa-solid fa-arrow-down"></i></a>
-          <a href="/reservation" class="btn btn-outline">바로 예약 문의</a>
+          <a href="/treatments/implant" class="btn btn-primary">고난도 임플란트 진료 보기 <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/reservation" class="btn btn-outline">상담·진단 예약</a>
         </div>
         <div class="hh-meta reveal reveal-d4">
-          <div class="item"><span class="num"><span data-count="3">3</span></span><span class="lbl">분야별 전문의</span></div>
-          <div class="item"><span class="num"><span data-count="10" data-suffix="+">10+</span></span><span class="lbl">진료 영역</span></div>
+          <div class="item"><span class="num"><span data-count="3">3</span></span><span class="lbl">분야별 전문의 협진</span></div>
+          <div class="item"><span class="num">수면</span><span class="lbl">의식하진정법 병행</span></div>
           <div class="item"><span class="num"><span data-count="20" data-suffix=":30">20:30</span></span><span class="lbl">야간진료 (월·화·목)</span></div>
         </div>
       </div>
@@ -147,8 +147,8 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   <!-- ============ CHAPTER 00 — 당신의 이야기 (스토리 네비게이터) ============ -->
   <section class="section story-nav" id="your-story">
     <div class="container">
-      ${raw(chapterHead('00', 'Where does your story begin?', '당신의 이야기는 <em>어디쯤</em>인가요?',
-    '불편을 골라주세요. 그 자리에서 이야기를 이어가겠습니다.'))}
+      ${raw(chapterHead('00', 'Where does it hurt?', '지금 가장 불편한 곳은 <em>어디</em>인가요?',
+    '증상을 골라주세요. 전문의가 어떤 진단과 치료로 접근하는지 바로 안내해 드립니다.'))}
       <div class="sn-chips reveal reveal-d2" role="tablist" aria-label="불편 증상 선택">
         ${raw(STORY_BRANCHES.map((b, i) => `
           <button class="sn-chip${i === 0 ? ' on' : ''}" data-branch="${b.id}" role="tab" aria-selected="${i === 0}">
@@ -192,8 +192,8 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
     <div class="philo-sticky">
       <div class="container philo-grid">
         <div class="philo-aside">
-          <span class="sec-label"><span class="num">Chapter 01</span> Empathy, First</span>
-          <h2 class="philo-h2">치료 이전에,<br><em>불편을 먼저</em> 읽습니다</h2>
+          <span class="sec-label"><span class="num">Chapter 01</span> Diagnosis, First</span>
+          <h2 class="philo-h2">치료의 성패는<br><em>진단에서</em> 갈립니다</h2>
           <p class="philo-lead">${CLINIC.philosophy}</p>
           <svg class="philo-path" viewBox="0 0 4 200" preserveAspectRatio="none" aria-hidden="true">
             <line x1="2" y1="0" x2="2" y2="200" class="philo-path-bg"/>
@@ -221,8 +221,8 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   <!-- ============ CHAPTER 02 — 만남 (핵심 진료) ============ -->
   <section class="section" style="background:var(--ivory-2)" id="ch-meeting">
     <div class="container">
-      ${raw(chapterHead('02', 'The Meeting', '불편이 <em>해답을 만나는</em> 자리',
-    '분야별 전문의가 진단부터 마무리까지 일관되게 맡습니다. 세 가지 깊은 이야기.'))}
+      ${raw(chapterHead('02', 'Specialist Care', '전문의가 <em>직접 맡는</em> 진료',
+    '구강악안면외과·보철과·통합치의학과 전문의가 진단부터 수술·보철·사후관리까지 한 팀으로 책임집니다.'))}
       <div class="tx-feature">
         ${raw(CORE_TREATMENTS.map((t, i) => `
           <article class="tx-article reveal">
@@ -246,21 +246,21 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   <!-- ============ 키네틱 디스플레이 띠 ============ -->
   <section class="kinetic" aria-hidden="true">
     <div class="kinetic-track">
-      <span class="lit">Every&nbsp;smile&nbsp;has&nbsp;a&nbsp;story.</span><span class="out">Every&nbsp;smile&nbsp;has&nbsp;a&nbsp;story.</span>
-      <span class="lit">Every&nbsp;smile&nbsp;has&nbsp;a&nbsp;story.</span><span class="out">Every&nbsp;smile&nbsp;has&nbsp;a&nbsp;story.</span>
+      <span class="lit">Solving&nbsp;the&nbsp;Difficult&nbsp;Cases.</span><span class="out">Solving&nbsp;the&nbsp;Difficult&nbsp;Cases.</span>
+      <span class="lit">Solving&nbsp;the&nbsp;Difficult&nbsp;Cases.</span><span class="out">Solving&nbsp;the&nbsp;Difficult&nbsp;Cases.</span>
     </div>
     <div class="kinetic-track">
       <span class="out">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span><span class="lit">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span>
       <span class="out">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span><span class="lit">From&nbsp;Diagnosis&nbsp;to&nbsp;Recovery.</span>
     </div>
-    <p class="kinetic-sub">진단부터 회복까지, 흩어지지 않는 한 곳의 진료</p>
+    <p class="kinetic-sub">진단부터 회복까지 — 어려운 케이스를 끝까지 해결하는 한 곳의 진료</p>
   </section>
 
   <!-- ============ CHAPTER 03 — 사람들 (의료진) ============ -->
   <section class="section" id="ch-people">
     <div class="container">
-      ${raw(chapterHead('03', 'The People', '이야기를 <em>함께 쓰는</em> 사람들',
-    '입안 전체를 하나의 그림으로 보는 협진. 환자 한 분을 여러 과로 나누지 않습니다.'))}
+      ${raw(chapterHead('03', 'The Specialists', '<em>3인 전문의</em> 통합진료팀',
+    '수술·보철·교정·턱관절까지 한 공간에서. 복잡한 케이스일수록 여러 전문 영역의 관점을 함께 반영합니다.'))}
       <div class="doc-grid">
         ${raw(DOCTORS.map((d, i) => `
           <a href="/doctors/${d.slug}" class="doc-card reveal reveal-d${i + 1}">
@@ -282,10 +282,11 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         <div class="why-head grid-2">
           <div class="reveal">
             <span class="sec-label"><span class="num">03-1</span> Why ALLCARE</span>
-            <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 22px">규모와 시설, 그리고 <br><em>끝까지 잇는 섬세함</em></h2>
+            <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 22px">왜 <em>전문의 진료</em>가<br>다른가</h2>
             <p style="color:var(--ink-soft,#5a6b78);line-height:1.8;max-width:460px">
-              겉으로 드러나는 규모와 장비를 넘어, 진단부터 회복까지 한 사람의 치아를
-              끝까지 책임지는 여섯 가지 약속으로 답합니다.
+              임플란트의 성패는 식립 그 자체보다 식립 이전의 진단에서 갈립니다.
+              구강악안면외과 전문의가 진단·수술·보철의 전 과정을 일관되게 책임지는
+              여섯 가지 강점으로 답합니다.
             </p>
             <a href="/mission" class="btn btn-outline" style="margin-top:28px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
           </div>
@@ -351,8 +352,8 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
           <path class="cb-dia" d="M60 1 L65 6 L60 11 L55 6 Z"/>
           <line class="co-line co-line2" pathLength="1" x1="72" y1="6" x2="120" y2="6"/>
         </svg>
-        <h2>회복의 기록</h2>
-        <p>먼저 다녀간 분들의 이야기가 쌓여갑니다.</p>
+        <h2>진료의 기반</h2>
+        <p>고난도 케이스를 끝까지 책임지는 진료 환경입니다.</p>
       </div>
       <div class="stats-grid">
         <div class="stat reveal"><div class="num"><span data-count="3">3</span></div><div class="lbl">분야별 전문의</div></div>
@@ -420,8 +421,8 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   <!-- ============ CHAPTER 05 — 일상 (진료시간 / 오시는 길 + 일반 진료) ============ -->
   <section class="section" id="ch-daily">
     <div class="container">
-      ${raw(chapterHead('05', 'Back to Daily Life', '다시, <em>아무렇지 않은</em> 일상으로',
-    '치료의 끝은 병원이 아니라 당신의 식탁과 웃음입니다. 일상의 모든 진료가 곁에 있습니다.'))}
+      ${raw(chapterHead('05', 'Everyday Care', '큰 치료부터 <em>일상 관리</em>까지',
+    '고난도 수술만이 아니라, 충치·잇몸·검진 같은 일상 진료까지 한 곳에서 이어서 관리합니다.'))}
 
       <div class="tx-sub-grid">
         ${raw(SUB_TREATMENTS.map((t, i) => `

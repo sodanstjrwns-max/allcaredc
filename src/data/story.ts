@@ -130,12 +130,12 @@ export const STORY_BRANCHES: StoryBranch[] = [
 
 // 메인 챕터 레일 (스크롤스파이 내비게이션)
 export const HOME_CHAPTERS = [
-  { id: 'prologue', no: 'P', label: 'Prologue' },
-  { id: 'your-story', no: '00', label: '당신의 이야기' },
-  { id: 'ch-empathy', no: '01', label: '공감' },
-  { id: 'ch-meeting', no: '02', label: '만남' },
-  { id: 'ch-people', no: '03', label: '사람들' },
-  { id: 'ch-recovery', no: '04', label: '회복' },
-  { id: 'ch-daily', no: '05', label: '일상' },
-  { id: 'epilogue', no: 'E', label: 'Epilogue' },
+  { id: 'prologue', no: 'P', label: '인트로' },
+  { id: 'your-story', no: '00', label: '증상 선택' },
+  { id: 'ch-empathy', no: '01', label: '진단' },
+  { id: 'ch-meeting', no: '02', label: '전문 진료' },
+  { id: 'ch-people', no: '03', label: '전문의' },
+  { id: 'ch-recovery', no: '04', label: '진료 기반' },
+  { id: 'ch-daily', no: '05', label: '일상 관리' },
+  { id: 'epilogue', no: 'E', label: '예약' },
 ]
