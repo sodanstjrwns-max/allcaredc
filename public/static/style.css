@@ -465,6 +465,66 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 .section-head.center p { margin-left: auto; margin-right: auto; }
 
 /* ============================================================
+   SEC-HEAD — 직설적 진료 중심 섹션 헤드 (책 메타포 제거)
+   ============================================================ */
+.sec-head { max-width: 760px; margin-bottom: clamp(40px, 5vw, 68px); }
+.sec-head--center { margin-left: auto; margin-right: auto; text-align: center; }
+.sec-kicker {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-disp); font-size: 13px; letter-spacing: .12em;
+  font-weight: 600; color: var(--gold-600); margin-bottom: 20px;
+}
+.sec-kicker .hh-diamond { color: var(--gold); font-size: 9px; }
+.sec-title {
+  font-size: clamp(1.9rem, 4.4vw, 3.3rem); line-height: 1.1; margin: 0 0 18px;
+  font-weight: 800; letter-spacing: -.02em; color: var(--navy-900, #062741);
+}
+.sec-title em { font-style: normal; color: var(--gold-600); }
+.sec-lead {
+  color: var(--gray-600); font-size: clamp(1rem, 1.4vw, 1.12rem); line-height: 1.75;
+  max-width: 620px;
+}
+.sec-head--center .sec-lead { margin-left: auto; margin-right: auto; }
+
+/* ============================================================
+   KEYPOINTS — 강점 3대 포인트 (직설적)
+   ============================================================ */
+.keypoints-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px;
+}
+.keypoint {
+  position: relative; padding: 38px 32px 34px;
+  background: var(--ivory, #fffeee); border: 1px solid var(--line, rgba(6,39,65,.1));
+  border-radius: var(--radius-lg, 20px); box-shadow: var(--shadow-sm);
+  transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .5s var(--ease);
+  overflow: hidden;
+}
+.keypoint::before {
+  content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease);
+}
+.keypoint:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: var(--gold); }
+.keypoint:hover::before { transform: scaleX(1); }
+.kp-no {
+  display: block; font-family: var(--font-mono, monospace); font-size: 13px;
+  letter-spacing: .1em; color: var(--mint); margin-bottom: 16px;
+}
+.kp-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 54px; height: 54px; border-radius: 14px; margin-bottom: 20px;
+  background: var(--navy-900, #062741); color: var(--gold-300, #d6b27a); font-size: 22px;
+}
+.kp-title {
+  font-size: clamp(1.15rem, 1.9vw, 1.4rem); line-height: 1.35; margin: 0 0 14px;
+  font-weight: 700; color: var(--navy-900, #062741);
+}
+.kp-desc { color: var(--gray-600); font-size: 15px; line-height: 1.75; margin: 0; }
+@media (max-width: 900px) {
+  .keypoints-grid { grid-template-columns: 1fr; gap: 18px; }
+}
+
+/* ============================================================
    값(VALUE) 카드 — 인지/공감/해소/원칙
    ============================================================ */
 .value-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--ink); }
@@ -1908,7 +1968,7 @@ body::after {
 .hh-title .morph-line { white-space: nowrap; }
 .hh-title .hh-italic { font-style: normal; font-weight: 380; color: var(--navy-600); }
 /* 한글 롱카피 히어로 — 가변폰트 모핑 OFF, 줄바꿈 허용 + 사이즈 축소로 가독성 확보 */
-.hh-title--ko { font-size: clamp(1.85rem, 5vw, 3.5rem); line-height: 1.22; letter-spacing: -.02em; font-weight: 700; word-break: keep-all; }
+.hh-title--ko { font-size: clamp(2.8rem, 8vw, 6rem); line-height: 1.04; letter-spacing: -.035em; font-weight: 800; word-break: keep-all; }
 .hh-title--ko .hh-ko-line { display: block; white-space: normal; }
 .hh-title--ko .hh-italic { font-weight: 500; }
 .hh-lead {
