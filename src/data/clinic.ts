@@ -149,7 +149,7 @@ export const CLINIC = {
   // 검색엔진 소유권 인증 코드 (웹마스터 도구에서 발급받은 content 값만 입력 → 메타태그 자동 출력)
   // 빈 값이면 해당 메타태그는 출력되지 않음
   siteVerification: {
-    google: '',  // Google Search Console → '도메인' 또는 'URL 접두어' → HTML 태그 방식 content 값
+    google: '',  // ✅ DNS(도메인 속성)로 인증 완료 — Cloudflare TXT 레코드 방식, 메타태그 불필요
     naver: '',   // 네이버 서치어드바이저 → 사이트 소유확인 → HTML 태그 content 값
     bing: '',    // Bing Webmaster Tools → 사이트 추가 → meta 태그 content 값 (또는 GSC 자동연동)
   },
