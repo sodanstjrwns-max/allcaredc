@@ -105,7 +105,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img class="hh-portrait" src="/static/img/hero-doctor.webp" alt="올케어치과 권민수 대표원장 — 약수역 임플란트·교정·심미보철 더블보드 전문의" width="683" height="1024" fetchpriority="high" />
+          <img class="hh-portrait" src="/static/img/hero-doctor.webp" alt="올케어치과 권민수 대표원장 — 약수역 임플란트·교정·심미보철 더블보드 전문의" width="819" height="1024" fetchpriority="high" />
         </div>
         <figcaption class="hh-caption"><span class="hh-cap-eng disp">${CLINIC.doctorLead?.name || '권민수'} 대표원장</span> 구강악안면외과·통합치의학과 더블보드 전문의</figcaption>
       </figure>
