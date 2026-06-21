@@ -3,6 +3,7 @@ import { Bindings, getAdmin, setAdminSession, clearSession, secret } from '../li
 import { verifyToken } from '../lib/auth'
 import { getCookie } from 'hono/cookie'
 import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary, getViews } from '../lib/store'
+import { notifySearchEngines } from '../lib/indexnow'
 import {
   AdminLogin, AdminDashboard, AdminReservations, AdminMembers, AdminCases, AdminCaseForm,
   AdminColumns, AdminColumnForm, AdminNotices, AdminNoticeForm,
@@ -147,6 +148,8 @@ admin.post('/cases/new', async (c) => {
     }
   }
   await addToCollection(c.env, 'cases', item)
+  // 자동 색인: 새 케이스 등록 → 검색엔진 즉시 통보 (백그라운드, 응답 지연 없음)
+  c.executionCtx.waitUntil(notifySearchEngines('/cases', '/cases'))
   return c.redirect('/admin/cases')
 })
 admin.post('/cases/:id/delete', async (c) => {
@@ -165,6 +168,7 @@ admin.post('/columns/new', async (c) => {
   const title = String(form.title || '')
   const slug = String(form.slug || '').trim() || slugify(title)
   const now = Date.now()
+  const published = !!form.published
   await addToCollection<Column>(c.env, 'columns', {
     id: uid('col_'), slug, title,
     excerpt: String(form.excerpt || ''), body: String(form.body || ''),
@@ -175,8 +179,10 @@ admin.post('/columns/new', async (c) => {
     metaDesc: String(form.metaDesc || '') || undefined,
     keywords: parseKeywords(form.keywords),
     faqs: parseFaqs(form.faqs),
-    published: !!form.published, createdAt: now, updatedAt: now,
+    published, createdAt: now, updatedAt: now,
   })
+  // 자동 색인: 발행된 글만 검색엔진에 즉시 통보 (임시저장은 제외)
+  if (published) c.executionCtx.waitUntil(notifySearchEngines(`/column/${slug}`, '/column'))
   return c.redirect('/admin/columns')
 })
 admin.get('/columns/:id/edit', async (c) => {
@@ -188,8 +194,10 @@ admin.get('/columns/:id/edit', async (c) => {
 admin.post('/columns/:id/edit', async (c) => {
   const form = await c.req.parseBody()
   const title = String(form.title || '')
+  const editSlug = String(form.slug || '').trim() || slugify(title)
+  const published = !!form.published
   await updateInCollection<Column>(c.env, 'columns', c.req.param('id'), {
-    title, slug: String(form.slug || '').trim() || slugify(title),
+    title, slug: editSlug,
     excerpt: String(form.excerpt || ''), body: String(form.body || ''),
     author: String(form.author || ''), category: String(form.category || ''),
     thumbnail: String(form.thumbnail || '') || undefined,
@@ -198,8 +206,10 @@ admin.post('/columns/:id/edit', async (c) => {
     metaDesc: String(form.metaDesc || '') || undefined,
     keywords: parseKeywords(form.keywords),
     faqs: parseFaqs(form.faqs),
-    published: !!form.published, updatedAt: Date.now(),
+    published, updatedAt: Date.now(),
   })
+  // 자동 색인: 발행 상태로 수정된 글은 갱신 통보 (구글이 lastmod 보고 재크롤)
+  if (published) c.executionCtx.waitUntil(notifySearchEngines(`/column/${editSlug}`, '/column'))
   return c.redirect('/admin/columns')
 })
 admin.post('/columns/:id/delete', async (c) => {
