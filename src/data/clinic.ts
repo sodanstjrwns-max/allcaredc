@@ -752,9 +752,9 @@ export const TREATMENTS: Treatment[] = [
 
 // 핵심 진료 카드 이미지 매핑
 export const TX_IMAGES: Record<string, string> = {
-  implant: '/static/img/surgery-osstem.webp',
-  ortho: '/static/img/consult-implant-3d.webp',
-  esthetic: '/static/img/about-consult.webp',
+  implant: '/static/img/tx-implant-real.webp',
+  ortho: '/static/img/tx-ortho-real.webp',
+  esthetic: '/static/img/tx-esthetic-real.webp',
 }
 
 // ── 비급여 진료 수가표 (사업자 제출 자료 기준 · 단위: 원, VAT 포함 / 별도 표기 항목 제외) ──
