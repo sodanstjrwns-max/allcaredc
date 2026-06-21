@@ -24,6 +24,41 @@ export function speakableSchema(cssSelectors: string[] = ['.answer-box', '.enc-i
   }
 }
 
+// ── 환자 후기 → AggregateRating + Review 스키마 (구글 별점 노출용) ──
+export function reviewSchema() {
+  const reviews = CLINIC.reviews || []
+  if (!reviews.length) return null
+  const avg = (reviews.reduce((s, r) => s + (r.rating || 5), 0) / reviews.length).toFixed(1)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dentist',
+    '@id': `${BASE}/#clinic`,
+    name: CLINIC.name,
+    image: `${BASE}/static/img/hero.webp`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: CLINIC.address,
+      addressLocality: CLINIC.region.district,
+      addressRegion: CLINIC.region.city,
+      addressCountry: 'KR',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: avg,
+      reviewCount: reviews.length,
+      bestRating: '5',
+      worstRating: '1',
+    },
+    review: reviews.map(r => ({
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: String(r.rating || 5), bestRating: '5' },
+      author: { '@type': 'Person', name: r.name },
+      datePublished: r.date,
+      reviewBody: r.text,
+    })),
+  }
+}
+
 // ── 2. 동적 OG 이미지 (edge SVG 생성) ──
 // 정적 og.jpg 1장이 아니라 페이지 제목/카테고리별로 즉석 생성 → SNS·검색 미리보기 품질↑
 const OG_THEMES: Record<string, { bg: string; accent: string; label: string }> = {

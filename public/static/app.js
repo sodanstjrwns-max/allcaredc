@@ -650,6 +650,14 @@
   };
 
   // ---------- reservation form submit ----------
+  function setResvStep(n) {
+    var steps = document.querySelectorAll('.resv-steps li');
+    steps.forEach(function (li) {
+      var s = parseInt(li.getAttribute('data-s'), 10);
+      li.classList.toggle('done', s < n);
+      li.classList.toggle('active', s === n);
+    });
+  }
   window.submitReservation = function (e) {
     e.preventDefault();
     var form = e.target;
@@ -660,8 +668,23 @@
     fetch('/api/reservation', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
       .then(function (r) { return r.json(); })
       .then(function (res) {
-        if (res.ok) { form.reset(); window.showToast('예약 문의가 접수되었습니다. 곧 연락드리겠습니다.'); }
-        else window.showToast(res.error || '접수에 실패했습니다. 전화로 문의해 주세요.');
+        if (res.ok) {
+          form.reset();
+          setResvStep(2);
+          window.showToast('예약 문의가 접수되었습니다. 곧 연락드리겠습니다.');
+          // 성공 화면으로 전환
+          var card = form.closest('.form-card');
+          if (card) {
+            var done = document.createElement('div');
+            done.className = 'resv-done';
+            done.innerHTML = '<div class="rd-icon"><i class="fa-solid fa-circle-check"></i></div>'
+              + '<h3>예약 문의가 접수되었습니다</h3>'
+              + '<p>진료시간 내에 순차적으로 연락드리겠습니다.<br>급하신 경우 <a href="tel:0222322911">02-2232-2911</a>로 바로 전화 주세요.</p>'
+              + '<div class="rd-actions"><a href="/" class="btn btn-outline">홈으로</a><a href="tel:0222322911" class="btn btn-primary"><i class="fa-solid fa-phone"></i> 바로 전화하기</a></div>';
+            form.style.display = 'none';
+            card.appendChild(done);
+          }
+        } else { window.showToast(res.error || '접수에 실패했습니다. 전화로 문의해 주세요.'); }
       })
       .catch(function () { window.showToast('일시적 오류입니다. 전화(02-2232-2911)로 문의해 주세요.'); })
       .finally(function () { btn.disabled = false; btn.textContent = '예약 문의 보내기'; });

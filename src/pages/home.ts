@@ -3,7 +3,7 @@ import { Page } from '../components/page'
 import { organizationSchema, faqSchema } from '../components/layout'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../data/clinic'
 import { STORY_BRANCHES, HOME_CHAPTERS } from '../data/story'
-import { speakableSchema } from '../lib/seo-engine'
+import { speakableSchema, reviewSchema } from '../lib/seo-engine'
 import { truncate } from '../lib/text'
 
 // 핵심 진료별 영문 캐치프레이즈
@@ -366,6 +366,56 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
     </div>
   </section>
 
+  <!-- ============ 진료 여정 (페이션트 퍼널 프로세스) ============ -->
+  <section class="section journey-sec" id="ch-journey">
+    <div class="container">
+      <div class="reveal" style="text-align:center;margin-bottom:54px">
+        <span class="disp" style="font-size:13px;letter-spacing:.14em;color:var(--brand-accent);text-transform:uppercase">Your Care Journey</span>
+        <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);margin:14px 0 12px">처음 오신 순간부터, <em>오래도록 곁에</em></h2>
+        <p style="color:var(--gray-600);max-width:600px;margin:0 auto">올케어치과는 한 번의 치료로 끝나지 않습니다. 인지부터 사후관리까지, 흩어지지 않는 다섯 단계로 함께합니다.</p>
+      </div>
+      <ol class="journey-track">
+        ${raw(CLINIC.journey.map((j, i) => `
+          <li class="journey-step reveal reveal-d${(i % 4) + 1}">
+            <div class="js-line" aria-hidden="true"></div>
+            <div class="js-node"><i class="fa-solid fa-${j.icon}"></i></div>
+            <div class="js-body">
+              <span class="js-no">STEP ${j.step}</span>
+              <h3 class="js-title">${j.title}</h3>
+              <p class="js-desc">${j.desc}</p>
+            </div>
+          </li>`).join(''))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ 환자 후기 ============ -->
+  <section class="section reviews-sec" id="ch-reviews" style="background:var(--ivory-2)">
+    <div class="container">
+      <div class="reveal" style="text-align:center;margin-bottom:14px">
+        <span class="disp" style="font-size:13px;letter-spacing:.14em;color:var(--brand-accent);text-transform:uppercase">Patient Voices</span>
+        <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);margin:14px 0 10px">먼저 다녀간 분들의 <em>진심</em></h2>
+        <div class="reviews-rating">
+          <span class="rr-stars">${raw('<i class="fa-solid fa-star"></i>'.repeat(5))}</span>
+          <strong>5.0</strong>
+          <span class="rr-count">· 내원 환자 후기 ${CLINIC.reviews.length}건</span>
+        </div>
+      </div>
+      <div class="reviews-grid">
+        ${raw(CLINIC.reviews.map((r, i) => `
+          <figure class="review-card reveal reveal-d${(i % 3) + 1}">
+            <div class="rc-stars">${'<i class="fa-solid fa-star"></i>'.repeat(r.rating)}</div>
+            <blockquote class="rc-text">${r.text}</blockquote>
+            <figcaption class="rc-meta">
+              <span class="rc-avatar" aria-hidden="true">${r.name.charAt(0)}</span>
+              <span class="rc-who"><strong>${r.name}</strong><span>${r.area} · ${r.treatment}</span></span>
+            </figcaption>
+          </figure>`).join(''))}
+      </div>
+      <p class="reviews-note reveal">※ 환자 개인의 경험으로 치료 결과는 개인에 따라 차이가 있을 수 있습니다. 동의를 받은 후기만 게재합니다.</p>
+    </div>
+  </section>
+
   <!-- ============ CHAPTER 05 — 일상 (진료시간 / 오시는 길 + 일반 진료) ============ -->
   <section class="section" id="ch-daily">
     <div class="container">
@@ -441,7 +491,8 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         ...STORY_BRANCHES.slice(0, 4).map(b => b.faq),
       ]),
       speakableSchema(['.answer-box', 'h1', 'h2']),
-    ],
+      reviewSchema(),
+    ].filter(Boolean),
   }
   return Page(meta, body)
 }

@@ -257,6 +257,14 @@ export function Footer() {
     </div>
   </footer>
 
+  <!-- 모바일 하단 고정 상담바 (모바일 전용) -->
+  <nav class="mobile-cta-bar" aria-label="빠른 상담">
+    <a href="tel:${CLINIC.phoneRaw}" class="mcb-item"><i class="fa-solid fa-phone"></i><span>전화</span></a>
+    ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" class="mcb-item" target="_blank" rel="noopener"><i class="fa-solid fa-comment"></i><span>카카오톡</span></a>`) : ''}
+    <a href="/directions" class="mcb-item"><i class="fa-solid fa-location-dot"></i><span>오시는길</span></a>
+    <a href="/reservation" class="mcb-item mcb-primary"><i class="fa-solid fa-calendar-check"></i><span>예약문의</span></a>
+  </nav>
+
   <!-- floating consult widget (toggle + 영업상태) -->
   <div class="consult-widget" id="consultWidget">
     <div class="cw-panel" id="cwPanel" hidden>
@@ -278,7 +286,7 @@ export function Footer() {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260621c"></script>
+  <script src="/static/app.js?v=20260621d"></script>
   `
 }
 
@@ -331,15 +339,20 @@ export function headTags(meta: Meta) {
     <meta name="geo.position" content="${CLINIC.geo.lat};${CLINIC.geo.lng}" />
     <meta name="ICBM" content="${CLINIC.geo.lat}, ${CLINIC.geo.lng}" />
     <meta name="theme-color" content="#072740" />
+    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/static/img/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/static/img/favicon-64.png" sizes="64x64" type="image/png" />
     <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
+    <link rel="manifest" href="/static/manifest.json" />
+    <meta name="apple-mobile-web-app-title" content="올케어치과" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20260621c" />
+    <link rel="stylesheet" href="/static/style.css?v=20260621d" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->

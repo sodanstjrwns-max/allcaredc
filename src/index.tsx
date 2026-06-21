@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { html } from 'hono/html'
+import { html, raw } from 'hono/html'
 import { HomePage } from './pages/home'
 import { TreatmentsIndex, TreatmentDetail } from './pages/treatments'
 import { FaqPage } from './pages/faq'
@@ -286,16 +286,29 @@ app.get('/terms', (c) => c.html(legalPage('이용약관', TERMS).toString()))
 
 // ════════════════ 404 ════════════════
 app.notFound((c) => {
+  const links = [
+    { url: '/treatments', label: '진료 안내', icon: 'tooth' },
+    { url: '/cases', label: '진료사례', icon: 'images' },
+    { url: '/reservation', label: '예약 문의', icon: 'calendar-check' },
+    { url: '/directions', label: '오시는 길', icon: 'location-dot' },
+  ]
   const body = html`
-  <section style="min-height:80vh;display:grid;place-items:center;text-align:center;padding:120px 24px">
-    <div>
-      <div style="font-size:6rem;font-weight:800;color:var(--brand-accent)">404</div>
-      <h1 style="font-size:1.8rem;margin:10px 0 16px">페이지를 찾을 수 없습니다</h1>
-      <p style="color:var(--gray-600);margin-bottom:30px">요청하신 페이지가 이동되었거나 존재하지 않습니다.</p>
-      <a href="/" class="btn btn-primary">홈으로 돌아가기 <i class="fa-solid fa-arrow-right"></i></a>
+  <section class="err-page">
+    <div class="err-inner">
+      <div class="err-tooth" aria-hidden="true"><i class="fa-solid fa-tooth"></i></div>
+      <div class="err-code">404</div>
+      <h1 class="err-title">길을 잃으셨나요?</h1>
+      <p class="err-desc">찾으시는 페이지가 이동되었거나 존재하지 않습니다.<br>아래에서 필요한 곳으로 바로 이동하실 수 있습니다.</p>
+      <div class="err-actions">
+        <a href="/" class="btn btn-primary"><i class="fa-solid fa-house"></i> 홈으로</a>
+        <a href="tel:${CLINIC.phoneRaw}" class="btn btn-outline"><i class="fa-solid fa-phone"></i> ${CLINIC.phone}</a>
+      </div>
+      <div class="err-links">
+        ${raw(links.map(l => `<a href="${l.url}"><i class="fa-solid fa-${l.icon}"></i> ${l.label}</a>`).join(''))}
+      </div>
     </div>
   </section>`
-  return c.html(Page({ title: '404 | 올케어치과', description: '페이지를 찾을 수 없습니다.', path: '/404' }, body).toString(), 404)
+  return c.html(Page({ title: '페이지를 찾을 수 없습니다 (404) | 올케어치과', description: '요청하신 페이지를 찾을 수 없습니다. 올케어치과 주요 메뉴로 이동하세요.', path: '/404' }, body).toString(), 404)
 })
 
 function legalPage(title: string, content: string) {

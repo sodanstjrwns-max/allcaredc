@@ -71,6 +71,11 @@ export function ReservationPage() {
       <div class="grid-detail">
         <div class="reveal">
           <div class="form-card">
+            <ol class="resv-steps" aria-label="예약 진행 단계">
+              <li class="active" data-s="1"><span class="rs-dot">1</span><span class="rs-lbl">정보 입력</span></li>
+              <li data-s="2"><span class="rs-dot">2</span><span class="rs-lbl">접수 확인</span></li>
+              <li data-s="3"><span class="rs-dot">3</span><span class="rs-lbl">상담 연락</span></li>
+            </ol>
             <form onsubmit="return submitReservation(event)">
               <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
               <div class="grid-2" style="gap:18px;align-items:start">

@@ -2521,3 +2521,94 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 .cl-doctor{display:inline-block;font-size:13px;font-weight:700;color:var(--brand-accent,#b08d57);margin-bottom:18px}
 .cl-cta{border-top:1px solid var(--warm-line,#e2d8c4);padding-top:18px}
 @media(max-width:760px){.cl-card{grid-template-columns:1fr;max-height:92vh}.cl-media{flex-direction:row}.cl-info{padding:22px 20px}}
+
+/* ===== 모바일 하단 고정 상담바 ===== */
+.mobile-cta-bar{display:none}
+@media(max-width:768px){
+  .mobile-cta-bar{
+    display:grid;grid-auto-flow:column;grid-auto-columns:1fr;
+    position:fixed;left:0;right:0;bottom:0;z-index:950;
+    background:#fffeee;border-top:1px solid #e2d8c4;
+    box-shadow:0 -4px 20px rgba(6,39,65,.1);
+    padding:8px 4px calc(8px + env(safe-area-inset-bottom,0));
+  }
+  .mcb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 2px;color:#062741;font-size:11px;font-weight:700;border-radius:10px;transition:.15s}
+  .mcb-item i{font-size:18px}
+  .mcb-item:active{transform:scale(.93)}
+  .mcb-primary{background:#b08d57;color:#fff;margin:0 2px}
+  /* 데스크탑 위젯은 모바일 하단 바 위로 띄움(겹침 방지) */
+  .consult-widget{bottom:78px;bottom:calc(78px + env(safe-area-inset-bottom,0))}
+  /* 본문 하단 여백 확보(고정 바에 가리지 않게) */
+  body{padding-bottom:64px}
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0))}
+}
+
+/* ===== 진료 여정 (프로세스) ===== */
+.journey-track{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(5,1fr);gap:0;counter-reset:js}
+.journey-step{position:relative;text-align:center;padding:0 14px}
+.js-line{position:absolute;top:34px;left:50%;width:100%;height:2px;background:linear-gradient(90deg,var(--brand-accent,#b08d57),rgba(176,141,87,.25));z-index:0}
+.journey-step:last-child .js-line{display:none}
+.js-node{position:relative;z-index:1;width:68px;height:68px;margin:0 auto 22px;border-radius:50%;background:#fffeee;border:2px solid var(--brand-accent,#b08d57);display:flex;align-items:center;justify-content:center;color:var(--brand,#062741);font-size:24px;box-shadow:0 8px 24px rgba(6,39,65,.08);transition:.3s}
+.journey-step:hover .js-node{background:var(--brand,#062741);color:#fffeee;transform:translateY(-4px)}
+.js-no{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--brand-accent,#b08d57);margin-bottom:6px}
+.js-title{font-size:1.05rem;margin-bottom:10px}
+.js-desc{font-size:13px;line-height:1.7;color:var(--gray-600)}
+@media(max-width:900px){
+  .journey-track{grid-template-columns:1fr;gap:0;text-align:left;max-width:480px;margin:0 auto}
+  .journey-step{display:grid;grid-template-columns:68px 1fr;gap:18px;text-align:left;padding:0 0 28px;align-items:start}
+  .js-node{margin:0}
+  .js-line{top:68px;left:33px;width:2px;height:100%;background:linear-gradient(180deg,var(--brand-accent,#b08d57),rgba(176,141,87,.25))}
+  .js-body{padding-top:6px}
+}
+
+/* ===== 환자 후기 ===== */
+.reviews-rating{display:inline-flex;align-items:center;gap:8px;font-size:15px;color:var(--brand,#062741)}
+.rr-stars{color:#f4b400;letter-spacing:1px}
+.reviews-rating strong{font-size:18px}
+.rr-count{color:var(--gray-600);font-size:13px}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.review-card{background:#fffeee;border:1px solid var(--warm-line,#e2d8c4);border-radius:14px;padding:26px 24px;display:flex;flex-direction:column;gap:14px;transition:.3s}
+.review-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(6,39,65,.1)}
+.rc-stars{color:#f4b400;font-size:14px;letter-spacing:1px}
+.rc-text{margin:0;font-size:14.5px;line-height:1.8;color:var(--brand,#062741);flex:1}
+.rc-meta{display:flex;align-items:center;gap:12px;border-top:1px solid var(--warm-line,#e2d8c4);padding-top:16px}
+.rc-avatar{width:42px;height:42px;border-radius:50%;background:var(--brand,#062741);color:var(--brand-accent,#b08d57);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0}
+.rc-who{display:flex;flex-direction:column;line-height:1.4}
+.rc-who strong{font-size:14px;color:var(--brand,#062741)}
+.rc-who span{font-size:12.5px;color:var(--gray-600)}
+.reviews-note{text-align:center;font-size:12.5px;color:var(--gray-400);margin-top:30px}
+@media(max-width:900px){.reviews-grid{grid-template-columns:1fr}}
+
+/* ===== 예약 폼 스텝 인디케이터 ===== */
+.resv-steps{list-style:none;display:flex;align-items:center;gap:0;padding:0;margin:0 0 28px;counter-reset:rs}
+.resv-steps li{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;color:var(--gray-400)}
+.resv-steps li:not(:last-child):after{content:'';position:absolute;top:17px;left:50%;width:100%;height:2px;background:var(--warm-line,#e2d8c4);z-index:0}
+.resv-steps li.done:not(:last-child):after{background:var(--brand-accent,#b08d57)}
+.rs-dot{position:relative;z-index:1;width:36px;height:36px;border-radius:50%;background:#fffeee;border:2px solid var(--warm-line,#e2d8c4);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;transition:.3s}
+.rs-lbl{font-size:12.5px;font-weight:600}
+.resv-steps li.active .rs-dot{border-color:var(--brand,#062741);background:var(--brand,#062741);color:#fffeee}
+.resv-steps li.active{color:var(--brand,#062741)}
+.resv-steps li.done .rs-dot{border-color:var(--brand-accent,#b08d57);background:var(--brand-accent,#b08d57);color:#fff}
+.resv-steps li.done{color:var(--brand-accent,#b08d57)}
+
+/* ===== 예약 접수 완료 화면 ===== */
+.resv-done{text-align:center;padding:30px 10px;animation:rdIn .5s cubic-bezier(.34,1.3,.64,1) both}
+@keyframes rdIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.rd-icon{font-size:64px;color:#1f9d55;margin-bottom:18px;animation:rdPop .6s cubic-bezier(.34,1.5,.64,1) .15s both}
+@keyframes rdPop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.resv-done h3{font-size:1.4rem;margin-bottom:12px}
+.resv-done p{color:var(--gray-600);font-size:14.5px;line-height:1.8;margin-bottom:26px}
+.resv-done a[href^="tel"]{color:var(--brand-accent,#b08d57);font-weight:700}
+.rd-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* ===== 404 에러 페이지 (브랜드화) ===== */
+.err-page{min-height:78vh;display:grid;place-items:center;text-align:center;padding:100px 24px;background:radial-gradient(ellipse at top,#f1e9dc55,transparent)}
+.err-tooth{font-size:46px;color:var(--brand-accent,#b08d57);opacity:.4;margin-bottom:6px;animation:errFloat 3s ease-in-out infinite}
+@keyframes errFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.err-code{font-family:var(--font-disp,serif);font-size:clamp(5rem,16vw,9rem);font-weight:800;line-height:1;color:var(--brand,#062741);letter-spacing:-.02em}
+.err-title{font-size:clamp(1.4rem,4vw,2rem);margin:10px 0 14px}
+.err-desc{color:var(--gray-600);line-height:1.8;margin-bottom:30px}
+.err-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.err-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:480px;margin:0 auto}
+.err-links a{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border:1px solid var(--warm-line,#e2d8c4);border-radius:999px;font-size:13.5px;font-weight:600;color:var(--brand,#062741);transition:.2s}
+.err-links a:hover{background:var(--brand,#062741);color:#fffeee;border-color:var(--brand,#062741)}
