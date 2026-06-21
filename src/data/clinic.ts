@@ -150,7 +150,7 @@ export const CLINIC = {
   // 빈 값이면 해당 메타태그는 출력되지 않음
   siteVerification: {
     google: '',  // ✅ DNS(도메인 속성)로 인증 완료 — Cloudflare TXT 레코드 방식, 메타태그 불필요
-    naver: '',   // 네이버 서치어드바이저 → 사이트 소유확인 → HTML 태그 content 값
+    naver: '549621162778717ac29187f2c19d93918f28c7b7',   // 네이버 서치어드바이저 소유확인 ✅
     bing: '',    // Bing Webmaster Tools → 사이트 추가 → meta 태그 content 값 (또는 GSC 자동연동)
   },
   // 사업자 정보 (푸터) — 사업자등록증 기준

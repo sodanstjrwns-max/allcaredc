@@ -40,6 +40,9 @@ app.get('/sitemap.xml', async (c) => c.body(await sitemap(c.env), 200, { 'Conten
 app.get('/robots.txt', (c) => c.body(robotsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
 // IndexNow 키 검증 파일 (빙/네이버가 소유권 확인용으로 요청)
 app.get(`/${INDEXNOW_KEY}.txt`, (c) => c.body(INDEXNOW_KEY, 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
+// 네이버 서치어드바이저 HTML 파일 소유확인 (메타태그 방식과 병행)
+app.get('/naver22a12bf996862862e0b64978f42923d9.html', (c) =>
+  c.body('naver-site-verification: naver22a12bf996862862e0b64978f42923d9.html', 200, { 'Content-Type': 'text/html; charset=utf-8' }))
 app.get('/llms.txt', (c) => c.body(llmsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
 app.get('/llms-full.txt', (c) => c.body(llmsTxt(true), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
 app.get('/ai.txt', (c) => c.body(aiTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
