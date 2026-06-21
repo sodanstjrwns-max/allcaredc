@@ -2670,6 +2670,7 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 .cw-actions{padding:12px;display:flex;flex-direction:column;gap:8px}
 .cw-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;font-size:14px;font-weight:700;transition:.2s;color:#062741;background:#f1e9dc}
 .cw-btn:hover{transform:translateX(2px)}
+.cw-btn.naver{background:#03c75a;color:#fff}
 .cw-btn.kakao{background:#fee500;color:#3c1e1e}
 .cw-btn.tel{background:#062741;color:#fffeee}
 .cw-btn.tel .cw-phone{margin-left:auto;font-size:12px;opacity:.8;font-weight:600}

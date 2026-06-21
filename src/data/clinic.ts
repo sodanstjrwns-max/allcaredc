@@ -209,6 +209,7 @@ export const CLINIC = {
     blog: 'https://blog.naver.com/365allcaredc',
     youtube: '', // 미운영 — 비노출
     kakao: 'http://pf.kakao.com/_AmxkqG', // 카카오톡 채널 (친구 583+) — 채팅 상담 운영 중 ✅
+    naverBooking: 'https://naver.me/GubjwO8y', // 네이버 예약 (네이버 플레이스) ✅
   },
   // 결제·지원 안내 (카카오톡 채널 가격정보 기준)
   payments: [

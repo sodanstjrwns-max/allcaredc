@@ -113,6 +113,11 @@ export function ReservationPage() {
           </div>
         </div>
         <aside class="reveal reveal-d2">
+          <div class="inlink-box" style="background:#03c75a;color:#fff;margin-bottom:20px">
+            <h4 style="color:#fff;margin-bottom:6px"><i class="fa-solid fa-calendar-check"></i> 네이버 예약 (가장 빠름)</h4>
+            <p style="font-size:13px;color:rgba(255,255,255,.85);margin-bottom:14px">네이버 예약으로 원하시는 시간을 직접 선택해 즉시 예약하실 수 있습니다.</p>
+            <a href="${CLINIC.sns.naverBooking}" target="_blank" rel="noopener" class="btn" style="width:100%;justify-content:center;background:#fff;color:#03c75a;font-weight:800"><i class="fa-solid fa-arrow-up-right-from-square"></i> 네이버 예약 바로가기</a>
+          </div>
           <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
             <h4 style="color:#fffeee"><i class="fa-solid fa-phone text-mint"></i> 바로 전화 예약</h4>
             <a href="tel:${CLINIC.phoneRaw}" style="font-size:1.6rem;font-weight:800;color:#fffeee;display:block;margin:10px 0 6px">${CLINIC.phone}</a>

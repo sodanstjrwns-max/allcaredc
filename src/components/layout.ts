@@ -229,6 +229,7 @@ export function Footer() {
             <li><a href="/column">원장 칼럼</a></li>
             <li><a href="/encyclopedia">치과 백과사전</a></li>
             <li><a href="/reservation">예약 문의</a></li>
+            ${CLINIC.sns.naverBooking ? raw(`<li><a href="${CLINIC.sns.naverBooking}" target="_blank" rel="noopener">네이버 예약 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.7"></i></a></li>`) : ''}
           </ul>
         </div>
         <div>
@@ -276,6 +277,7 @@ export function Footer() {
       </div>
       <p class="cw-sub" id="cwHoursToday">${raw(CLINIC.hours.map(h => `<span data-day="${h.day}" hidden>${h.day.replace('요일', '')} ${h.time}</span>`).join(''))}</p>
       <div class="cw-actions">
+        ${CLINIC.sns.naverBooking ? raw(`<a href="${CLINIC.sns.naverBooking}" class="cw-btn naver" target="_blank" rel="noopener"><i class="fa-solid fa-calendar-check"></i> 네이버 예약</a>`) : ''}
         ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" class="cw-btn kakao" target="_blank" rel="noopener"><i class="fa-solid fa-comment"></i> 카카오톡 상담</a>`) : ''}
         <a href="tel:${CLINIC.phoneRaw}" class="cw-btn tel"><i class="fa-solid fa-phone"></i> 전화 상담 <span class="cw-phone">${CLINIC.phone}</span></a>
         <a href="/reservation" class="cw-btn book"><i class="fa-solid fa-calendar-check"></i> 온라인 예약 문의</a>
@@ -288,7 +290,7 @@ export function Footer() {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260621r"></script>
+  <script src="/static/app.js?v=20260621s"></script>
   `
 }
 
@@ -357,7 +359,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20260621r" />
+    <link rel="stylesheet" href="/static/style.css?v=20260621s" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->
