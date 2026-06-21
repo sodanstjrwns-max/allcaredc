@@ -126,15 +126,59 @@ export function AdminLogin(error?: string) {
 }
 
 // ── 대시보드 ──
-export function AdminDashboard(stats: { reservations: number; newReservations: number; cases: number; columns: number; members: number; notices: number }) {
+export function AdminDashboard(stats: {
+  reservations: number; newReservations: number; weekReservations: number;
+  cases: number; columns: number; members: number; notices: number; totalViews: number;
+  recentReservations: any[]; topContent: { title: string; type: string; url: string; v: number }[];
+}) {
+  const e = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   return adminShell('dashboard', '대시보드', html`
-    <div class="admin-head"><h1>대시보드</h1><span style="color:var(--gray-600)">${new Date().toLocaleDateString('ko-KR')}</span></div>
-    <div class="stat-cards">
-      <div class="stat-box"><div class="n">${stats.newReservations}</div><div class="l">신규 예약</div></div>
-      <div class="stat-box"><div class="n">${stats.reservations}</div><div class="l">전체 예약</div></div>
-      <div class="stat-box"><div class="n">${stats.members}</div><div class="l">회원 수</div></div>
-      <div class="stat-box"><div class="n">${stats.cases}</div><div class="l">진료사례</div></div>
+    <div class="admin-head"><h1>대시보드</h1><span style="color:var(--gray-600)">${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</span></div>
+
+    ${stats.newReservations > 0 ? html`<div class="admin-card" style="background:linear-gradient(135deg,#062741,#0a3a5c);color:#fffeee;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div><i class="fa-solid fa-bell text-mint" style="margin-right:8px"></i><strong style="font-size:1.1rem">확인하지 않은 신규 예약 ${stats.newReservations}건</strong><p style="color:rgba(255,255,255,.7);font-size:13px;margin-top:4px">고객이 기다리고 있어요. 빠르게 연락드리면 전환율이 올라갑니다.</p></div>
+      <a href="/admin/reservations" class="btn btn-sm" style="background:#b08d57;color:#fff">지금 확인 <i class="fa-solid fa-arrow-right"></i></a>
+    </div>` : ''}
+
+    <div class="stat-cards" style="grid-template-columns:repeat(5,1fr)">
+      <div class="stat-box"><div class="n" data-count="${stats.newReservations}">${stats.newReservations}</div><div class="l">신규 예약</div></div>
+      <div class="stat-box"><div class="n" data-count="${stats.weekReservations}">${stats.weekReservations}</div><div class="l">최근 7일 예약</div></div>
+      <div class="stat-box"><div class="n" data-count="${stats.reservations}">${stats.reservations}</div><div class="l">전체 예약</div></div>
+      <div class="stat-box"><div class="n" data-count="${stats.totalViews}">${stats.totalViews}</div><div class="l">콘텐츠 조회수</div></div>
+      <div class="stat-box"><div class="n" data-count="${stats.members}">${stats.members}</div><div class="l">회원 수</div></div>
     </div>
+
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start">
+      <div class="admin-card">
+        <h2 style="font-size:1.2rem;margin-bottom:16px"><i class="fa-solid fa-calendar-check" style="color:var(--brand-accent)"></i> 최근 예약</h2>
+        ${stats.recentReservations.length === 0
+          ? html`<p style="color:var(--gray-600);font-size:14px;padding:20px 0;text-align:center">아직 접수된 예약이 없습니다.</p>`
+          : html`<table><tbody>
+            ${raw(stats.recentReservations.map(r => `<tr>
+              <td style="white-space:nowrap"><span class="badge ${r.status === '신규' ? 'new' : 'done'}">${e(r.status)}</span></td>
+              <td><strong>${e(r.name)}</strong> · ${e(r.treatment)}</td>
+              <td style="color:var(--gray-600);font-size:13px">${e(r.phone)}</td>
+              <td style="color:var(--gray-400);font-size:12px;white-space:nowrap">${new Date(r.createdAt).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })}</td>
+            </tr>`).join(''))}
+          </tbody></table>
+          <div style="text-align:right;margin-top:12px"><a href="/admin/reservations" style="font-size:13px;color:var(--brand-accent);font-weight:600">전체 예약 보기 →</a></div>`}
+      </div>
+
+      <div class="admin-card">
+        <h2 style="font-size:1.2rem;margin-bottom:16px"><i class="fa-solid fa-fire" style="color:var(--brand-accent)"></i> 인기 콘텐츠</h2>
+        ${stats.topContent.length === 0 || stats.topContent.every(t => t.v === 0)
+          ? html`<p style="color:var(--gray-600);font-size:14px;padding:20px 0;text-align:center">조회 데이터가 쌓이면 표시됩니다.</p>`
+          : html`<ol style="list-style:none;padding:0;margin:0">
+            ${raw(stats.topContent.filter(t => t.v > 0).map((t, i) => `<li style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)">
+              <span style="font-weight:800;color:var(--brand-accent);width:20px">${i + 1}</span>
+              <a href="${t.url}" style="flex:1;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(t.title)}</a>
+              <span style="font-size:11px;color:var(--gray-400)">${e(t.type)}</span>
+              <span style="font-size:13px;color:var(--gray-600);white-space:nowrap"><i class="fa-regular fa-eye" style="font-size:11px"></i> ${t.v}</span>
+            </li>`).join(''))}
+          </ol>`}
+      </div>
+    </div>
+
     <div class="admin-card">
       <h2 style="font-size:1.2rem;margin-bottom:16px">빠른 작업</h2>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -143,33 +187,72 @@ export function AdminDashboard(stats: { reservations: number; newReservations: n
         <a href="/admin/notices/new" class="btn btn-outline btn-sm"><i class="fa-solid fa-bullhorn"></i> 공지 작성</a>
         <a href="/admin/reservations" class="btn btn-outline btn-sm"><i class="fa-solid fa-calendar"></i> 예약 확인</a>
       </div>
+      <p style="color:var(--gray-600);font-size:13px;margin-top:16px">콘텐츠 현황 · 칼럼 ${stats.columns}개 · 공지 ${stats.notices}개 · 진료사례 ${stats.cases}개</p>
     </div>
-    <div class="admin-card">
-      <h2 style="font-size:1.2rem;margin-bottom:8px">콘텐츠 현황</h2>
-      <p style="color:var(--gray-600);font-size:14px">칼럼 ${stats.columns}개 · 공지 ${stats.notices}개 · 진료사례 ${stats.cases}개가 등록되어 있습니다.</p>
-    </div>
+
+    <script>
+      // 카운트업 애니메이션
+      (function(){
+        var nums=document.querySelectorAll('.stat-box .n[data-count]');
+        nums.forEach(function(el){
+          var target=parseInt(el.getAttribute('data-count'),10)||0;
+          if(target===0){el.textContent='0';return;}
+          var dur=900,start=null;
+          function step(ts){if(!start)start=ts;var p=Math.min((ts-start)/dur,1);
+            el.textContent=Math.floor((1-Math.pow(1-p,3))*target).toLocaleString();
+            if(p<1)requestAnimationFrame(step);}
+          requestAnimationFrame(step);
+        });
+      })();
+    </script>
   `)
 }
 
 // ── 예약 관리 ──
+const esc = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 export function AdminReservations(items: any[]) {
+  const newCount = items.filter(r => r.status === '신규').length
+  const doneCount = items.length - newCount
   return adminShell('reservations', '예약 관리', html`
-    <div class="admin-head"><h1>예약 관리</h1></div>
-    <div class="admin-card">
-      ${items.length === 0 ? html`<p style="color:var(--gray-600);text-align:center;padding:40px">접수된 예약이 없습니다.</p>` : html`
-      <table><thead><tr><th>접수일</th><th>이름</th><th>연락처</th><th>진료</th><th>희망일시</th><th>상태</th><th>관리</th></tr></thead><tbody>
-      ${raw(items.map(r => `<tr>
-        <td>${new Date(r.createdAt).toLocaleDateString('ko-KR')}</td>
-        <td><strong>${r.name}</strong></td>
-        <td>${r.phone}</td>
-        <td>${r.treatment}</td>
-        <td>${r.date || '-'} ${r.timeslot || ''}</td>
-        <td><span class="badge ${r.status === '신규' ? 'new' : 'done'}">${r.status}</span></td>
-        <td>
+    <div class="admin-head"><h1>예약 관리</h1><span style="color:var(--gray-600)">신규 ${newCount}건 · 완료 ${doneCount}건 · 전체 ${items.length}건</span></div>
+    ${items.length === 0 ? html`<div class="admin-card"><p style="color:var(--gray-600);text-align:center;padding:40px">접수된 예약이 없습니다.</p></div>` : html`
+    <div class="admin-card" style="padding:0;overflow:hidden">
+      <div style="display:flex;gap:8px;padding:14px 20px;border-bottom:1px solid var(--gray-100);flex-wrap:wrap">
+        <button type="button" class="btn-sm btn-outline res-filter active" data-f="all">전체 (${items.length})</button>
+        <button type="button" class="btn-sm btn-outline res-filter" data-f="신규">신규 (${newCount})</button>
+        <button type="button" class="btn-sm btn-outline res-filter" data-f="완료">완료 (${doneCount})</button>
+      </div>
+      <div style="overflow-x:auto"><table><thead><tr><th>접수일시</th><th>이름</th><th>연락처</th><th>진료</th><th>희망일시</th><th>문의내용</th><th>상태</th><th>관리</th></tr></thead><tbody>
+      ${raw(items.map(r => {
+        const d = new Date(r.createdAt)
+        const phoneDigits = String(r.phone || '').replace(/[^0-9]/g, '')
+        const msg = esc(r.message)
+        return `<tr data-status="${esc(r.status)}">
+        <td style="white-space:nowrap">${d.toLocaleDateString('ko-KR')}<br><span style="color:var(--gray-400);font-size:12px">${d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span></td>
+        <td><strong>${esc(r.name)}</strong>${r.email ? `<br><span style="color:var(--gray-400);font-size:12px">${esc(r.email)}</span>` : ''}</td>
+        <td><a href="tel:${phoneDigits}" style="color:var(--brand-accent);font-weight:600"><i class="fa-solid fa-phone" style="font-size:11px"></i> ${esc(r.phone)}</a></td>
+        <td>${esc(r.treatment)}</td>
+        <td style="white-space:nowrap">${esc(r.date) || '-'}<br><span style="color:var(--gray-400);font-size:12px">${esc(r.timeslot) || '시간 무관'}</span></td>
+        <td style="max-width:240px">${msg ? `<span title="${msg}" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;color:var(--gray-600)">${msg}</span>` : '<span style="color:var(--gray-400)">-</span>'}</td>
+        <td><span class="badge ${r.status === '신규' ? 'new' : 'done'}">${esc(r.status)}</span></td>
+        <td style="white-space:nowrap">
           <form method="POST" action="/admin/reservations/${r.id}/status" style="display:inline"><button class="btn-sm btn-outline" name="status" value="${r.status === '신규' ? '완료' : '신규'}">${r.status === '신규' ? '완료처리' : '되돌리기'}</button></form>
-        </td></tr>`).join(''))}
-      </tbody></table>`}
+          <form method="POST" action="/admin/reservations/${r.id}/delete" style="display:inline" onsubmit="return confirm('이 예약을 삭제하시겠습니까?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form>
+        </td></tr>`
+      }).join(''))}
+      </tbody></table></div>
     </div>
+    <script>
+      (function(){
+        var btns=document.querySelectorAll('.res-filter');
+        var rows=document.querySelectorAll('tbody tr[data-status]');
+        btns.forEach(function(b){b.addEventListener('click',function(){
+          btns.forEach(function(x){x.classList.remove('active')});b.classList.add('active');
+          var f=b.getAttribute('data-f');
+          rows.forEach(function(r){r.style.display=(f==='all'||r.getAttribute('data-status')===f)?'':'none'});
+        })});
+      })();
+    </script>`}
   `)
 }
 

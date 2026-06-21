@@ -233,9 +233,33 @@ app.get('/auth/google/callback', async (c) => {
 app.post('/api/reservation', async (c) => {
   try {
     const data = await c.req.json<any>()
-    if (!data.name || !data.phone || !data.treatment) return c.json({ ok: false, error: '필수 항목을 입력해 주세요.' })
-    const item = { id: uid('r_'), ...data, status: '신규', createdAt: Date.now() }
-    delete (item as any).agree
+    // 허니팟(봇 차단): 숨김 필드 'website'가 채워져 있으면 봇 → 성공한 척하고 폐기
+    if (data.website) return c.json({ ok: true })
+
+    const name = String(data.name || '').trim()
+    const phoneRaw = String(data.phone || '').trim()
+    const treatment = String(data.treatment || '').trim()
+    const phoneDigits = phoneRaw.replace(/[^0-9]/g, '')
+
+    // ── 서버 측 검증 ──
+    if (!name || !phoneRaw || !treatment) return c.json({ ok: false, error: '필수 항목을 입력해 주세요.' })
+    if (name.length < 2 || name.length > 30) return c.json({ ok: false, error: '이름을 정확히 입력해 주세요.' })
+    if (phoneDigits.length < 9 || phoneDigits.length > 11) return c.json({ ok: false, error: '연락처를 정확히 입력해 주세요. (예: 010-0000-0000)' })
+    if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.email))) return c.json({ ok: false, error: '이메일 형식이 올바르지 않습니다.' })
+    if (String(data.message || '').length > 1000) return c.json({ ok: false, error: '문의 내용이 너무 깁니다.' })
+
+    const item = {
+      id: uid('r_'),
+      name,
+      phone: phoneRaw,
+      email: String(data.email || '').trim(),
+      treatment,
+      date: String(data.date || '').trim(),
+      timeslot: String(data.timeslot || '').trim(),
+      message: String(data.message || '').trim(),
+      status: '신규',
+      createdAt: Date.now(),
+    }
     await addToCollection(c.env, 'reservations', item)
     if (c.env.RESEND_API_KEY && c.env.NOTIFICATION_EMAIL) c.executionCtx?.waitUntil(sendReservationEmail(c.env, item))
     return c.json({ ok: true })

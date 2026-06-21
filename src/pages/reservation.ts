@@ -72,6 +72,7 @@ export function ReservationPage() {
         <div class="reveal">
           <div class="form-card">
             <form onsubmit="return submitReservation(event)">
+              <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
               <div class="grid-2" style="gap:18px;align-items:start">
                 <div class="field"><label>이름 <span class="req">*</span></label><input type="text" name="name" required></div>
                 <div class="field"><label>연락처 <span class="req">*</span></label><input type="tel" name="phone" required placeholder="010-0000-0000"></div>

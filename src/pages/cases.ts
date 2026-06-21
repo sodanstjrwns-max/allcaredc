@@ -25,8 +25,8 @@ export type CaseItem = {
 // 비포애프터 목록 /cases  (?cat= / ?doctor= 필터)
 // ============================================================
 export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: string; doctor?: string }) {
+  // 전체를 렌더하고 클라이언트에서 즉시 필터(필터 UX 일관성). doctor 필터만 서버 적용.
   let filtered = cases
-  if (filter.cat) filtered = filtered.filter(c => c.category === filter.cat)
   if (filter.doctor) filtered = filtered.filter(c => c.doctor === filter.doctor)
 
   const catName = (slug: string) => TREATMENTS.find(t => t.slug === slug)?.name || slug
@@ -42,11 +42,12 @@ export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: 
 
   <section class="section">
     <div class="container">
-      <!-- 필터 -->
-      <div class="reveal" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:36px">
-        <a href="/cases" class="tag-pill" style="${!filter.cat ? 'background:var(--brand);color:#fffeee' : ''}">전체</a>
+      <!-- 필터 (클라이언트 즉시 필터) -->
+      <div class="reveal case-filter" id="caseFilter" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+        <button type="button" class="tag-pill case-fbtn${!filter.cat ? ' active' : ''}" data-cat="all">전체</button>
         ${raw(TREATMENTS.filter(t => t.core).map(t => `
-          <a href="/cases?cat=${t.slug}" class="tag-pill" style="${filter.cat === t.slug ? 'background:var(--brand);color:#fffeee' : ''}">${t.name}</a>`).join(''))}
+          <button type="button" class="tag-pill case-fbtn${filter.cat === t.slug ? ' active' : ''}" data-cat="${t.slug}">${t.name}</button>`).join(''))}
+        <span id="caseCount" style="margin-left:auto;font-size:13px;color:var(--gray-600)"></span>
       </div>
 
       ${!loggedIn ? html`
@@ -63,12 +64,38 @@ export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: 
           <p>등록된 진료사례가 준비 중입니다.</p>
         </div>
       ` : html`
-        <div class="case-grid">
+        <div class="case-grid" id="caseGrid">
           ${raw(filtered.map((c, i) => caseCard(c, loggedIn, catName, docName, i)).join(''))}
+        </div>
+        <div id="caseEmpty" hidden style="text-align:center;padding:60px 0;color:var(--gray-600)">
+          <i class="fa-solid fa-filter-circle-xmark" style="font-size:40px;color:var(--gray-200);margin-bottom:14px"></i>
+          <p>선택하신 진료 분야의 사례가 아직 없습니다.</p>
         </div>
       `}
     </div>
   </section>
+
+  <!-- 라이트박스 -->
+  <div class="case-lightbox" id="caseLightbox" hidden>
+    <div class="cl-backdrop" data-cl-close></div>
+    <div class="cl-card" role="dialog" aria-modal="true" aria-label="진료사례 상세">
+      <button type="button" class="cl-close" data-cl-close aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
+      <div class="cl-media">
+        <figure><img id="clBefore" alt="치료 전"><figcaption>Before</figcaption></figure>
+        <figure id="clAfterFig"><img id="clAfter" alt="치료 후"><figcaption>After</figcaption></figure>
+      </div>
+      <div class="cl-info">
+        <span class="cl-cat" id="clCat"></span>
+        <h3 id="clTitle"></h3>
+        <p id="clDesc"></p>
+        <ul class="cl-tags" id="clTags"></ul>
+        <a id="clDoctor" class="cl-doctor" href="#" hidden></a>
+        <div class="cl-cta">
+          <a href="/reservation" class="btn btn-accent" style="font-size:14px"><i class="fa-solid fa-calendar-check"></i> 비슷한 고민, 상담받기</a>
+        </div>
+      </div>
+    </div>
+  </div>
   ${ctaBand()}
   `
   return Page({
@@ -86,9 +113,19 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
   const after = c.panoAfter || c.intraAfter
   const afterSrc = loggedIn && after ? `/api/case-image/${c.id}/after` : ''
   const beforeSrc = before ? `/api/case-image/${c.id}/before` : ''
+  const esc = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const tagsHtml = [
+    c.ageGroup ? `${c.ageGroup} ${c.gender || ''}` : '',
+    c.period ? `치료기간 ${c.period}` : '',
+    c.region ? c.region : '',
+  ].filter(Boolean).map(t => `<li>${esc(t)}</li>`).join('')
 
   return `
-  <article class="case-card reveal reveal-d${(i % 3) + 1}">
+  <article class="case-card reveal reveal-d${(i % 3) + 1}" data-cat="${esc(c.category)}"
+    data-before="${esc(beforeSrc)}" data-after="${esc(afterSrc)}" data-locked="${loggedIn ? '0' : '1'}"
+    data-title="${esc(storyLine(c))}" data-cat-name="${esc(catName(c.category))}"
+    data-desc="${esc(c.description)}" data-tags="${esc(tagsHtml)}"
+    data-doctor="${esc(c.doctor || '')}" data-doctor-name="${esc(docName(c.doctor) ? docName(c.doctor) + ' 원장' : '')}">
     
     <div class="ba-slider${loggedIn ? '' : ' locked'}">
       ${beforeSrc ? `<img src="${beforeSrc}" alt="${c.title} 치료 전" loading="lazy">` : `<div style="position:absolute;inset:0;display:grid;place-items:center;color:var(--gray-400);background:var(--gray-100)"><i class="fa-solid fa-image" style="font-size:32px"></i></div>`}
@@ -118,6 +155,7 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
         ${c.region ? `<i class="fa-solid fa-location-dot"></i> ${c.region}` : ''}
       </div>
       ${c.doctor ? `<a href="/doctors/${c.doctor}" style="display:inline-block;margin-top:10px;font-size:13px;font-weight:600;color:var(--brand-accent)">담당: ${docName(c.doctor)} 원장 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></a>` : ''}
+      <button type="button" class="case-detail-btn" aria-label="진료사례 자세히 보기"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> 자세히 보기</button>
     </div>
   </article>`
 }

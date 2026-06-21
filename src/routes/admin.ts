@@ -46,10 +46,33 @@ admin.get('/', async (c) => {
   const columns = await listCollection<any>(c.env, 'columns')
   const members = await listCollection<any>(c.env, 'users')
   const notices = await listCollection<any>(c.env, 'notices')
+
+  // 조회수 합산 (칼럼 + 케이스 + 공지)
+  const colViews = await viewsMap(c.env, 'column', columns)
+  const caseViews = await viewsMap(c.env, 'case', cases)
+  const noticeViews = await viewsMap(c.env, 'notice', notices)
+  const sumViews = (m: Record<string, number>) => Object.values(m).reduce((a, b) => a + b, 0)
+  const totalViews = sumViews(colViews) + sumViews(caseViews) + sumViews(noticeViews)
+
+  // 인기 콘텐츠 Top 3 (조회수 기준)
+  const ranked = [
+    ...columns.map(x => ({ title: x.title, type: '칼럼', url: `/column/${x.slug}`, v: colViews[x.id] || 0 })),
+    ...cases.map(x => ({ title: x.title, type: '사례', url: `/cases`, v: caseViews[x.id] || 0 })),
+    ...notices.map(x => ({ title: x.title, type: '공지', url: `/notice/${x.id}`, v: noticeViews[x.id] || 0 })),
+  ].sort((a, b) => b.v - a.v).slice(0, 5)
+
+  // 최근 7일 신규 예약
+  const weekAgo = Date.now() - 7 * 86400000
+  const weekReservations = reservations.filter(r => (r.createdAt || 0) >= weekAgo).length
+
   return c.html(AdminDashboard({
     reservations: reservations.length,
     newReservations: reservations.filter(r => r.status === '신규').length,
+    weekReservations,
     cases: cases.length, columns: columns.length, members: members.length, notices: notices.length,
+    totalViews,
+    recentReservations: reservations.slice(0, 5),
+    topContent: ranked,
   }).toString())
 })
 
@@ -61,6 +84,10 @@ admin.get('/reservations', async (c) => {
 admin.post('/reservations/:id/status', async (c) => {
   const form = await c.req.parseBody()
   await updateInCollection(c.env, 'reservations', c.req.param('id'), { status: String(form.status) })
+  return c.redirect('/admin/reservations')
+})
+admin.post('/reservations/:id/delete', async (c) => {
+  await removeFromCollection(c.env, 'reservations', c.req.param('id'))
   return c.redirect('/admin/reservations')
 })
 

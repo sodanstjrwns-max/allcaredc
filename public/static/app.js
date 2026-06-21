@@ -62,13 +62,18 @@
     requestAnimationFrame(step);
   }
   var counters = document.querySelectorAll('[data-count]');
+  // 콜론 suffix(시간 표기 "20:30" 등)는 카운트업이 어색하므로 즉시 고정값 표시
+  function isTimeLike(el) { return (el.getAttribute('data-suffix') || '').indexOf(':') > -1; }
+  function setFinal(el) { el.textContent = el.getAttribute('data-count') + (el.getAttribute('data-suffix') || ''); }
   if (reduce) {
-    counters.forEach(function (el) { el.textContent = el.getAttribute('data-count') + (el.getAttribute('data-suffix') || ''); });
+    counters.forEach(setFinal);
   } else if ('IntersectionObserver' in window) {
     var cio = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { countUp(e.target); cio.unobserve(e.target); } });
+      entries.forEach(function (e) { if (e.isIntersecting) { if (isTimeLike(e.target)) setFinal(e.target); else countUp(e.target); cio.unobserve(e.target); } });
     }, { threshold: 0.5 });
     counters.forEach(function (el) { cio.observe(el); });
+  } else {
+    counters.forEach(setFinal);
   }
 
   // ============================================================
@@ -992,4 +997,158 @@
   window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
   window.addEventListener('resize', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
   update();
+})();
+
+// ---------- soft page transition (fade-out on internal navigation) ----------
+(function () {
+  if (typeof window === 'undefined') return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+  // 진입 시 페이드인
+  document.documentElement.classList.add('pt-ready');
+  requestAnimationFrame(function () { document.body.classList.add('pt-in'); });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a');
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (!href || href.charAt(0) === '#') return;
+    if (a.target === '_blank' || a.hasAttribute('download')) return;
+    if (a.getAttribute('rel') === 'external') return;
+    if (a.protocol && a.protocol !== window.location.protocol) return;
+    if (a.host && a.host !== window.location.host) return;        // 외부 링크 제외
+    if (href.indexOf('tel:') === 0 || href.indexOf('mailto:') === 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // 새 탭 의도 존중
+    // 같은 페이지 앵커 제외
+    var url = new URL(a.href, window.location.href);
+    if (url.pathname === window.location.pathname && url.hash) return;
+    e.preventDefault();
+    document.body.classList.add('pt-out');
+    setTimeout(function () { window.location.href = a.href; }, 260);
+  });
+  // bfcache 복귀 시 잔상 제거
+  window.addEventListener('pageshow', function (ev) {
+    if (ev.persisted) { document.body.classList.remove('pt-out'); document.body.classList.add('pt-in'); }
+  });
+})();
+
+// ---------- consult widget (toggle + 영업상태 판정) ----------
+(function () {
+  var w = document.getElementById('consultWidget');
+  if (!w) return;
+  var toggle = document.getElementById('cwToggle');
+  var panel = document.getElementById('cwPanel');
+  var closeBtn = document.getElementById('cwClose');
+
+  function open() { w.classList.add('open'); panel.hidden = false; toggle.setAttribute('aria-expanded', 'true'); }
+  function close() { w.classList.remove('open'); panel.hidden = true; toggle.setAttribute('aria-expanded', 'false'); }
+  toggle.addEventListener('click', function () { w.classList.contains('open') ? close() : open(); });
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  document.addEventListener('click', function (e) { if (w.classList.contains('open') && !w.contains(e.target)) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+  // 영업상태: 요일별 진료시간 파싱 (data-day 요소 텍스트 "월 09:30 - 20:30")
+  var DAY_KO = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+  var statusEl = document.getElementById('cwStatus');
+  var statusTxt = statusEl ? statusEl.querySelector('.cw-status-txt') : null;
+  var todayEl = document.getElementById('cwHoursToday');
+  function toMin(hhmm) { var p = hhmm.split(':'); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); }
+  function evalStatus() {
+    if (!statusEl || !statusTxt) return;
+    var now = new Date();
+    var dayName = DAY_KO[now.getDay()];
+    var spans = todayEl ? todayEl.querySelectorAll('[data-day]') : [];
+    var todaySpan = null;
+    spans.forEach(function (s) { if (s.getAttribute('data-day') === dayName) todaySpan = s; });
+    var nowMin = now.getHours() * 60 + now.getMinutes();
+    // 시간 범위 추출: "09:30 - 20:30"
+    var label = '오늘 휴진', isOpen = false, range = null;
+    if (todaySpan) {
+      var m = todaySpan.textContent.match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+      if (m) { range = m; var s = toMin(m[1]), e = toMin(m[2]); isOpen = nowMin >= s && nowMin < e; }
+    }
+    if (range) {
+      var lunchNote = '';
+      if (isOpen) label = '지금 진료 중 · ' + range[2] + ' 마감';
+      else if (nowMin < toMin(range[1])) label = '오늘 ' + range[1] + ' 진료 시작';
+      else label = '오늘 진료 마감 (' + range[2] + ')';
+    }
+    statusEl.classList.add(isOpen ? 'open' : 'closed');
+    statusTxt.textContent = label;
+    if (todayEl) {
+      todayEl.textContent = todaySpan ? ('오늘(' + dayName.replace('요일','') + ') ' + (range ? range[1] + ' ~ ' + range[2] : '휴진')) : '오늘은 휴진일입니다';
+    }
+  }
+  evalStatus();
+})();
+
+// ---------- case gallery: 즉시 필터 + 라이트박스 ----------
+(function () {
+  var grid = document.getElementById('caseGrid');
+  if (!grid) return;
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.case-card'));
+  var fbtns = document.querySelectorAll('.case-fbtn');
+  var countEl = document.getElementById('caseCount');
+  var emptyEl = document.getElementById('caseEmpty');
+
+  function applyFilter(cat) {
+    var shown = 0;
+    cards.forEach(function (c) {
+      var ok = cat === 'all' || c.getAttribute('data-cat') === cat;
+      c.classList.toggle('filtered-out', !ok);
+      if (ok) shown++;
+    });
+    if (countEl) countEl.textContent = '총 ' + shown + '건';
+    if (emptyEl) emptyEl.hidden = shown !== 0;
+  }
+  fbtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      fbtns.forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      applyFilter(b.getAttribute('data-cat'));
+    });
+  });
+  var initial = document.querySelector('.case-fbtn.active');
+  applyFilter(initial ? initial.getAttribute('data-cat') : 'all');
+
+  // ---------- 라이트박스 ----------
+  var lb = document.getElementById('caseLightbox');
+  if (!lb) return;
+  var elBefore = document.getElementById('clBefore');
+  var elAfter = document.getElementById('clAfter');
+  var afterFig = document.getElementById('clAfterFig');
+  var elCat = document.getElementById('clCat');
+  var elTitle = document.getElementById('clTitle');
+  var elDesc = document.getElementById('clDesc');
+  var elTags = document.getElementById('clTags');
+  var elDoctor = document.getElementById('clDoctor');
+
+  function openLb(card) {
+    var before = card.getAttribute('data-before');
+    var after = card.getAttribute('data-after');
+    var locked = card.getAttribute('data-locked') === '1';
+    if (before) { elBefore.src = before; elBefore.parentElement.style.display = ''; }
+    else { elBefore.parentElement.style.display = 'none'; }
+    if (after && !locked) { elAfter.src = after; afterFig.style.display = ''; }
+    else { afterFig.style.display = 'none'; }
+    elCat.textContent = card.getAttribute('data-cat-name') || '';
+    elTitle.textContent = card.getAttribute('data-title') || '';
+    elDesc.textContent = card.getAttribute('data-desc') || '';
+    elTags.innerHTML = card.getAttribute('data-tags') || '';
+    var doc = card.getAttribute('data-doctor');
+    var docName = card.getAttribute('data-doctor-name');
+    if (doc && docName) { elDoctor.textContent = '담당: ' + docName + ' →'; elDoctor.href = '/doctors/' + doc; elDoctor.hidden = false; }
+    else elDoctor.hidden = true;
+    lb.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLb() { lb.hidden = true; document.body.style.overflow = ''; }
+
+  grid.addEventListener('click', function (e) {
+    var btn = e.target.closest('.case-detail-btn');
+    if (!btn) return;
+    var card = btn.closest('.case-card');
+    if (card) openLb(card);
+  });
+  lb.addEventListener('click', function (e) { if (e.target.hasAttribute('data-cl-close')) closeLb(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
 })();

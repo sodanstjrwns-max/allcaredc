@@ -257,15 +257,28 @@ export function Footer() {
     </div>
   </footer>
 
-  <!-- floating CTA -->
-  <div class="float-cta">
-    ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" class="kakao" target="_blank" rel="noopener" aria-label="카카오톡 상담"><i class="fa-solid fa-comment"></i><span class="tip">카카오톡 상담</span></a>`) : ''}
-    <a href="tel:${CLINIC.phoneRaw}" class="tel" aria-label="전화 상담"><i class="fa-solid fa-phone"></i><span class="tip">전화 상담</span></a>
-    <a href="/reservation" class="book" aria-label="예약 문의"><i class="fa-solid fa-calendar-check"></i><span class="tip">예약 문의</span></a>
+  <!-- floating consult widget (toggle + 영업상태) -->
+  <div class="consult-widget" id="consultWidget">
+    <div class="cw-panel" id="cwPanel" hidden>
+      <div class="cw-head">
+        <span class="cw-status" id="cwStatus"><span class="cw-dot"></span> <span class="cw-status-txt">진료시간 확인 중…</span></span>
+        <button type="button" class="cw-close" id="cwClose" aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="cw-sub" id="cwHoursToday">${raw(CLINIC.hours.map(h => `<span data-day="${h.day}" hidden>${h.day.replace('요일', '')} ${h.time}</span>`).join(''))}</p>
+      <div class="cw-actions">
+        ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" class="cw-btn kakao" target="_blank" rel="noopener"><i class="fa-solid fa-comment"></i> 카카오톡 상담</a>`) : ''}
+        <a href="tel:${CLINIC.phoneRaw}" class="cw-btn tel"><i class="fa-solid fa-phone"></i> 전화 상담 <span class="cw-phone">${CLINIC.phone}</span></a>
+        <a href="/reservation" class="cw-btn book"><i class="fa-solid fa-calendar-check"></i> 온라인 예약 문의</a>
+      </div>
+    </div>
+    <button type="button" class="cw-fab" id="cwToggle" aria-label="상담 메뉴 열기" aria-expanded="false">
+      <i class="fa-solid fa-headset cw-ic-open"></i><i class="fa-solid fa-xmark cw-ic-close"></i>
+      <span class="cw-pulse" aria-hidden="true"></span>
+    </button>
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=20260621c"></script>
   `
 }
 
@@ -281,6 +294,7 @@ export type Meta = {
   schema?: any[]
   noindex?: boolean
   keywords?: string
+  preloadImage?: string  // LCP 이미지 preload (성능 최적화)
 }
 
 export function headTags(meta: Meta) {
@@ -321,13 +335,18 @@ export function headTags(meta: Meta) {
     <link rel="icon" href="/static/img/favicon-64.png" sizes="64x64" type="image/png" />
     <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
+    <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
+    <link rel="stylesheet" href="/static/style.css?v=20260621c" />
+    <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Nanum+Myeongjo:wght@400;700;800&family=DM+Mono:wght@300;400;500&display=swap" />
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="/static/style.css?v=20260621a" />
+    <!-- FontAwesome: 비동기 로드(렌더 차단 제거) -->
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" /></noscript>
     ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('')) : ''}
   `
 }
