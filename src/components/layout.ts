@@ -152,6 +152,7 @@ export function Header() {
                 <a href="/pricing"><span class="ico"><i class="fa-solid fa-won-sign"></i></span><span><strong>비급여 비용 안내</strong></span></a>
                 <a href="/faq"><span class="ico"><i class="fa-solid fa-circle-question"></i></span><span><strong>자주 묻는 질문</strong></span></a>
                 <a href="/notice"><span class="ico"><i class="fa-solid fa-bullhorn"></i></span><span><strong>공지사항</strong></span></a>
+                <a href="/events"><span class="ico"><i class="fa-solid fa-gift"></i></span><span><strong>이벤트</strong><span>진행 중인 혜택</span></span></a>
               </div>
             </div>
           </li>
@@ -186,6 +187,7 @@ export function Header() {
       <a href="/pricing">비용 안내</a>
       <a href="/faq">자주 묻는 질문</a>
       <a href="/notice">공지사항</a>
+      <a href="/events">이벤트</a>
     </div>
     <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:24px">예약 문의</a>
     <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:10px">${CLINIC.phone}</a>
@@ -286,7 +288,7 @@ export function Footer() {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260621k"></script>
+  <script src="/static/app.js?v=20260621m"></script>
   `
 }
 
@@ -355,7 +357,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20260621k" />
+    <link rel="stylesheet" href="/static/style.css?v=20260621m" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->

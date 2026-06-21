@@ -7,9 +7,11 @@ import { notifySearchEngines } from '../lib/indexnow'
 import {
   AdminLogin, AdminDashboard, AdminReservations, AdminMembers, AdminCases, AdminCaseForm,
   AdminColumns, AdminColumnForm, AdminNotices, AdminNoticeForm,
+  AdminEvents, AdminEventForm,
 } from '../pages/admin'
 import { SEED_COLUMNS, Column } from '../pages/column'
 import { SEED_NOTICES, Notice } from '../pages/notice'
+import { SEED_EVENTS, EventItem } from '../pages/event'
 import { CaseItem } from '../pages/cases'
 
 // /admin prefix로 마운트되므로 내부 경로는 prefix 제외
@@ -272,6 +274,65 @@ admin.post('/notices/:id/delete', async (c) => {
   return c.redirect('/admin/notices')
 })
 
+// ── 이벤트 ──
+async function uploadEventImage(c: any, form: any): Promise<string | undefined> {
+  const file = form['imageFile'] as unknown as File
+  if (file && typeof file === 'object' && (file as any).size > 0) {
+    const ext = (((file as any).name || '').split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
+    const key = `uploads/columns/${uid('ev_')}.${ext}`
+    await r2PutBinary(c.env, key, await (file as any).arrayBuffer(), (file as any).type || 'image/jpeg')
+    return `/${key}`
+  }
+  return undefined
+}
+
+admin.get('/events', async (c) => {
+  const items = await listCollection<EventItem>(c.env, 'events')
+  return c.html(AdminEvents(items, await viewsMap(c.env, 'event', items)).toString())
+})
+admin.get('/events/new', (c) => c.html(AdminEventForm().toString()))
+admin.post('/events/new', async (c) => {
+  const form = await c.req.parseBody()
+  const uploaded = await uploadEventImage(c, form)
+  const id = uid('ev_')
+  await addToCollection<EventItem>(c.env, 'events', {
+    id, title: String(form.title || ''), body: String(form.body || ''),
+    summary: String(form.summary || '').trim() || undefined,
+    image: uploaded || (String(form.image || '').trim() || undefined),
+    startDate: String(form.startDate || '').trim() || undefined,
+    endDate: String(form.endDate || '').trim() || undefined,
+    pinned: !!form.pinned, createdAt: Date.now(),
+  })
+  c.executionCtx.waitUntil(notifySearchEngines(`/events/${id}`, '/events'))
+  return c.redirect('/admin/events')
+})
+admin.get('/events/:id/edit', async (c) => {
+  const items = await listCollection<EventItem>(c.env, 'events')
+  const ev = items.find(x => x.id === c.req.param('id'))
+  if (!ev) return c.notFound()
+  return c.html(AdminEventForm(ev).toString())
+})
+admin.post('/events/:id/edit', async (c) => {
+  const form = await c.req.parseBody()
+  const patch: Partial<EventItem> = {
+    title: String(form.title || ''), body: String(form.body || ''),
+    summary: String(form.summary || '').trim() || undefined,
+    startDate: String(form.startDate || '').trim() || undefined,
+    endDate: String(form.endDate || '').trim() || undefined,
+    pinned: !!form.pinned,
+  }
+  const uploaded = await uploadEventImage(c, form)
+  if (uploaded) patch.image = uploaded
+  else if (form.image !== undefined) patch.image = String(form.image || '').trim() || undefined
+  await updateInCollection<EventItem>(c.env, 'events', c.req.param('id'), patch)
+  c.executionCtx.waitUntil(notifySearchEngines(`/events/${c.req.param('id')}`, '/events'))
+  return c.redirect('/admin/events')
+})
+admin.post('/events/:id/delete', async (c) => {
+  await removeFromCollection(c.env, 'events', c.req.param('id'))
+  return c.redirect('/admin/events')
+})
+
 function slugify(s: string): string {
   return s.toLowerCase().replace(/[^\w가-힣]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'post-' + Date.now().toString(36)
 }
@@ -298,4 +359,6 @@ export async function ensureSeed(env: Bindings) {
   if (cols.length === 0) await saveCollection(env, 'columns', SEED_COLUMNS)
   const nots = await listCollection<Notice>(env, 'notices')
   if (nots.length === 0) await saveCollection(env, 'notices', SEED_NOTICES)
+  const evs = await listCollection<EventItem>(env, 'events')
+  if (evs.length === 0) await saveCollection(env, 'events', SEED_EVENTS)
 }

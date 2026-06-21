@@ -2809,3 +2809,28 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 .err-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:480px;margin:0 auto}
 .err-links a{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border:1px solid var(--warm-line,#e2d8c4);border-radius:999px;font-size:13.5px;font-weight:600;color:var(--brand,#062741);transition:.2s}
 .err-links a:hover{background:var(--brand,#062741);color:#fffeee;border-color:var(--brand,#062741)}
+
+/* ===== 이벤트 카드 그리드 ===== */
+.event-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:900px){.event-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.event-grid{grid-template-columns:1fr}}
+.event-card{display:flex;flex-direction:column;background:var(--ivory,#fffeee);border:1px solid var(--ivory-2,#f1e9dc);border-radius:16px;overflow:hidden;transition:transform .25s, box-shadow .25s}
+.event-card:hover{transform:translateY(-4px);box-shadow:0 16px 38px rgba(6,39,65,.13)}
+.event-card.is-ended{opacity:.62;filter:grayscale(.25)}
+.ev-thumb{position:relative;aspect-ratio:16/10;background:var(--ivory-2,#f1e9dc);overflow:hidden}
+.ev-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ev-thumb .ev-ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--gold,#b08d57);font-size:42px;opacity:.5}
+.ev-status{position:absolute;top:12px;left:12px;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;letter-spacing:.02em}
+.ev-status.ev-ongoing{background:#1f7a4d}
+.ev-status.ev-upcoming{background:var(--gold,#b08d57)}
+.ev-status.ev-ended{background:#8a8a8a}
+.ev-pin{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(6,39,65,.82);color:#fffeee}
+.ev-info{padding:20px 20px 22px;display:flex;flex-direction:column;gap:8px;flex:1}
+.ev-info h3{font-size:1.12rem;font-weight:800;color:var(--navy-800,#062741);line-height:1.4}
+.ev-info p{font-size:14px;color:var(--gray-600,#666);line-height:1.6;flex:1}
+.ev-period{font-size:12.5px;color:var(--gold,#b08d57);font-weight:600;display:flex;align-items:center;gap:6px;margin-top:2px}
+
+/* ===== 약수 협약식 배너 (병원소개) ===== */
+.yaksu-banner{margin:0 0 28px;border-radius:16px;overflow:hidden;border:1px solid rgba(176,141,87,.35);position:relative}
+.yaksu-banner img{width:100%;max-height:420px;object-fit:cover;display:block}
+.yaksu-banner figcaption{padding:14px 20px;font-size:13.5px;color:rgba(255,254,238,.78);background:rgba(255,254,238,.05);text-align:center}

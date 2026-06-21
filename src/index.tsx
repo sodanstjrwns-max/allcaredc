@@ -10,6 +10,7 @@ import { ReservationPage } from './pages/reservation'
 import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
 import { ColumnIndex, ColumnDetail, Column } from './pages/column'
 import { NoticeIndex, NoticeDetail, Notice, activePopupNotice } from './pages/notice'
+import { EventIndex, EventDetail, EventItem } from './pages/event'
 import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
 import { SeoHealthPage } from './pages/seo-health'
 import { Page } from './components/page'
@@ -131,6 +132,19 @@ app.get('/notice/:id', async (c) => {
   if (!n) return c.notFound()
   await trackView(c.env, 'notice', n.id, isBot(c.req.header('User-Agent')))
   return c.html(NoticeDetail(n).toString())
+})
+
+// ── 이벤트 ──
+app.get('/events', async (c) => {
+  const events = await listCollection<EventItem>(c.env, 'events')
+  return c.html(EventIndex(events).toString())
+})
+app.get('/events/:id', async (c) => {
+  const events = await listCollection<EventItem>(c.env, 'events')
+  const e = events.find(x => x.id === c.req.param('id'))
+  if (!e) return c.notFound()
+  await trackView(c.env, 'event', e.id, isBot(c.req.header('User-Agent')))
+  return c.html(EventDetail(e).toString())
 })
 
 // ── 업로드 이미지 서빙 (칼럼 본문 삽입 이미지) ──

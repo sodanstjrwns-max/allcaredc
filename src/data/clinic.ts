@@ -283,7 +283,7 @@ export const DOCTORS: Doctor[] = [
     ],
     // §B 필터: 약점(심미/라미네이트) 노출 X → 강점(수술·외과·교수경력) 리프레이밍. 철학은 자료 원문
     intro: '어려운 치료도, 환자분이 이해하고 안심할 수 있게 설명하는 것을 목표로 합니다. 구강악안면외과 전문의로서 고난도 임플란트 수술, 매복 사랑니, 턱관절 등 외과 영역에 깊이를 두고, 경희대학교 치과병원 외래교수로 후학을 가르쳐 온 경험을 진료에 녹여냅니다. 통합치의학과 전문의 관점에서 입안 전체의 상태를 함께 살펴 오래 안정적인 치료를 지향하며, 환자가 두려워하는 진료일수록 더 차분하고 정밀하게 다가가고, 필요한 경우 의식하진정법(수면치료)을 병행해 불안과 부담을 줄입니다.',
-    photo: '/static/img/kwon-minsu.webp',
+    photo: '/static/img/doctor-profile-arms.webp',
     isHead: true,
   },
   {
@@ -752,9 +752,9 @@ export const TREATMENTS: Treatment[] = [
 
 // 핵심 진료 카드 이미지 매핑
 export const TX_IMAGES: Record<string, string> = {
-  implant: '/static/img/tx-implant.webp',
-  ortho: '/static/img/tx-ortho.webp',
-  esthetic: '/static/img/tx-esthetic.webp',
+  implant: '/static/img/surgery-osstem.webp',
+  ortho: '/static/img/consult-implant-3d.webp',
+  esthetic: '/static/img/about-consult.webp',
 }
 
 // ── 비급여 진료 수가표 (사업자 제출 자료 기준 · 단위: 원, VAT 포함 / 별도 표기 항목 제외) ──

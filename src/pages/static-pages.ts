@@ -102,24 +102,24 @@ export function MissionPage() {
       </div>
       <div class="space-gallery reveal">
         <figure class="sg-item sg-wide">
-          <img src="/static/img/about-reception.webp" alt="올케어치과 인포메이션 데스크 — 환자를 가장 먼저 맞이하는 응대 공간" width="1200" height="800" loading="lazy">
+          <img src="/static/img/reception-desk.webp" alt="올케어치과 인포메이션 데스크 — 환자를 가장 먼저 맞이하는 통합진료센터 응대 공간" width="1024" height="683" loading="lazy">
           <figcaption><span class="sg-cap">인포메이션</span><span class="sg-sub">처음 만나는 자리</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/about-lounge.webp" alt="올케어치과 대기 라운지 — 편안한 소파와 밝은 채광의 휴식 공간" width="1200" height="800" loading="lazy">
-          <figcaption><span class="sg-cap">대기 라운지</span><span class="sg-sub">기다림도 편안하게</span></figcaption>
+          <img src="/static/img/recovery-massage-chair.webp" alt="올케어치과 회복실 — 안마의자가 놓인 편안한 진료 후 휴식 공간" width="1024" height="683" loading="lazy">
+          <figcaption><span class="sg-cap">회복실</span><span class="sg-sub">진료 후 편안한 휴식</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/about-consult.webp" alt="올케어치과 치료계획 상담실 — 창가의 밝은 1:1 상담 공간" width="1200" height="800" loading="lazy">
+          <img src="/static/img/consult-implant-3d.webp" alt="올케어치과 치료계획 상담실 — 3D 모니터로 보철·임플란트를 설명하는 1:1 상담" width="1024" height="683" loading="lazy">
           <figcaption><span class="sg-cap">치료계획 상담실</span><span class="sg-sub">충분히 설명드립니다</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/about-chairs.webp" alt="올케어치과 진료실 — 분야별로 구분된 진료 체어 공간" width="1200" height="800" loading="lazy">
-          <figcaption><span class="sg-cap">진료실</span><span class="sg-sub">분야별 전문 진료</span></figcaption>
+          <img src="/static/img/sleep-implant-suite.webp" alt="올케어치과 수면임플란트 진료실 — 의식하진정요법으로 편안한 수면 진료 공간" width="1024" height="683" loading="lazy">
+          <figcaption><span class="sg-cap">수면임플란트 진료실</span><span class="sg-sub">의식하진정 진료</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/about-powder.webp" alt="올케어치과 파우더룸 — 진료 전후 단장할 수 있는 세면 공간" width="1200" height="800" loading="lazy">
-          <figcaption><span class="sg-cap">파우더룸</span><span class="sg-sub">진료 전후 단장 공간</span></figcaption>
+          <img src="/static/img/sleep-recovery-room.webp" alt="올케어치과 수면치료회복실 — 수면 진료 후 안정을 취하는 독립 회복 공간" width="683" height="1024" loading="lazy">
+          <figcaption><span class="sg-cap">수면치료회복실</span><span class="sg-sub">충분한 회복까지</span></figcaption>
         </figure>
       </div>
     </div>
@@ -133,6 +133,10 @@ export function MissionPage() {
         <h2 style="color:#fffeee">약수 생활권과 <em style="color:var(--gold-300)">함께</em></h2>
         <p style="color:rgba(255,254,238,.65)">멀리 어렵게 찾는 치과가 아니라, 우리 동네에서 믿고 편하게 갈 수 있는 치과.</p>
       </div>
+      <figure class="reveal yaksu-banner">
+        <img src="/static/img/yaksu-mou-sign.webp" alt="365올케어치과 - 약수상인회 업무협약식 — 권민수 대표원장이 상인회 대표와 상호협력 협약서에 서명하는 모습" width="1024" height="683" loading="lazy">
+        <figcaption><i class="fa-solid fa-handshake" style="color:var(--gold-300);margin-right:8px"></i>2024.11.13 · 약수상인회 업무협약식 — 동네 상권과 상호협력을 약속했습니다</figcaption>
+      </figure>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px">
         ${raw(CLINIC.community.map((cm, i) => `
           <article class="reveal reveal-d${(i % 3) + 1}" style="background:rgba(255,254,238,.05);border:1px solid rgba(176,141,87,.3);border-radius:var(--radius-lg);padding:28px 24px">

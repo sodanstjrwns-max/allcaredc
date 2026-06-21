@@ -36,6 +36,7 @@ export async function sitemap(env: Bindings): Promise<string> {
     { loc: '/directions', pri: '0.7', freq: 'monthly' },
     { loc: '/pricing', pri: '0.6', freq: 'monthly' },
     { loc: '/notice', pri: '0.5', freq: 'weekly' },
+    { loc: '/events', pri: '0.6', freq: 'weekly' },
     { loc: '/reservation', pri: '0.7', freq: 'monthly' },
   ]
   // 진료 (핵심진료는 대표 이미지 포함 → image sitemap)
@@ -73,6 +74,11 @@ export async function sitemap(env: Bindings): Promise<string> {
   try {
     const notices = await listCollection<any>(env, 'notices')
     notices.forEach((n: any) => urls.push({ loc: `/notice/${n.id}`, pri: '0.4', freq: 'monthly', mod: isoDate(n.updatedAt || n.createdAt) }))
+  } catch {}
+  // 이벤트 (동적)
+  try {
+    const events = await listCollection<any>(env, 'events')
+    events.forEach((e: any) => urls.push({ loc: `/events/${e.id}`, pri: '0.5', freq: 'weekly', mod: isoDate(e.updatedAt || e.createdAt) }))
   } catch {}
 
   const body = urls.map(u => {

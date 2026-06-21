@@ -1,5 +1,6 @@
 import { html, raw } from 'hono/html'
 import { CLINIC, TREATMENTS, DOCTORS } from '../data/clinic'
+import { eventStatus } from './event'
 
 // 관리자 셸 (사이드바)
 function adminShell(active: string, title: string, content: any) {
@@ -9,6 +10,7 @@ function adminShell(active: string, title: string, content: any) {
     ['cases', '비포애프터', 'images', '/admin/cases'],
     ['columns', '원장 칼럼', 'pen-nib', '/admin/columns'],
     ['notices', '공지사항', 'bullhorn', '/admin/notices'],
+    ['events', '이벤트', 'gift', '/admin/events'],
     ['members', '회원 관리', 'users', '/admin/members'],
   ]
   return html`<!DOCTYPE html>
@@ -185,6 +187,7 @@ export function AdminDashboard(stats: {
         <a href="/admin/cases/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 비포애프터 등록</a>
         <a href="/admin/columns/new" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i> 칼럼 작성</a>
         <a href="/admin/notices/new" class="btn btn-outline btn-sm"><i class="fa-solid fa-bullhorn"></i> 공지 작성</a>
+        <a href="/admin/events/new" class="btn btn-outline btn-sm"><i class="fa-solid fa-gift"></i> 이벤트 작성</a>
         <a href="/admin/reservations" class="btn btn-outline btn-sm"><i class="fa-solid fa-calendar"></i> 예약 확인</a>
       </div>
       <p style="color:var(--gray-600);font-size:13px;margin-top:16px">콘텐츠 현황 · 칼럼 ${stats.columns}개 · 공지 ${stats.notices}개 · 진료사례 ${stats.cases}개</p>
@@ -738,5 +741,71 @@ export function AdminNoticeForm(n?: any) {
         if (t && o) t.addEventListener('change', function(){ o.style.display = t.checked ? '' : 'none'; });
       })();
     </script>
+  `)
+}
+
+// ── 이벤트 관리 ──
+export function AdminEvents(items: any[], views: Record<string, number> = {}) {
+  return adminShell('events', '이벤트', html`
+    <div class="admin-head"><h1>이벤트</h1><a href="/admin/events/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 이벤트</a></div>
+    <div class="admin-card">
+      ${items.length === 0 ? html`<p style="color:var(--gray-600);text-align:center;padding:40px">등록된 이벤트가 없습니다.</p>` : html`
+      <table><thead><tr><th>등록일</th><th>제목</th><th>진행 기간</th><th>상태</th><th>조회수</th><th>고정</th><th>관리</th></tr></thead><tbody>
+      ${raw(items.map(e => {
+        const st = eventStatus(e)
+        const period = (e.startDate || e.endDate)
+          ? `${(e.startDate || '').replace(/-/g, '.') || '상시'} ~ ${(e.endDate || '').replace(/-/g, '.') || '상시'}`
+          : '상시'
+        const badge = st.key === 'ongoing' ? 'background:#1f7a4d;color:#fff' : st.key === 'upcoming' ? 'background:#b08d57;color:#fff' : 'background:#aaa;color:#fff'
+        return `<tr>
+        <td>${new Date(e.createdAt).toLocaleDateString('ko-KR')}</td>
+        <td><strong>${esc(e.title)}</strong></td>
+        <td style="white-space:nowrap;font-size:13px;color:var(--gray-600)">${period}</td>
+        <td><span class="badge" style="${badge}">${st.label}</span></td>
+        <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[e.id] || 0}</td>
+        <td>${e.pinned ? '<span class="badge new">고정</span>' : '-'}</td>
+        <td style="white-space:nowrap">
+          <a href="/admin/events/${e.id}/edit" class="btn-sm" style="color:var(--gold,#b08d57)">수정</a>
+          <form method="POST" action="/admin/events/${e.id}/delete" style="display:inline" onsubmit="return confirm('삭제?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form>
+        </td></tr>`
+      }).join(''))}
+      </tbody></table>`}
+    </div>
+  `)
+}
+
+export function AdminEventForm(ev?: any) {
+  const edit = !!ev
+  const action = edit ? `/admin/events/${ev.id}/edit` : '/admin/events/new'
+  const e = (s: any) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  return adminShell('events', edit ? '이벤트 수정' : '이벤트 작성', html`
+    <div class="admin-head"><h1>${edit ? '이벤트 수정' : '이벤트 작성'}</h1></div>
+    <div class="admin-card">
+      <form method="POST" action="${action}" enctype="multipart/form-data">
+        <div class="field"><label>제목 <span class="req">*</span></label><input name="title" required value="${raw(e(ev?.title))}" placeholder="예: 구강검진 + 파노라마 촬영 안내"></div>
+        <div class="field"><label>한 줄 요약 <span style="font-weight:400;opacity:.6">(목록·카드 노출)</span></label><input name="summary" value="${raw(e(ev?.summary))}" placeholder="목록에 보일 짧은 설명"></div>
+        <div class="field"><label>내용 <span class="req">*</span></label><textarea name="body" required style="min-height:200px" placeholder="이벤트 상세 내용을 적어주세요. 줄바꿈은 그대로 반영됩니다.">${raw(e(ev?.body))}</textarea></div>
+
+        <div class="grid-2" style="gap:18px;align-items:start">
+          <div class="field"><label>시작일 <span style="font-weight:400;opacity:.6">(비우면 상시)</span></label><input type="date" name="startDate" value="${raw(e(ev?.startDate))}"></div>
+          <div class="field"><label>종료일 <span style="font-weight:400;opacity:.6">(비우면 상시)</span></label><input type="date" name="endDate" value="${raw(e(ev?.endDate))}"></div>
+        </div>
+
+        <div class="field"><label>대표 이미지 업로드</label><input type="file" name="imageFile" accept="image/*">
+          ${edit && ev.image ? html`<div style="margin-top:8px"><img src="${ev.image}" alt="" style="max-height:120px;border-radius:6px;border:1px solid var(--line)"></div>` : ''}
+        </div>
+        <div class="field"><label>또는 이미지 URL</label><input name="image" placeholder="(선택)" value="${raw(e(ev?.image))}"></div>
+
+        <div class="field"><label class="checkbox-row"><input type="checkbox" name="pinned" ${ev?.pinned ? 'checked' : ''}> <span>상단 고정 (대표 이벤트 · 진행중 우선 노출)</span></label></div>
+
+        <div style="background:var(--ivory-2,#f6f1e8);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--gray-600,#777);margin-bottom:18px">
+          <i class="fa-solid fa-circle-info" style="color:var(--gold,#b08d57);margin-right:6px"></i>
+          의료광고법 준수를 위해 <strong>치료 결과 보장·과장 표현</strong>은 피해주세요. 비급여 비용은 “상담 시 안내” 형태를 권장합니다. (본문 하단에 면책 문구가 자동 표시됩니다.)
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top:4px"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+        <a href="/admin/events" class="btn btn-outline" style="margin-left:8px">취소</a>
+      </form>
+    </div>
   `)
 }
