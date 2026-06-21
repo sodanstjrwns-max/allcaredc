@@ -86,7 +86,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
       <div class="hh-copy">
         <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 의식하진정법(수면치료) 병행</span>
         <h1 class="hh-title hh-title--ko">
-          <span class="line-mask"><span class="hh-ko-line">고난도 케이스,</span></span>
+          <span class="line-mask"><span class="hh-ko-line">고난도 임플란트,</span></span>
           <span class="line-mask"><span class="hh-italic disp hh-ko-line">책임집니다</span></span>
         </h1>
         <p class="hh-lead reveal reveal-d2">심한 뼈 소실, 실패한 임플란트, 부러진 픽스처, 상악동 거상술이 필요한 복합 케이스까지.<br>단순 식립을 넘어, <strong>정확한 진단과 수술 계획으로 끝까지 책임지는</strong> 구강악안면외과 전문의 진료.</p>
