@@ -240,7 +240,9 @@ export function TreatmentDetail(slug: string) {
 
   const docNames = docs.map(d => d.name).join('·')
   const subNames = (t.subProcedures || []).map(sp => sp.name).slice(0, 4).join('·')
-  const metaDesc = `약수역 5번 출구 1분, 올케어치과 ${t.name}. ${t.short}${docNames ? ` ${docNames} 전문의가 진단부터 진행합니다.` : ''}${subNames ? ` ${subNames} 등 안내.` : ''}`.slice(0, 158)
+  // t.short은 명사구로 끝나므로 마침표로 끊어 비문 방지, 의사 안내는 중복 없는 별도 문장
+  const shortClean = t.short.replace(/[.\s]+$/, '')
+  const metaDesc = `약수역 5번 출구 1분, 올케어치과 ${t.name}. ${shortClean}.${docNames ? ` ${docNames} 전문의가 직접 진료합니다.` : ''}${subNames ? ` ${subNames} 등 안내.` : ''}`.slice(0, 158)
   return Page({
     title: `${t.name} | 약수역 ${t.name} 치과 - 올케어치과`,
     description: metaDesc,
