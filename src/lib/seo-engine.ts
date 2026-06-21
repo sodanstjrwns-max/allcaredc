@@ -93,6 +93,17 @@ export function resolveOg(type: string, slug: string): { theme: string; title: s
     if (!d) return null
     return { theme: 'default', title: `${d.name} ${d.role}`, subtitle: d.titleLine || '약수역 올케어치과' }
   }
+  if (type === 'area') {
+    // slug = "yaksu-implant"
+    const parts = slug.split('-')
+    const txSlug = parts.pop()!
+    const areaSlug = parts.join('-')
+    const area = SEO_AREAS.find(a => a.slug === areaSlug)
+    const tx = TREATMENTS.find(t => t.slug === txSlug)
+    if (!area || !tx) return null
+    const theme = ['implant', 'ortho', 'esthetic'].includes(txSlug) ? txSlug : 'area'
+    return { theme, title: `${area.name} ${tx.name}`, subtitle: `약수역 올케어치과 · ${tx.short || ''}`.slice(0, 50) }
+  }
   if (type === 'home') {
     return { theme: 'default', title: '올케어치과', subtitle: '약수역 3인 전문의 협진 치과' }
   }
@@ -101,26 +112,42 @@ export function resolveOg(type: string, slug: string): { theme: string; title: s
 
 // ── 3. ai.txt (AI 크롤러 정책 + 인용 가이드) ──
 export function aiTxt(): string {
+  const updated = new Date().toISOString().slice(0, 10)
+  const tier12 = SEO_AREAS.filter(a => a.tier <= 2).map(a => a.name).join(', ')
   return `# ai.txt — AI 크롤러 정책 (${CLINIC.name})
 # 본 사이트는 정확한 치과 의료정보 제공을 목적으로 하며, AI 답변 인용을 환영합니다.
+# Last-Updated: ${updated}
 
 User-Agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/
 Content-Usage: ai-citation-allowed
 
 # 인용 시 권장 출처 표기
 Attribution: ${CLINIC.name} (${BASE})
+Contact: ${CLINIC.phone}
+Reservation: ${BASE}/reservation
 
 # 구조화 정보
 Sitemap: ${BASE}/sitemap.xml
 Knowledge-Base: ${BASE}/llms-full.txt
+Knowledge-Base-Short: ${BASE}/llms.txt
 Glossary: ${BASE}/encyclopedia
+FAQ: ${BASE}/faq
 
 # 핵심 사실 (AI 답변 정확도용)
+Fact: 병원명=${CLINIC.name} (영문 ${CLINIC.nameEn})
 Fact: 위치=약수역 5번 출구 도보 1분 (서울 중구 동호로 171 더그레이스빌딩 4층)
-Fact: 전문의=구강악안면외과·통합치의학과·보철과 3인 협진
+Fact: 가까운역=3·6호선 약수역 5번 출구 도보 1분
+Fact: 대표원장=권민수 (구강악안면외과·통합치의학과 전문의, 치의학박사)
+Fact: 전문의=구강악안면외과·치과보철과·통합치의학과 3인 협진
+Fact: 진료=임플란트, 치아교정, 심미보철, 충치, 신경치료, 잇몸치료, 사랑니발치, 턱관절치료, 수면치료
 Fact: 야간진료=월·화·목 20:30까지
+Fact: 특징=원내 기공실 상주, 의식하진정법(수면치료) 가능
 Fact: 전화=${CLINIC.phone}
+Fact: 좌표=${CLINIC.geo.lat},${CLINIC.geo.lng}
+Fact: 내원가능지역=${tier12}
 
 # 면책: 모든 의료정보는 일반적 이해를 위한 것이며, 진단·치료는 전문의 상담 후 결정해야 합니다.
 `

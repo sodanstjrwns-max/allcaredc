@@ -1,5 +1,5 @@
 import { html, raw } from 'hono/html'
-import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, TREATMENTS, DOCTORS } from '../data/clinic'
+import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, TREATMENTS, DOCTORS, SEO_AREAS } from '../data/clinic'
 
 // ============================================================
 // JSON-LD 스키마 빌더 (§G-2)
@@ -35,14 +35,19 @@ export function organizationSchema() {
     },
     geo: { '@type': 'GeoCoordinates', latitude: CLINIC.geo.lat, longitude: CLINIC.geo.lng },
     hasMap: `https://map.naver.com/p/search/${encodeURIComponent(CLINIC.name + ' ' + CLINIC.address)}`,
-    // 지역 타겟팅 (로컬 검색 강화) — 약수역 생활권
+    // 서비스 반경 (로컬 SEO) — 약수역 중심 6km
+    serviceArea: {
+      '@type': 'GeoCircle',
+      geoMidpoint: { '@type': 'GeoCoordinates', latitude: CLINIC.geo.lat, longitude: CLINIC.geo.lng },
+      geoRadius: '6000',
+    },
+    // 지역 타겟팅 (로컬 검색 강화) — 내원 가능 지역 전체
     areaServed: [
       { '@type': 'City', name: '서울특별시 중구' },
-      { '@type': 'Place', name: '약수역' },
-      { '@type': 'Place', name: '신당동' },
-      { '@type': 'Place', name: '동대문구 신당' },
-      { '@type': 'Place', name: '성동구 금호동' },
-      { '@type': 'Place', name: '용산구 한남동' },
+      { '@type': 'City', name: '서울특별시 성동구' },
+      { '@type': 'City', name: '서울특별시 용산구' },
+      { '@type': 'City', name: '서울특별시 동대문구' },
+      ...SEO_AREAS.filter(a => a.tier <= 2).map(a => ({ '@type': 'Place', name: a.name })),
     ],
     // 대중교통 접근성 (로컬 SEO)
     publicTransportClosestTo: { '@type': 'TrainStation', name: '약수역 (3·6호선)', description: CLINIC.subway },
@@ -289,6 +294,8 @@ export function headTags(meta: Meta) {
     ${meta.keywords ? raw(`<meta name="keywords" content="${meta.keywords}" />`) : ''}
     ${meta.noindex ? raw('<meta name="robots" content="noindex, nofollow" />') : raw('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />')}
     <link rel="canonical" href="${url}" />
+    <link rel="alternate" hreflang="ko-KR" href="${url}" />
+    <link rel="alternate" hreflang="x-default" href="${url}" />
     <meta property="og:type" content="${meta.ogType || 'website'}" />
     <meta property="og:site_name" content="${CLINIC.name}" />
     <meta property="og:title" content="${meta.title}" />
@@ -297,11 +304,18 @@ export function headTags(meta: Meta) {
     <meta property="og:image" content="${og}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="${meta.title}" />
     <meta property="og:locale" content="ko_KR" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${meta.title}" />
     <meta name="twitter:description" content="${meta.description}" />
     <meta name="twitter:image" content="${og}" />
+    <meta name="twitter:image:alt" content="${meta.title}" />
+    <meta name="author" content="${CLINIC.name}" />
+    <meta name="geo.region" content="KR-11" />
+    <meta name="geo.placename" content="서울특별시 중구 약수동" />
+    <meta name="geo.position" content="${CLINIC.geo.lat};${CLINIC.geo.lng}" />
+    <meta name="ICBM" content="${CLINIC.geo.lat}, ${CLINIC.geo.lng}" />
     <meta name="theme-color" content="#072740" />
     <link rel="icon" href="/static/img/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/static/img/favicon-64.png" sizes="64x64" type="image/png" />
@@ -313,7 +327,7 @@ export function headTags(meta: Meta) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Nanum+Myeongjo:wght@400;700;800&family=DM+Mono:wght@300;400;500&display=swap" />
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="/static/style.css?v=20260620c" />
+    <link rel="stylesheet" href="/static/style.css?v=20260621a" />
     ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('')) : ''}
   `
 }

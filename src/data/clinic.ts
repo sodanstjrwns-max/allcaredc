@@ -773,22 +773,45 @@ export function treatmentsForDoctor(slug: string) {
 }
 
 // ============================================================
-// 지역 SEO — Q6 주소(약수역/중구) 기반 인근 유입 지역
+// 지역 SEO — Q6 주소(약수역/중구) 기반 내원 가능 지역 (슈퍼 업그레이드)
+// 각 지역: 행정구역(adminArea) · 교통 접근(transit) · 거리/소요(access) · 우선순위(tier)
+//   tier 1 = 약수역 생활권(도보·1정거장) / tier 2 = 인접 동 / tier 3 = 광역 유입권
 // ============================================================
-export const SEO_AREAS = [
-  { slug: 'yaksu', name: '약수동' },
-  { slug: 'sindang', name: '신당동' },
-  { slug: 'oksu', name: '옥수동' },
-  { slug: 'geumho', name: '금호동' },
-  { slug: 'hannam', name: '한남동' },
-  { slug: 'cheonggu', name: '청구동' },
-  { slug: 'janchung', name: '장충동' },
-  { slug: 'dongdaemun', name: '동대문구' },
-  { slug: 'seongdong', name: '성동구' },
-  { slug: 'jung', name: '중구' },
-  { slug: 'yongsan', name: '용산구' },
-  { slug: 'wangsimni', name: '왕십리' },
+export type SeoArea = {
+  slug: string
+  name: string          // 표기명 (예: '약수동', '신당역')
+  adminArea: string     // 행정구역 (LocalBusiness areaServed용)
+  transit: string       // 교통 접근
+  access: string        // 거리/소요시간
+  tier: 1 | 2 | 3
+}
+
+export const SEO_AREAS: SeoArea[] = [
+  // ── tier 1 : 약수역 도보·생활권 ──
+  { slug: 'yaksu',      name: '약수역',   adminArea: '서울특별시 중구 신당동',   transit: '3·6호선 약수역 5번 출구 도보 1분', access: '도보 1분 거리', tier: 1 },
+  { slug: 'sindang',    name: '신당동',   adminArea: '서울특별시 중구 신당동',   transit: '6호선 신당역에서 한 정거장',        access: '지하철 1정거장 · 약 5분', tier: 1 },
+  { slug: 'cheonggu',   name: '청구동',   adminArea: '서울특별시 중구 청구동',   transit: '5·6호선 청구역에서 한 정거장',      access: '지하철 1정거장 · 약 5분', tier: 1 },
+  { slug: 'jangchung',  name: '장충동',   adminArea: '서울특별시 중구 장충동',   transit: '약수역에서 차량 5분 · 버스 직행',   access: '차량 5분', tier: 1 },
+  { slug: 'dasan',      name: '다산동',   adminArea: '서울특별시 중구 다산동',   transit: '약수역 생활권 · 도보·버스 접근',     access: '도보·버스 5분', tier: 1 },
+  // ── tier 2 : 인접 동·한 정거장권 ──
+  { slug: 'oksu',       name: '옥수동',   adminArea: '서울특별시 성동구 옥수동',  transit: '3호선 옥수역에서 두 정거장',        access: '지하철 2정거장 · 약 7분', tier: 2 },
+  { slug: 'geumho',     name: '금호동',   adminArea: '서울특별시 성동구 금호동',  transit: '약수역에서 차량·버스 7분',          access: '차량 7분', tier: 2 },
+  { slug: 'hannam',     name: '한남동',   adminArea: '서울특별시 용산구 한남동',  transit: '약수역에서 버스·차량 10분',         access: '차량 10분', tier: 2 },
+  { slug: 'itaewon',    name: '이태원',   adminArea: '서울특별시 용산구 이태원동', transit: '6호선으로 약수역까지 환승 접근',    access: '지하철 10분', tier: 2 },
+  { slug: 'haengdang',  name: '행당동',   adminArea: '서울특별시 성동구 행당동',  transit: '약수역에서 버스·차량 10분',         access: '차량 10분', tier: 2 },
+  { slug: 'wangsimni',  name: '왕십리',   adminArea: '서울특별시 성동구 행당동',  transit: '약수역에서 지하철·차량 10분',       access: '차량 10분', tier: 2 },
+  { slug: 'yaksudong',  name: '약수동',   adminArea: '서울특별시 중구 신당동',   transit: '3·6호선 약수역 인근 생활권',        access: '도보권', tier: 2 },
+  // ── tier 3 : 광역 유입권(구 단위) ──
+  { slug: 'jung',       name: '중구',     adminArea: '서울특별시 중구',          transit: '중구 전역에서 지하철·버스 접근',     access: '구 내 10~15분', tier: 3 },
+  { slug: 'seongdong',  name: '성동구',   adminArea: '서울특별시 성동구',        transit: '성동구에서 지하철·차량 접근',        access: '10~15분', tier: 3 },
+  { slug: 'yongsan',    name: '용산구',   adminArea: '서울특별시 용산구',        transit: '용산구에서 지하철·버스 접근',        access: '10~15분', tier: 3 },
+  { slug: 'dongdaemun', name: '동대문구', adminArea: '서울특별시 동대문구',      transit: '동대문구에서 지하철·차량 접근',      access: '15분', tier: 3 },
 ]
+
+// areaServed 스키마용 — tier 1·2 동 단위 + tier 3 구 단위 중복 제거
+export const AREA_SERVED_NAMES = Array.from(
+  new Set(SEO_AREAS.flatMap(a => [a.name, a.adminArea]))
+)
 
 
 

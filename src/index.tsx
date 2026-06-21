@@ -33,11 +33,13 @@ app.use('*', async (c, next) => {
 app.route('/admin', admin)
 
 // ════════════════ SEO 파일 ════════════════
-app.get('/sitemap.xml', async (c) => c.body(await sitemap(c.env), 200, { 'Content-Type': 'application/xml' }))
-app.get('/robots.txt', (c) => c.body(robotsTxt(), 200, { 'Content-Type': 'text/plain' }))
-app.get('/llms.txt', (c) => c.body(llmsTxt(), 200, { 'Content-Type': 'text/plain' }))
-app.get('/llms-full.txt', (c) => c.body(llmsTxt(true), 200, { 'Content-Type': 'text/plain' }))
-app.get('/ai.txt', (c) => c.body(aiTxt(), 200, { 'Content-Type': 'text/plain; charset=utf-8' }))
+const TXT = 'text/plain; charset=utf-8'
+const SEO_CACHE = 'public, max-age=3600'
+app.get('/sitemap.xml', async (c) => c.body(await sitemap(c.env), 200, { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': SEO_CACHE }))
+app.get('/robots.txt', (c) => c.body(robotsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
+app.get('/llms.txt', (c) => c.body(llmsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
+app.get('/llms-full.txt', (c) => c.body(llmsTxt(true), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
+app.get('/ai.txt', (c) => c.body(aiTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
 
 // 동적 OG 이미지 (edge SVG 생성) — /og/treatment/implant.svg, /og/enc/dental-implant.svg
 app.get('/og/:type/:file', (c) => {
