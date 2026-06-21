@@ -358,6 +358,8 @@ export type Treatment = {
   steps?: { t: string; d: string }[]
   faqs: { q: string; a: string }[]
   subProcedures?: { name: string; desc: string }[]
+  // 상세페이지 본문 중간 삽입 실사진 (캡션 포함)
+  detailImages?: { src: string; caption: string }[]
 }
 
 export const TREATMENTS: Treatment[] = [
@@ -402,6 +404,10 @@ export const TREATMENTS: Treatment[] = [
       { q: '뼈가 없다고 다른 곳에서 거절당했어요.', a: '뼈가 부족한 경우에도 골이식이나 상악동 거상 등으로 식립을 검토할 수 있습니다. 구강악안면외과 전문의가 영상 진단을 통해 가능 여부를 함께 살펴보겠습니다.' },
       { q: '이전에 한 임플란트가 실패했는데 다시 할 수 있나요?', a: '기존 임플란트 실패, 부러진 픽스처, 주변 염증이 있는 경우에도 재수술을 검토할 수 있습니다. 망가진 임플란트와 염증 조직을 제거한 뒤 뼈 상태를 회복시키고, 단계적으로 재건 계획을 세웁니다. 정확한 가능 여부는 정밀 진단 후 안내드립니다.' },
       { q: '임플란트는 평생 쓰나요?', a: '관리 상태에 따라 오래 사용하실 수 있지만, 자연치아처럼 잇몸 관리와 정기 점검이 중요합니다. 임플란트 주위염 예방을 위해 정기 검진을 권해드립니다.' },
+    ],
+    detailImages: [
+      { src: '/static/img/implant-surgery-monitor.webp', caption: '실시간 활력징후 모니터링과 3D 영상 진단 아래 진행되는 임플란트 수술' },
+      { src: '/static/img/implant-surgery-team.webp', caption: '구강악안면외과 전문의와 어시스트가 한 팀으로 진행하는 정밀 식립' },
     ],
   },
   {
@@ -485,6 +491,9 @@ export const TREATMENTS: Treatment[] = [
       { q: '원내 기공실이 있으면 뭐가 좋나요?', a: '치과의사와 기공사가 직접 소통하므로 미세한 색·형태 조정이 빠르고 정확합니다. 외부 기공소를 오가는 시간이 줄어 수정도 신속합니다.' },
       { q: '보철은 얼마나 오래 쓰나요?', a: '관리 상태와 맞물림에 따라 다르지만, 잇몸 관리와 정기 점검을 잘 하면 오래 사용하실 수 있습니다. 정기 검진으로 상태를 확인하는 것이 좋습니다.' },
       { q: '보철 치료가 아픈가요?', a: '치아를 다듬는 과정은 마취 하에 진행되어 통증이 크지 않습니다. 시린 느낌이 있을 수 있으나 임시 보철과 관리로 조절합니다.' },
+    ],
+    detailImages: [
+      { src: '/static/img/esthetic-kaed.webp', caption: '대한심미치과학회(KAED) 인정의 교육원 과정 수료 — 심미보철 전문성을 위한 지속적인 학술 연수' },
     ],
   },
   // ── 그 외 진료 (Q11) — sub ──

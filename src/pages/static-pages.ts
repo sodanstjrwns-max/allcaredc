@@ -175,6 +175,12 @@ export function MissionPage() {
         <p>${CLINIC.collaboration.lead}</p>
       </div>
 
+      <!-- 전 직원 케이스 컨퍼런스 실사진 -->
+      <figure class="collab-photo reveal">
+        <img src="/static/img/team-case-meeting.webp" alt="올케어치과 통합 진료팀 — 전 직원이 함께 환자 케이스를 공유하는 진료 컨퍼런스" loading="lazy" width="1024" height="683">
+        <figcaption>전 직원이 함께 환자 케이스를 공유하는 통합 진료 컨퍼런스 — 한 사람의 환자를 진료팀 전체가 이해합니다.</figcaption>
+      </figure>
+
       <!-- 통합진료가 실제로 작동하는 방식: 수술 기반 → 보철 설계 → 전체 구강 점검 -->
       <div class="collab-flow">
         ${raw(CLINIC.collaboration.flow.map((f, i) => `

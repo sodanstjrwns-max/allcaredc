@@ -168,6 +168,16 @@ export function TreatmentDetail(slug: string) {
           `).join(''))
           })()}
 
+          ${t.detailImages && t.detailImages.length ? html`
+            <div class="tx-detail-gallery">
+              ${raw(t.detailImages.map(im => `
+                <figure class="tx-detail-fig">
+                  <img src="${im.src}" alt="${t.name} — ${im.caption}" loading="lazy">
+                  <figcaption>${im.caption}</figcaption>
+                </figure>`).join(''))}
+            </div>
+          ` : ''}
+
           ${t.steps ? html`
             <h2 class="split-rise">진료는 <em>이렇게</em> 진행됩니다</h2>
             <div class="steps">
