@@ -525,6 +525,25 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 }
 
 /* ============================================================
+   결제 안내 칩 + 카카오톡 버튼
+   ============================================================ */
+.pay-chips { }
+.pay-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 13px; border-radius: 999px; font-size: 13px; font-weight: 600;
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.82);
+  border: 1px solid rgba(255,255,255,.16);
+}
+.pay-chip i { color: var(--gold-300, #d6b27a); font-size: 13px; }
+.btn-kakao {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  background: #FEE500; color: #181600 !important; font-weight: 700;
+  border: none; transition: filter .3s var(--ease), transform .3s var(--ease);
+}
+.btn-kakao:hover { filter: brightness(.95); transform: translateY(-2px); }
+.btn-kakao i { color: #181600; }
+
+/* ============================================================
    값(VALUE) 카드 — 인지/공감/해소/원칙
    ============================================================ */
 .value-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--ink); }
@@ -1953,9 +1972,16 @@ body::after {
   width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter);
 }
 .hh-eyebrow {
-  display: inline-flex; align-items: center; gap: 12px;
-  font-family: var(--font-mono); font-size: 12px; letter-spacing: .2em;
+  display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px 12px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em;
   text-transform: uppercase; color: var(--gold-600); margin-bottom: 30px;
+  line-height: 1.5;
+}
+.hh-eyebrow strong { color: var(--gold); font-weight: 700; margin: 0 1px; }
+.hh-eyebrow em {
+  font-style: normal; font-weight: 700; color: var(--navy-800);
+  padding: 2px 9px; border-radius: 999px; background: rgba(176,141,87,.16);
+  letter-spacing: .04em;
 }
 .hero--heritage .hh-title, .hh-title {
   color: var(--navy-800);

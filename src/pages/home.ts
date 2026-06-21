@@ -84,7 +84,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
     </div>
     <div class="hero-inner hh-grid">
       <div class="hh-copy">
-        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 전문의 · 의식하진정법(수면치료) 병행</span>
+        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 의식하진정법(수면치료) 병행</span>
         <h1 class="hh-title hh-title--ko">
           <span class="line-mask"><span class="hh-ko-line">고난도 케이스,</span></span>
           <span class="line-mask"><span class="hh-italic disp hh-ko-line">책임집니다</span></span>
@@ -120,9 +120,9 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   <!-- ============ 신뢰 마퀴 띠 ============ -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span>구강악안면외과 전문의</span><span>통합치의학과 전문의</span><span>보철과 전문의</span>
+      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>보철과 전문의</span>
       <span>원내 기공실</span><span>수면 진료</span><span>야간 진료</span>
-      <span>구강악안면외과 전문의</span><span>통합치의학과 전문의</span><span>보철과 전문의</span>
+      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>보철과 전문의</span>
       <span>원내 기공실</span><span>수면 진료</span><span>야간 진료</span>
     </div>
   </div>
@@ -421,7 +421,11 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
             <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-location-dot" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div><strong style="display:block;font-size:17px;margin-bottom:4px">${CLINIC.name}</strong>${CLINIC.address}</div></div>
             <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-train-subway" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div>${CLINIC.subway}</div></div>
             <div style="display:flex;gap:14px"><i class="fa-solid fa-phone" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><a href="tel:${CLINIC.phoneRaw}" style="font-weight:700;font-size:18px;font-family:var(--font-disp)">${CLINIC.phone}</a></div>
-            <a href="/directions" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:24px">지도 보기 <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="pay-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px">
+              ${raw(CLINIC.payments.map(p => `<span class="pay-chip" title="${p.desc}"><i class="fa-solid fa-${p.icon}"></i> ${p.name}</span>`).join(''))}
+            </div>
+            ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" class="btn btn-kakao" target="_blank" rel="noopener" style="width:100%;justify-content:center;margin-top:14px"><i class="fa-solid fa-comment"></i> 카카오톡으로 빠른 상담</a>`) : ''}
+            <a href="/directions" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:14px">지도 보기 <i class="fa-solid fa-arrow-right"></i></a>
           </div>
         </div>
       </div>

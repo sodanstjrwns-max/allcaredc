@@ -168,8 +168,13 @@ export const CLINIC = {
     instagram: 'https://www.instagram.com/365allcare/',
     blog: 'https://blog.naver.com/365allcaredc',
     youtube: '', // 미운영 — 비노출
-    kakao: '', // 미운영 — 비노출 (채널 개설 시 URL 입력하면 전 버튼 자동 노출)
+    kakao: 'http://pf.kakao.com/_AmxkqG', // 카카오톡 채널 (친구 583+) — 채팅 상담 운영 중 ✅
   },
+  // 결제·지원 안내 (카카오톡 채널 가격정보 기준)
+  payments: [
+    { name: '제로페이', desc: '제로페이 간편결제 가능', icon: 'mobile-screen' },
+    { name: '고유가 피해지원금', desc: '고유가 피해지원금(소상공인) 사용 가능', icon: 'hand-holding-dollar' },
+  ],
   // 검색엔진 소유권 인증 코드 (웹마스터 도구에서 발급받은 content 값만 입력 → 메타태그 자동 출력)
   // 빈 값이면 해당 메타태그는 출력되지 않음
   siteVerification: {
