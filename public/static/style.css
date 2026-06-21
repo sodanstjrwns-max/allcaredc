@@ -2058,8 +2058,8 @@ body::after {
 
 .hh-grid {
   position: relative; z-index: 2;
-  display: grid; grid-template-columns: 1fr 1.04fr;
-  gap: clamp(40px, 5vw, 78px); align-items: center;
+  display: grid; grid-template-columns: 1fr 1.22fr;
+  gap: clamp(36px, 4.4vw, 68px); align-items: center;
   width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter);
 }
 .hh-eyebrow {
@@ -2121,7 +2121,7 @@ body::after {
   width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block;
   filter: saturate(.96) contrast(1.02);
 }
-.hh-frame img.hh-portrait { aspect-ratio: 4/5; object-position: center 22%; }
+.hh-frame img.hh-portrait { aspect-ratio: 3/4; object-position: center 12%; }
 .hh-caption {
   display: flex; align-items: baseline; gap: 14px; margin-top: 16px;
   font-size: 13px; color: var(--gray-600);
