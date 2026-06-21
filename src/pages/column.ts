@@ -3,6 +3,8 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment } from '../data/clinic'
 
+export type ColumnFAQ = { q: string; a: string }
+
 export type Column = {
   id: string
   slug: string
@@ -12,8 +14,11 @@ export type Column = {
   author: string        // doctor slug
   category: string      // treatment slug
   thumbnail?: string
+  thumbnailAlt?: string // 대표 이미지 대체텍스트 (SEO)
   metaTitle?: string
   metaDesc?: string
+  keywords?: string[]   // SEO 키워드
+  faqs?: ColumnFAQ[]    // 자주 묻는 질문 → FAQPage 스키마
   published: boolean
   createdAt: number
   updatedAt: number
@@ -70,17 +75,32 @@ export function ColumnDetail(col: Column, views: number) {
   const author = getDoctor(col.author)
   const related = TREATMENTS.filter(t => t.slug === col.category)[0]
 
-  const articleSchema = {
+  const articleSchema: any = {
     '@context': 'https://schema.org',
     '@type': ['Article', 'MedicalWebPage'],
-    headline: col.title,
-    description: col.excerpt,
+    headline: col.metaTitle || col.title,
+    description: col.metaDesc || col.excerpt,
     datePublished: new Date(col.createdAt).toISOString(),
     dateModified: new Date(col.updatedAt).toISOString(),
     author: author ? { '@type': 'Person', name: `${author.name} ${author.role}`, jobTitle: author.titleLine } : undefined,
     reviewedBy: author ? { '@type': 'Person', name: `${author.name} ${author.role}` } : undefined,
     publisher: { '@type': 'Organization', name: CLINIC.name },
+    ...(col.thumbnail ? { image: col.thumbnail } : {}),
+    ...(col.keywords && col.keywords.length ? { keywords: col.keywords.join(', ') } : {}),
+    inLanguage: 'ko-KR',
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://${CLINIC.domain}/column/${col.slug}` },
   }
+
+  // FAQ 스키마 (구글 리치 결과 노출)
+  const faqs = (col.faqs || []).filter(f => f.q && f.a)
+  const faqSchema = faqs.length ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(f => ({
+      '@type': 'Question', name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  } : null
 
   const body = html`
   ${PageHero({
@@ -97,8 +117,19 @@ export function ColumnDetail(col: Column, views: number) {
             <span style="color:var(--gray-400);font-size:14px">${new Date(col.createdAt).toLocaleDateString('ko-KR')}</span>
             <span style="color:var(--gray-400);font-size:14px;margin-left:auto"><i class="fa-solid fa-eye"></i> ${views.toLocaleString()}</span>
           </div>
-          ${col.thumbnail ? html`<img src="${col.thumbnail}" alt="${col.title}" style="border-radius:var(--radius-lg);margin-bottom:30px" loading="lazy">` : ''}
+          ${col.thumbnail ? html`<img src="${col.thumbnail}" alt="${col.thumbnailAlt || col.title}" style="border-radius:var(--radius-lg);margin-bottom:30px" loading="lazy">` : ''}
           <div class="prose">${raw(col.body)}</div>
+
+          ${faqs.length ? html`
+            <section class="col-faq" aria-label="자주 묻는 질문">
+              <h2 class="col-faq-h"><i class="fa-solid fa-circle-question"></i> 자주 묻는 질문</h2>
+              ${raw(faqs.map(f => `
+                <details class="col-faq-item">
+                  <summary>${f.q.replace(/</g, '&lt;')}</summary>
+                  <div class="col-faq-a">${f.a.replace(/</g, '&lt;').replace(/\n/g, '<br>')}</div>
+                </details>`).join(''))}
+            </section>
+          ` : ''}
 
           ${author ? html`
             <div style="background:var(--beige-soft);border-radius:var(--radius);padding:24px;margin-top:40px;display:flex;gap:16px;align-items:center">
@@ -137,6 +168,7 @@ export function ColumnDetail(col: Column, views: number) {
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }, { name: col.title, url: `/column/${col.slug}` }]),
       articleSchema,
+      ...(faqSchema ? [faqSchema] : []),
     ],
   }, body)
 }

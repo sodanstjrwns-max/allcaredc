@@ -707,6 +707,24 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 @media (max-width: 900px) { .why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .why-grid { grid-template-columns: 1fr; } }
 
+/* 칼럼 FAQ 섹션 (FAQPage 스키마와 연동) */
+.col-faq { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line, #e2d8c4); }
+.col-faq-h { font-family: 'Nanum Myeongjo', serif; font-size: 1.4rem; margin-bottom: 18px; color: var(--navy-800, #062741); }
+.col-faq-h i { color: var(--gold, #b08d57); margin-right: 8px; }
+.col-faq-item { border: 1px solid var(--line, #e2d8c4); border-radius: var(--radius-lg, 4px); margin-bottom: 12px; overflow: hidden; background: var(--ivory, #fffeee); }
+.col-faq-item summary {
+  cursor: pointer; padding: 16px 20px; font-weight: 700; color: var(--navy-800, #062741);
+  list-style: none; position: relative; padding-right: 44px; line-height: 1.5;
+}
+.col-faq-item summary::-webkit-details-marker { display: none; }
+.col-faq-item summary::after {
+  content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+  position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+  color: var(--gold, #b08d57); font-size: .85rem; transition: transform .3s;
+}
+.col-faq-item[open] summary::after { transform: translateY(-50%) rotate(180deg); }
+.col-faq-a { padding: 0 20px 18px; color: var(--ink-soft, #5a6b78); line-height: 1.8; }
+
 /* ============================================================
    공지 팝업 (관리자 설정 → 홈 노출)
    ============================================================ */

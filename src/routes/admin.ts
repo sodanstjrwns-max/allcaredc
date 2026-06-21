@@ -143,6 +143,11 @@ admin.post('/columns/new', async (c) => {
     excerpt: String(form.excerpt || ''), body: String(form.body || ''),
     author: String(form.author || ''), category: String(form.category || ''),
     thumbnail: String(form.thumbnail || '') || undefined,
+    thumbnailAlt: String(form.thumbnailAlt || '') || undefined,
+    metaTitle: String(form.metaTitle || '') || undefined,
+    metaDesc: String(form.metaDesc || '') || undefined,
+    keywords: parseKeywords(form.keywords),
+    faqs: parseFaqs(form.faqs),
     published: !!form.published, createdAt: now, updatedAt: now,
   })
   return c.redirect('/admin/columns')
@@ -161,6 +166,11 @@ admin.post('/columns/:id/edit', async (c) => {
     excerpt: String(form.excerpt || ''), body: String(form.body || ''),
     author: String(form.author || ''), category: String(form.category || ''),
     thumbnail: String(form.thumbnail || '') || undefined,
+    thumbnailAlt: String(form.thumbnailAlt || '') || undefined,
+    metaTitle: String(form.metaTitle || '') || undefined,
+    metaDesc: String(form.metaDesc || '') || undefined,
+    keywords: parseKeywords(form.keywords),
+    faqs: parseFaqs(form.faqs),
     published: !!form.published, updatedAt: Date.now(),
   })
   return c.redirect('/admin/columns')
@@ -227,6 +237,22 @@ admin.post('/notices/:id/delete', async (c) => {
 
 function slugify(s: string): string {
   return s.toLowerCase().replace(/[^\w가-힣]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'post-' + Date.now().toString(36)
+}
+
+function parseKeywords(raw: any): string[] | undefined {
+  const arr = String(raw || '').split(',').map(s => s.trim()).filter(Boolean)
+  return arr.length ? arr.slice(0, 20) : undefined
+}
+
+function parseFaqs(raw: any): { q: string; a: string }[] | undefined {
+  try {
+    const arr = JSON.parse(String(raw || '[]'))
+    if (!Array.isArray(arr)) return undefined
+    const clean = arr
+      .map((f: any) => ({ q: String(f?.q || '').trim(), a: String(f?.a || '').trim() }))
+      .filter((f: { q: string; a: string }) => f.q && f.a)
+    return clean.length ? clean.slice(0, 30) : undefined
+  } catch { return undefined }
 }
 
 // ── 시드 데이터 초기화 (최초 1회) ──
