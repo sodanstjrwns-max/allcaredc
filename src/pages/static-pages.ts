@@ -46,7 +46,7 @@ export function MissionPage() {
     </div>
   </section>
 
-  <!-- ============ 우리의 시작 — 2대(父子) 진료 연속성 서사 (2차 전달문 기반, 서브 컸셉) ============ -->
+  <!-- ============ 우리의 시작 — 2대(父子) 진료 연속성 서사 (§3 원문 — 서브 컨셉) ============ -->
   <section class="section">
     <div class="container">
       <div class="grid-2" style="align-items:center;gap:clamp(36px,5vw,72px)">
@@ -57,9 +57,9 @@ export function MissionPage() {
         <div class="reveal reveal-d1">
           <span class="sec-label"><span class="num">01</span> Our Story</span>
           <h2 class="split-rise" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 18px">아버지의 경험에 이어,<br><em>아들의 섬세함</em>을 더하다</h2>
+          <p class="subconcept-note reveal">${CLINIC.familyStory.subConceptNote}</p>
           <div class="prose" style="font-size:1.05rem;line-height:1.9">
-            <p>아버지는 고려대병원에서 구강외과 교수로 약 30년, 이후 약수역 인근에서 약 13년간 진료를 이어왔습니다. 그리고 2026년 4월, 올케어치과에서 아버지와 아들이 함께 진료를 시작했습니다. 오랜 기간 아버지께 진료받아 온 환자분들은 기존 진료 기록과 치료 이력을 바탕으로, 보다 쾌적한 환경에서 구강건강 관리를 이어가시고 있습니다.</p>
-            <p>저희가 가장 중요하게 생각하는 가치는 단순히 “부자가 함께 진료한다”는 사실 자체가 아닙니다. 오랜 기간 한 원장님을 믿고 다녀오신 환자분들이 낯선 병원으로 흩어지지 않고, 아들이 책임감을 가지고 이어서 케어해드릴 수 있다는 점 — 진료의 연속성입니다.</p>
+            <p>저희가 가장 중요하게 생각하는 가치는 단순히 “부자가 함께 진료한다”는 사실 자체가 아닙니다. 오랜 기간 한 원장님을 믿고 다녀오신 환자분들이 낯선 병원으로 흩어지지 않고, <strong>아들이 책임감을 가지고 이어서 케어</strong>해드릴 수 있다는 점 — 진료의 연속성입니다.</p>
             <p>그래서 화려한 약속보다 환자 한 분 한 분의 불편함을 끝까지 들여다보는 일을 먼저 합니다. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과 — 그것이 지역 안에서 인정받고 오래 머무는 길이라 믿습니다.</p>
           </div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px">
@@ -67,6 +67,27 @@ export function MissionPage() {
               <span style="display:inline-flex;align-items:center;gap:9px;background:var(--ivory-2);border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:.9rem;color:var(--ink-soft)"><i class="fa-solid fa-circle-check" style="color:var(--gold)"></i>${p}</span>`).join(''))}
           </div>
         </div>
+      </div>
+
+      <!-- §3 진료 연속성 타임라인 — '각자의 자리 → 이어달리기 → 함께 진료' -->
+      <div class="continuity-block reveal" style="margin-top:clamp(56px,7vw,90px)">
+        <div class="continuity-head">
+          <span class="sec-label"><span class="num">01-1</span> Continuity</span>
+          <h3 class="continuity-title">환자분이 흩어지지 않도록, <em>진료를 이어받았습니다</em></h3>
+        </div>
+        <ol class="continuity-timeline">
+          ${raw(CLINIC.familyStory.timeline.map((t, i) => `
+            <li class="ct-step reveal reveal-d${i + 1}">
+              <span class="ct-dot" aria-hidden="true"></span>
+              <span class="ct-year disp">${t.year}</span>
+              <strong class="ct-label">${t.label}</strong>
+              <p class="ct-desc">${t.desc}</p>
+            </li>`).join(''))}
+        </ol>
+        <p class="sustainability-note reveal">
+          <i class="fa-solid fa-leaf" aria-hidden="true"></i>
+          ${CLINIC.familyStory.sustainability}
+        </p>
       </div>
     </div>
   </section>
@@ -141,11 +162,44 @@ export function MissionPage() {
     </div>
   </section>
 
+  <!-- ============ §4 3인 전문의 협진 = 통합진료 (수술→보철→전체구강) ============ -->
+  <section class="section collab-sec">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">03</span> Team Approach</span>
+        <h2>여러 원장이 아니라, <em>하나의 진료팀</em></h2>
+        <p>${CLINIC.collaboration.lead}</p>
+      </div>
+
+      <!-- 통합진료가 실제로 작동하는 방식: 수술 기반 → 보철 설계 → 전체 구강 점검 -->
+      <div class="collab-flow">
+        ${raw(CLINIC.collaboration.flow.map((f, i) => `
+          <article class="collab-node reveal reveal-d${i + 1}">
+            <span class="cn-ico"><i class="fa-solid fa-${f.icon}"></i></span>
+            <span class="cn-part">${f.part}</span>
+            <strong class="cn-role">${f.role}</strong>
+            <p class="cn-desc">${f.desc}</p>
+            ${i < CLINIC.collaboration.flow.length - 1 ? '<span class="cn-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right-long"></i></span>' : ''}
+          </article>`).join(''))}
+      </div>
+
+      <!-- 협진이 빛나는 지점 -->
+      <div class="collab-points">
+        ${raw(CLINIC.collaboration.points.map((p, i) => `
+          <article class="collab-card reveal reveal-d${i + 1}">
+            <span class="cc-ico"><i class="fa-solid fa-${p.icon}"></i></span>
+            <h3 class="cc-title">${p.title}</h3>
+            <p class="cc-desc">${p.desc}</p>
+          </article>`).join(''))}
+      </div>
+    </div>
+  </section>
+
   <!-- ============ 올케어가 다른 이유 — AEO 질문-직답형 (strengths 재활용) ============ -->
   <section class="section">
     <div class="container">
       <div class="section-head reveal">
-        <span class="sec-label"><span class="num">03</span> Why ALLCARE</span>
+        <span class="sec-label"><span class="num">04</span> Why ALLCARE</span>
         <h2>올케어치과가 <em>다른 이유</em></h2>
         <p>규모와 시설을 넘어, 끝까지 잇는 섬세함으로 답합니다.</p>
       </div>
@@ -166,7 +220,7 @@ export function MissionPage() {
     <div class="container">
       <div class="grid-2" style="align-items:center">
         <div class="reveal">
-          <span class="sec-label"><span class="num">04</span> Our Vision</span>
+          <span class="sec-label"><span class="num">05</span> Our Vision</span>
           <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 22px">지역 안에서 인정받고 <br><em>오래 머무는 치과</em></h2>
           <p class="prose" style="font-size:1.05rem">한때의 유행이 아니라, 동네에서 신뢰로 이어지는 치과. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과. 그것이 올케어치과가 그리는 미래입니다.</p>
           <ul class="check prose" style="margin-top:22px">
@@ -196,7 +250,11 @@ export function MissionPage() {
     path: '/mission',
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '병원소개', url: '/mission' }]),
-      faqSchema(CLINIC.strengths.map(s => ({ q: s.head, a: s.desc }))),
+      faqSchema([
+        { q: '올케어치과의 3인 전문의 협진은 무엇이 다른가요?', a: CLINIC.collaboration.lead },
+        { q: '고령이거나 전신질환이 있어도 임플란트를 받을 수 있나요?', a: CLINIC.collaboration.points[0].desc },
+        ...CLINIC.strengths.map(s => ({ q: s.head, a: s.desc })),
+      ]),
     ],
   }, body)
 }
