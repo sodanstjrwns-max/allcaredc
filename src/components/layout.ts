@@ -286,7 +286,7 @@ export function Footer() {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260621f"></script>
+  <script src="/static/app.js?v=20260621g"></script>
   `
 }
 
@@ -338,7 +338,7 @@ export function headTags(meta: Meta) {
     <meta name="geo.placename" content="서울특별시 중구 약수동" />
     <meta name="geo.position" content="${CLINIC.geo.lat};${CLINIC.geo.lng}" />
     <meta name="ICBM" content="${CLINIC.geo.lat}, ${CLINIC.geo.lng}" />
-    <meta name="theme-color" content="#072740" />
+    <meta name="theme-color" content="#062741" />
     ${CLINIC.siteVerification.google ? raw(`<meta name="google-site-verification" content="${CLINIC.siteVerification.google}" />`) : ''}
     ${CLINIC.siteVerification.naver ? raw(`<meta name="naver-site-verification" content="${CLINIC.siteVerification.naver}" />`) : ''}
     ${CLINIC.siteVerification.bing ? raw(`<meta name="msvalidate.01" content="${CLINIC.siteVerification.bing}" />`) : ''}
@@ -355,7 +355,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20260621f" />
+    <link rel="stylesheet" href="/static/style.css?v=20260621g" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->

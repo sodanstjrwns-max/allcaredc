@@ -3,7 +3,7 @@ import { Page } from '../components/page'
 import { organizationSchema, faqSchema } from '../components/layout'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../data/clinic'
 import { STORY_BRANCHES, HOME_CHAPTERS } from '../data/story'
-import { speakableSchema, reviewSchema } from '../lib/seo-engine'
+import { speakableSchema } from '../lib/seo-engine'
 import { truncate } from '../lib/text'
 
 // 핵심 진료별 영문 캐치프레이즈
@@ -389,30 +389,31 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
     </div>
   </section>
 
-  <!-- ============ 환자 후기 ============ -->
-  <section class="section reviews-sec" id="ch-reviews" style="background:var(--ivory-2)">
+  <!-- ============ 대표 치료 사례 (실제 진료 경험 기반 — 의료광고법 준수) ============ -->
+  <section class="section cases-sec" id="ch-cases" style="background:var(--ivory-2)">
     <div class="container">
-      <div class="reveal" style="text-align:center;margin-bottom:14px">
-        <span class="disp" style="font-size:13px;letter-spacing:.14em;color:var(--brand-accent);text-transform:uppercase">Patient Voices</span>
-        <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);margin:14px 0 10px">먼저 다녀간 분들의 <em>진심</em></h2>
-        <div class="reviews-rating">
-          <span class="rr-stars">${raw('<i class="fa-solid fa-star"></i>'.repeat(5))}</span>
-          <strong>5.0</strong>
-          <span class="rr-count">· 내원 환자 후기 ${CLINIC.reviews.length}건</span>
-        </div>
+      <div class="reveal" style="text-align:center;margin-bottom:28px">
+        <span class="disp" style="font-size:13px;letter-spacing:.14em;color:var(--brand-accent);text-transform:uppercase">Treatment Stories</span>
+        <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);margin:14px 0 10px">끝까지 <em>해결 방법</em>을 찾은 이야기</h2>
+        <p class="answer-box" style="max-width:680px;margin:0 auto">단순히 많은 케이스를 진행하는 병원이 아니라, 어려운 케이스일수록 정확한 진단과 수술 계획으로 끝까지 해결 방법을 찾고, 환자의 불안과 부담까지 함께 고려하는 진료를 지향합니다.</p>
       </div>
-      <div class="reviews-grid">
-        ${raw(CLINIC.reviews.map((r, i) => `
-          <figure class="review-card reveal reveal-d${(i % 3) + 1}">
-            <div class="rc-stars">${'<i class="fa-solid fa-star"></i>'.repeat(r.rating)}</div>
-            <blockquote class="rc-text">${r.text}</blockquote>
-            <figcaption class="rc-meta">
-              <span class="rc-avatar" aria-hidden="true">${r.name.charAt(0)}</span>
-              <span class="rc-who"><strong>${r.name}</strong><span>${r.area} · ${r.treatment}</span></span>
-            </figcaption>
-          </figure>`).join(''))}
+      <div class="cases-grid">
+        ${raw(CLINIC.cases.map((cs, i) => `
+          <article class="case-card reveal reveal-d${(i % 2) + 1}">
+            <header class="case-head">
+              <span class="case-tag"><i class="fa-solid fa-${cs.icon}"></i> ${cs.tag}</span>
+              <h3 class="case-title">${cs.title}</h3>
+              <p class="case-sub">${cs.sub}</p>
+            </header>
+            <div class="case-body">
+              <div class="case-step"><span class="case-step-label">상황</span><p>${cs.before}</p></div>
+              <div class="case-step"><span class="case-step-label">진료</span><p>${cs.process}</p></div>
+              <div class="case-step"><span class="case-step-label">결과</span><p>${cs.result}</p></div>
+            </div>
+            ${cs.voice ? `<blockquote class="case-voice">"${cs.voice}"</blockquote>` : ''}
+          </article>`).join(''))}
       </div>
-      <p class="reviews-note reveal">※ 환자 개인의 경험으로 치료 결과는 개인에 따라 차이가 있을 수 있습니다. 동의를 받은 후기만 게재합니다.</p>
+      <p class="reviews-note reveal">※ 위 사례는 실제 진료 경험을 바탕으로 환자 동의를 받아 재구성한 것으로, 치료 결과는 환자 개인의 상태에 따라 차이가 있을 수 있습니다.</p>
     </div>
   </section>
 
@@ -491,7 +492,6 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         ...STORY_BRANCHES.slice(0, 4).map(b => b.faq),
       ]),
       speakableSchema(['.answer-box', 'h1', 'h2']),
-      reviewSchema(),
     ].filter(Boolean),
   }
   return Page(meta, body)
