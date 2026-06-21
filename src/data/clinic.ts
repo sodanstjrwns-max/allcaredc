@@ -144,7 +144,7 @@ export const CLINIC = {
     instagram: 'https://www.instagram.com/365allcare/',
     blog: 'https://blog.naver.com/365allcaredc',
     youtube: '', // 미운영 — 비노출
-    kakao: 'https://pf.kakao.com/_AmxkqG', // 상담/문의 채널 (운영 중)
+    kakao: '', // 미운영 — 비노출 (채널 개설 시 URL 입력하면 전 버튼 자동 노출)
   },
   // 사업자 정보 (푸터) — 사업자등록증 기준
   business: {
