@@ -38,8 +38,18 @@
       entries.forEach(function (e) {
         if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    // threshold:0 → 요소가 1px라도 뷰포트에 걸치면 발현.
+    // (threshold 비율 방식은 화면보다 훨씬 큰 요소—예: 533항목 백과사전 그리드—가
+    //  비율에 영원히 도달 못 해 opacity:0으로 멈추는 버그를 유발하므로 사용 금지)
+    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
     reveals.forEach(function (el) { io.observe(el); });
+    // 안전망: 어떤 이유로든 관찰이 누락돼도 콘텐츠가 영구히 숨지 않도록 보강.
+    setTimeout(function () {
+      document.querySelectorAll('.reveal:not(.in)').forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('in');
+      });
+    }, 1200);
   } else {
     reveals.forEach(function (el) { el.classList.add('in'); });
   }
