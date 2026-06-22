@@ -416,7 +416,15 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 }
 .hero-now { font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) {
-  .hero-top { grid-template-columns: 1fr 1fr; }
+  /* 모바일: 절대배치 메타바를 정상 흐름(static flex column)으로 빼서
+     영문 라벨이 길어 줄바꿈돼도 아래 본문과 겹치지 않게 한다 */
+  .hero-top {
+    position: static; display: flex; flex-direction: column; gap: 4px;
+    padding: 96px var(--gutter) 0; margin-bottom: 18px;
+    text-transform: none; letter-spacing: .12em; line-height: 1.5;
+  }
+  .hero-top span { white-space: normal; word-break: keep-all; }
+  .hero-top span:last-child { text-align: left; }
   .hero-coord { display: none; }
   .hero-foot { font-size: 10px; }
 }
@@ -2251,8 +2259,18 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
   .hh-frame::before { left: 10px; top: 10px; right: -10px; bottom: -10px; }
 }
 @media (max-width: 640px) {
-  .hero--heritage .hh-top { grid-template-columns: 1fr 1fr; }
+  /* 모바일: 상단 메타바를 절대배치에서 빼서 정상 흐름으로 — 영문 라벨이 길어
+     줄바꿈돼도 아래 eyebrow(구강악안면외과…)와 겹치지 않도록 한다 */
+  .hero--heritage { padding-top: 96px; }
+  .hero--heritage .hh-top {
+    position: static; display: flex; flex-direction: column; gap: 4px;
+    padding: 0 var(--gutter) 0; margin-bottom: 22px;
+    text-transform: none; letter-spacing: .12em; line-height: 1.5;
+  }
+  .hero--heritage .hh-top span { white-space: normal; word-break: keep-all; }
+  .hero--heritage .hh-top span:last-child { text-align: left; }
   .hero--heritage .hh-top .hero-coord { display: none; }
+  .hh-eyebrow { margin-bottom: 22px; }
   .hh-meta { flex-wrap: wrap; gap: 22px; }
   .hh-rule { margin: 0 12px; }
 }
