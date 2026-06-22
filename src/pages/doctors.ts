@@ -24,7 +24,7 @@ export function DoctorsIndex() {
             <div class="doc-photo"><img src="${d.photo}" alt="${d.name} ${d.role}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center"></div>
             <div class="doc-body">
               <span class="role">${d.role}</span>
-              <h3>${d.name}</h3>
+              <h2>${d.name}</h2>
               <p class="title-line">${d.titleLine}</p>
               <p class="doc-career">${d.career[0]}</p>
               <div class="doc-tags">
@@ -122,19 +122,19 @@ export function DoctorDetail(slug: string) {
 
         <aside class="reveal reveal-d2">
           <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
-            <h4 style="color:#fffeee">${d.name} 원장과 상담</h4>
+            <h3 style="color:#fffeee">${d.name} 원장과 상담</h3>
             <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin:14px 0 10px">예약 문의</a>
             <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center">${CLINIC.phone}</a>
           </div>
 
           ${txs.length ? html`
           <div class="inlink-box" style="margin-bottom:20px">
-            <h4><i class="fa-solid fa-tooth text-mint"></i> 주요 진료 분야</h4>
+            <h3><i class="fa-solid fa-tooth text-mint"></i> 주요 진료 분야</h3>
             ${raw(txs.map(t => `<a href="/treatments/${t.slug}"><span>${t.name}</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>`).join(''))}
           </div>` : ''}
 
           <div class="inlink-box">
-            <h4><i class="fa-solid fa-images text-mint"></i> 진료사례</h4>
+            <h3><i class="fa-solid fa-images text-mint"></i> 진료사례</h3>
             <a href="/cases?doctor=${d.slug}"><span>${d.name} 원장 진료사례</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
             <a href="/doctors"><span>전체 의료진 보기</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
           </div>

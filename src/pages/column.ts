@@ -53,7 +53,7 @@ export function ColumnIndex(columns: Column[]) {
               </div>
               <div class="doc-body">
                 <span class="role">${txName(col.category)}</span>
-                <h3 style="font-size:1.25rem;line-height:1.4">${col.title}</h3>
+                <h2 style="font-size:1.25rem;line-height:1.4">${col.title}</h2>
                 <p class="title-line" style="min-height:auto;margin-top:8px">${col.excerpt}</p>
                 <p style="font-size:13px;color:var(--gray-400);margin-top:14px">${docName(col.author)} 원장 · ${new Date(col.createdAt).toLocaleDateString('ko-KR')}</p>
               </div>
@@ -147,13 +147,13 @@ export function ColumnDetail(col: Column, views: number) {
         <aside class="reveal reveal-d2">
           ${related ? html`
             <div class="inlink-box" style="margin-bottom:20px">
-              <h4><i class="fa-solid fa-tooth text-mint"></i> 관련 진료</h4>
+              <h3><i class="fa-solid fa-tooth text-mint"></i> 관련 진료</h3>
               <a href="/treatments/${related.slug}"><span>${related.name} 자세히 보기</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
               <a href="/cases?cat=${related.slug}"><span>${related.name} 진료사례</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
             </div>
           ` : ''}
           <div class="inlink-box" style="background:var(--brand);color:#fffeee">
-            <h4 style="color:#fffeee">상담이 필요하신가요?</h4>
+            <h3 style="color:#fffeee">상담이 필요하신가요?</h3>
             <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin:14px 0 10px">예약 문의</a>
             <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center">${CLINIC.phone}</a>
           </div>

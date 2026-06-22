@@ -275,8 +275,8 @@ async function sendReservationEmail(env: Bindings, r: any) {
 }
 
 // 약관/개인정보
-app.get('/privacy', (c) => c.html(legalPage('개인정보 처리방침', PRIVACY).toString()))
-app.get('/terms', (c) => c.html(legalPage('이용약관', TERMS).toString()))
+app.get('/privacy', (c) => c.html(legalPage('개인정보 처리방침', PRIVACY, '/privacy').toString()))
+app.get('/terms', (c) => c.html(legalPage('이용약관', TERMS, '/terms').toString()))
 
 // ════════════════ 404 ════════════════
 app.notFound((c) => {
@@ -305,11 +305,11 @@ app.notFound((c) => {
   return c.html(Page({ title: '페이지를 찾을 수 없습니다 (404) | 올케어치과', description: '요청하신 페이지를 찾을 수 없습니다. 올케어치과 주요 메뉴로 이동하세요.', path: '/404' }, body).toString(), 404)
 })
 
-function legalPage(title: string, content: string) {
+function legalPage(title: string, content: string, path: string) {
   const body = html`
   <section class="page-hero"><div class="container"><h1>${title}</h1></div></section>
   <section class="section"><div class="container" style="max-width:820px"><div class="prose" style="white-space:pre-line">${content}</div></div></section>`
-  return Page({ title: `${title} | 올케어치과`, description: title, path: '/legal' }, body)
+  return Page({ title: `${title} | 올케어치과`, description: title, path }, body)
 }
 
 const PRIVACY = `올케어치과(이하 "병원")는 이용자의 개인정보를 중요시하며, 관련 법령을 준수합니다.

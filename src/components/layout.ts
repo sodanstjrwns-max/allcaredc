@@ -71,32 +71,7 @@ export function organizationSchema() {
     })),
     knowsAbout: ['임플란트', '치아교정', '심미보철', '충치치료', '신경치료', '잇몸치료', '사랑니발치', '턱관절치료', '수면치료'],
     sameAs: [CLINIC.sns.instagram, CLINIC.sns.blog, CLINIC.sns.kakao, CLINIC.sns.youtube].filter(Boolean),
-    // 환자 후기 → 별점(AggregateRating) + 개별 리뷰. 구글 검색결과 별점 리치스니펫 노출용.
-    // @id(#clinic)가 동일하므로 별도 Review 스키마 대신 클리닉 엔티티에 직접 병합한다.
-    ...reviewProps(),
-  }
-}
-
-// CLINIC.reviews → AggregateRating + Review 속성 (organizationSchema에 병합)
-function reviewProps() {
-  const reviews = (CLINIC as any).reviews as { name: string; rating?: number; date: string; text: string }[] | undefined
-  if (!reviews || !reviews.length) return {}
-  const avg = (reviews.reduce((s, r) => s + (r.rating || 5), 0) / reviews.length).toFixed(1)
-  return {
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: avg,
-      reviewCount: reviews.length,
-      bestRating: '5',
-      worstRating: '1',
-    },
-    review: reviews.map(r => ({
-      '@type': 'Review',
-      reviewRating: { '@type': 'Rating', ratingValue: String(r.rating || 5), bestRating: '5', worstRating: '1' },
-      author: { '@type': 'Person', name: r.name },
-      datePublished: r.date,
-      reviewBody: r.text,
-    })),
+    // 의료광고법(후기·평가 표시 민감) 고려 — AggregateRating/Review 스키마는 노출하지 않음.
   }
 }
 
@@ -197,17 +172,17 @@ export function Header() {
     <button class="m-close" id="mClose" aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
     <a href="/mission">병원소개</a>
     <a href="/doctors">의료진</a>
-    <h4>진료안내</h4>
+    <p class="m-drawer-title">진료안내</p>
     <div class="m-sub">
       ${raw(TREATMENTS.map(t => `<a href="/treatments/${t.slug}">${t.name}</a>`).join(''))}
     </div>
-    <h4>콘텐츠</h4>
+    <p class="m-drawer-title">콘텐츠</p>
     <div class="m-sub">
       <a href="/cases">비포/애프터</a>
       <a href="/column">원장 칼럼</a>
       <a href="/encyclopedia">치과 백과사전</a>
     </div>
-    <h4>안내</h4>
+    <p class="m-drawer-title">안내</p>
     <div class="m-sub">
       <a href="/directions">오시는 길</a>
       <a href="/pricing">비용 안내</a>
@@ -240,7 +215,7 @@ export function Footer() {
           </div>
         </div>
         <div>
-          <h5>진료안내</h5>
+          <p class="footer-col-title">진료안내</p>
           <ul class="footer-links">
             ${raw(CORE_TREATMENTS.map(t => `<li><a href="/treatments/${t.slug}">${t.name}</a></li>`).join(''))}
             <li><a href="/treatments">전체 진료보기</a></li>
@@ -248,7 +223,7 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h5>바로가기</h5>
+          <p class="footer-col-title">바로가기</p>
           <ul class="footer-links">
             <li><a href="/mission">병원소개</a></li>
             <li><a href="/cases">비포/애프터</a></li>
@@ -259,7 +234,7 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h5>오시는 길 · 연락처</h5>
+          <p class="footer-col-title">오시는 길 · 연락처</p>
           <ul class="footer-contact">
             <li><span class="ico"><i class="fa-solid fa-location-dot"></i></span><span>${CLINIC.address}<br><small style="color:var(--brand-accent-2)">${CLINIC.directions}</small></span></li>
             <li><span class="ico"><i class="fa-solid fa-phone"></i></span><a href="tel:${CLINIC.phoneRaw}">${CLINIC.phone}</a></li>
@@ -316,7 +291,7 @@ export function Footer() {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260622j"></script>
+  <script src="/static/app.js?v=20260622k"></script>
   `
 }
 
@@ -385,7 +360,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20260622j" />
+    <link rel="stylesheet" href="/static/style.css?v=20260622k" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->

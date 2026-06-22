@@ -86,7 +86,7 @@ export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: 
       </div>
       <div class="cl-info">
         <span class="cl-cat" id="clCat"></span>
-        <h3 id="clTitle"></h3>
+        <h2 id="clTitle"></h2>
         <p id="clDesc"></p>
         <ul class="cl-tags" id="clTags"></ul>
         <a id="clDoctor" class="cl-doctor" href="#" hidden></a>
@@ -147,7 +147,7 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
     </div>
     <div class="case-meta">
       <span class="case-story-no">Story ${String(i + 1).padStart(2, '0')} · ${catName(c.category)}</span>
-      <h4 class="case-story-line">${storyLine(c)}</h4>
+      <h2 class="case-story-line">${storyLine(c)}</h2>
       <p style="font-size:14px;color:var(--gray-600);margin-bottom:8px">${c.description}</p>
       <div class="tags">
         ${c.ageGroup ? `<i class="fa-solid fa-user"></i> ${c.ageGroup} ${c.gender || ''} · ` : ''}

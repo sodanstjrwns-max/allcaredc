@@ -356,16 +356,16 @@ export function AreaPage(combo: string) {
         </article>
         <aside class="reveal reveal-d2">
           <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
-            <h4 style="color:#fffeee">${area.name} ${tx.name} 상담</h4>
+            <h3 style="color:#fffeee">${area.name} ${tx.name} 상담</h3>
             <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin:14px 0 10px">예약 문의</a>
             <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center">${CLINIC.phone}</a>
           </div>
           <div class="inlink-box" style="margin-bottom:20px">
-            <h4><i class="fa-solid fa-tooth text-mint"></i> ${area.name} 다른 진료</h4>
+            <h3><i class="fa-solid fa-tooth text-mint"></i> ${area.name} 다른 진료</h3>
             ${raw(otherTx.map(t => `<a href="/area/${area.slug}-${t.slug}"><span>${area.name} ${t.name}</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>`).join(''))}
           </div>
           <div class="inlink-box">
-            <h4><i class="fa-solid fa-location-dot text-mint"></i> 인근 지역 ${tx.name}</h4>
+            <h3><i class="fa-solid fa-location-dot text-mint"></i> 인근 지역 ${tx.name}</h3>
             ${raw(nearby.map(a => `<a href="/area/${a.slug}-${tx.slug}"><span>${a.name} ${tx.name}</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>`).join(''))}
           </div>
         </aside>

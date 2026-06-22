@@ -185,7 +185,7 @@ export function TreatmentDetail(slug: string) {
                 <div class="step" id="step-${i + 1}">
                   <div class="n">${i + 1}</div>
                   <div class="step-body">
-                    <h4>${s.t}</h4>
+                    <h3>${s.t}</h3>
                     <p>${s.d}</p>
                   </div>
                 </div>`).join(''))}
@@ -213,7 +213,7 @@ export function TreatmentDetail(slug: string) {
         <!-- 사이드바 (인링크) -->
         <aside class="reveal reveal-d2">
           <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
-            <h4 style="color:#fffeee">상담이 필요하신가요?</h4>
+            <h3 style="color:#fffeee">상담이 필요하신가요?</h3>
             <p style="font-size:14px;color:rgba(255,255,255,.8);margin-bottom:18px">${t.name}에 대해 더 궁금한 점은 편하게 문의해 주세요.</p>
             <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin-bottom:10px">예약 문의</a>
             <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center">${CLINIC.phone}</a>
@@ -221,7 +221,7 @@ export function TreatmentDetail(slug: string) {
 
           ${docs.length ? html`
             <div class="inlink-box" style="margin-bottom:20px">
-              <h4><i class="fa-solid fa-user-doctor text-mint"></i> 담당 의료진</h4>
+              <h3><i class="fa-solid fa-user-doctor text-mint"></i> 담당 의료진</h3>
               ${raw(docs.map(d => `
                 <a href="/doctors/${d.slug}">
                   <span>${d.name} ${d.role}</span>
@@ -231,13 +231,13 @@ export function TreatmentDetail(slug: string) {
           ` : ''}
 
           <div class="inlink-box" style="margin-bottom:20px">
-            <h4><i class="fa-solid fa-images text-mint"></i> 관련 진료사례</h4>
+            <h3><i class="fa-solid fa-images text-mint"></i> 관련 진료사례</h3>
             <a href="/cases?cat=${t.slug}"><span>${t.name} 비포/애프터</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
             <a href="/cases"><span>전체 진료사례 보기</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
           </div>
 
           <div class="inlink-box">
-            <h4><i class="fa-solid fa-link text-mint"></i> 다른 진료</h4>
+            <h3><i class="fa-solid fa-link text-mint"></i> 다른 진료</h3>
             ${raw(related.map(r => `
               <a href="/treatments/${r.slug}"><span>${r.name}</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>`).join(''))}
           </div>

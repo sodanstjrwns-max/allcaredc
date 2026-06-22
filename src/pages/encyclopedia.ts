@@ -69,7 +69,7 @@ export function EncyclopediaPage() {
             : ''
           return `
           <div class="enc-item${hasDetail ? ' has-detail' : ''}" data-initial="${t.initial}">
-            <h4>${titleHtml}</h4>
+            <h2 class="enc-term-h">${titleHtml}</h2>
             <p>${esc(t.desc)}</p>
             <div class="links">
               ${detailLink}

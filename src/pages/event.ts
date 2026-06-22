@@ -73,7 +73,7 @@ export function EventIndex(events: EventItem[]) {
                 ${e.pinned ? '<span class="ev-pin">진행 중</span>' : ''}
               </div>
               <div class="ev-info">
-                <h3>${e.title}</h3>
+                <h2 class="ev-title">${e.title}</h2>
                 ${e.summary ? `<p>${e.summary}</p>` : ''}
                 <span class="ev-period"><i class="fa-regular fa-calendar"></i> ${periodText(e)}</span>
               </div>
