@@ -71,6 +71,32 @@ export function organizationSchema() {
     })),
     knowsAbout: ['임플란트', '치아교정', '심미보철', '충치치료', '신경치료', '잇몸치료', '사랑니발치', '턱관절치료', '수면치료'],
     sameAs: [CLINIC.sns.instagram, CLINIC.sns.blog, CLINIC.sns.kakao, CLINIC.sns.youtube].filter(Boolean),
+    // 환자 후기 → 별점(AggregateRating) + 개별 리뷰. 구글 검색결과 별점 리치스니펫 노출용.
+    // @id(#clinic)가 동일하므로 별도 Review 스키마 대신 클리닉 엔티티에 직접 병합한다.
+    ...reviewProps(),
+  }
+}
+
+// CLINIC.reviews → AggregateRating + Review 속성 (organizationSchema에 병합)
+function reviewProps() {
+  const reviews = (CLINIC as any).reviews as { name: string; rating?: number; date: string; text: string }[] | undefined
+  if (!reviews || !reviews.length) return {}
+  const avg = (reviews.reduce((s, r) => s + (r.rating || 5), 0) / reviews.length).toFixed(1)
+  return {
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: avg,
+      reviewCount: reviews.length,
+      bestRating: '5',
+      worstRating: '1',
+    },
+    review: reviews.map(r => ({
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: String(r.rating || 5), bestRating: '5', worstRating: '1' },
+      author: { '@type': 'Person', name: r.name },
+      datePublished: r.date,
+      reviewBody: r.text,
+    })),
   }
 }
 

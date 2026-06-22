@@ -44,7 +44,8 @@ export async function sitemap(env: Bindings): Promise<string> {
     loc: `/treatments/${t.slug}`,
     pri: t.core ? '0.9' : '0.6',
     freq: 'monthly',
-    img: [{ url: `${BASE}/og/${t.core ? t.slug : 'default'}/${t.slug}.svg`, title: `${t.name} - ${CLINIC.name}` }],
+    // OG 라우트(/og/:type/:file)는 type=treatment 로 해석한다. type을 slug로 쓰면 404가 나므로 고정.
+    img: [{ url: `${BASE}/og/treatment/${t.slug}.svg`, title: `${t.name} - ${CLINIC.name}` }],
   }))
   // 의료진 (사진 포함)
   ;['kwon-minsu', 'kwon-jongjin', 'bae-suhyeon'].forEach(s => urls.push({
@@ -130,10 +131,10 @@ export function robotsTxt(): string {
 
 User-agent: *
 Allow: /
+Allow: /og/
 Disallow: /admin
 Disallow: /admin/
 Disallow: /api/
-Disallow: /og/
 Crawl-delay: 1
 
 `
