@@ -1050,7 +1050,44 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 .cta-band .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
 /* 진료시간 박스 / inlink */
-.inlink-box { padding: 34px; border-radius: var(--radius-lg); }
+.inlink-box {
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  background: var(--ivory);
+  border: 1px solid var(--line);
+}
+.inlink-box h4 {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 15px; font-weight: 700; color: var(--navy-900);
+  margin-bottom: 16px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+/* 네이비(brand) 박스에서는 구분선/제목색 보정 */
+.inlink-box[style*="--brand"] h4 { border-bottom-color: rgba(255,255,255,.14); }
+/* 네이비 박스 안의 예약 버튼은 박스와 같은 네이비라 묻힘 → 골드로 강조 */
+.inlink-box[style*="--brand"] .btn-accent {
+  background: var(--gold); border-color: var(--gold); color: var(--navy-900);
+}
+.inlink-box[style*="--brand"] .btn-accent:hover {
+  background: var(--gold-600, #9a7842); border-color: var(--gold-600, #9a7842); color: var(--ivory);
+}
+.inlink-box > p { margin-bottom: 0; }
+/* 인링크 행: span(라벨) + 화살표 아이콘 — .btn(예약/전화 버튼)은 제외 */
+.inlink-box > a:not(.btn) {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; margin: 0 -8px;
+  font-size: 14.5px; font-weight: 600; color: var(--navy-800);
+  border-radius: var(--radius-lg); text-decoration: none;
+  transition: background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
+}
+.inlink-box > a:not(.btn) + a:not(.btn) { margin-top: 2px; }
+.inlink-box > a:not(.btn):hover {
+  background: rgba(6,39,65,.05);
+  color: var(--navy-900);
+}
+.inlink-box > a:not(.btn):hover i { transform: translateX(3px); }
+.inlink-box > a:not(.btn) i { color: var(--gold, #b08d57); transition: transform .2s var(--ease); flex-shrink: 0; }
+.inlink-box > a:not(.btn) span { line-height: 1.35; }
 .text-mint { color: var(--mint); }
 
 /* ============================================================
