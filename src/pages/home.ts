@@ -454,7 +454,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
 
   const meta = {
     title: '올케어치과 | 약수역 임플란트·교정·심미보철 3인 전문의 치과',
-    description: '약수역 5번 출구 올케어치과. 구강악안면외과·통합치의학과·보철과 3인 전문의가 임플란트, 치아교정, 심미보철을 진단부터 책임집니다. 수면진료·원내 기공실·야간진료(월·화·목 20:30).',
+    description: '약수역 5번 출구 올케어치과. 3인 전문의가 임플란트·치아교정·심미보철을 진단부터 책임집니다. 수면진료·야간진료 운영.',
     path: '/',
     ogImage: `https://${CLINIC.domain}/og/home/main.svg`,
     preloadImage: '/static/img/hero-doctor.webp',

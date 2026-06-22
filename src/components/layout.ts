@@ -108,7 +108,7 @@ export function Header() {
   <header class="site-header" id="siteHeader">
     <div class="header-inner">
       <a href="/" class="logo" aria-label="${CLINIC.name} 홈">
-        <span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="" class="mark-img mark-ivory" width="32" height="32"/><img src="/static/img/logo-symbol.png" alt="" class="mark-img mark-navy" width="32" height="32"/></span>
+        <span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="올케어치과 로고" class="mark-img mark-ivory" width="32" height="32"/><img src="/static/img/logo-symbol.png" alt="올케어치과 로고" class="mark-img mark-navy" width="32" height="32"/></span>
         <span>올케어치과</span>
       </a>
       <nav aria-label="주메뉴">
@@ -204,7 +204,7 @@ export function Footer() {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="" width="30" height="30" style="display:block"/></span> 올케어치과</div>
+          <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="올케어치과 로고" width="30" height="30" style="display:block"/></span> 올케어치과</div>
           <p style="line-height:1.7">${CLINIC.philosophy}<br>약수동에서 오래도록 곁을 지키는 치과를 만듭니다.</p>
           <div class="footer-sns">
             ${CLINIC.sns.instagram ? raw(`<a href="${CLINIC.sns.instagram}" aria-label="인스타그램" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>`) : ''}
