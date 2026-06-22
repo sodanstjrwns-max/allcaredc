@@ -43,24 +43,6 @@
   .cover .meta{margin-top:38px; padding-top:24px; border-top:1px solid rgba(255,255,255,.15); font-size:13px; color:rgba(255,255,255,.6);}
   .cover .meta b{color:#fff; font-weight:500;}
 
-  /* ── 편지 ── */
-  .letter{padding:52px 56px 44px; background:var(--soft); border-bottom:1px solid var(--line);}
-  .letter .lt-tag{font-family:'Noto Serif KR',serif; font-size:13px; letter-spacing:.2em; color:var(--gold); font-weight:600; margin-bottom:18px;}
-  .letter p{font-size:15px; color:var(--ink); margin-bottom:15px; font-weight:300;}
-  .letter p.greet{font-size:16px; font-weight:500; color:var(--navy);}
-  .letter .em{color:var(--gold); font-weight:700;}
-  .letter strong{color:var(--navy); font-weight:700;}
-  .letter .three{background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px 26px; margin:20px 0;}
-  .letter .three .ti{font-family:'Noto Serif KR',serif; font-weight:600; color:var(--navy); margin-bottom:12px; font-size:15px;}
-  .letter .three ol{list-style:none; counter-reset:t; padding:0;}
-  .letter .three li{counter-increment:t; position:relative; padding-left:38px; margin-bottom:10px; font-size:14.5px;}
-  .letter .three li::before{content:counter(t); position:absolute; left:0; top:1px; width:26px; height:26px;
-    background:var(--navy); color:#fff; border-radius:7px; display:flex; align-items:center; justify-content:center;
-    font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700;}
-  .letter .three li b{color:var(--navy);}
-  .letter .sign-letter{margin-top:24px; font-size:14px; color:var(--muted);}
-  .letter .sign-letter b{color:var(--navy); font-family:'Noto Serif KR',serif;}
-
   /* ── 본문 영역 ── */
   .body{padding:52px 56px 48px;}
   section{margin-bottom:50px;}
@@ -128,12 +110,12 @@
   @media print{
     body{background:#fff;}
     .doc{box-shadow:none; max-width:100%;}
-    section,.letter .three,.pay{page-break-inside:avoid;}
-    .cover,.closing,.pay,.stat,.letter{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    section,.pay{page-break-inside:avoid;}
+    .cover,.closing,.pay,.stat{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
   }
   @media (max-width:600px){
     .cover{padding:54px 26px 44px;} .cover h1{font-size:27px;}
-    .letter{padding:38px 26px;} .body{padding:36px 26px;} .closing{padding:36px 26px;}
+    .body{padding:36px 26px;} .closing{padding:36px 26px;}
     .stats{grid-template-columns:1fr;} .pay{padding:24px;}
     td:first-child{width:auto;}
   }
@@ -144,44 +126,13 @@
 
   <!-- 표지 -->
   <header class="cover">
-    <div class="eyebrow">WEBSITE HANDOVER &middot; FROM MOON</div>
+    <div class="eyebrow">WEBSITE HANDOVER DOCUMENT</div>
     <h1>365올케어치과<br><span class="accent">공식 홈페이지</span> 납품 안내서</h1>
-    <p class="sub">병원의 미래 성장을 바꿀 홈페이지의 탄생이라고 자신합니다. ㅎㅎ<br>늦은 밤, 하얗게 불태워 완성한 결과물을 전해 드립니다.</p>
+    <p class="sub">홈페이지 제작이 완료되어 결과물과 운영 안내를 전해 드립니다.<br>아래 내용은 사이트의 핵심 가치·사양·관리 방법·운영 당부·결제 안내를 담고 있습니다.</p>
     <div class="meta">
       <b>도메인</b> allcaredc.kr &nbsp;·&nbsp; <b>받는 분</b> 권민수 대표원장님 &nbsp;·&nbsp; <b>제작</b> 문석준
     </div>
   </header>
-
-  <!-- 원장님께 드리는 편지 -->
-  <section class="letter">
-    <div class="lt-tag">A LETTER TO YOU</div>
-    <p class="greet">원장님, 늦은 밤 죄송합니다. ㅎㅎ<br>홈페이지가 완성이 되어 전달드리지 아니할 수가 없었습니다.</p>
-    <p><strong>정말 하얗게 불태웠습니다.</strong> 병원의 미래 성장을 바꿀 홈페이지의 탄생이라고 <span class="em">자신합니다.</span></p>
-
-    <div class="three">
-      <div class="ti">이 홈페이지는 세 가지를 담고 있습니다.</div>
-      <ol>
-        <li><b>SEO</b> — 검색엔진 크롤러들이 긁어가도록</li>
-        <li><b>AEO</b> — AI 크롤러들이 긁어가도록</li>
-        <li><b>체류시간</b> — 사람이 실제로 보고 <b>내원을 결정</b>할 수 있도록</li>
-      </ol>
-    </div>
-
-    <p>따라서 이 홈페이지는 기능적으로 <strong>로봇이 좋아할 만한 많은 특성</strong>을 담고 있습니다.
-    예를 들어 각 진료 페이지의 내용을 아주 상세하게 써놓은 부분이나, 존재하는 수많은 페이지들은
-    사실 사람이 다 읽길 기대하는 콘텐츠라기보단 <span class="hl">크롤러가 긁어가고 추천하기 좋게 만든 용도</span>입니다.</p>
-
-    <p>그에 더해, 이 홈페이지는 앞으로 <strong>가만히 내버려두면 안 됩니다.</strong>
-    계속 <b>케이스</b>도 올려주시고 <b>블로그 포스팅</b>도 올려주시면,
-    앞으로 <span class="em">돈값 &times;100 이상</span>은 할 수 있는 홈페이지라고 말씀드릴 수 있습니다.
-    하나하나의 케이스와 포스팅이 <strong>매번 새로운 검색어로 우리 홈페이지에 유입</strong>을 만들어낼 것입니다.</p>
-
-    <p style="font-size:15px;color:var(--navy);font-weight:500;">이 홈페이지를 만드신 <span class="em">목적</span>을 절대 잊으시면 안 됩니다.</p>
-
-    <p>일단 밤이 늦었으니 편히 보시고, <strong>어떤 방식의 피드백도 환영합니다.</strong></p>
-
-    <div class="sign-letter">— <b>문석준</b> 드림</div>
-  </section>
 
   <div class="body">
 
@@ -217,11 +168,11 @@
       </ul>
     </section>
 
-    <!-- 규모 & 숨은 자랑 -->
+    <!-- 규모 & 숨은 사양 -->
     <section>
-      <div class="sec-num">SPECS &amp; HIDDEN GEMS</div>
-      <h2>말하지 않으면 모를 <span class="em">자랑들</span> 😎</h2>
-      <p class="sec-desc">압도적 규모와, 겉으론 안 보이지만 강력한 기능들입니다.</p>
+      <div class="sec-num">SPECS &amp; FEATURES</div>
+      <h2>주요 사양 및 <span class="em">핵심 기능</span></h2>
+      <p class="sec-desc">겉으로는 드러나지 않지만 사이트 성능을 좌우하는 규모와 기능들을 정리했습니다.</p>
 
       <div class="stats">
         <div class="stat"><div class="num">284</div><div class="lbl">검색 색인 가능 페이지</div></div>
@@ -249,7 +200,7 @@
     <section>
       <div class="sec-num">ADMIN GUIDE</div>
       <h2>관리자 페이지 <span class="em">사용법</span></h2>
-      <p class="sec-desc">원장님이 직접 케이스·포스팅을 올리실 수 있도록 정리했습니다. <strong>이게 돈값 ×100의 열쇠입니다.</strong></p>
+      <p class="sec-desc">원장님께서 직접 치료사례·포스팅을 등록하실 수 있도록 정리했습니다. 꾸준한 콘텐츠 축적이 사이트 성과를 좌우합니다.</p>
 
       <h3>들어가는 방법</h3>
       <ul>
@@ -268,7 +219,7 @@
         <li>📊 <strong>대시보드</strong> — 전체 현황 한눈에</li>
         <li>📅 <strong>예약 관리</strong> — 홈페이지로 들어온 예약 문의 확인 / 상태변경 / 삭제</li>
         <li>👥 <strong>회원 관리</strong> — 가입 환자 조회</li>
-        <li>🖼️ <strong>비포&애프터(치료사례)</strong> — 가장 중요! 새로 등록·삭제</li>
+        <li>🖼️ <strong>비포&애프터(치료사례)</strong> — 가장 중요한 항목. 신규 등록·삭제</li>
         <li>✍️ <strong>컬럼(칼럼) 포스팅</strong> — 작성·수정·삭제 (SEO 최적화 글쓰기)</li>
         <li>📢 <strong>공지사항</strong> — 작성·수정·삭제, 팝업 띄우기</li>
         <li>🎉 <strong>이벤트</strong> — 작성·수정·삭제</li>
@@ -301,7 +252,7 @@
     <!-- 색인 고지 + 운영 당부 -->
     <section>
       <div class="sec-num">IMPORTANT</div>
-      <h2>가장 중요한 당부 — <span class="em">“심어야 거둡니다”</span></h2>
+      <h2>운영상 가장 중요한 <span class="em">당부 사항</span></h2>
       <p>새 홈페이지가 검색엔진에 <strong>풍부하게 색인되기까지는 시간이 필요합니다.</strong></p>
       <div class="callout">
         <div class="title">⏳ 예상 소요 기간</div>
@@ -314,29 +265,29 @@
         <li>처음 몇 달의 꾸준함이 1년 뒤 <strong>광고비 없이 들어오는 환자 수</strong>를 결정합니다.</li>
       </ul>
       <div class="note">
-        <b>한 줄 요약:</b> “지금 심으면 6개월 뒤 수확합니다. <b>오늘부터 케이스 하나, 포스팅 한 편</b>씩 — 이게 돈값 ×100의 비밀입니다.”
+        <b>한 줄 요약:</b> 지금 축적한 콘텐츠가 수개월 뒤 성과로 돌아옵니다. <b>오늘부터 케이스 하나, 포스팅 한 편</b>씩 꾸준히 축적해 주시는 것이 핵심입니다.
       </div>
     </section>
 
     <!-- 베타테스트 & 수정 안내 -->
     <section>
-      <div class="sec-num">BETA &amp; SUPPORT</div>
-      <h2>당분간 <span class="em">함께 베타테스터</span>가 되어주세요 🙏</h2>
-      <p>버그나 에러를 찾으려고 엄청 열심히 했지만, <strong>브라우저마다 반응이 다르고</strong> 제가 전부 찾아내는 건 솔직히 불가능하더라고요. ㅠㅠ 원장님의 도움을 빌리고 싶습니다.</p>
+      <div class="sec-num">SUPPORT &amp; MAINTENANCE</div>
+      <h2>안정화 기간 <span class="em">협조 요청</span> 및 유지보수 안내</h2>
+      <p>출시 전 다방면으로 점검을 진행했으나, 브라우저·기기 환경에 따라 동작이 달라질 수 있어 제작자 한 사람이 모든 케이스를 검증하기에는 한계가 있습니다. 운영 초기 안정화 기간 동안 원장님의 협조를 부탁드립니다.</p>
       <ul>
-        <li>여러 페이지에 들어가 보시고 기능들을 활용해 보시면서 <strong>잘 되지 않는 부분</strong>을 말씀해 주시면 정말 감사하겠습니다.</li>
-        <li>원장님이 생각하시는 <strong>대부분의 사항은 수정·구현 가능</strong>합니다. 수정하고 싶은 부분이나 새 기능, 편하게 계속 전달해 주세요.</li>
+        <li>여러 페이지와 기능을 사용해 보시면서 <strong>정상 동작하지 않는 부분</strong>이 발견되면 전달해 주시기 바랍니다.</li>
+        <li>원장님께서 요청하시는 <strong>대부분의 수정·기능 추가는 구현 가능</strong>합니다. 개선 사항이나 신규 기능은 언제든 전달해 주십시오.</li>
       </ul>
 
       <div class="warn">
-        <div class="title">🖼️ 딱 하나, 제 능력 밖인 것 — ‘없는 사진’의 추가</div>
-        예를 들어 “각 진료 페이지에 적절한 사진을 넣어주세요”는 제가 만들어낼 수 없습니다.
-        <strong>멋진 사진이나 영상이 생기면 언제든 추가 가능</strong>하니, 새 자료가 생길 때마다 전달 부탁드립니다.
+        <div class="title">참고 — 신규 사진·영상 자료가 필요한 작업</div>
+        “각 진료 페이지에 적절한 실제 사진을 넣어 달라”와 같이 <strong>존재하지 않는 사진·영상이 전제되는 작업</strong>은 자료가 확보되어야 진행할 수 있습니다.
+        병원 사진·영상 자료가 준비되면 전달해 주시면 언제든 반영해 드리겠습니다.
       </div>
 
       <div class="callout">
-        <div class="title">🗓️ 수정 기한은 언제까지냐면…</div>
-        <strong style="font-size:17px;color:var(--gold)">영원히, 입니다.</strong> 언제든 편하게 연락 주세요.
+        <div class="title">유지보수 기한</div>
+        본 홈페이지의 <strong style="color:var(--gold)">수정·유지보수 기한은 별도 제한을 두지 않습니다.</strong> 필요하실 때 언제든 연락 주시기 바랍니다.
       </div>
     </section>
 
@@ -361,7 +312,7 @@
         <ul>
           <li><strong>결제 방법</strong> — 위 계좌로 계좌이체 부탁드립니다.</li>
           <li><strong>세금계산서</strong> — 입금 확인 후 <strong>2주 이내</strong>로 발급해 드립니다.</li>
-          <li>아무쪼록 다른 결제 수단이 없는 점, 너그러운 양해 부탁드립니다. 🙏</li>
+          <li><strong>결제 수단</strong> — 별도의 카드 결제는 제공되지 않으며, 계좌이체로만 진행됩니다. 양해 부탁드립니다.</li>
         </ul>
       </div>
     </section>
