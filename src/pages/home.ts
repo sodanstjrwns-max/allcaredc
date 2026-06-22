@@ -161,7 +161,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
               <span class="tx-no">0${i + 1}</span>
               <span class="tx-eng disp">${TX_ENG[t.slug] || ''}</span>
               <h3>${t.hero}</h3>
-              <p>${truncate(t.intro, 130)}</p>
+              <p>${t.intro}</p>
               <a href="/treatments/${t.slug}" class="link-arrow">자세히 보기 <i class="fa-solid fa-arrow-right"></i></a>
             </div>
           </article>`).join(''))}
