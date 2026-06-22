@@ -290,7 +290,7 @@ export function Footer() {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260622c"></script>
+  <script src="/static/app.js?v=20260622d"></script>
   `
 }
 
@@ -359,7 +359,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20260622c" />
+    <link rel="stylesheet" href="/static/style.css?v=20260622d" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->
