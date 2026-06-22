@@ -21,6 +21,7 @@ import { admin, ensureSeed } from './routes/admin'
 import { sitemap, robotsTxt, llmsTxt, AreaPage } from './routes/seo'
 import { aiTxt, ogImageSvg, resolveOg } from './lib/seo-engine'
 import { INDEXNOW_KEY } from './lib/indexnow'
+import { HANDOVER_DOC_B64 } from './lib/handover-doc'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
@@ -49,6 +50,14 @@ app.get('/naver22a12bf996862862e0b64978f42923d9.html', (c) =>
 app.get('/llms.txt', (c) => c.body(llmsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
 app.get('/llms-full.txt', (c) => c.body(llmsTxt(true), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
 app.get('/ai.txt', (c) => c.body(aiTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
+// 납품 안내서 (비공개 — noindex, sitemap 미포함). 원장님 전달용.
+app.get('/handover-allcare-2026.html', (c) => {
+  const bin = atob(HANDOVER_DOC_B64)
+  const bytes = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
+  const htmlStr = new TextDecoder('utf-8').decode(bytes)
+  return c.body(htmlStr, 200, { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'private, max-age=300' })
+})
 
 // 동적 OG 이미지 (edge SVG 생성) — /og/treatment/implant.svg, /og/enc/dental-implant.svg
 app.get('/og/:type/:file', (c) => {
