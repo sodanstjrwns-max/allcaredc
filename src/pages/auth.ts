@@ -21,13 +21,6 @@ function authShell(title: string, inner: any) {
 export function LoginPage(next = '/', error?: string) {
   const body = authShell('로그인', html`
     ${error ? html`<div style="background:#fdeaea;color:#c0392b;padding:12px 16px;border-radius:10px;margin-bottom:18px;font-size:14px">${error}</div>` : ''}
-    <a href="/auth/google?next=${encodeURIComponent(next)}" class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:18px;border-color:var(--gray-200)">
-      <i class="fa-brands fa-google" style="color:#ea4335"></i> Google 계정으로 로그인
-    </a>
-    <div style="text-align:center;color:var(--gray-400);font-size:13px;margin:18px 0;position:relative">
-      <span style="background:#fffeee;padding:0 12px;position:relative;z-index:1">또는 이메일로</span>
-      <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--gray-200)"></div>
-    </div>
     <form method="POST" action="/auth/login">
       <input type="hidden" name="next" value="${next}">
       <div class="field"><label>이메일</label><input type="email" name="email" required placeholder="name@example.com"></div>
@@ -42,13 +35,6 @@ export function LoginPage(next = '/', error?: string) {
 export function RegisterPage(next = '/', error?: string) {
   const body = authShell('회원가입', html`
     ${error ? html`<div style="background:#fdeaea;color:#c0392b;padding:12px 16px;border-radius:10px;margin-bottom:18px;font-size:14px">${error}</div>` : ''}
-    <a href="/auth/google?next=${encodeURIComponent(next)}" class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:18px;border-color:var(--gray-200)">
-      <i class="fa-brands fa-google" style="color:#ea4335"></i> Google 계정으로 시작하기
-    </a>
-    <div style="text-align:center;color:var(--gray-400);font-size:13px;margin:18px 0;position:relative">
-      <span style="background:#fffeee;padding:0 12px;position:relative;z-index:1">또는 이메일로</span>
-      <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--gray-200)"></div>
-    </div>
     <form method="POST" action="/auth/register">
       <input type="hidden" name="next" value="${next}">
       <div class="field"><label>이름 <span class="req">*</span></label><input type="text" name="name" required></div>

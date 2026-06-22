@@ -9,8 +9,6 @@ export type Bindings = {
   DB?: D1Database
   ADMIN_PASSWORD?: string
   ADMIN_SESSION_SECRET?: string
-  GOOGLE_CLIENT_ID?: string
-  GOOGLE_CLIENT_SECRET?: string
   RESEND_API_KEY?: string
   NOTIFICATION_EMAIL?: string
 }

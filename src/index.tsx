@@ -223,43 +223,6 @@ app.post('/auth/login', async (c) => {
 })
 app.post('/auth/logout', (c) => { clearSession(c, 'session'); return c.redirect('/') })
 
-// Google OAuth
-app.get('/auth/google', (c) => {
-  const next = c.req.query('next') || '/'
-  const cid = c.env.GOOGLE_CLIENT_ID
-  if (!cid) return c.html(LoginPage(next, 'Google 로그인은 현재 준비 중입니다. 이메일로 로그인해 주세요.').toString())
-  const redirect = `https://${CLINIC.domain}/auth/google/callback`
-  const url = new URL('https://accounts.google.com/o/oauth2/v2/auth')
-  url.searchParams.set('client_id', cid)
-  url.searchParams.set('redirect_uri', redirect)
-  url.searchParams.set('response_type', 'code')
-  url.searchParams.set('scope', 'openid email profile')
-  url.searchParams.set('state', next)
-  return c.redirect(url.toString())
-})
-app.get('/auth/google/callback', async (c) => {
-  const code = c.req.query('code')
-  const next = c.req.query('state') || '/'
-  const { GOOGLE_CLIENT_ID: cid, GOOGLE_CLIENT_SECRET: csec } = c.env
-  if (!code || !cid || !csec) return c.redirect('/auth/login')
-  try {
-    const redirect = `https://${CLINIC.domain}/auth/google/callback`
-    const tokRes = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ code, client_id: cid, client_secret: csec, redirect_uri: redirect, grant_type: 'authorization_code' }),
-    })
-    const tok = await tokRes.json<any>()
-    const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', { headers: { Authorization: `Bearer ${tok.access_token}` } })
-    const gu = await userRes.json<any>()
-    const email = (gu.email || '').toLowerCase()
-    const name = gu.name || email.split('@')[0]
-    const users = await listCollection<any>(c.env, 'users')
-    if (!users.find(u => u.email === email)) await addToCollection(c.env, 'users', { id: uid('u_'), name, email, provider: 'google', createdAt: Date.now() })
-    await setMemberSession(c, { email, name })
-    return c.redirect(next)
-  } catch { return c.redirect('/auth/login') }
-})
-
 // ════════════════ 예약 API ════════════════
 app.post('/api/reservation', async (c) => {
   try {
