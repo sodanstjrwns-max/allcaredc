@@ -96,7 +96,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         </div>
         <div class="hh-meta reveal reveal-d4">
           <div class="item"><span class="num"><span data-count="3">3</span></span><span class="lbl">분야별 전문의 협진</span></div>
-          <div class="item"><span class="num">수면</span><span class="lbl">의식하진정법 병행</span></div>
+          <div class="item"><span class="num num-ko">수면</span><span class="lbl">의식하진정법 병행</span></div>
           <div class="item"><span class="num"><span data-count="20" data-suffix=":30">20:30</span></span><span class="lbl">야간진료 (월·화·목)</span></div>
         </div>
       </div>
