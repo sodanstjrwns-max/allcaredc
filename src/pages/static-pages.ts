@@ -51,8 +51,8 @@ export function MissionPage() {
     <div class="container">
       <div class="grid-2" style="align-items:center;gap:clamp(36px,5vw,72px)">
         <figure class="reveal about-figure">
-          <img src="/static/img/about-exterior.webp" alt="약수역 365올케어치과의원 외관 — 4층 통유리 건물의 치과 간판" width="1200" height="795" loading="lazy">
-          <figcaption>약수역 5번 출구 도보 1분 · 365올케어치과의원</figcaption>
+          <img src="/static/img/about-exterior.webp" alt="약수역 올케어치과의원 외관 — 4층 통유리 건물의 치과 간판" width="1200" height="795" loading="lazy">
+          <figcaption>약수역 5번 출구 도보 1분 · 올케어치과의원</figcaption>
         </figure>
         <div class="reveal reveal-d1">
           <span class="sec-label"><span class="num">01</span> Our Story</span>
@@ -134,7 +134,7 @@ export function MissionPage() {
         <p style="color:rgba(255,254,238,.65)">멀리 어렵게 찾는 치과가 아니라, 우리 동네에서 믿고 편하게 갈 수 있는 치과.</p>
       </div>
       <figure class="reveal yaksu-banner">
-        <img src="/static/img/yaksu-mou-sign.webp" alt="365올케어치과 - 약수상인회 업무협약식 — 권민수 대표원장이 상인회 대표와 상호협력 협약서에 서명하는 모습" width="1024" height="683" loading="lazy">
+        <img src="/static/img/yaksu-mou-sign.webp" alt="올케어치과 - 약수상인회 업무협약식 — 권민수 대표원장이 상인회 대표와 상호협력 협약서에 서명하는 모습" width="1024" height="683" loading="lazy">
         <figcaption><i class="fa-solid fa-handshake" style="color:var(--gold-300);margin-right:8px"></i>2024.11.13 · 약수상인회 업무협약식 — 동네 상권과 상호협력을 약속했습니다</figcaption>
       </figure>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px">
