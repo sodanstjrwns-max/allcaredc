@@ -59,7 +59,7 @@ export function MissionPage() {
     <div class="container">
       <div class="section-head reveal">
         <span class="sec-label"><span class="num">01</span> What We Do</span>
-        <h2>지금, <em>무엇을 잘하는가</em></h2>
+        <h2>올케어치과는 <em>무엇을 잘하는가</em></h2>
         <p>약수역 올케어치과가 가장 자신 있게 책임지는 핵심 진료입니다. 진단부터 회복까지 한 곳에서 흩어지지 않게 이어갑니다.</p>
       </div>
       <div class="core-tx-grid reveal">
@@ -85,7 +85,7 @@ export function MissionPage() {
     <div class="container">
       <div class="section-head reveal">
         <span class="sec-label"><span class="num">01-1</span> Everyday Care</span>
-        <h2>가까운 동네 치과로서, <em>일상 진료</em>도 든든하게</h2>
+        <h2>믿음직한 약수 치과로서, <em>일반 진료</em>도 든든하게</h2>
         <p>큰 수술뿐 아니라 충치·신경·잇몸 같은 일상적인 진료도 같은 전문성으로 봅니다. 멀리 갈 필요 없이, 동네에서 편하게.</p>
       </div>
       <div class="daily-tx-grid reveal">
