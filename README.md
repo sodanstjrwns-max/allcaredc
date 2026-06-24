@@ -90,7 +90,8 @@
 - **배포**: `npm run build && npx wrangler pages deploy dist --project-name allcare-dental`
 - **운영 시크릿(미설정, 추후 주입 예정)**: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL` → `wrangler pages secret put <KEY> --project-name allcare-dental`
 - **남은 작업**: 운영 시크릿 주입(ADMIN_PASSWORD 등), GA4/서치콘솔/네이버 등록
-- **최종 업데이트**: 2026-06-17 (의료진 검증가능 자격 보강 + 원내 디지털 기공실 갤러리 5컷 추가 / 브랜드 BI 색상 일치 검증 완료)
+- **최종 업데이트**: 2026-06-24 (상호 `365올케어치과의원`→`올케어치과의원` 정리 / 서체 명조 절제(제목 고딕화·명조는 헤드라인 한정) / 병원소개 재구성 — 핵심진료 전면 배치 + 일반진료 별도 동선 + 2대(父子) 서사 보조 톤 강등 / 섹션 번호 체계 재정렬)
+  - ⚠️ **미해결**: SNS 핸들 `365allcare`(인스타)·`365allcaredc`(블로그)는 실제 계정 주소라 미변경 — 새 계정 주소 확정 시 `src/data/clinic.ts`의 `sns.instagram`/`sns.blog` 교체 필요
 
 ## 스크립트
 ```bash

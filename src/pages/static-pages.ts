@@ -125,7 +125,7 @@ export function MissionPage() {
       <!-- §3 진료 연속성 타임라인 — '각자의 자리 → 이어달리기 → 함께 진료' -->
       <div class="continuity-block reveal" style="margin-top:clamp(56px,7vw,90px)">
         <div class="continuity-head">
-          <span class="sec-label"><span class="num">01-1</span> Continuity</span>
+          <span class="sec-label"><span class="num">02-1</span> Continuity</span>
           <h3 class="continuity-title">환자분이 흩어지지 않도록, <em>진료를 이어받았습니다</em></h3>
         </div>
         <ol class="continuity-timeline">
@@ -205,7 +205,7 @@ export function MissionPage() {
   <section class="section" style="background:var(--ivory-2)">
     <div class="container">
       <div class="section-head reveal">
-        <span class="sec-label"><span class="num">02</span> Our Principles</span>
+        <span class="sec-label"><span class="num">03</span> Our Principles</span>
         <h2>네 가지 <em>원칙</em></h2>
       </div>
       <div class="value-grid">
@@ -223,7 +223,7 @@ export function MissionPage() {
   <section class="section collab-sec" id="team">
     <div class="container">
       <div class="section-head reveal">
-        <span class="sec-label"><span class="num">03</span> Team Approach</span>
+        <span class="sec-label"><span class="num">04</span> Team Approach</span>
         <h2>여러 원장이 아니라, <em>하나의 진료팀</em></h2>
         <p>${CLINIC.collaboration.lead}</p>
       </div>
@@ -262,7 +262,7 @@ export function MissionPage() {
   <section class="section">
     <div class="container">
       <div class="section-head reveal">
-        <span class="sec-label"><span class="num">04</span> Why ALLCARE</span>
+        <span class="sec-label"><span class="num">05</span> Why ALLCARE</span>
         <h2>올케어치과가 <em>다른 이유</em></h2>
         <p>규모와 시설을 넘어, 끝까지 잇는 섬세함으로 답합니다.</p>
       </div>
@@ -283,13 +283,13 @@ export function MissionPage() {
     <div class="container">
       <div class="grid-2" style="align-items:center">
         <div class="reveal">
-          <span class="sec-label"><span class="num">05</span> Our Vision</span>
+          <span class="sec-label"><span class="num">06</span> Our Vision</span>
           <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 22px">지역 안에서 인정받고 <br><em>오래 머무는 치과</em></h2>
           <p class="prose" style="font-size:1.05rem">한때의 유행이 아니라, 동네에서 신뢰로 이어지는 치과. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과. 그것이 올케어치과가 그리는 미래입니다.</p>
           <ul class="check prose" style="margin-top:22px">
             <li>친절은 기본, 원칙은 약속입니다.</li>
             <li>과잉 없이, 필요한 진료만 권합니다.</li>
-            <li>아버지의 경험에 이어, 아들의 섬세함을 더합니다.</li>
+            <li>전문의 협진으로, 진단부터 회복까지 끝까지 책임집니다.</li>
           </ul>
         </div>
         <div class="reveal reveal-d2">
