@@ -71,10 +71,13 @@
   --shadow: 0 22px 60px -30px rgba(6,39,65,.22);
   --shadow-lg: 0 50px 110px -40px rgba(6,39,65,.32);
 
-  /* ---- 타이포 ---- */
-  --font-head: 'Nanum Myeongjo','Fraunces','Pretendard',Georgia,serif;
+  /* ---- 타이포 ----
+     [정책] 명조(Nanum Myeongjo)는 '큰 헤드라인 한두 곳'에만 .serif-head 로 명시 적용.
+     기본 제목(h1~h6)은 고딕(Pretendard)으로 — 신뢰·품격 톤은 유지하되 명조 남용 방지. */
+  --font-head: 'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI',sans-serif;
   --font-body: 'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI',sans-serif;
   --font-disp: 'Fraunces','Nanum Myeongjo',Georgia,serif;      /* 영문 디스플레이 */
+  --font-serif: 'Nanum Myeongjo','Fraunces',Georgia,serif;     /* 명조 — 큰 헤드라인 전용 */
 
   --maxw: 1320px;
   --gutter: clamp(20px, 5vw, 64px);
@@ -142,6 +145,9 @@ h1,h2,h3,h4,h5,h6 {
   color: var(--ink);
 }
 em, .italic { font-style: normal; color: var(--mint); }
+
+/* 명조 헤드라인 — 품격 포인트 전용(히어로/병원소개 등 큰 헤드라인 한두 곳에만 사용) */
+.serif-head { font-family: var(--font-serif) !important; letter-spacing: -.015em; }
 
 /* 기울임체(이탤릭) 전체 제거 — 어떤 폰트/태그도 기울지 않도록 강제 정체(upright) */
 em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
@@ -2122,6 +2128,7 @@ body::after {
 }
 .hero--heritage .hh-title, .hh-title {
   color: var(--navy-800);
+  font-family: var(--font-serif);  /* 히어로 메인 — 명조 헤드라인(품격 포인트 ①) */
   font-size: clamp(3.2rem, 8.6vw, 7.6rem); line-height: .96; letter-spacing: -.035em;
   margin-bottom: 0;
 }
