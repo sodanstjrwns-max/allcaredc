@@ -25,6 +25,14 @@ function openingHoursSpec() {
     .filter(Boolean)
 }
 
+// ── 병원소개 진료 분류 (재구성: 핵심진료 전면 / 일반진료 별도 동선) ──
+// 핵심진료: 임플란트·교정·심미보철·수면 (+ 협진은 카드에 직접 추가)
+const CORE_SLUGS = ['implant', 'ortho', 'esthetic', 'sleep']
+// 일반진료(동네 일상 수요): 충치·신경·잇몸·틀니·구강외과·턱관절·미백
+const DAILY_SLUGS = ['conservative', 'gum', 'denture', 'surgery', 'tmj', 'whitening']
+const CORE_TX = CORE_SLUGS.map(s => TREATMENTS.find(t => t.slug === s)!).filter(Boolean)
+const DAILY_TX = DAILY_SLUGS.map(s => TREATMENTS.find(t => t.slug === s)!).filter(Boolean)
+
 // ════════════════ 병원소개 / 미션 ════════════════
 export function MissionPage() {
   const body = html`
@@ -46,8 +54,53 @@ export function MissionPage() {
     </div>
   </section>
 
-  <!-- ============ 우리의 시작 — 2대(父子) 진료 연속성 서사 (§3 원문 — 서브 컨셉) ============ -->
+  <!-- ============ §A 현재 진료 역량 — 전면 (환자가 가장 궁금한 '지금 무엇을 잘하나') ============ -->
   <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">01</span> What We Do</span>
+        <h2>지금, <em>무엇을 잘하는가</em></h2>
+        <p>약수역 올케어치과가 가장 자신 있게 책임지는 핵심 진료입니다. 진단부터 회복까지 한 곳에서 흩어지지 않게 이어갑니다.</p>
+      </div>
+      <div class="core-tx-grid reveal">
+        ${raw(CORE_TX.map((t, i) => `
+          <a href="/treatments/${t.slug}" class="core-tx-card reveal reveal-d${(i % 3) + 1}">
+            <span class="ctx-ico"><i class="fa-solid fa-${t.icon}"></i></span>
+            <h3 class="ctx-name">${t.name}</h3>
+            <p class="ctx-short">${t.short}</p>
+            <span class="ctx-go">자세히 보기 <i class="fa-solid fa-arrow-right"></i></span>
+          </a>`).join(''))}
+        <a href="/mission#team" class="core-tx-card ctx-team reveal reveal-d1">
+          <span class="ctx-ico"><i class="fa-solid fa-user-doctor"></i></span>
+          <h3 class="ctx-name">전문의 협진 시스템</h3>
+          <p class="ctx-short">구강악안면외과·보철과·통합치의학 — 수술부터 보철·교정·턱관절까지 한 팀이 이어서 진료합니다.</p>
+          <span class="ctx-go">협진 자세히 <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ §A-2 일반진료 — 동네 일상 진료 동선 (충치·신경·잇몸 등 베이스 수요) ============ -->
+  <section class="section" style="background:var(--ivory-2)">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="sec-label"><span class="num">01-1</span> Everyday Care</span>
+        <h2>가까운 동네 치과로서, <em>일상 진료</em>도 든든하게</h2>
+        <p>큰 수술뿐 아니라 충치·신경·잇몸 같은 일상적인 진료도 같은 전문성으로 봅니다. 멀리 갈 필요 없이, 동네에서 편하게.</p>
+      </div>
+      <div class="daily-tx-grid reveal">
+        ${raw(DAILY_TX.map((t, i) => `
+          <a href="/treatments/${t.slug}" class="daily-tx-chip reveal reveal-d${(i % 3) + 1}">
+            <i class="fa-solid fa-${t.icon}"></i>
+            <span class="dtx-name">${t.name}</span>
+            <span class="dtx-short">${t.short}</span>
+          </a>`).join(''))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ §B 진료의 연속성 (2대 父子) — 신뢰를 더하는 보조 톤으로 한 단계 강등 ============ -->
+  <section class="section about-story-sub">
     <div class="container">
       <div class="grid-2" style="align-items:center;gap:clamp(36px,5vw,72px)">
         <figure class="reveal about-figure">
@@ -55,8 +108,8 @@ export function MissionPage() {
           <figcaption>약수역 5번 출구 도보 1분 · 올케어치과의원</figcaption>
         </figure>
         <div class="reveal reveal-d1">
-          <span class="sec-label"><span class="num">01</span> Our Story</span>
-          <h2 class="split-rise" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 18px">아버지의 경험에 이어,<br><em>아들의 섬세함</em>을 더하다</h2>
+          <span class="sec-label"><span class="num">02</span> Continuity of Care</span>
+          <h2 class="split-rise" style="font-size:clamp(1.6rem,3.4vw,2.4rem);margin:18px 0 18px">끊김 없는 진료,<br><em>믿고 이어올 수 있는 곳</em></h2>
           <p class="subconcept-note reveal">${CLINIC.familyStory.subConceptNote}</p>
           <div class="prose" style="font-size:1.05rem;line-height:1.9">
             <p>저희가 가장 중요하게 생각하는 가치는 단순히 “부자가 함께 진료한다”는 사실 자체가 아닙니다. 오랜 기간 한 원장님을 믿고 다녀오신 환자분들이 낯선 병원으로 흩어지지 않고, <strong>아들이 책임감을 가지고 이어서 케어</strong>해드릴 수 있다는 점 — 진료의 연속성입니다.</p>
@@ -167,7 +220,7 @@ export function MissionPage() {
   </section>
 
   <!-- ============ §4 3인 전문의 협진 = 통합진료 (수술→보철→전체구강) ============ -->
-  <section class="section collab-sec">
+  <section class="section collab-sec" id="team">
     <div class="container">
       <div class="section-head reveal">
         <span class="sec-label"><span class="num">03</span> Team Approach</span>

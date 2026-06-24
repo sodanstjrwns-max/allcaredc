@@ -2919,3 +2919,70 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 .collab-photo img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:var(--radius-lg);display:block;box-shadow:var(--shadow-lg,var(--shadow))}
 .collab-photo figcaption{margin-top:14px;text-align:center;font-size:14px;line-height:1.7;color:var(--gray-500);max-width:640px;margin-left:auto;margin-right:auto}
 @media (max-width:640px){.collab-photo{margin-bottom:30px}.collab-photo figcaption{font-size:13px;padding:0 4px}}
+
+/* ============================================================
+   병원소개 재구성 — 핵심진료 전면(core-tx) / 일반진료 동선(daily-tx)
+   ============================================================ */
+/* 핵심진료 카드 그리드 */
+.core-tx-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(16px,2vw,24px);
+}
+.core-tx-card{
+  display:flex; flex-direction:column; gap:12px;
+  background:var(--ivory); border:1px solid var(--line);
+  border-radius:var(--radius-lg); padding:clamp(26px,3vw,34px);
+  color:var(--ink); text-decoration:none;
+  transition:transform .4s var(--spring), box-shadow .4s var(--ease), border-color .3s;
+}
+.core-tx-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow); border-color:var(--gold-300); }
+.core-tx-card .ctx-ico{
+  width:54px; height:54px; display:grid; place-items:center;
+  background:var(--gold-tint); color:var(--gold); border-radius:var(--radius-lg);
+  font-size:22px;
+}
+.core-tx-card .ctx-name{ font-size:1.25rem; font-weight:800; margin:0; color:var(--navy-800); }
+.core-tx-card .ctx-short{ font-size:.95rem; line-height:1.7; color:var(--ink-soft); flex:1; margin:0; }
+.core-tx-card .ctx-go{
+  display:inline-flex; align-items:center; gap:8px; margin-top:6px;
+  font-family:var(--font-disp); font-size:13px; letter-spacing:.04em; font-weight:600; color:var(--gold-600);
+}
+.core-tx-card .ctx-go i{ transition:transform .3s var(--ease); }
+.core-tx-card:hover .ctx-go i{ transform:translateX(5px); }
+/* 협진 카드 — 네이비 강조로 차별화 */
+.core-tx-card.ctx-team{ background:var(--navy-800); border-color:var(--navy-700); }
+.core-tx-card.ctx-team .ctx-name{ color:#fffeee; }
+.core-tx-card.ctx-team .ctx-short{ color:rgba(255,254,238,.72); }
+.core-tx-card.ctx-team .ctx-ico{ background:rgba(199,168,120,.18); color:var(--gold-300); }
+.core-tx-card.ctx-team .ctx-go{ color:var(--gold-300); }
+
+/* 일반진료 동선 — 가벼운 chip 리스트 */
+.daily-tx-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+}
+.daily-tx-chip{
+  display:flex; align-items:flex-start; gap:14px;
+  background:var(--ivory); border:1px solid var(--line);
+  border-radius:var(--radius-lg); padding:20px 22px;
+  text-decoration:none; color:var(--ink);
+  transition:transform .3s var(--ease), border-color .3s, background .3s;
+}
+.daily-tx-chip:hover{ transform:translateY(-3px); border-color:var(--gold-300); background:#fff; }
+.daily-tx-chip > i{
+  flex:none; width:40px; height:40px; display:grid; place-items:center;
+  background:var(--ivory-2); color:var(--gold-600); border-radius:50%; font-size:16px; margin-top:2px;
+}
+.daily-tx-chip .dtx-name{ display:block; font-weight:700; font-size:1.02rem; color:var(--navy-800); }
+.daily-tx-chip .dtx-short{ display:block; font-size:.85rem; line-height:1.6; color:var(--ink-soft); margin-top:4px; }
+
+/* 2대 서사 보조 톤 — 시각 비중 낮춤(연한 배경) */
+.about-story-sub{ background:var(--ivory); }
+.about-story-sub .about-figure img{ filter:saturate(.96); }
+
+@media (max-width:900px){
+  .core-tx-grid{ grid-template-columns:repeat(2,1fr); }
+  .daily-tx-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:560px){
+  .core-tx-grid{ grid-template-columns:1fr; }
+  .daily-tx-grid{ grid-template-columns:1fr; }
+}
