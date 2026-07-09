@@ -212,22 +212,27 @@ export function MissionPage() {
         <p>${CLINIC.collaboration.lead}</p>
       </div>
 
-      <!-- 전 직원 케이스 컨퍼런스 실사진 -->
-      <figure class="collab-photo reveal">
-        <img src="/static/img/team-case-meeting.webp" alt="올케어치과 통합 진료팀 — 전 직원이 함께 환자 케이스를 공유하는 진료 컨퍼런스" loading="lazy" width="1024" height="683">
-        <figcaption>전 직원이 함께 환자 케이스를 공유하는 통합 진료 컨퍼런스 — 한 사람의 환자를 진료팀 전체가 이해합니다.</figcaption>
-      </figure>
-
-      <!-- 통합진료가 실제로 작동하는 방식: 수술 기반 → 보철 설계 → 전체 구강 점검 -->
-      <div class="collab-flow">
+      <!-- §S13/S14: 단체사진 삭제 → 협진 흐름 5단계 아이콘 카드 -->
+      <ol class="flow5-grid reveal">
         ${raw(CLINIC.collaboration.flow.map((f, i) => `
-          <article class="collab-node reveal reveal-d${i + 1}">
-            <span class="cn-ico"><i class="fa-solid fa-${f.icon}"></i></span>
-            <span class="cn-part">${f.part}</span>
-            <strong class="cn-role">${f.role}</strong>
-            <p class="cn-desc">${f.desc}</p>
-            ${i < CLINIC.collaboration.flow.length - 1 ? '<span class="cn-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right-long"></i></span>' : ''}
-          </article>`).join(''))}
+          <li class="flow5-card reveal reveal-d${(i % 3) + 1}">
+            <span class="f5-step">${f.step}</span>
+            <span class="f5-ico"><i class="fa-solid fa-${f.icon}"></i></span>
+            <strong class="f5-name">${f.part}</strong>
+            <p class="f5-desc">${f.desc}</p>
+          </li>`).join(''))}
+      </ol>
+
+      <!-- §S15: 협진이 특히 필요한 진료 — 태그/칩 형태 -->
+      <div class="collab-chips reveal">
+        <p class="cc-chips-lead">특히 이런 진료에서 협진이 빛납니다</p>
+        <div class="chip-row">
+          ${raw(CLINIC.collaboration.chips.map((c, i) => `
+            <div class="collab-chip reveal reveal-d${(i % 3) + 1}">
+              <strong class="chip-label">${c.label}</strong>
+              <span class="chip-flow">${c.flow}</span>
+            </div>`).join(''))}
+        </div>
       </div>
 
       <!-- 협진이 빛나는 지점 -->

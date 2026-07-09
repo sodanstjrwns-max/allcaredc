@@ -641,6 +641,60 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
   position: absolute; top: 50%; right: -22px; transform: translateY(-50%); z-index: 2;
   color: var(--gold, #b08d57); font-size: 18px;
 }
+/* §S14: 협진 흐름 5단계 아이콘 카드 */
+.flow5-grid {
+  list-style: none; margin: 0 0 clamp(36px, 4.5vw, 56px); padding: 0;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+}
+.flow5-card {
+  position: relative; padding: 30px 20px 26px; text-align: center;
+  background: var(--ivory, #fffeee); border: 1px solid var(--line, rgba(6,39,65,.1));
+  border-radius: var(--radius-lg, 18px); box-shadow: var(--shadow-sm);
+  transition: transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+.flow5-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+.f5-step {
+  position: absolute; top: 14px; right: 16px;
+  font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--gold, #b08d57);
+}
+.f5-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px; border-radius: 15px; margin-bottom: 16px;
+  background: var(--navy-900, #062741); color: var(--gold-300, #d6b27a); font-size: 22px;
+}
+.f5-name { display: block; font-size: 1.02rem; color: var(--navy-900, #062741); margin-bottom: 10px; font-weight: 700; }
+.f5-desc { font-size: 13.5px; line-height: 1.65; color: var(--gray-600); margin: 0; }
+@media (max-width: 900px) {
+  .flow5-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .flow5-grid { grid-template-columns: 1fr; }
+}
+
+/* §S15: 협진이 특히 필요한 진료 — 태그/칩 */
+.collab-chips { margin-bottom: clamp(40px, 5vw, 64px); }
+.cc-chips-lead {
+  text-align: center; font-size: 14px; letter-spacing: .04em;
+  color: var(--mint, #4a9b8e); font-weight: 600; margin: 0 0 20px;
+}
+.chip-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.collab-chip {
+  display: inline-flex; flex-direction: column; gap: 5px;
+  padding: 16px 22px; border-radius: 999px; border-radius: 16px;
+  background: var(--ivory-2, #f1e9dc); border: 1px solid var(--line, rgba(6,39,65,.1));
+  max-width: 340px; transition: transform .4s var(--ease), border-color .4s var(--ease);
+}
+.collab-chip:hover { transform: translateY(-3px); border-color: var(--gold, #b08d57); }
+.chip-label {
+  font-size: 15px; font-weight: 700; color: var(--navy-900, #062741);
+  padding-left: 16px; position: relative;
+}
+.chip-label::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 7px; height: 7px; border-radius: 50%; background: var(--gold, #b08d57);
+}
+.chip-flow { font-size: 13px; line-height: 1.55; color: var(--gray-600); padding-left: 16px; }
+
 .collab-points {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
 }
