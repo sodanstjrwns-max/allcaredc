@@ -31,6 +31,15 @@
   --gold-300: #c7a878;
   --gold-tint: #f1e9dc;
 
+  /* ---- 포인트 컬러 (S2 요청) — 네이비/골드 톤과 조화되는 절제된 블루·그린 ----
+     운용색(네이비·아이보리·베이지·골드)은 유지하고, 강조가 필요한 지점에만 포인트로 사용 */
+  --point-blue: #2f6d9e;      /* 차분한 미드 블루 (신뢰·의료) */
+  --point-blue-600: #245a84;  /* hover/딥 */
+  --point-blue-tint: #e8f1f8; /* 밝은 배경 틴트 */
+  --point-green: #3d8168;     /* 딥 세이지 그린 (안정·케어) */
+  --point-green-600: #316a55;
+  --point-green-tint: #e8f2ed;
+
   /* ---- 아이보리 / 웜베이지 (순백 #FFFFFF 사용 금지) ---- */
   --ivory: #fffeee;       /* ★ 페이지 기본 배경 */
   --ivory-2: #f1e9dc;     /* ★ 섹션·카드·이미지 배경 */
@@ -662,6 +671,10 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
   width: 56px; height: 56px; border-radius: 15px; margin-bottom: 16px;
   background: var(--navy-900, #062741); color: var(--gold-300, #d6b27a); font-size: 22px;
 }
+/* S2 포인트 컬러: 5단계 아이콘 배지에 네이비→블루→그린→골드 흐름감 부여 */
+.flow5-card:nth-child(2) .f5-ico { background: var(--point-blue); color: #fff; }
+.flow5-card:nth-child(3) .f5-ico { background: var(--point-green); color: #fff; }
+.flow5-card:nth-child(4) .f5-ico { background: var(--point-blue-600); color: #fff; }
 .f5-name { display: block; font-size: 1.02rem; color: var(--navy-900, #062741); margin-bottom: 10px; font-weight: 700; }
 .f5-desc { font-size: 13.5px; line-height: 1.65; color: var(--gray-600); margin: 0; }
 @media (max-width: 900px) {
@@ -694,6 +707,13 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
   width: 7px; height: 7px; border-radius: 50%; background: var(--gold, #b08d57);
 }
 .chip-flow { font-size: 13px; line-height: 1.55; color: var(--gray-600); padding-left: 16px; }
+/* S2 포인트 컬러 변주 — 칩마다 골드/블루/그린 교차로 단조로움 해소 */
+.collab-chip:nth-child(2) { background: var(--point-blue-tint); }
+.collab-chip:nth-child(2) .chip-label::before { background: var(--point-blue); }
+.collab-chip:nth-child(2):hover { border-color: var(--point-blue); }
+.collab-chip:nth-child(3) { background: var(--point-green-tint); }
+.collab-chip:nth-child(3) .chip-label::before { background: var(--point-green); }
+.collab-chip:nth-child(3):hover { border-color: var(--point-green); }
 
 .collab-points {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
@@ -1463,6 +1483,21 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
   transition: all .25s var(--ease); cursor: pointer;
 }
 .tag-pill:hover { border-color: var(--navy-800); color: var(--navy-900); }
+
+/* S2 포인트: 진료 카테고리 태그 = 블루 (클라이언트 시안 기준) */
+.tag-pill.cat-tag {
+  background: var(--point-blue-tint); border-color: transparent; color: var(--point-blue-600);
+  cursor: default;
+}
+/* S2 포인트: 긍정/건강(건강보험 적용 등) 태그 = 그린 */
+.tag-green {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; font-size: 12.5px; font-weight: 600; border-radius: var(--radius-pill);
+  background: var(--point-green-tint); color: var(--point-green-600);
+}
+/* S2 포인트: 본문/카드 인링크 = 블루 */
+.link-point { color: var(--point-blue); font-weight: 600; transition: color .25s var(--ease); }
+.link-point:hover { color: var(--point-blue-600); text-decoration: underline; }
 
 .tags { font-size: 13px; color: var(--gray-600); display: flex; flex-wrap: wrap; gap: 4px 2px; align-items: center; }
 .tags i { color: var(--mint); margin-right: 3px; }
