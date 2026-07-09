@@ -105,9 +105,9 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img class="hh-portrait" src="/static/img/hero-doctor.webp" alt="올케어치과 권민수 대표원장 — 약수역 임플란트·교정·심미보철 더블보드 전문의" width="819" height="1024" fetchpriority="high" />
+          <img class="hh-portrait" src="/static/img/doctors-main-3.webp" alt="올케어치과 3인 전문의 통합진료팀 — 권종진 명예원장·권민수 대표원장·배수현 보철원장 (약수역)" width="576" height="1024" fetchpriority="high" />
         </div>
-        <figcaption class="hh-caption"><span class="hh-cap-eng disp">${CLINIC.doctorLead?.name || '권민수'} 대표원장</span> 구강악안면외과·통합치의학과 더블보드 전문의</figcaption>
+        <figcaption class="hh-caption"><span class="hh-cap-eng disp">3인 전문의 통합진료팀</span> 권종진 명예원장 · 권민수 대표원장 · 배수현 보철원장</figcaption>
       </figure>
     </div>
     <div class="hero-foot hh-foot">
@@ -457,7 +457,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
     description: '약수역 5번 출구 올케어치과. 3인 전문의가 임플란트·치아교정·심미보철을 진단부터 책임집니다. 수면진료·야간진료 운영.',
     path: '/',
     ogImage: `https://${CLINIC.domain}/og/home/main.svg`,
-    preloadImage: '/static/img/hero-doctor.webp',
+    preloadImage: '/static/img/doctors-main-3.webp',
     keywords: '약수역 치과,약수역 임플란트,약수역 교정,약수역 심미보철,올케어치과,약수동 치과,중구 치과',
     schema: [
       organizationSchema(),
