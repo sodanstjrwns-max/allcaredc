@@ -9,7 +9,7 @@ export const CLINIC = {
   tagline: '인지하고, 공감하고, 해소하는 치과',
   // §B-1 필터: "높은 객단가/주매출" 동기 제거, 가치 중심 미션 카피
   heroCopy: '불편함을 끝까지 책임지는 한 곳.',
-  heroSub: '진단부터 회복까지, 흩어지지 않는 진료. 약수동에서 오래도록 곁을 지키는 치과를 만듭니다.',
+  heroSub: '진단부터 회복까지, 흩어지지 않는 진료. 약수역에서 오래도록 곁을 지키는 치과를 만듭니다.',
   mission: '지역 안에서 인정받고 오래 머무는, 지역 대표 치과',
   philosophy: '환자의 불편한 포인트를 인지하고, 공감하고, 해소합니다.',
   values: [
@@ -496,14 +496,14 @@ export const TREATMENTS: Treatment[] = [
       { src: '/static/img/esthetic-kaed.webp', caption: '대한심미치과학회(KAED) 인정의 교육원 과정 수료 — 심미보철 전문성을 위한 지속적인 학술 연수' },
     ],
   },
-  // ── 그 외 진료 (Q11) — sub ──
+  // ── 핵심 진료 (Q12) — 수면진료 포함 ──
   {
     slug: 'sleep',
     name: '수면진료',
     short: '두려움이 큰 분, 장시간 진료가 어려운 분을 위한 수면진료',
     hero: '편안하게 잠든 사이, 진료를 마칩니다',
     icon: 'bed',
-    core: false,
+    core: true,
     keywords: ['약수역 수면치과', '수면진료', '공포 치과진료', '구역반사 치과'],
     doctors: ['kwon-minsu'],
     intro: '치과에 대한 두려움이 크거나, 구역반사가 심하거나, 한 번에 긴 진료가 필요한 경우 수면진료가 도움이 됩니다. 올케어치과는 수면진료(의식하진정법)를 위한 별도의 세팅을 갖추고, 환자의 전신 상태를 먼저 확인한 뒤 안전을 최우선으로 진행합니다. 약수역 5번 출구 인근에서 구강악안면외과 전문의가 진정 상태를 직접 관리합니다.',
@@ -535,6 +535,7 @@ export const TREATMENTS: Treatment[] = [
       { q: '수면진료는 전신마취와 같은 건가요?', a: '같지 않습니다. 의식하진정법은 호흡과 반사를 유지한 상태에서 불안을 낮추는 진정으로, 의식이 완전히 사라지는 전신마취와는 다릅니다. 어떤 방식이 적합한지는 상담을 통해 안내합니다.' },
     ],
   },
+  // ── 일반 진료 (Q11) — sub ──
   {
     slug: 'tmj',
     name: '턱관절 치료',
@@ -861,7 +862,12 @@ for (const t of TREATMENTS) {
 }
 
 export const CORE_TREATMENTS = TREATMENTS.filter(t => t.core)
-export const SUB_TREATMENTS = TREATMENTS.filter(t => !t.core)
+// 일반(비핵심) 진료 노출 순서: 동네 특성상 수요가 많은 충치·신경치료를 맨 앞에 배치
+const SUB_ORDER = ['conservative', 'gum', 'surgery', 'denture', 'tmj', 'whitening']
+export const SUB_TREATMENTS = TREATMENTS.filter(t => !t.core).sort((a, b) => {
+  const ia = SUB_ORDER.indexOf(a.slug), ib = SUB_ORDER.indexOf(b.slug)
+  return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib)
+})
 
 export function getTreatment(slug: string) {
   return TREATMENTS.find(t => t.slug === slug)

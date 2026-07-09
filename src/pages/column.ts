@@ -113,7 +113,7 @@ export function ColumnDetail(col: Column, views: number) {
         <article class="reveal">
           <div style="display:flex;align-items:center;gap:14px;padding-bottom:24px;margin-bottom:30px;border-bottom:1px solid var(--gray-200);flex-wrap:wrap">
             <span class="tag-pill">${txName(col.category)}</span>
-            ${author ? `<a href="/doctors/${author.slug}" style="font-weight:700;color:var(--brand)">${author.name} ${author.role}</a>` : ''}
+            ${author ? html`<a href="/doctors/${author.slug}" style="font-weight:700;color:var(--brand)">${author.name} ${author.role}</a>` : ''}
             <span style="color:var(--gray-400);font-size:14px">${new Date(col.createdAt).toLocaleDateString('ko-KR')}</span>
             <span style="color:var(--gray-400);font-size:14px;margin-left:auto"><i class="fa-solid fa-eye"></i> ${views.toLocaleString()}</span>
           </div>

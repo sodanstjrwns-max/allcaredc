@@ -206,7 +206,7 @@ export function Footer() {
       <div class="footer-grid">
         <div>
           <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="올케어치과 로고" width="30" height="30" style="display:block"/></span> 올케어치과</div>
-          <p style="line-height:1.7">${CLINIC.philosophy}<br>약수동에서 오래도록 곁을 지키는 치과를 만듭니다.</p>
+          <p style="line-height:1.7">${CLINIC.philosophy}<br>약수역에서 오래도록 곁을 지키는 치과를 만듭니다.</p>
           <div class="footer-sns">
             ${CLINIC.sns.instagram ? raw(`<a href="${CLINIC.sns.instagram}" aria-label="인스타그램" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>`) : ''}
             ${CLINIC.sns.blog ? raw(`<a href="${CLINIC.sns.blog}" aria-label="네이버 블로그" target="_blank" rel="noopener"><i class="fa-solid fa-blog"></i></a>`) : ''}

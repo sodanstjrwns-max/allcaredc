@@ -50,7 +50,7 @@ export function MissionPage() {
         <span class="line-mask"><span>인지하고, 공감하고,</span></span>
         <span class="line-mask"><span class="accent disp">해소합니다.</span></span>
       </h1>
-      <p class="lead reveal reveal-d2" style="max-width:640px">${CLINIC.mission}. 진단부터 회복까지, 흩어지지 않는 진료를 약수동에서 이어갑니다.</p>
+      <p class="lead reveal reveal-d2" style="max-width:640px">${CLINIC.mission}. 진단부터 회복까지, 흩어지지 않는 진료를 약수역에서 이어갑니다.</p>
     </div>
   </section>
 
