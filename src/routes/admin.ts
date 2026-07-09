@@ -17,7 +17,7 @@ import { CaseItem } from '../pages/cases'
 // /admin prefix로 마운트되므로 내부 경로는 prefix 제외
 export const admin = new Hono<{ Bindings: Bindings }>()
 
-function ADMIN_PW(env: Bindings) { return env.ADMIN_PASSWORD || 'allcare2026' }
+function ADMIN_PW(env: Bindings) { return env.ADMIN_PASSWORD || 'kms218588' }
 
 // 인증 미들웨어 (로그인 페이지 제외) — admin 라우터 내부에서만 작동
 admin.use('*', async (c, next) => {
