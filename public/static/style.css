@@ -604,6 +604,20 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
   .ct-dot { left: 0; transform: none; }
 }
 
+/* ── With Yaksu 서술형 문구 (네이비 배경 · 카드 그리드 대체) ── */
+.yaksu-copy {
+  max-width: 760px; margin: clamp(30px, 4vw, 46px) auto 0; text-align: center;
+}
+.yaksu-copy-head {
+  font-size: clamp(1.25rem, 2.4vw, 1.55rem); font-weight: 700;
+  color: var(--gold-300, #d6b27a); margin: 0 0 18px; letter-spacing: -.01em;
+}
+.yaksu-copy p {
+  font-size: clamp(15px, 1.6vw, 16.5px); line-height: 1.9;
+  color: rgba(255,254,238,.82); margin: 0 auto 16px; max-width: 640px;
+}
+.yaksu-copy p:last-child { margin-bottom: 0; }
+
 /* ============================================================
    §4 3인 협진 통합진료 — flow + 카드
    ============================================================ */

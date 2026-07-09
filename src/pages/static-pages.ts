@@ -122,21 +122,8 @@ export function MissionPage() {
         </div>
       </div>
 
-      <!-- §3 진료 연속성 타임라인 — '각자의 자리 → 이어달리기 → 함께 진료' -->
-      <div class="continuity-block reveal" style="margin-top:clamp(56px,7vw,90px)">
-        <div class="continuity-head">
-          <span class="sec-label"><span class="num">02-1</span> Continuity</span>
-          <h3 class="continuity-title">환자분이 흩어지지 않도록, <em>진료를 이어받았습니다</em></h3>
-        </div>
-        <ol class="continuity-timeline">
-          ${raw(CLINIC.familyStory.timeline.map((t, i) => `
-            <li class="ct-step reveal reveal-d${i + 1}">
-              <span class="ct-dot" aria-hidden="true"></span>
-              <span class="ct-year disp">${t.year}</span>
-              <strong class="ct-label">${t.label}</strong>
-              <p class="ct-desc">${t.desc}</p>
-            </li>`).join(''))}
-        </ol>
+      <!-- §3 두 세대가 이어온 신뢰 — 타임라인 없이 명예원장 경력 중심 한 블록 (요청: 타임라인 전체 삭제) -->
+      <div class="continuity-block reveal" style="margin-top:clamp(48px,6vw,80px)">
         <p class="sustainability-note reveal">
           <i class="fa-solid fa-leaf" aria-hidden="true"></i>
           ${CLINIC.familyStory.sustainability}
@@ -190,13 +177,10 @@ export function MissionPage() {
         <img src="/static/img/yaksu-mou-sign.webp" alt="올케어치과 - 약수상인회 업무협약식 — 권민수 대표원장이 상인회 대표와 상호협력 협약서에 서명하는 모습" width="1024" height="683" loading="lazy">
         <figcaption><i class="fa-solid fa-handshake" style="color:var(--gold-300);margin-right:8px"></i>2024.11.13 · 약수상인회 업무협약식 — 동네 상권과 상호협력을 약속했습니다</figcaption>
       </figure>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px">
-        ${raw(CLINIC.community.map((cm, i) => `
-          <article class="reveal reveal-d${(i % 3) + 1}" style="background:rgba(255,254,238,.05);border:1px solid rgba(176,141,87,.3);border-radius:var(--radius-lg);padding:28px 24px">
-            <div style="width:42px;height:42px;display:grid;place-items:center;background:rgba(176,141,87,.15);color:var(--gold-300);border-radius:50%;margin-bottom:16px"><i class="fa-solid fa-${cm.icon}"></i></div>
-            <h3 style="color:#fffeee;font-size:1.05rem;margin-bottom:8px">${cm.name}</h3>
-            <p style="color:rgba(255,254,238,.62);font-size:.9rem;line-height:1.7">${cm.desc}</p>
-          </article>`).join(''))}
+      <div class="yaksu-copy reveal reveal-d1">
+        <h3 class="yaksu-copy-head">지역과 함께 걸어온 치과</h3>
+        <p>올케어치과는 개원 초부터 약수시장상인회와 협약을 맺고, 지역 상권과 주민들의 곁을 지켜왔습니다. 약수동주민센터, 다온봉사단, 중구 산악회 등 여러 지역 단체와도 꾸준히 함께해 왔습니다.</p>
+        <p>잠깐 스쳐가는 병원이 아니라, 동네에 뿌리내리고 오래 머무는 치과. 그 자리를 지키는 것이 저희가 지역에 보답하는 방식이라 믿습니다.</p>
       </div>
     </div>
   </section>
