@@ -140,11 +140,12 @@ export function Header() {
             <div class="mega" style="min-width:340px">
               <div class="mega-grid" style="grid-template-columns:1fr">
                 <a href="/cases"><span class="ico"><i class="fa-solid fa-images"></i></span><span><strong>비포/애프터</strong><span>치료 전후 사례</span></span></a>
-                <a href="/column"><span class="ico"><i class="fa-solid fa-pen-nib"></i></span><span><strong>원장 칼럼</strong><span>의료진이 직접 쓰는 글</span></span></a>
                 <a href="/encyclopedia"><span class="ico"><i class="fa-solid fa-book-open"></i></span><span><strong>치과 백과사전</strong><span>치과 용어 사전</span></span></a>
               </div>
             </div>
           </li>
+          <!-- §S5: 원장칼럼 별도 최상위 카테고리로 분리 -->
+          <li><a href="/column">원장칼럼</a></li>
           <li>
             <a href="/directions">안내 <i class="fa-solid fa-chevron-down" style="font-size:11px"></i></a>
             <div class="mega" style="min-width:340px">
@@ -176,10 +177,10 @@ export function Header() {
     <div class="m-sub">
       ${raw(TREATMENTS.map(t => `<a href="/treatments/${t.slug}">${t.name}</a>`).join(''))}
     </div>
+    <a href="/column">원장칼럼</a>
     <p class="m-drawer-title">콘텐츠</p>
     <div class="m-sub">
       <a href="/cases">비포/애프터</a>
-      <a href="/column">원장 칼럼</a>
       <a href="/encyclopedia">치과 백과사전</a>
     </div>
     <p class="m-drawer-title">안내</p>

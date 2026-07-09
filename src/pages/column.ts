@@ -27,6 +27,18 @@ export type Column = {
 const txName = (s: string) => getTreatment(s)?.name || s
 const docName = (s: string) => getDoctor(s)?.name || ''
 
+// §S7: 날짜 버그 방어 — createdAt이 없거나 1970-01-01 이전(0·undefined·Invalid)이면
+// updatedAt → 그마저 이상하면 오늘 날짜로 폴백해 '1969.12.25' 같은 오표기를 방지
+const MIN_VALID = Date.UTC(2000, 0, 1) // 2000-01-01 이전 값은 손상된 것으로 간주
+function safeDate(...cands: (number | undefined)[]): number {
+  for (const t of cands) {
+    if (typeof t === 'number' && !isNaN(t) && t >= MIN_VALID) return t
+  }
+  return Date.now()
+}
+const fmtDate = (createdAt?: number, updatedAt?: number) =>
+  new Date(safeDate(createdAt, updatedAt)).toLocaleDateString('ko-KR')
+
 // ── 칼럼 목록 /column ──
 export function ColumnIndex(columns: Column[]) {
   const pub = columns.filter(c => c.published)
@@ -55,7 +67,7 @@ export function ColumnIndex(columns: Column[]) {
                 <span class="role">${txName(col.category)}</span>
                 <h2 style="font-size:1.25rem;line-height:1.4">${col.title}</h2>
                 <p class="title-line" style="min-height:auto;margin-top:8px">${col.excerpt}</p>
-                <p style="font-size:13px;color:var(--gray-400);margin-top:14px">${docName(col.author)} 원장 · ${new Date(col.createdAt).toLocaleDateString('ko-KR')}</p>
+                <p style="font-size:13px;color:var(--gray-400);margin-top:14px">${docName(col.author)} 원장 · ${fmtDate(col.createdAt, col.updatedAt)}</p>
               </div>
             </a>`).join(''))}
         </div>
@@ -80,8 +92,8 @@ export function ColumnDetail(col: Column, views: number) {
     '@type': ['Article', 'MedicalWebPage'],
     headline: col.metaTitle || col.title,
     description: col.metaDesc || col.excerpt,
-    datePublished: new Date(col.createdAt).toISOString(),
-    dateModified: new Date(col.updatedAt).toISOString(),
+    datePublished: new Date(safeDate(col.createdAt, col.updatedAt)).toISOString(),
+    dateModified: new Date(safeDate(col.updatedAt, col.createdAt)).toISOString(),
     author: author ? { '@type': 'Person', name: `${author.name} ${author.role}`, jobTitle: author.titleLine } : undefined,
     reviewedBy: author ? { '@type': 'Person', name: `${author.name} ${author.role}` } : undefined,
     publisher: { '@type': 'Organization', name: CLINIC.name },
@@ -114,7 +126,7 @@ export function ColumnDetail(col: Column, views: number) {
           <div style="display:flex;align-items:center;gap:14px;padding-bottom:24px;margin-bottom:30px;border-bottom:1px solid var(--gray-200);flex-wrap:wrap">
             <span class="tag-pill">${txName(col.category)}</span>
             ${author ? html`<a href="/doctors/${author.slug}" style="font-weight:700;color:var(--brand)">${author.name} ${author.role}</a>` : ''}
-            <span style="color:var(--gray-400);font-size:14px">${new Date(col.createdAt).toLocaleDateString('ko-KR')}</span>
+            <span style="color:var(--gray-400);font-size:14px">${fmtDate(col.createdAt, col.updatedAt)}</span>
             <span style="color:var(--gray-400);font-size:14px;margin-left:auto"><i class="fa-solid fa-eye"></i> ${views.toLocaleString()}</span>
           </div>
           ${col.thumbnail ? html`<img src="${col.thumbnail}" alt="${col.thumbnailAlt || col.title}" style="border-radius:var(--radius-lg);margin-bottom:30px" loading="lazy">` : ''}
@@ -141,7 +153,7 @@ export function ColumnDetail(col: Column, views: number) {
               </div>
             </div>
           ` : ''}
-          <p style="font-size:12.5px;color:var(--gray-400);margin-top:20px">※ 본 칼럼은 일반적인 정보 제공을 위한 것으로 개인의 진단·치료를 대신하지 않습니다. 최종 검토일: ${new Date(col.updatedAt).toLocaleDateString('ko-KR')}</p>
+          <p style="font-size:12.5px;color:var(--gray-400);margin-top:20px">※ 본 칼럼은 일반적인 정보 제공을 위한 것으로 개인의 진단·치료를 대신하지 않습니다. 최종 검토일: ${fmtDate(col.updatedAt, col.createdAt)}</p>
         </article>
 
         <aside class="reveal reveal-d2">
