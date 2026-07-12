@@ -3089,3 +3089,37 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
   .core-tx-grid{ grid-template-columns:1fr; }
   .daily-tx-grid{ grid-template-columns:1fr; }
 }
+
+/* ============ 구강나이 자가진단 미니앱 배너 (홈) ============ */
+.oral-check-band{
+  display:grid; grid-template-columns:1fr auto; align-items:center; gap:32px;
+  padding:40px 48px; border-radius:22px;
+  background:linear-gradient(120deg, var(--navy-900,#062741) 0%, var(--navy-700,#0d3a5c) 100%);
+  color:var(--ivory,#fffeee); position:relative; overflow:hidden;
+  box-shadow:var(--shadow-lg,var(--shadow)); transition:transform .3s ease, box-shadow .3s ease;
+}
+.oral-check-band::after{
+  content:""; position:absolute; right:-60px; top:-60px; width:240px; height:240px;
+  background:radial-gradient(circle, rgba(176,141,87,.35), transparent 70%); pointer-events:none;
+}
+.oral-check-band:hover{ transform:translateY(-3px); box-shadow:0 18px 44px rgba(6,39,65,.28); }
+.occ-left{ position:relative; z-index:1; max-width:560px; }
+.occ-eyebrow{
+  display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:700;
+  letter-spacing:.06em; color:var(--gold,#b08d57); margin-bottom:12px;
+}
+.occ-title{ font-size:clamp(1.5rem,3.4vw,2.1rem); line-height:1.25; margin:0 0 12px; color:var(--ivory,#fffeee); }
+.occ-title em{ color:var(--gold,#b08d57); font-style:normal; }
+.occ-lead{ font-size:15px; line-height:1.7; color:rgba(255,255,255,.82); margin:0 0 20px; }
+.occ-cta{
+  display:inline-flex; align-items:center; gap:10px; font-weight:700; font-size:15px;
+  color:var(--navy-900,#062741); background:var(--gold,#b08d57);
+  padding:12px 24px; border-radius:999px; transition:gap .25s ease, background .25s ease;
+}
+.oral-check-band:hover .occ-cta{ gap:16px; background:#c39d63; }
+.occ-right{ position:relative; z-index:1; }
+.occ-dial{ width:clamp(96px,12vw,132px); height:auto; }
+@media (max-width:720px){
+  .oral-check-band{ grid-template-columns:1fr; padding:32px 26px; gap:20px; text-align:left; }
+  .occ-right{ display:none; }
+}

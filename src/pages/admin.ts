@@ -461,13 +461,13 @@ export function AdminColumnForm(col?: any) {
               <select name="category" required>${raw(TREATMENTS.map(t => `<option value="${t.slug}" ${c.category === t.slug ? 'selected' : ''}>${t.name}</option>`).join(''))}</select></div>
             <div class="field"><label>작성자(원장) <span class="req">*</span></label>
               <select name="author" required>${raw(DOCTORS.map(d => `<option value="${d.slug}" ${c.author === d.slug ? 'selected' : ''}>${d.name} ${d.role}</option>`).join(''))}</select></div>
-            <div class="field"><label>대표(썸네일) 이미지</label>
+            <div class="field"><label>대표(썸네일) 이미지 <span style="font-weight:500;color:var(--gray-400);font-size:12px">권장 1200×630px (카드·카톡·SNS 공유 공통)</span></label>
               <div style="display:flex;gap:8px;align-items:center">
                 <input name="thumbnail" id="thumbInput" value="${raw(esc(c.thumbnail))}" placeholder="URL 또는 업로드" style="flex:1">
                 <label class="btn btn-outline btn-sm" style="cursor:pointer;margin:0;white-space:nowrap"><i class="fa-solid fa-upload"></i>
                   <input type="file" id="thumbPicker" accept="image/*" style="display:none"></label>
               </div>
-              <div id="thumbPreview" style="margin-top:8px">${c.thumbnail ? `<img src="${esc(c.thumbnail)}" alt="" style="width:100%;border-radius:8px;border:1px solid var(--line)">` : ''}</div>
+              <div id="thumbPreview" style="margin-top:8px">${c.thumbnail ? `<img src="${esc(c.thumbnail)}" alt="" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:8px;border:1px solid var(--line)">` : ''}</div>
             </div>
             <div class="field"><label>대표 이미지 대체텍스트(alt)</label>
               <input name="thumbnailAlt" value="${raw(esc(c.thumbnailAlt))}" placeholder="이미지 설명 (SEO·접근성)"></div>

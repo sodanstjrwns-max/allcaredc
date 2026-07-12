@@ -387,6 +387,28 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
     </div>
   </section>
 
+  <!-- ============ 구강나이 자가진단 미니앱 배너 ============ -->
+  <section class="section oral-check-sec" id="oral-check" style="padding-top:0">
+    <div class="container">
+      <a class="oral-check-band reveal" href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="1분 구강 셀프 스캔 — 내 구강나이 확인하기 (새 창)">
+        <div class="occ-left">
+          <span class="occ-eyebrow disp"><i class="fa-solid fa-wand-magic-sparkles"></i> 1분 구강 셀프 스캔</span>
+          <h2 class="occ-title">내 <em>구강나이</em>는 몇 살일까?</h2>
+          <p class="occ-lead">60초 셀프 스캔으로 내 치아·잇몸 상태를 리포트로 확인해 보세요. 올케어치과 의료진이 만든 무료 자가진단입니다.</p>
+          <span class="occ-cta">지금 무료로 확인하기 <i class="fa-solid fa-arrow-right"></i></span>
+        </div>
+        <div class="occ-right" aria-hidden="true">
+          <svg class="occ-dial" viewBox="0 0 120 120" fill="none">
+            <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+            <circle cx="60" cy="60" r="38" stroke="rgba(255,255,255,.4)" stroke-width="1.5" stroke-dasharray="4 5"/>
+            <line x1="60" y1="60" x2="96" y2="38" stroke="var(--ivory)" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="6" fill="var(--ivory)"/>
+          </svg>
+        </div>
+      </a>
+    </div>
+  </section>
+
   <!-- ============ 일상 관리 (진료시간 / 오시는 길 + 일반 진료) ============ -->
   <section class="section" style="background:var(--ivory-2)" id="daily">
     <div class="container">

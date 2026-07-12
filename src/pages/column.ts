@@ -60,7 +60,7 @@ export function ColumnIndex(columns: Column[]) {
         <div class="doc-grid">
           ${raw(pub.map((col, i) => `
             <a href="/column/${col.slug}" class="doc-card reveal reveal-d${(i % 3) + 1}">
-              <div class="doc-photo" style="aspect-ratio:16/10;background:linear-gradient(135deg,var(--brand),var(--brand-accent))">
+              <div class="doc-photo" style="aspect-ratio:1200/630;background:linear-gradient(135deg,var(--brand),var(--brand-accent))">
                 ${col.thumbnail ? `<img src="${col.thumbnail}" alt="${col.title}" loading="lazy">` : `<div class="ph" style="color:rgba(255,255,255,.5)"><i class="fa-solid fa-pen-nib"></i></div>`}
               </div>
               <div class="doc-body">
