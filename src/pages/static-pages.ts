@@ -146,11 +146,15 @@ export function MissionPage() {
           <figcaption><span class="sg-cap">인포메이션</span><span class="sg-sub">처음 만나는 자리</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/recovery-massage-chair.webp" alt="올케어치과 회복실 — 안마의자가 놓인 편안한 진료 후 휴식 공간" width="1024" height="683" loading="lazy">
-          <figcaption><span class="sg-cap">회복실</span><span class="sg-sub">진료 후 편안한 휴식</span></figcaption>
+          <img src="/static/img/about-lounge.webp" alt="올케어치과 쾌적한 대기실 — 넓고 밝은 소파형 대기 공간" width="960" height="720" loading="lazy">
+          <figcaption><span class="sg-cap">쾌적한 대기실</span><span class="sg-sub">여유롭게 기다리는 공간</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/consult-implant-3d.webp" alt="올케어치과 치료계획 상담실 — 3D 모니터로 보철·임플란트를 설명하는 1:1 상담" width="1024" height="683" loading="lazy">
+          <img src="/static/img/about-sterilization.webp" alt="올케어치과 철저한 멸균소독실 — 독일 MELAG 장비로 대학병원 수준의 감염관리 시스템" width="960" height="720" loading="lazy">
+          <figcaption><span class="sg-cap">철저한 멸균소독</span><span class="sg-sub">대학병원급 감염관리</span></figcaption>
+        </figure>
+        <figure class="sg-item">
+          <img src="/static/img/about-consult.webp" alt="올케어치과 치료계획 상담실 — 원장이 3D 자료로 임플란트·보철을 직접 설명하는 1:1 상담" width="1024" height="768" loading="lazy">
           <figcaption><span class="sg-cap">치료계획 상담실</span><span class="sg-sub">충분히 설명드립니다</span></figcaption>
         </figure>
         <figure class="sg-item">
@@ -273,7 +277,8 @@ export function MissionPage() {
       <div class="grid-2" style="align-items:center">
         <div class="reveal">
           <span class="sec-label"><span class="num">06</span> Our Vision</span>
-          <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 22px">지역 안에서 인정받고 <br><em>오래 머무는 치과</em></h2>
+          <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 18px">지역 안에서 인정받고 <br><em>오래 머무는 치과</em></h2>
+          <p class="vision-slogan reveal">${CLINIC.familyStory.slogan}</p>
           <p class="prose" style="font-size:1.05rem">한때의 유행이 아니라, 동네에서 신뢰로 이어지는 치과. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과. 그것이 올케어치과가 그리는 미래입니다.</p>
           <ul class="check prose" style="margin-top:22px">
             <li>친절은 기본, 원칙은 약속입니다.</li>
