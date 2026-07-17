@@ -264,6 +264,7 @@ export type Doctor = {
   role: string
   titleLine: string
   specialties: string[]   // 잘하는 진료 (인링크용 treatment slug)
+  treatItems: string[]    // §S8: 프로필에 명시 노출할 진료과목 (원장별 대표 진료)
   career: string[]
   education: string[]
   intro: string
@@ -279,8 +280,10 @@ export const DOCTORS: Doctor[] = [
     role: '명예원장',
     titleLine: '구강악안면외과 전문의 / 치의학 박사',
     specialties: ['implant', 'surgery', 'tmj'],
+    treatItems: ['임플란트', '골이식', '턱관절', '주사치료'],  // §S8
     // §L: 추가자료.docx 원문. §B: 방송 출연·"명의/베스트닥터" 비노출, 교수·학회직 등 검증 가능 사실만
     career: [
+      '서울대학교 치과대학 동문',
       '고려대학교 의과대학 명예교수',
       '일본 도쿄의치과대학 교환교수',
       '미국 하버드 치과대학 교환교수',
@@ -306,6 +309,7 @@ export const DOCTORS: Doctor[] = [
     role: '대표원장',
     titleLine: '구강악안면외과 · 통합치의학과 전문의',
     specialties: ['implant', 'surgery', 'tmj'],
+    treatItems: ['임플란트', '치아교정', '심미보철', '수면진료'],  // §S8
     // §L: 신청서 원문(추가자료.docx) 그대로 — 검증 가능한 자격·학회 사실만. §B: 방송·"명의" 비노출
     career: [
       '경희대학교 치과병원 구강악안면외과 외래교수',
@@ -342,6 +346,7 @@ export const DOCTORS: Doctor[] = [
     role: '보철과 원장',
     titleLine: '치과보철과 전문의 / 치의학 박사',
     specialties: ['prosthetics', 'esthetic', 'denture'],
+    treatItems: ['심미보철', '충치치료', '틀니'],  // §S8
     // §L: 추가자료.docx 원문 그대로. 철학은 자료 원문
     career: [
       '경북대학교 치과병원 치과보철과 외래교수',

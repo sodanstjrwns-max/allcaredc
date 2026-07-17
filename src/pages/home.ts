@@ -198,7 +198,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
               <p class="title-line">${d.titleLine}</p>
               <p class="doc-career">${d.career[0]}</p>
               <div class="doc-tags">
-                ${d.specialties.slice(0, 3).map(s => `<span>${({ implant: '임플란트', surgery: '구강외과', tmj: '턱관절', conservative: '보존치료', prosthetics: '보철', gum: '잇몸', esthetic: '심미보철', denture: '틀니' } as any)[s] || s}</span>`).join('')}
+                ${d.treatItems.map(t => `<span>${t}</span>`).join('')}
               </div>
             </div>
           </a>`).join(''))}

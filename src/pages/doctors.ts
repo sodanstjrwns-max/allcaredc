@@ -28,7 +28,7 @@ export function DoctorsIndex() {
               <p class="title-line">${d.titleLine}</p>
               <p class="doc-career">${d.career[0]}</p>
               <div class="doc-tags">
-                ${d.specialties.slice(0, 3).map(s => `<span>${specLabel(s)}</span>`).join('')}
+                ${d.treatItems.map(t => `<span>${t}</span>`).join('')}
               </div>
             </div>
           </a>`).join(''))}
@@ -99,8 +99,9 @@ export function DoctorDetail(slug: string) {
               <span class="role" style="color:var(--brand-accent);font-weight:700">${d.role}</span>
               <h2 style="font-size:2rem;margin:6px 0 4px">${d.name}</h2>
               <p style="color:var(--gray-600);font-size:1.05rem;margin-bottom:20px">${d.titleLine}</p>
+              <p style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-600);font-weight:700;margin-bottom:10px">진료과목</p>
               <div class="doc-tags">
-                ${raw(d.specialties.map(s => `<span>${specLabel(s)}</span>`).join(''))}
+                ${raw(d.treatItems.map(t => `<span>${t}</span>`).join(''))}
               </div>
             </div>
           </div>
