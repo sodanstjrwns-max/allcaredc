@@ -109,11 +109,11 @@ export function MissionPage() {
         </figure>
         <div class="reveal reveal-d1">
           <span class="sec-label"><span class="num">02</span> Continuity of Care</span>
-          <h2 class="split-rise" style="font-size:clamp(1.6rem,3.4vw,2.4rem);margin:18px 0 18px">끊김 없는 진료,<br><em>믿고 이어올 수 있는 곳</em></h2>
-          <p class="subconcept-note reveal">${CLINIC.familyStory.subConceptNote}</p>
+          <h2 class="split-rise" style="font-size:clamp(1.6rem,3.4vw,2.4rem);margin:18px 0 18px">축적된 경험으로 이어가는<br><em>두 세대의 진료</em></h2>
+          <p class="subconcept-note reveal">오랜 임상 경험과 전문의의 세심한 진료가 만나, 기존 치료 이력부터 앞으로의 관리 방향까지 함께 살핍니다.</p>
           <div class="prose" style="font-size:1.05rem;line-height:1.9">
-            <p>저희가 가장 중요하게 생각하는 가치는 단순히 “부자가 함께 진료한다”는 사실 자체가 아닙니다. 오랜 기간 한 원장님을 믿고 다녀오신 환자분들이 낯선 병원으로 흩어지지 않고, <strong>아들이 책임감을 가지고 이어서 케어</strong>해드릴 수 있다는 점 — 진료의 연속성입니다.</p>
-            <p>그래서 화려한 약속보다 환자 한 분 한 분의 불편함을 끝까지 들여다보는 일을 먼저 합니다. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과 — 그것이 지역 안에서 인정받고 오래 머무는 길이라 믿습니다.</p>
+            <p>서울대학교를 졸업하고 치의학박사 학위를 취득한 <strong>권종진 명예원장</strong>은 고려대병원 구강외과 교수로 30년 이상 재직한 뒤, 약수역 인근에서 진료를 이어왔습니다.</p>
+            <p>권종진 명예원장의 축적된 임상 경험과 구강악안면외과·통합치의학과 더블보드 전문의인 <strong>권민수 대표원장</strong>의 세심한 진료를 바탕으로, 기존 치료 이력과 관리 방향까지 면밀히 살피는 일관된 통합진료를 이어갑니다.</p>
           </div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px">
             ${raw(CLINIC.familyStory.points.map(p => `
@@ -207,7 +207,7 @@ export function MissionPage() {
     </div>
   </section>
 
-  <!-- ============ §4 3인 전문의 협진 = 통합진료 (수술→보철→전체구강) ============ -->
+  <!-- ============ §4 치과 전문의 협진 = 통합진료 (수술→보철→전체구강) ============ -->
   <section class="section collab-sec" id="team">
     <div class="container">
       <div class="section-head reveal">
@@ -289,7 +289,7 @@ export function MissionPage() {
         <div class="reveal reveal-d2">
           <div class="stats-band" style="border-radius:var(--radius-lg);padding:48px">
             <div class="stats-grid" style="grid-template-columns:1fr 1fr;gap:30px">
-              <div class="stat"><div class="num"><span data-count="3">3</span></div><div class="lbl">분야별 전문의</div></div>
+              <div class="stat"><div class="num num-ko">협진</div><div class="lbl">치과 전문의 협진 시스템</div></div>
               <div class="stat"><div class="num"><span data-count="1">1</span></div><div class="lbl">원내 기공실</div></div>
               <div class="stat"><div class="num"><span data-count="10" data-suffix="+">10+</span></div><div class="lbl">진료 영역</div></div>
               <div class="stat"><div class="num"><span data-count="2023">2023</span></div><div class="lbl">개원</div></div>
@@ -302,13 +302,13 @@ export function MissionPage() {
   ${ctaBand()}
   `
   return Page({
-    title: '병원소개 | 올케어치과 — 약수역 3인 전문의 통합진료 치과',
-    description: '약수역 올케어치과는 구강악안면외과·통합치의학과·보철과 3인 전문의 통합진료 치과입니다. 고난도 임플란트 수술 역량, 의식하진정법 병행, 원내 기공실로 불편함을 끝까지 책임집니다.',
+    title: '병원소개 | 올케어치과 — 약수역 치과 전문의 협진 통합진료',
+    description: '약수역 올케어치과는 구강악안면외과·통합치의학과·보철과 전문의 협진 시스템의 통합진료 치과입니다. 고난도 임플란트 수술 역량, 의식하진정법(수면진료) 병행, 원내 기공실로 불편함을 끝까지 살핍니다.',
     path: '/mission',
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '병원소개', url: '/mission' }]),
       faqSchema([
-        { q: '올케어치과의 3인 전문의 협진은 무엇이 다른가요?', a: CLINIC.collaboration.lead },
+        { q: '올케어치과의 치과 전문의 협진은 무엇이 다른가요?', a: CLINIC.collaboration.lead },
         { q: '고령이거나 전신질환이 있어도 임플란트를 받을 수 있나요?', a: CLINIC.collaboration.points[0].desc },
         ...CLINIC.strengths.map(s => ({ q: s.head, a: s.desc })),
       ]),
@@ -354,7 +354,7 @@ export function DirectionsPage() {
 
   const directionsFaqs = [
     { q: '올케어치과는 약수역에서 얼마나 걸리나요?', a: `${CLINIC.subway}입니다. 5번 출구로 나오시면 스타벅스가 있는 건물 4층입니다.` },
-    { q: '주차가 가능한가요?', a: '건물 주차장 이용이 가능합니다. 자세한 주차 안내는 내원 전 전화로 문의해 주세요.' },
+    { q: '주차가 가능한가요?', a: '건물 기계식 주차장을 이용하실 수 있습니다. 전기차·대형 SUV는 기계식 주차가 어려워 인근 공영주차장 이용을 권장드리며, 방문 전 전화로 주차 가능 여부를 확인해 주세요.' },
     { q: '야간 진료를 하나요?', a: `${CLINIC.hoursNote}` },
   ]
 
@@ -382,10 +382,10 @@ export function DirectionsPage() {
             <p>신당동·청구역·동대입구역·옥수동 생활권에서 가까워, 동네에서 믿고 편하게 다니실 수 있는 거리입니다. 약수역 인근 직장·학교에서도 점심·퇴근 시간을 활용해 방문하기 좋습니다.</p>
             <h3><i class="fa-solid fa-bus text-mint"></i> 버스</h3>
             <p>약수역 정류장 하차 후 도보로 이동하실 수 있습니다. 마을버스·간선버스 모두 약수역 인근에 정차합니다.</p>
-            <h3><i class="fa-solid fa-car text-mint"></i> 자가용</h3>
-            <p>건물 주차장 이용이 가능합니다. 주차 공간이 한정되어 있어, 자세한 주차 안내는 내원 전 전화(<a href="tel:${CLINIC.phoneRaw}">${CLINIC.phone}</a>)로 문의해 주세요.</p>
+            <h3><i class="fa-solid fa-car text-mint"></i> 자가용 · 주차 안내</h3>
+            <p>건물은 <strong>기계식 주차장</strong>을 운영합니다. 다만 <strong>전기차와 대형 SUV는 기계식 주차가 어려워</strong>, 해당 차량은 <strong>인근 공영주차장 이용</strong>을 권장드립니다. 주차 공간이 한정되어 있으니, 방문 전 전화(<a href="tel:${CLINIC.phoneRaw}">${CLINIC.phone}</a>)로 주차 가능 여부를 확인해 주시면 정확히 안내해 드립니다.</p>
             <h3><i class="fa-solid fa-clock text-mint"></i> 진료시간 안내</h3>
-            <p>${CLINIC.hoursNote} 진료시간은 변동될 수 있으니, 방문 전 전화로 확인해 주시면 정확히 안내해 드립니다.</p>
+            <p>월·화·목요일은 09:30~20:30 야간진료, <strong>수·금요일은 09:30~18:30</strong>까지 진료합니다. 토·일·공휴일은 09:30~14:00(일요일 격주)이며, 평일 <strong>점심 휴게시간은 ${CLINIC.lunch}</strong>입니다. 진료시간은 변동될 수 있으니, 방문 전 전화로 확인해 주시면 정확히 안내해 드립니다.</p>
           </div>
         </div>
         <aside class="reveal reveal-d2">
@@ -399,7 +399,14 @@ export function DirectionsPage() {
           <div class="inlink-box">
             <h4><i class="fa-solid fa-clock text-mint"></i> 진료시간</h4>
             ${raw(CLINIC.hours.map(h => `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="font-weight:${h.night ? '700' : '400'};color:${h.night ? 'var(--brand)' : 'inherit'}">${h.day}</span><span style="color:var(--gray-600)">${h.time}</span></div>`).join(''))}
+            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심 휴게</span><span style="color:var(--gray-600)">${CLINIC.lunch}</span></div>
             <p style="font-size:12.5px;color:var(--gray-400);margin-top:10px">${CLINIC.hoursNote}</p>
+          </div>
+          <div class="inlink-box">
+            <h4><i class="fa-solid fa-square-parking text-mint"></i> 주차 안내</h4>
+            <ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--gray-600);line-height:1.7">
+              ${raw(CLINIC.parking.notes.map(n => `<li>${n}</li>`).join(''))}
+            </ul>
           </div>
         </aside>
       </div>

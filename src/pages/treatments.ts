@@ -61,7 +61,7 @@ export function TreatmentsIndex() {
   `
   return Page({
     title: '진료안내 | 임플란트·교정·심미보철·수면진료 | 올케어치과',
-    description: '약수역 올케어치과 진료안내. 임플란트, 치아교정, 심미보철 등 핵심 진료부터 충치·신경·잇몸·턱관절·사랑니까지 3인 전문의가 진료합니다.',
+    description: '약수역 올케어치과 진료안내. 임플란트, 치아교정, 심미보철 등 핵심 진료부터 충치·신경·잇몸·턱관절·사랑니까지 치과 전문의 협진으로 진료합니다.',
     path: '/treatments',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }])],
   }, body)

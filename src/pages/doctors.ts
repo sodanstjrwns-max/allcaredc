@@ -39,7 +39,7 @@ export function DoctorsIndex() {
   `
   return Page({
     title: '의료진 소개 | 구강악안면외과·통합치의학과·보철과 전문의 | 올케어치과',
-    description: '약수역 올케어치과 의료진. 구강악안면외과·통합치의학과 전문의, 보철과 전문의, 치의학박사가 함께하는 3인 전문의 협진 치과입니다.',
+    description: '약수역 올케어치과 의료진. 구강악안면외과·통합치의학과 전문의, 보철과 전문의, 치의학박사가 함께하는 치과 전문의 협진 치과입니다.',
     path: '/doctors',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }])],
   }, body)

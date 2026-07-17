@@ -171,7 +171,7 @@ export function llmsTxt(full = false): string {
 
   let s = `# ${CLINIC.name} (${CLINIC.nameEn})
 
-> ${CLINIC.philosophy} 서울 약수역 5번 출구 도보 1분에 위치한 3인 전문의 치과입니다. 구강악안면외과·치과보철과·통합치의학과 전문의가 임플란트·치아교정·심미보철·잇몸·사랑니·턱관절을 진료하며, 원내 기공실과 의식하진정법(수면치료)을 갖추고 있습니다.
+> ${CLINIC.philosophy} 서울 약수역 5번 출구 도보 1분에 위치한 치과 전문의 협진 치과입니다. 구강악안면외과·치과보철과·통합치의학과 전문의가 임플란트·치아교정·심미보철·잇몸·사랑니·턱관절을 진료하며, 원내 기공실과 의식하진정법(수면치료)을 갖추고 있습니다.
 
 <!-- 최종 갱신: ${updated} | 출처 표기: 올케어치과(${BASE}) -->
 
@@ -181,7 +181,7 @@ export function llmsTxt(full = false): string {
 - 가까운 역: ${CLINIC.subway}
 - 전화: ${CLINIC.phone}
 - 대표원장: 권민수 (구강악안면외과·통합치의학과 전문의, 치의학박사)
-- 전문의 구성: 3인 (구강악안면외과 / 치과보철과 / 통합치의학과)
+- 전문의 구성: 구강악안면외과 / 치과보철과 / 통합치의학과 전문의 협진
 - 야간진료: 월·화·목 20:30까지
 - 특징: 원내 기공실 상주, 의식하진정법(수면치료) 가능, 분야별 전문의 협진
 - 좌표: ${CLINIC.geo.lat}, ${CLINIC.geo.lng}
@@ -205,7 +205,7 @@ ${CORE_TREATMENTS.map(t => `- [${t.name}](${BASE}/treatments/${t.slug}): ${t.sho
 ${TREATMENTS.map(t => `- [${t.name}](${BASE}/treatments/${t.slug})`).join('\n')}
 
 ## 특장점
-- 3인 분야별 전문의 협진 (외과·보철·통합)
+- 치과 전문의 협진 시스템 (외과·보철·통합)
 - 원내 기공실 운영 (상주 기공사 — 보철 정밀 제작)
 - 의식하진정법(수면치료) 세팅 — 치과 공포·고난도 수술 대응
 - 야간진료 (월·화·목 20:30까지) — 직장인 접근성
@@ -287,7 +287,7 @@ export function AreaPage(combo: string) {
   // 지역 특화 FAQ (AEO — 로컬 검색 질문 대응)
   const areaFaqs = [
     { q: `${area.name}에서 올케어치과까지 어떻게 가나요?`, a: `${area.transit} 위치이며, ${area.name} 기준 ${area.access}입니다. 서울 중구 동호로 171 더그레이스빌딩 4층(약수역 5번 출구 스타벅스 건물)입니다.` },
-    { q: `${area.name}에서 가까운 ${tx.name} 치과를 찾고 있어요.`, a: `약수역 올케어치과는 ${area.name}에서 ${area.access} 거리로, 구강악안면외과·치과보철과·통합치의학과 3인 전문의가 ${tx.name} 진료를 협진합니다. 예약 문의는 ${CLINIC.phone}.` },
+    { q: `${area.name}에서 가까운 ${tx.name} 치과를 찾고 있어요.`, a: `약수역 올케어치과는 ${area.name}에서 ${area.access} 거리로, 구강악안면외과·치과보철과·통합치의학과 전문의가 ${tx.name} 진료를 협진합니다. 예약 문의는 ${CLINIC.phone}.` },
     { q: `직장인인데 ${area.name} 근처에서 야간에 ${tx.name} 진료가 가능한가요?`, a: `네, 올케어치과는 월·화·목요일 저녁 20:30까지 야간진료를 운영합니다. ${area.name}에서 퇴근 후 내원하시기 편리합니다.` },
     ...(tx.faqs && tx.faqs.length ? [{ q: tx.faqs[0].q, a: tx.faqs[0].a }] : []),
   ]
@@ -332,7 +332,7 @@ export function AreaPage(combo: string) {
     <div class="container">
       <div class="grid-detail">
         <article class="prose reveal">
-          <div class="answer-box" style="font-size:1.1rem">${area.name}(${area.adminArea})에서 ${area.access}, ${area.transit}에 위치한 올케어치과에서 ${tx.name} 상담을 받으실 수 있습니다. 구강악안면외과·치과보철과·통합치의학과 3인 전문의가 함께합니다.</div>
+          <div class="answer-box" style="font-size:1.1rem">${area.name}(${area.adminArea})에서 ${area.access}, ${area.transit}에 위치한 올케어치과에서 ${tx.name} 상담을 받으실 수 있습니다. 구강악안면외과·치과보철과·통합치의학과 전문의가 함께합니다.</div>
 
           <h2>${area.name} 주민을 위한 ${tx.name} 안내</h2>
           <p>${tx.intro}</p>
@@ -341,7 +341,7 @@ export function AreaPage(combo: string) {
           <p><strong>${area.transit}</strong> — ${area.name} 기준 약 ${area.access} 거리입니다. 주소는 ${CLINIC.address}(${CLINIC.directions})입니다.</p>
           <ul class="check">
             <li>3·6호선 약수역 5번 출구 도보 1분 — 더블 역세권으로 ${area.name}에서 환승·직통 접근 용이</li>
-            <li>분야별 전문의 3인이 진단부터 마무리까지 책임지는 협진</li>
+            <li>분야별 전문의가 진단부터 마무리까지 함께 살피는 협진</li>
             <li>원내 기공실(상주 기공사)과 의식하진정법(수면치료) 세팅을 갖춘 진료 환경</li>
             <li>월·화·목 야간진료(20:30까지)로 ${area.name} 직장인도 편하게 내원 가능</li>
           </ul>
@@ -374,7 +374,7 @@ export function AreaPage(combo: string) {
   </section>`
   return Page({
     title: `${area.name} ${tx.name} | 약수역 ${tx.name} 치과 - 올케어치과`,
-    description: `${area.name} ${tx.name}을(를) 찾으신다면 약수역 올케어치과. ${area.transit}, ${area.access}. ${tx.short} 3인 전문의 협진, 원내 기공실, 야간진료.`,
+    description: `${area.name} ${tx.name}을(를) 찾으신다면 약수역 올케어치과. ${area.transit}, ${area.access}. ${tx.short} 치과 전문의 협진, 원내 기공실, 야간진료.`,
     path: `/area/${combo}`,
     ogImage: `${BASE}/og/area/${combo}.svg`,
     schema: [bc, localSchema, areaSchema, faqLd, speakableSchema()],

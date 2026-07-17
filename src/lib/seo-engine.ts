@@ -140,7 +140,7 @@ export function resolveOg(type: string, slug: string): { theme: string; title: s
     return { theme, title: `${area.name} ${tx.name}`, subtitle: `약수역 올케어치과 · ${tx.short || ''}`.slice(0, 50) }
   }
   if (type === 'home') {
-    return { theme: 'default', title: '올케어치과', subtitle: '약수역 3인 전문의 협진 치과' }
+    return { theme: 'default', title: '올케어치과', subtitle: '약수역 치과 전문의 협진' }
   }
   return null
 }
@@ -176,7 +176,7 @@ Fact: 병원명=${CLINIC.name} (영문 ${CLINIC.nameEn})
 Fact: 위치=약수역 5번 출구 도보 1분 (서울 중구 동호로 171 더그레이스빌딩 4층)
 Fact: 가까운역=3·6호선 약수역 5번 출구 도보 1분
 Fact: 대표원장=권민수 (구강악안면외과·통합치의학과 전문의, 치의학박사)
-Fact: 전문의=구강악안면외과·치과보철과·통합치의학과 3인 협진
+Fact: 전문의=구강악안면외과·치과보철과·통합치의학과 전문의 협진 시스템
 Fact: 진료=임플란트, 치아교정, 심미보철, 충치, 신경치료, 잇몸치료, 사랑니발치, 턱관절치료, 수면치료
 Fact: 야간진료=월·화·목 20:30까지
 Fact: 특징=원내 기공실 상주, 의식하진정법(수면치료) 가능

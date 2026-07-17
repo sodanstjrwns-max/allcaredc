@@ -17,7 +17,7 @@ export function organizationSchema() {
     email: CLINIC.email,
     image: [`${BASE}/static/img/og.jpg`, `${BASE}/og/home/main.svg`],
     logo: `${BASE}/static/img/logo-horizontal.svg`,
-    description: '약수역 5번 출구 1분, 구강악안면외과·보철과·통합치의학과 3인 전문의가 진단부터 회복까지 책임지는 동네 치과. 고난도 임플란트·수면치료(의식하진정법)·치아교정·심미보철·잇몸·사랑니·턱관절 진료.',
+    description: '약수역 5번 출구 1분, 구강악안면외과·보철과·통합치의학과 전문의가 진단부터 회복까지 살피는 동네 치과. 고난도 임플란트·수면치료(의식하진정법)·치아교정·심미보철·잇몸·사랑니·턱관절 진료.',
     slogan: CLINIC.tagline,
     priceRange: '₩₩',
     currenciesAccepted: 'KRW',
@@ -262,12 +262,12 @@ export function Footer() {
     </div>
   </footer>
 
-  <!-- 모바일 하단 고정 상담바 (모바일 전용) -->
+  <!-- 모바일 하단 고정 상담바 (모바일 전용) — 전화·네이버예약·카카오톡·오시는길 4개 -->
   <nav class="mobile-cta-bar" aria-label="빠른 상담">
     <a href="tel:${CLINIC.phoneRaw}" class="mcb-item"><i class="fa-solid fa-phone"></i><span>전화</span></a>
+    ${CLINIC.sns.naverBooking ? raw(`<a href="${CLINIC.sns.naverBooking}" class="mcb-item mcb-primary" target="_blank" rel="noopener"><i class="fa-solid fa-calendar-check"></i><span>네이버 예약</span></a>`) : ''}
     ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" class="mcb-item" target="_blank" rel="noopener"><i class="fa-solid fa-comment"></i><span>카카오톡</span></a>`) : ''}
-    <a href="/directions" class="mcb-item"><i class="fa-solid fa-location-dot"></i><span>오시는길</span></a>
-    <a href="/reservation" class="mcb-item mcb-primary"><i class="fa-solid fa-calendar-check"></i><span>예약문의</span></a>
+    <a href="/directions" class="mcb-item"><i class="fa-solid fa-location-dot"></i><span>오시는 길</span></a>
   </nav>
 
   <!-- floating consult widget (toggle + 영업상태) -->

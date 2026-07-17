@@ -2218,10 +2218,10 @@ body::after {
   width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter);
 }
 .hh-eyebrow {
-  display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px 12px;
-  font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--gold-600); margin-bottom: 30px;
-  line-height: 1.5;
+  display: inline-flex; align-items: center; flex-wrap: wrap; gap: 10px 14px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--gold-600); margin-bottom: 34px;
+  line-height: 1.9;
 }
 .hh-eyebrow strong { color: var(--gold); font-weight: 700; margin: 0 1px; }
 .hh-eyebrow em {
@@ -2240,15 +2240,24 @@ body::after {
 /* 영문 디스플레이 헤드라인 — 단어 중간 줄바꿈 금지 (Every smil/e 같은 깨짐 방지) */
 .hh-title .morph-line { white-space: nowrap; }
 .hh-title .hh-italic { font-style: normal; font-weight: 380; color: var(--navy-600); }
-/* 한글 롱카피 히어로 — 가변폰트 모핑 OFF, 줄바꿈 허용 + 사이즈 축소로 가독성 확보 */
-.hh-title--ko { font-size: clamp(2.8rem, 8vw, 6rem); line-height: 1.04; letter-spacing: -.035em; font-weight: 800; word-break: keep-all; }
+/* 한글 롱카피 히어로 — 가변폰트 모핑 OFF, 줄바꿈 허용 + 행간·자간 여유로 가독성 확보 */
+.hh-title--ko { font-size: clamp(2.8rem, 8vw, 6rem); line-height: 1.16; letter-spacing: -.028em; font-weight: 800; word-break: keep-all; }
 .hh-title--ko .hh-ko-line { display: block; white-space: normal; }
+/* 두 줄(믿고 찾는 / 올케어치과) 사이 숨통 — 뭉침 방지 */
+.hh-title--ko .line-mask + .line-mask { margin-top: .1em; }
 .hh-title--ko .hh-italic { font-weight: 500; }
 .hh-lead {
-  color: var(--ink-soft); font-size: clamp(1.02rem, 1.5vw, 1.16rem);
-  line-height: 1.85; margin-top: clamp(26px, 3.4vw, 40px); max-width: 470px;
+  color: var(--ink-soft); font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  line-height: 2.0; margin-top: clamp(30px, 3.8vw, 44px); max-width: 480px;
+  letter-spacing: -.01em;
 }
 .hh-lead strong { color: var(--navy-800); font-weight: 800; }
+/* 서브 리드 — 메인 메시지와 여백으로 분리, 톤 다운 */
+.hh-lead--sub {
+  margin-top: clamp(16px, 1.8vw, 22px);
+  font-size: clamp(.95rem, 1.3vw, 1.04rem); line-height: 1.95;
+  color: var(--gray-600); max-width: 500px;
+}
 .hero--heritage .hero-actions { margin-top: 34px; }
 
 .hh-meta {
@@ -2419,7 +2428,12 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
   .hero--heritage .hh-top span { white-space: normal; word-break: keep-all; }
   .hero--heritage .hh-top span:last-child { text-align: left; }
   .hero--heritage .hh-top .hero-coord { display: none; }
-  .hh-eyebrow { margin-bottom: 22px; }
+  .hh-eyebrow { margin-bottom: 24px; line-height: 1.8; }
+  /* 모바일 메인 타이틀 — 두 줄 사이 숨통 유지, 행간 여유 */
+  .hh-title--ko { line-height: 1.2; }
+  .hh-title--ko .line-mask + .line-mask { margin-top: .06em; }
+  .hh-lead { line-height: 1.9; margin-top: 26px; }
+  .hh-lead--sub { margin-top: 15px; }
   .hh-meta { flex-wrap: wrap; gap: 22px; }
   .hh-rule { margin: 0 12px; }
   /* 모바일 터치 타깃 최소치 확보 (필터/태그) */

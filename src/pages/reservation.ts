@@ -126,6 +126,7 @@ export function ReservationPage() {
           <div class="inlink-box">
             <h2 style="font-size:15px;display:flex;align-items:center;gap:9px"><i class="fa-solid fa-clock text-mint"></i> 진료시간</h2>
             ${raw(CLINIC.hours.map(h => `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span>${h.day}</span><span style="color:var(--gray-600)">${h.time}</span></div>`).join(''))}
+            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심 휴게</span><span style="color:var(--gray-600)">${CLINIC.lunch}</span></div>
             <p style="font-size:12.5px;color:var(--gray-400);margin-top:10px">${CLINIC.hoursNote}</p>
           </div>
         </aside>

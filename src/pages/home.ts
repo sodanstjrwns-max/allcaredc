@@ -78,25 +78,26 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
       <circle class="hr-dot" cx="88" cy="14" r="2.2"/>
     </svg>
     <div class="hero-top hh-top">
-      <span>ALLCARE DENTAL — ORAL & MAXILLOFACIAL SURGERY</span>
+      <span>ALLCARE DENTAL — SPECIALIST COLLABORATIVE CARE</span>
       <span class="hero-coord">37.5547°N · 127.0107°E</span>
       <span>EST. 2023 · 약수역</span>
     </div>
     <div class="hero-inner hh-grid">
       <div class="hh-copy">
-        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 의식하진정법(수면치료) 병행</span>
+        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 의식하진정법(수면진료)</span>
         <h1 class="hh-title hh-title--ko">
-          <span class="line-mask"><span class="hh-ko-line">고난도 임플란트,</span></span>
-          <span class="line-mask"><span class="hh-italic disp hh-ko-line">책임집니다</span></span>
+          <span class="line-mask"><span class="hh-ko-line">믿고 찾는</span></span>
+          <span class="line-mask"><span class="hh-italic disp hh-ko-line">올케어치과</span></span>
         </h1>
-        <p class="hh-lead reveal reveal-d2">심한 뼈 소실, 실패한 임플란트, 부러진 픽스처, 상악동 거상술이 필요한 복합 케이스까지.<br>단순 식립을 넘어, <strong>정확한 진단과 수술 계획으로 끝까지 책임지는</strong> 구강악안면외과 전문의 진료.</p>
+        <p class="hh-lead reveal reveal-d2"><strong>고난도 임플란트는 전문성을 더하고,</strong><br>일반진료는 기본과 원칙에 충실합니다.</p>
+        <p class="hh-lead hh-lead--sub reveal reveal-d2">고난도 임플란트부터 치아교정·심미보철·일반 치과진료까지.<br>치과 전문의 협진 시스템을 바탕으로 정확하게 진단하고 필요한 치료를 제안합니다.</p>
         <div class="hero-actions reveal reveal-d3">
-          <a href="/treatments/implant" class="btn btn-primary">고난도 임플란트 진료 보기 <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/treatments" class="btn btn-primary">전체 진료 보기 <i class="fa-solid fa-arrow-right"></i></a>
           <a href="/reservation" class="btn btn-outline">상담·진단 예약</a>
         </div>
         <div class="hh-meta reveal reveal-d4">
-          <div class="item"><span class="num"><span data-count="3">3</span></span><span class="lbl">분야별 전문의 협진</span></div>
-          <div class="item"><span class="num num-ko">수면</span><span class="lbl">의식하진정법 병행</span></div>
+          <div class="item"><span class="num num-ko">협진</span><span class="lbl">치과 전문의 협진 시스템</span></div>
+          <div class="item"><span class="num num-ko">수면</span><span class="lbl">의식하진정법(수면진료)</span></div>
           <div class="item"><span class="num"><span data-count="20" data-suffix=":30">20:30</span></span><span class="lbl">야간진료 (월·화·목)</span></div>
         </div>
       </div>
@@ -105,9 +106,9 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img class="hh-portrait" src="/static/img/doctors-main-3.webp" alt="올케어치과 3인 전문의 통합진료팀 — 권종진 명예원장·권민수 대표원장·배수현 보철원장 (약수역)" width="576" height="1024" fetchpriority="high" />
+          <img class="hh-portrait" src="/static/img/doctors-main-3.webp" alt="올케어치과 치과 전문의 협진 시스템 — 약수역 통합진료팀" width="576" height="1024" fetchpriority="high" />
         </div>
-        <figcaption class="hh-caption"><span class="hh-cap-eng disp">3인 전문의 통합진료팀</span> 권종진 명예원장 · 권민수 대표원장 · 배수현 보철원장</figcaption>
+        <figcaption class="hh-caption"><span class="hh-cap-eng disp">치과 전문의 협진 시스템</span> 진단부터 수술·보철·유지관리까지 한 곳에서</figcaption>
       </figure>
     </div>
     <div class="hero-foot hh-foot">
@@ -185,7 +186,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   <!-- ============ 의료진 ============ -->
   <section class="section" id="doctors">
     <div class="container">
-      ${raw(sectionHead('의료진', '<em>3인 전문의</em> 통합진료팀',
+      ${raw(sectionHead('의료진', '<em>치과 전문의</em> 협진 시스템',
     '수술·보철·교정·턱관절까지 한 공간에서. 복잡한 케이스일수록 여러 전문 영역의 관점을 함께 반영합니다.'))}
       <div class="doc-grid">
         ${raw(DOCTORS.map((d, i) => `
@@ -279,10 +280,10 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
           <line class="co-line co-line2" pathLength="1" x1="72" y1="6" x2="120" y2="6"/>
         </svg>
         <h2>진료의 기반</h2>
-        <p>고난도 케이스를 끝까지 책임지는 진료 환경입니다.</p>
+        <p>복잡한 케이스를 끝까지 살피는 진료 환경입니다.</p>
       </div>
       <div class="stats-grid">
-        <div class="stat reveal"><div class="num"><span data-count="3">3</span></div><div class="lbl">분야별 전문의</div></div>
+        <div class="stat reveal"><div class="num num-ko">협진</div><div class="lbl">치과 전문의 협진 시스템</div></div>
         <div class="stat reveal reveal-d1"><div class="num"><span data-count="1">1</span></div><div class="lbl">원내 기공실 (상주 기공사)</div></div>
         <div class="stat reveal reveal-d2"><div class="num"><span data-count="20" data-suffix=":30">20:30</span></div><div class="lbl">야간진료 마감 (월·화·목)</div></div>
         <div class="stat reveal reveal-d3"><div class="num"><span data-count="2023">2023</span></div><div class="lbl">개원 연도</div></div>
@@ -433,8 +434,13 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
                 <span style="font-weight:600;color:${h.night ? 'var(--mint)' : 'var(--ink-soft)'}">${h.day}${h.night ? ' <span style="font-size:11px;background:var(--mint);color:#fffeee;padding:2px 8px;border-radius:999px;margin-left:6px">야간</span>' : ''}</span>
                 <span style="color:var(--gray-600);font-family:var(--font-disp)">${h.time}</span>
               </div>`).join(''))}
+            <div style="display:flex;justify-content:space-between;padding:15px 22px;background:var(--ivory-2)">
+              <span style="font-weight:600;color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심 휴게</span>
+              <span style="color:var(--gray-600);font-family:var(--font-disp)">${CLINIC.lunch}</span>
+            </div>
           </div>
-          <p style="margin-top:14px;font-size:14px;color:var(--gray-600)"><i class="fa-solid fa-circle-info text-mint"></i> ${CLINIC.hoursNote} · 점심시간은 전화로 문의해 주세요.</p>
+          <p style="margin-top:14px;font-size:14px;color:var(--gray-600)"><i class="fa-solid fa-circle-info text-mint"></i> ${CLINIC.hoursNote}</p>
+          <p style="margin-top:10px;font-size:13px;color:var(--gray-500);line-height:1.6"><i class="fa-solid fa-square-parking text-mint"></i> <strong>주차 안내</strong> — 건물 기계식 주차 운영. 전기차·대형 SUV는 기계식 주차가 어려워 인근 공영주차장 이용을 권장드립니다.</p>
         </div>
         <div class="reveal reveal-d2">
           <span class="sec-label"><span class="num">05-2</span> Directions</span>
@@ -475,8 +481,8 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   `
 
   const meta = {
-    title: '올케어치과 | 약수역 임플란트·교정·심미보철 3인 전문의 치과',
-    description: '약수역 5번 출구 올케어치과. 3인 전문의가 임플란트·치아교정·심미보철을 진단부터 책임집니다. 수면진료·야간진료 운영.',
+    title: '올케어치과 | 약수역 임플란트·교정·심미보철 치과 전문의 협진',
+    description: '약수역 5번 출구 올케어치과. 치과 전문의 협진 시스템으로 임플란트·치아교정·심미보철·일반진료를 진단부터 살핍니다. 수면진료·야간진료 운영.',
     path: '/',
     ogImage: `https://${CLINIC.domain}/og/home/main.svg`,
     preloadImage: '/static/img/doctors-main-3.webp',
