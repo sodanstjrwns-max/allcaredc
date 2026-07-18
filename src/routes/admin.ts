@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { Bindings, getAdmin, setAdminSession, clearSession, secret } from '../lib/auth'
 import { verifyToken } from '../lib/auth'
 import { getCookie } from 'hono/cookie'
-import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary, getViews } from '../lib/store'
+import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary, r2GetBinary, getViews } from '../lib/store'
 import { notifySearchEngines } from '../lib/indexnow'
 import {
   AdminLogin, AdminDashboard, AdminReservations, AdminMembers, AdminCases, AdminCaseForm,
@@ -151,6 +151,48 @@ admin.post('/cases/new', async (c) => {
   }
   await addToCollection(c.env, 'cases', item)
   // 자동 색인: 새 케이스 등록 → 검색엔진 즉시 통보 (백그라운드, 응답 지연 없음)
+  c.executionCtx.waitUntil(notifySearchEngines('/cases', '/cases'))
+  return c.redirect('/admin/cases')
+})
+// 관리자 폼 미리보기용 케이스 이미지 서빙 (인증된 admin 영역 · 게이팅 없이 원본)
+admin.get('/case-media/:id/:field', async (c) => {
+  const { id, field } = c.req.param()
+  const cases = await listCollection<any>(c.env, 'cases')
+  const item = cases.find(x => x.id === id)
+  const key = item && item[field]
+  if (!key) return c.notFound()
+  const obj = await r2GetBinary(c.env, key)
+  if (!obj) return c.notFound()
+  return new Response(obj.body as any, { headers: { 'Content-Type': obj.contentType, 'Cache-Control': 'private, no-store' } })
+})
+// 비포애프터 수정
+admin.get('/cases/:id/edit', async (c) => {
+  const items = await listCollection<CaseItem>(c.env, 'cases')
+  const item = items.find(x => x.id === c.req.param('id'))
+  if (!item) return c.notFound()
+  return c.html(AdminCaseForm(item).toString())
+})
+admin.post('/cases/:id/edit', async (c) => {
+  const id = c.req.param('id')
+  const form = await c.req.parseBody()
+  const patch: any = {
+    title: String(form.title || ''), description: String(form.description || ''),
+    ageGroup: String(form.ageGroup || ''), gender: String(form.gender || ''),
+    category: String(form.category || ''), region: String(form.region || ''),
+    doctor: String(form.doctor || ''), period: String(form.period || ''),
+    updatedAt: Date.now(),
+  }
+  // 새로 올린 파일만 R2 교체 — 비워두면 기존 사진 유지
+  for (const field of ['panoBefore', 'panoAfter', 'intraBefore', 'intraAfter']) {
+    const file = form[field] as unknown as File
+    if (file && typeof file === 'object' && (file as any).size > 0) {
+      const ext = ((file as any).name || '').split('.').pop() || 'jpg'
+      const key = `cases/${id}/${field}.${ext}`
+      await r2PutBinary(c.env, key, await (file as any).arrayBuffer(), (file as any).type || 'image/jpeg')
+      patch[field] = key
+    }
+  }
+  await updateInCollection<CaseItem>(c.env, 'cases', id, patch)
   c.executionCtx.waitUntil(notifySearchEngines('/cases', '/cases'))
   return c.redirect('/admin/cases')
 })

@@ -288,41 +288,54 @@ export function AdminCases(items: any[], views: Record<string, number> = {}) {
         <td><strong>${c.title}</strong></td><td>${TREATMENTS.find(t=>t.slug===c.category)?.name||c.category}</td>
         <td>${c.ageGroup || '-'} ${c.gender || ''}</td><td>${DOCTORS.find(d=>d.slug===c.doctor)?.name||'-'}</td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
-        <td><form method="POST" action="/admin/cases/${c.id}/delete" style="display:inline" onsubmit="return confirm('삭제하시겠습니까?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form></td></tr>`).join(''))}
+        <td style="white-space:nowrap"><a href="/admin/cases/${c.id}/edit" class="btn-sm" style="color:var(--gold-600);text-decoration:none">수정</a> <form method="POST" action="/admin/cases/${c.id}/delete" style="display:inline" onsubmit="return confirm('삭제하시겠습니까?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form></td></tr>`).join(''))}
       </tbody></table>`}
     </div>
   `)
 }
 
-// ── 비포애프터 등록 폼 ──
-export function AdminCaseForm() {
-  return adminShell('cases', '비포애프터 등록', html`
-    <div class="admin-head"><h1>비포애프터 등록</h1></div>
+// ── 비포애프터 등록/수정 폼 (item 있으면 수정 모드) ──
+export function AdminCaseForm(item?: any) {
+  const edit = !!item
+  const it = item || {}
+  const sel = (v: string, cur: any) => (String(cur || '') === v ? ' selected' : '')
+  // 사진 필드: 수정 시 기존 파일 유무 안내 + 미리보기
+  const photoField = (name: string, label: string) => {
+    const has = !!it[name]
+    return `<div class="field">
+      <label>${label}${has ? ' <span style="color:var(--gold-600);font-size:12px;font-weight:600">· 등록됨</span>' : ''}</label>
+      ${has ? `<div style="margin-bottom:8px"><img src="/admin/case-media/${it.id}/${name}" alt="${label}" style="max-width:140px;border-radius:6px;border:1px solid var(--gray-100)"></div>` : ''}
+      <input type="file" name="${name}" accept="image/*">
+      ${edit && has ? `<p style="font-size:12px;color:var(--gray-600);margin-top:4px">새 파일을 고르면 교체되고, 비워두면 기존 사진이 유지됩니다.</p>` : ''}
+    </div>`
+  }
+  return adminShell('cases', edit ? '비포애프터 수정' : '비포애프터 등록', html`
+    <div class="admin-head"><h1>${edit ? '비포애프터 수정' : '비포애프터 등록'}</h1></div>
     <div class="admin-card">
-      <form method="POST" action="/admin/cases/new" enctype="multipart/form-data">
+      <form method="POST" action="${edit ? `/admin/cases/${it.id}/edit` : '/admin/cases/new'}" enctype="multipart/form-data">
         <div class="grid-2" style="gap:18px;align-items:start">
-          <div class="field"><label>제목 <span class="req">*</span></label><input name="title" required placeholder="예: 다수 치아 상실 임플란트 케이스"></div>
-          <div class="field"><label>진료 카테고리 <span class="req">*</span></label><select name="category" required><option value="">선택</option>${raw(TREATMENTS.map(t => `<option value="${t.slug}">${t.name}</option>`).join(''))}</select></div>
+          <div class="field"><label>제목 <span class="req">*</span></label><input name="title" required placeholder="예: 다수 치아 상실 임플란트 케이스" value="${raw(String(it.title || '').replace(/"/g, '&quot;'))}"></div>
+          <div class="field"><label>진료 카테고리 <span class="req">*</span></label><select name="category" required><option value="">선택</option>${raw(TREATMENTS.map(t => `<option value="${t.slug}"${sel(t.slug, it.category)}>${t.name}</option>`).join(''))}</select></div>
         </div>
-        <div class="field"><label>케이스 설명</label><textarea name="description" placeholder="치료 내용을 간단히 적어주세요."></textarea></div>
+        <div class="field"><label>케이스 설명</label><textarea name="description" placeholder="치료 내용을 간단히 적어주세요.">${it.description || ''}</textarea></div>
         <div class="grid-2" style="gap:18px;align-items:start">
-          <div class="field"><label>환자 나이대</label><select name="ageGroup"><option value="">선택</option>${raw(['10대','20대','30대','40대','50대','60대','70대 이상'].map(a => `<option>${a}</option>`).join(''))}</select></div>
-          <div class="field"><label>성별</label><select name="gender"><option value="">선택</option><option>남성</option><option>여성</option></select></div>
+          <div class="field"><label>환자 나이대</label><select name="ageGroup"><option value="">선택</option>${raw(['10대','20대','30대','40대','50대','60대','70대 이상'].map(a => `<option${sel(a, it.ageGroup)}>${a}</option>`).join(''))}</select></div>
+          <div class="field"><label>성별</label><select name="gender"><option value="">선택</option><option${sel('남성', it.gender)}>남성</option><option${sel('여성', it.gender)}>여성</option></select></div>
         </div>
         <div class="grid-2" style="gap:18px;align-items:start">
-          <div class="field"><label>담당 원장</label><select name="doctor"><option value="">선택</option>${raw(DOCTORS.map(d => `<option value="${d.slug}">${d.name} ${d.role}</option>`).join(''))}</select></div>
-          <div class="field"><label>치료 기간</label><input name="period" placeholder="예: 약 6개월"></div>
+          <div class="field"><label>담당 원장</label><select name="doctor"><option value="">선택</option>${raw(DOCTORS.map(d => `<option value="${d.slug}"${sel(d.slug, it.doctor)}>${d.name} ${d.role}</option>`).join(''))}</select></div>
+          <div class="field"><label>치료 기간</label><input name="period" placeholder="예: 약 6개월" value="${raw(String(it.period || '').replace(/"/g, '&quot;'))}"></div>
         </div>
-        <div class="field autocomplete-wrap"><label>지역 카테고리</label><input id="regionInput" name="region" autocomplete="off" placeholder="예: 안산 입력 → 안산시"><div class="autocomplete-list" id="regionList" style="display:none"></div></div>
+        <div class="field autocomplete-wrap"><label>지역 카테고리</label><input id="regionInput" name="region" autocomplete="off" placeholder="예: 안산 입력 → 안산시" value="${raw(String(it.region || '').replace(/"/g, '&quot;'))}"><div class="autocomplete-list" id="regionList" style="display:none"></div></div>
         <hr style="border:none;border-top:1px solid var(--gray-100);margin:24px 0">
         <p style="font-weight:700;margin-bottom:14px">사진 업로드 (업로드한 사진만 표시됩니다)</p>
         <div class="grid-2" style="gap:18px;align-items:start">
-          <div class="field"><label>파노라마 — 치료 전</label><input type="file" name="panoBefore" accept="image/*"></div>
-          <div class="field"><label>파노라마 — 치료 후</label><input type="file" name="panoAfter" accept="image/*"></div>
-          <div class="field"><label>구내포토 — 치료 전</label><input type="file" name="intraBefore" accept="image/*"></div>
-          <div class="field"><label>구내포토 — 치료 후</label><input type="file" name="intraAfter" accept="image/*"></div>
+          ${raw(photoField('panoBefore', '파노라마 — 치료 전'))}
+          ${raw(photoField('panoAfter', '파노라마 — 치료 후'))}
+          ${raw(photoField('intraBefore', '구내포토 — 치료 전'))}
+          ${raw(photoField('intraAfter', '구내포토 — 치료 후'))}
         </div>
-        <button type="submit" class="btn btn-primary" style="margin-top:14px"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+        <button type="submit" class="btn btn-primary" style="margin-top:14px"><i class="fa-solid fa-floppy-disk"></i> ${edit ? '수정 저장' : '저장'}</button>
         <a href="/admin/cases" class="btn btn-outline" style="margin-left:8px">취소</a>
       </form>
     </div>
