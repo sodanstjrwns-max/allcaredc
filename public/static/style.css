@@ -1507,6 +1507,18 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
   letter-spacing: .03em; border-radius: var(--radius-pill);
   background: var(--mint-tint); color: var(--mint-600);
 }
+/* 예약 상태 5단계 배지 색 */
+.badge.new     { background: #e8f0fe; color: #1a56db; }          /* 신규 = 파랑 */
+.badge.trying  { background: #fff4e0; color: #b06a00; }          /* 연락시도 = 주황 */
+.badge.confirm { background: var(--mint-tint); color: var(--mint-600); } /* 예약확정 = 민트 */
+.badge.done    { background: #eee; color: #777; }                /* 종결 = 회색 */
+/* 미처리 경과시간 배지 (60분 노랑 / 4시간 빨강) */
+.elapsed { display:inline-block; margin-top:4px; padding:2px 8px; font-size:11px; font-weight:700; border-radius:var(--radius-pill); background:#f2f2f2; color:#888; }
+.elapsed.yellow { background:#fff3cd; color:#8a6d00; }
+.elapsed.red    { background:#fde2e1; color:#c0392b; }
+/* 예약 관리 미니 입력 */
+.res-mini { font-size:12px; padding:5px 8px; border:1px solid var(--gray-100); border-radius:4px; font-family:inherit; }
+select.res-mini { background:#fff; }
 
 .pm { transition: transform .3s var(--ease); color: var(--mint); }
 .faq-item.open .pm { transform: rotate(45deg); }

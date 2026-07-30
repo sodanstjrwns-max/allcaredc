@@ -86,7 +86,17 @@ admin.get('/reservations', async (c) => {
 })
 admin.post('/reservations/:id/status', async (c) => {
   const form = await c.req.parseBody()
-  await updateInCollection(c.env, 'reservations', c.req.param('id'), { status: String(form.status) })
+  await updateInCollection(c.env, 'reservations', c.req.param('id'), { status: String(form.status), updatedAt: Date.now() })
+  return c.redirect('/admin/reservations')
+})
+// 담당자 지정 + 처리 메모 저장
+admin.post('/reservations/:id/note', async (c) => {
+  const form = await c.req.parseBody()
+  const patch: any = { updatedAt: Date.now() }
+  if (form.status !== undefined) patch.status = String(form.status)
+  if (form.assignee !== undefined) patch.assignee = String(form.assignee).slice(0, 30)
+  if (form.memo !== undefined) patch.memo = String(form.memo).slice(0, 1000)
+  await updateInCollection(c.env, 'reservations', c.req.param('id'), patch)
   return c.redirect('/admin/reservations')
 })
 admin.post('/reservations/:id/delete', async (c) => {

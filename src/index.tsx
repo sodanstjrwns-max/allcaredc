@@ -242,6 +242,11 @@ app.post('/api/reservation', async (c) => {
     if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.email))) return c.json({ ok: false, error: '이메일 형식이 올바르지 않습니다.' })
     if (String(data.message || '').length > 1000) return c.json({ ok: false, error: '문의 내용이 너무 깁니다.' })
 
+    // 중복 제출 제한: 같은 연락처로 3분 이내 재접수 차단
+    const recent = await listCollection<any>(c.env, 'reservations')
+    const dup = recent.find(x => String(x.phone || '').replace(/[^0-9]/g, '') === phoneDigits && (Date.now() - (x.createdAt || 0)) < 3 * 60 * 1000)
+    if (dup) return c.json({ ok: false, error: '방금 접수된 문의가 있습니다. 잠시 후 다시 시도해 주세요.' })
+
     const item = {
       id: uid('r_'),
       name,
@@ -262,13 +267,38 @@ app.post('/api/reservation', async (c) => {
 
 async function sendReservationEmail(env: Bindings, r: any) {
   try {
+    const base = (env.SITE_URL || 'https://allcare-dental.pages.dev').replace(/\/$/, '')
+    const adminUrl = `${base}/admin/reservations`
+    const when = new Date(r.createdAt).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' })
+    const phoneDigits = String(r.phone || '').replace(/[^0-9]/g, '')
+    const esc = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: '올케어치과 <onboarding@resend.dev>', to: [env.NOTIFICATION_EMAIL],
-        subject: `[예약문의] ${r.name} - ${r.treatment}`,
-        html: `<h3>새 예약 문의</h3><ul><li>이름: ${r.name}</li><li>연락처: ${r.phone}</li><li>이메일: ${r.email || '-'}</li><li>진료: ${r.treatment}</li><li>희망: ${r.date || '-'} ${r.timeslot || ''}</li><li>내용: ${r.message || '-'}</li></ul>`,
+        reply_to: r.email || undefined,
+        subject: `[예약문의] ${r.name} · ${r.treatment}`,
+        html: `
+          <div style="font-family:-apple-system,'Malgun Gothic',sans-serif;max-width:560px;margin:0 auto;color:#062741">
+            <div style="background:#062741;color:#fffeee;padding:18px 22px;border-radius:8px 8px 0 0">
+              <div style="font-size:13px;letter-spacing:.08em;color:#b08d57">ALLCARE DENTAL · 새 예약문의</div>
+              <div style="font-size:20px;font-weight:700;margin-top:4px">${esc(r.name)} 님의 예약 문의</div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;border:1px solid #eee;border-top:none">
+              <tr><td style="padding:11px 16px;background:#faf9f2;width:110px;color:#b08d57;font-weight:600">접수일시</td><td style="padding:11px 16px">${esc(when)}</td></tr>
+              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">이름</td><td style="padding:11px 16px"><strong>${esc(r.name)}</strong></td></tr>
+              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">연락처</td><td style="padding:11px 16px"><a href="tel:${phoneDigits}" style="color:#062741;font-weight:700">${esc(r.phone)}</a></td></tr>
+              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">이메일</td><td style="padding:11px 16px">${esc(r.email) || '-'}</td></tr>
+              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">진료</td><td style="padding:11px 16px">${esc(r.treatment)}</td></tr>
+              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">희망일시</td><td style="padding:11px 16px">${esc(r.date) || '-'} ${esc(r.timeslot) || ''}</td></tr>
+              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600;vertical-align:top">문의내용</td><td style="padding:11px 16px;white-space:pre-wrap">${esc(r.message) || '-'}</td></tr>
+            </table>
+            <div style="text-align:center;padding:20px 0">
+              <a href="${adminUrl}" style="display:inline-block;background:#b08d57;color:#fff;text-decoration:none;padding:13px 30px;border-radius:6px;font-weight:700;font-size:15px">→ 관리자 화면에서 처리하기</a>
+            </div>
+            <p style="text-align:center;font-size:12px;color:#999;margin:0 0 8px">처리 기록은 관리자 페이지에 남습니다 · <a href="${adminUrl}" style="color:#b08d57">${adminUrl}</a></p>
+          </div>`,
       }),
     })
   } catch {}

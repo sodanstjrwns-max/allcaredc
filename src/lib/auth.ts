@@ -11,6 +11,7 @@ export type Bindings = {
   ADMIN_SESSION_SECRET?: string
   RESEND_API_KEY?: string
   NOTIFICATION_EMAIL?: string
+  SITE_URL?: string
 }
 
 const enc = new TextEncoder()

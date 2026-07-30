@@ -213,34 +213,57 @@ export function AdminDashboard(stats: {
 
 // ── 예약 관리 ──
 const esc = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+// 예약 상태 5단계 (권민수 대표원장 요청)
+export const RES_STATUSES = ['신규', '연락시도1', '연락시도2', '예약확정', '종결'] as const
+// 진행중(미종결) 상태 = 경과시간 카운트 대상
+const RES_OPEN = new Set(['신규', '연락시도1', '연락시도2'])
+function resStatusClass(s: string) {
+  if (s === '신규') return 'new'
+  if (s === '예약확정') return 'confirm'
+  if (s === '종결') return 'done'
+  return 'trying' // 연락시도1/2
+}
+
 export function AdminReservations(items: any[]) {
-  const newCount = items.filter(r => r.status === '신규').length
-  const doneCount = items.length - newCount
+  const cnt = (s: string) => items.filter(r => (r.status || '신규') === s).length
+  const openCount = items.filter(r => RES_OPEN.has(r.status || '신규')).length
   return adminShell('reservations', '예약 관리', html`
-    <div class="admin-head"><h1>예약 관리</h1><span style="color:var(--gray-600)">신규 ${newCount}건 · 완료 ${doneCount}건 · 전체 ${items.length}건</span></div>
+    <div class="admin-head"><h1>예약 관리</h1><span style="color:var(--gray-600)">진행중 ${openCount}건 · 전체 ${items.length}건</span></div>
     ${items.length === 0 ? html`<div class="admin-card"><p style="color:var(--gray-600);text-align:center;padding:40px">접수된 예약이 없습니다.</p></div>` : html`
     <div class="admin-card" style="padding:0;overflow:hidden">
-      <div style="display:flex;gap:8px;padding:14px 20px;border-bottom:1px solid var(--gray-100);flex-wrap:wrap">
+      <div style="display:flex;gap:6px;padding:14px 20px;border-bottom:1px solid var(--gray-100);flex-wrap:wrap">
         <button type="button" class="btn-sm btn-outline res-filter active" data-f="all">전체 (${items.length})</button>
-        <button type="button" class="btn-sm btn-outline res-filter" data-f="신규">신규 (${newCount})</button>
-        <button type="button" class="btn-sm btn-outline res-filter" data-f="완료">완료 (${doneCount})</button>
+        ${raw(RES_STATUSES.map(s => `<button type="button" class="btn-sm btn-outline res-filter" data-f="${s}">${s} (${cnt(s)})</button>`).join(''))}
       </div>
-      <div style="overflow-x:auto"><table><thead><tr><th>접수일시</th><th>이름</th><th>연락처</th><th>진료</th><th>희망일시</th><th>문의내용</th><th>상태</th><th>관리</th></tr></thead><tbody>
+      <div style="overflow-x:auto"><table><thead><tr><th>접수 / 경과</th><th>이름·연락처</th><th>진료·희망</th><th>문의내용</th><th>상태·담당·메모</th></tr></thead><tbody>
       ${raw(items.map(r => {
+        const status = r.status || '신규'
         const d = new Date(r.createdAt)
         const phoneDigits = String(r.phone || '').replace(/[^0-9]/g, '')
         const msg = esc(r.message)
-        return `<tr data-status="${esc(r.status)}">
-        <td style="white-space:nowrap">${d.toLocaleDateString('ko-KR')}<br><span style="color:var(--gray-400);font-size:12px">${d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span></td>
-        <td><strong>${esc(r.name)}</strong>${r.email ? `<br><span style="color:var(--gray-400);font-size:12px">${esc(r.email)}</span>` : ''}</td>
-        <td><a href="tel:${phoneDigits}" style="color:var(--brand-accent);font-weight:600"><i class="fa-solid fa-phone" style="font-size:11px"></i> ${esc(r.phone)}</a></td>
-        <td>${esc(r.treatment)}</td>
-        <td style="white-space:nowrap">${esc(r.date) || '-'}<br><span style="color:var(--gray-400);font-size:12px">${esc(r.timeslot) || '시간 무관'}</span></td>
-        <td style="max-width:240px">${msg ? `<span title="${msg}" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;color:var(--gray-600)">${msg}</span>` : '<span style="color:var(--gray-400)">-</span>'}</td>
-        <td><span class="badge ${r.status === '신규' ? 'new' : 'done'}">${esc(r.status)}</span></td>
-        <td style="white-space:nowrap">
-          <form method="POST" action="/admin/reservations/${r.id}/status" style="display:inline"><button class="btn-sm btn-outline" name="status" value="${r.status === '신규' ? '완료' : '신규'}">${r.status === '신규' ? '완료처리' : '되돌리기'}</button></form>
-          <form method="POST" action="/admin/reservations/${r.id}/delete" style="display:inline" onsubmit="return confirm('이 예약을 삭제하시겠습니까?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form>
+        const isOpen = RES_OPEN.has(status)
+        // 경과시간 배지 (진행중일 때만): 60분 초과 노랑, 4시간 초과 빨강
+        const mins = Math.floor((Date.now() - (r.createdAt || Date.now())) / 60000)
+        const elapsedTxt = mins < 60 ? `${mins}분 전` : mins < 1440 ? `${Math.floor(mins / 60)}시간 ${mins % 60}분 전` : `${Math.floor(mins / 1440)}일 전`
+        const level = !isOpen ? '' : mins > 240 ? 'red' : mins > 60 ? 'yellow' : ''
+        const elapsedBadge = isOpen
+          ? `<span class="elapsed ${level}">${level === 'red' ? '<i class="fa-solid fa-triangle-exclamation"></i> ' : level === 'yellow' ? '<i class="fa-solid fa-clock"></i> ' : ''}${elapsedTxt}</span>`
+          : `<span style="color:var(--gray-400);font-size:12px">${elapsedTxt}</span>`
+        const statusOpts = RES_STATUSES.map(s => `<option value="${s}"${s === status ? ' selected' : ''}>${s}</option>`).join('')
+        return `<tr data-status="${esc(status)}">
+        <td style="white-space:nowrap">${d.toLocaleDateString('ko-KR')}<br><span style="color:var(--gray-400);font-size:12px">${d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span><br>${elapsedBadge}</td>
+        <td><strong>${esc(r.name)}</strong>${r.email ? `<br><span style="color:var(--gray-400);font-size:12px">${esc(r.email)}</span>` : ''}<br><a href="tel:${phoneDigits}" style="color:var(--brand-accent);font-weight:600"><i class="fa-solid fa-phone" style="font-size:11px"></i> ${esc(r.phone)}</a></td>
+        <td style="white-space:nowrap">${esc(r.treatment)}<br><span style="color:var(--gray-400);font-size:12px">${esc(r.date) || '희망일 무관'} ${esc(r.timeslot) || ''}</span></td>
+        <td style="max-width:220px">${msg ? `<span title="${msg}" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;color:var(--gray-600)">${msg}</span>` : '<span style="color:var(--gray-400)">-</span>'}</td>
+        <td style="min-width:230px">
+          <form method="POST" action="/admin/reservations/${r.id}/note">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span class="badge ${resStatusClass(status)}">${esc(status)}</span>
+              <select name="status" class="res-mini">${statusOpts}</select></div>
+            <input name="assignee" class="res-mini" style="width:100%;margin-bottom:6px" placeholder="담당자" value="${esc(r.assignee) || ''}">
+            <textarea name="memo" class="res-mini" style="width:100%;min-height:44px;margin-bottom:6px" placeholder="처리 메모">${esc(r.memo) || ''}</textarea>
+            <button class="btn-sm btn-primary" style="width:100%"><i class="fa-solid fa-floppy-disk" style="font-size:11px"></i> 저장</button>
+          </form>
+          <form method="POST" action="/admin/reservations/${r.id}/delete" onsubmit="return confirm('이 예약을 삭제하시겠습니까?')" style="margin-top:4px"><button class="btn-sm" style="color:#c0392b;width:100%">삭제</button></form>
         </td></tr>`
       }).join(''))}
       </tbody></table></div>
