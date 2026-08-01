@@ -276,7 +276,7 @@ async function sendReservationEmail(env: Bindings, r: any) {
       method: 'POST',
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: '올케어치과 <onboarding@resend.dev>', to: [env.NOTIFICATION_EMAIL],
+        from: '올케어치과 <noreply@allcaredc.kr>', to: [env.NOTIFICATION_EMAIL],
         reply_to: r.email || undefined,
         subject: `[예약문의] ${r.name} · ${r.treatment}`,
         html: `
