@@ -42,7 +42,10 @@ export function RegisterPage(next = '/', error?: string) {
       <div class="field"><label>전화번호 <span class="req">*</span></label><input type="tel" name="phone" required placeholder="010-0000-0000"></div>
       <div class="field"><label>비밀번호 <span class="req">*</span></label><input type="password" name="password" required minlength="6" placeholder="6자 이상"></div>
       <div class="field">
-        <label class="checkbox-row"><input type="checkbox" name="agree_privacy" required> <span>[필수] 개인정보 수집·이용에 동의합니다. 수집 항목: 이름, 이메일, 전화번호 / 목적: 회원관리·진료사례 열람·예약 안내 / 보유기간: 회원 탈퇴 시까지</span></label>
+        <label class="checkbox-row"><input type="checkbox" name="agree_terms" required> <span>[필수] <a href="/terms" target="_blank" style="color:var(--brand-accent);text-decoration:underline">이용약관</a>에 동의합니다.</span></label>
+      </div>
+      <div class="field">
+        <label class="checkbox-row"><input type="checkbox" name="agree_privacy" required> <span>[필수] <a href="/privacy" target="_blank" style="color:var(--brand-accent);text-decoration:underline">개인정보 수집·이용</a>에 동의합니다. 수집 항목: 이름, 이메일, 전화번호 / 목적: 회원관리·진료사례 열람·예약 안내 / 보유기간: 회원 탈퇴 시까지</span></label>
       </div>
       <div class="field">
         <label class="checkbox-row"><input type="checkbox" name="agree_marketing"> <span>[선택] 마케팅 정보 수신(진료 안내, 이벤트 등)에 동의합니다.</span></label>

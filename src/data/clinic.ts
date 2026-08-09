@@ -196,7 +196,7 @@ export const CLINIC = {
   subway: '3·6호선 약수역 5번 출구 도보 1분',
   phone: '02-2232-2911',
   phoneRaw: '0222322911',
-  email: 'kms8383@gmail.com',
+  email: '365allcare@naver.com',
   openedYear: '2023',
   openedFull: '2023년 7월',
   // geo (약수역 인근 좌표)
@@ -243,6 +243,11 @@ export const CLINIC = {
     google: '',  // ✅ DNS(도메인 속성)로 인증 완료 — Cloudflare TXT 레코드 방식, 메타태그 불필요
     naver: '549621162778717ac29187f2c19d93918f28c7b7',   // 네이버 서치어드바이저 소유확인 ✅
     bing: '',    // Bing Webmaster Tools → 사이트 추가 → meta 태그 content 값 (또는 GSC 자동연동)
+  },
+  // 방문자 통계 — 측정 ID만 채우면 head에 자동 삽입됨 (코드 수정 불필요)
+  analytics: {
+    ga4: '',          // 예: 'G-XXXXXXXXXX' (구글 애널리틱스 4 측정 ID)
+    naverWcs: '',     // 네이버 애널리틱스 wcs_add['wa'] 값 (예: 'xxxxxxxxxxxxxx')
   },
   // 사업자 정보 (푸터) — 사업자등록증 기준
   business: {

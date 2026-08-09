@@ -135,7 +135,7 @@ export function AdminDashboard(stats: {
 }) {
   const e = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   return adminShell('dashboard', '대시보드', html`
-    <div class="admin-head"><h1>대시보드</h1><span style="color:var(--gray-600)">${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</span></div>
+    <div class="admin-head"><h1>대시보드</h1><span style="color:var(--gray-600)">${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', timeZone: 'Asia/Seoul' })}</span></div>
 
     ${stats.newReservations > 0 ? html`<div class="admin-card" style="background:linear-gradient(135deg,#062741,#0a3a5c);color:#fffeee;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
       <div><i class="fa-solid fa-bell text-mint" style="margin-right:8px"></i><strong style="font-size:1.1rem">확인하지 않은 신규 예약 ${stats.newReservations}건</strong><p style="color:rgba(255,255,255,.7);font-size:13px;margin-top:4px">고객이 기다리고 있어요. 빠르게 연락드리면 전환율이 올라갑니다.</p></div>
@@ -160,7 +160,7 @@ export function AdminDashboard(stats: {
               <td style="white-space:nowrap"><span class="badge ${r.status === '신규' ? 'new' : 'done'}">${e(r.status)}</span></td>
               <td><strong>${e(r.name)}</strong> · ${e(r.treatment)}</td>
               <td style="color:var(--gray-600);font-size:13px">${e(r.phone)}</td>
-              <td style="color:var(--gray-400);font-size:12px;white-space:nowrap">${new Date(r.createdAt).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })}</td>
+              <td style="color:var(--gray-400);font-size:12px;white-space:nowrap">${new Date(r.createdAt).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric', timeZone: 'Asia/Seoul' })}</td>
             </tr>`).join(''))}
           </tbody></table>
           <div style="text-align:right;margin-top:12px"><a href="/admin/reservations" style="font-size:13px;color:var(--brand-accent);font-weight:600">전체 예약 보기 →</a></div>`}
@@ -251,7 +251,7 @@ export function AdminReservations(items: any[]) {
           : `<span style="color:var(--gray-400);font-size:12px">${elapsedTxt}</span>`
         const statusOpts = RES_STATUSES.map(s => `<option value="${s}"${s === status ? ' selected' : ''}>${s}</option>`).join('')
         return `<tr data-status="${esc(status)}">
-        <td style="white-space:nowrap">${d.toLocaleDateString('ko-KR')}<br><span style="color:var(--gray-400);font-size:12px">${d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span><br>${elapsedBadge}</td>
+        <td style="white-space:nowrap">${d.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}<br><span style="color:var(--gray-400);font-size:12px">${d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' })}</span><br>${elapsedBadge}</td>
         <td><strong>${esc(r.name)}</strong>${r.email ? `<br><span style="color:var(--gray-400);font-size:12px">${esc(r.email)}</span>` : ''}<br><a href="tel:${phoneDigits}" style="color:var(--brand-accent);font-weight:600"><i class="fa-solid fa-phone" style="font-size:11px"></i> ${esc(r.phone)}</a></td>
         <td style="white-space:nowrap">${esc(r.treatment)}<br><span style="color:var(--gray-400);font-size:12px">${esc(r.date) || '희망일 무관'} ${esc(r.timeslot) || ''}</span></td>
         <td style="max-width:220px">${msg ? `<span title="${msg}" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;color:var(--gray-600)">${msg}</span>` : '<span style="color:var(--gray-400)">-</span>'}</td>
@@ -290,7 +290,7 @@ export function AdminMembers(users: any[]) {
       ${users.length === 0 ? html`<p style="color:var(--gray-600);text-align:center;padding:40px">가입한 회원이 없습니다.</p>` : html`
       <table><thead><tr><th>가입일</th><th>이름</th><th>이메일</th><th>전화</th><th>가입경로</th><th>마케팅</th></tr></thead><tbody>
       ${raw(users.map(u => `<tr>
-        <td>${new Date(u.createdAt).toLocaleDateString('ko-KR')}</td>
+        <td>${new Date(u.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
         <td><strong>${u.name}</strong></td><td>${u.email}</td><td>${u.phone || '-'}</td>
         <td><span class="badge done">${u.provider === 'google' ? 'Google' : '이메일'}</span></td>
         <td>${u.marketing ? '동의' : '-'}</td></tr>`).join(''))}
@@ -307,7 +307,7 @@ export function AdminCases(items: any[], views: Record<string, number> = {}) {
       ${items.length === 0 ? html`<p style="color:var(--gray-600);text-align:center;padding:40px">등록된 사례가 없습니다.</p>` : html`
       <table><thead><tr><th>등록일</th><th>제목</th><th>진료</th><th>나이/성별</th><th>담당</th><th>조회수</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(c => `<tr>
-        <td>${new Date(c.createdAt).toLocaleDateString('ko-KR')}</td>
+        <td>${new Date(c.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
         <td><strong>${c.title}</strong></td><td>${TREATMENTS.find(t=>t.slug===c.category)?.name||c.category}</td>
         <td>${c.ageGroup || '-'} ${c.gender || ''}</td><td>${DOCTORS.find(d=>d.slug===c.doctor)?.name||'-'}</td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
@@ -373,7 +373,7 @@ export function AdminColumns(items: any[], views: Record<string, number> = {}) {
     <div class="admin-card">
       <table><thead><tr><th>작성일</th><th>제목</th><th>진료</th><th>작성자</th><th>조회수</th><th>상태</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(c => `<tr>
-        <td>${new Date(c.createdAt).toLocaleDateString('ko-KR')}</td>
+        <td>${new Date(c.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
         <td><strong>${c.title}</strong></td><td>${TREATMENTS.find(t=>t.slug===c.category)?.name||'-'}</td>
         <td>${DOCTORS.find(d=>d.slug===c.author)?.name||'-'}</td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
@@ -725,7 +725,7 @@ export function AdminNotices(items: any[], views: Record<string, number> = {}) {
           ? `<span class="badge new" style="background:#1f7a4d">노출중${n.popupUntil ? ` <span style="opacity:.8">~${n.popupUntil}</span>` : ''}</span>`
           : popupExpired ? `<span class="badge" style="background:#aaa;color:#fff">만료</span>` : '-'
         return `<tr>
-        <td>${new Date(n.createdAt).toLocaleDateString('ko-KR')}</td><td><strong>${n.title}</strong></td>
+        <td>${new Date(n.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td><td><strong>${n.title}</strong></td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[n.id] || 0}</td>
         <td>${n.pinned ? '<span class="badge new">고정</span>' : '-'}</td>
         <td>${popupCell}</td>
@@ -794,7 +794,7 @@ export function AdminEvents(items: any[], views: Record<string, number> = {}) {
           : '상시'
         const badge = st.key === 'ongoing' ? 'background:#1f7a4d;color:#fff' : st.key === 'upcoming' ? 'background:#b08d57;color:#fff' : 'background:#aaa;color:#fff'
         return `<tr>
-        <td>${new Date(e.createdAt).toLocaleDateString('ko-KR')}</td>
+        <td>${new Date(e.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
         <td><strong>${esc(e.title)}</strong></td>
         <td style="white-space:nowrap;font-size:13px;color:var(--gray-600)">${period}</td>
         <td><span class="badge" style="${badge}">${st.label}</span></td>

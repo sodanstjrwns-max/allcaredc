@@ -25,6 +25,17 @@ import { HANDOVER_DOC_B64 } from './lib/handover-doc'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
+// www → non-www 301 통합 (네이버 권장: canonical보다 301을 우선)
+// 커스텀 도메인(allcaredc.kr)에서만 동작 — pages.dev/미리보기는 그대로 둠
+app.use('*', async (c, next) => {
+  const url = new URL(c.req.url)
+  if (url.hostname === 'www.allcaredc.kr') {
+    url.hostname = 'allcaredc.kr'
+    return c.redirect(url.toString(), 301)
+  }
+  return next()
+})
+
 // 시드 초기화 미들웨어 (한 번만)
 let seeded = false
 app.use('*', async (c, next) => {
@@ -199,6 +210,7 @@ app.post('/auth/register', async (c) => {
   const phone = String(form.phone || '').trim()
   const password = String(form.password || '')
   const next = String(form.next || '/')
+  if (!form.agree_terms) return c.html(RegisterPage(next, '이용약관에 동의해 주세요.').toString())
   if (!form.agree_privacy) return c.html(RegisterPage(next, '개인정보 수집·이용에 동의해 주세요.').toString())
   if (!name || !email || !phone || password.length < 6) return c.html(RegisterPage(next, '입력 정보를 확인해 주세요.').toString())
   const users = await listCollection<any>(c.env, 'users')
@@ -269,7 +281,7 @@ async function sendReservationEmail(env: Bindings, r: any) {
   try {
     const base = (env.SITE_URL || 'https://allcare-dental.pages.dev').replace(/\/$/, '')
     const adminUrl = `${base}/admin/reservations`
-    const when = new Date(r.createdAt).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' })
+    const when = new Date(r.createdAt).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Seoul' })
     const phoneDigits = String(r.phone || '').replace(/[^0-9]/g, '')
     const esc = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     await fetch('https://api.resend.com/emails', {
@@ -342,23 +354,43 @@ function legalPage(title: string, content: string, path: string) {
   return Page({ title: `${title} | 올케어치과`, description: title, path }, body)
 }
 
-const PRIVACY = `올케어치과(이하 "병원")는 이용자의 개인정보를 중요시하며, 관련 법령을 준수합니다.
+const PRIVACY = `올케어치과(이하 "병원")는 「개인정보 보호법」 등 관련 법령을 준수하며, 이용자의 개인정보를 소중히 보호합니다.
 
 1. 수집하는 개인정보 항목
 - 회원가입: 이름, 이메일, 전화번호
 - 예약 문의: 이름, 연락처, 이메일(선택)
+- 예약 문의 내용에 이용자가 자발적으로 증상·불편사항 등 건강 관련 정보를 기재하는 경우, 해당 정보(민감정보)는 별도의 동의를 받아 수집·이용합니다.
 
 2. 개인정보의 수집·이용 목적
-- 회원 관리, 진료사례 열람 권한 부여, 예약 상담 및 안내
+- 회원 관리, 진료사례 열람 권한 부여, 예약 상담 및 진료 안내
 
-3. 개인정보의 보유 및 이용기간
-- 회원 탈퇴 시 또는 수집·이용 목적 달성 시까지
+3. 민감정보(건강정보)의 처리
+- 병원은 예약 상담 목적에 한하여 이용자가 직접 입력한 건강 관련 정보를 처리하며, 목적 달성 후에는 지체 없이 파기합니다.
+- 민감정보 수집·이용에는 정보주체의 별도 동의를 받으며, 동의를 거부하실 수 있습니다(단, 상담 진행에 제한이 있을 수 있습니다).
 
-4. 개인정보의 제3자 제공
-- 병원은 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다.
+4. 개인정보의 보유 및 이용기간
+- 회원정보: 회원 탈퇴 시까지
+- 예약 문의: 상담 완료 후 1년(관련 법령에 별도 보존 의무가 있는 경우 해당 기간)
+- 보유기간이 경과하거나 처리 목적이 달성된 개인정보는 지체 없이 파기합니다. 전자적 파일은 복구할 수 없는 방법으로 삭제하고, 종이 문서는 분쇄 또는 소각합니다.
 
-5. 이용자의 권리
-- 이용자는 언제든지 본인의 개인정보 열람·정정·삭제를 요청할 수 있습니다.
+5. 개인정보의 제3자 제공
+- 병원은 이용자의 개인정보를 원칙적으로 외부에 제공하지 않으며, 법령에 근거하거나 이용자의 동의가 있는 경우에 한해 제공합니다.
+
+6. 개인정보 처리의 위탁
+- 병원은 원활한 서비스 제공을 위해 아래와 같이 개인정보 처리 업무를 위탁하고 있습니다.
+  · 웹사이트 호스팅·인프라: Cloudflare, Inc.
+  · 예약 알림 메일 발송: Resend (Plus Five Five, Inc.)
+- 위탁계약 시 개인정보가 안전하게 관리되도록 관련 사항을 규정하고 관리·감독합니다.
+
+7. 이용자 및 법정대리인의 권리
+- 이용자는 언제든지 본인의 개인정보 열람·정정·삭제·처리정지를 요청할 수 있으며, 병원은 지체 없이 조치합니다.
+
+8. 개인정보 보호책임자
+- 개인정보 보호책임자: 올케어치과 관리책임자
+- 연락처: ${CLINIC.phone} / ${CLINIC.email}
+- 개인정보 관련 문의·불만·피해구제는 위 연락처로 접수하실 수 있습니다.
+
+본 방침은 관련 법령 및 병원 내부 방침에 따라 변경될 수 있으며, 변경 시 웹사이트를 통해 공지합니다.
 
 문의: ${CLINIC.phone}`
 

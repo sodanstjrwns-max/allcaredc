@@ -103,9 +103,10 @@ export function ReservationPage() {
                   </select>
                 </div>
               </div>
-              <div class="field"><label>문의 내용</label><textarea name="message" placeholder="불편하신 점이나 궁금하신 점을 자유롭게 적어주세요."></textarea></div>
+              <div class="field"><label>문의 내용</label><textarea name="message" placeholder="불편하신 점이나 궁금하신 점을 자유롭게 적어주세요. (증상 등 건강 관련 내용을 적으실 경우 아래 민감정보 동의가 필요합니다)"></textarea></div>
               <div class="field">
                 <label class="checkbox-row"><input type="checkbox" name="agree" required> <span>[필수] 예약 상담을 위한 개인정보(이름, 연락처) 수집·이용에 동의합니다.</span></label>
+                <label class="checkbox-row"><input type="checkbox" name="agree_health"> <span>[선택] 문의 내용에 증상 등 건강정보를 기재하는 경우, 상담 목적의 민감정보 수집·이용에 동의합니다. (미동의 시에도 예약 문의는 가능하나 상담에 제한이 있을 수 있습니다)</span></label>
               </div>
               <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">예약 문의 보내기</button>
               <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--gray-400)">접수 후 진료시간 내에 순차적으로 연락드립니다.</p>
