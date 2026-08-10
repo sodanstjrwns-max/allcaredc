@@ -21,7 +21,7 @@ export function DoctorsIndex() {
       <div class="doc-grid">
         ${raw(DOCTORS.map((d, i) => `
           <a href="/doctors/${d.slug}" class="doc-card reveal reveal-d${i + 1}">
-            <div class="doc-photo"><img src="${d.photo}" alt="${d.name} ${d.role}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center"></div>
+            <div class="doc-photo"><img src="${d.photo}" alt="${d.name} ${d.role}" loading="lazy" style="width:100%;height:100%;object-fit:cover;${d.imgPos || 'object-position:top center'}"></div>
             <div class="doc-body">
               <span class="role">${d.role}</span>
               <h2>${d.name}</h2>
@@ -94,7 +94,7 @@ export function DoctorDetail(slug: string) {
       <div class="grid-detail">
         <article class="reveal">
           <div class="grid-2" style="gap:36px;margin-bottom:40px;align-items:start">
-            <div class="doc-photo" style="border-radius:var(--radius-lg);box-shadow:var(--shadow);aspect-ratio:4/4.6;overflow:hidden"><img src="${d.photo}" alt="${d.name} ${d.role}" style="width:100%;height:100%;object-fit:cover;object-position:top center"></div>
+            <div class="doc-photo" style="border-radius:var(--radius-lg);box-shadow:var(--shadow);aspect-ratio:4/4.6;overflow:hidden"><img src="${d.photo}" alt="${d.name} ${d.role}" style="width:100%;height:100%;object-fit:cover;${d.imgPos || 'object-position:top center'}"></div>
             <div>
               <span class="role" style="color:var(--brand-accent);font-weight:700">${d.role}</span>
               <h2 style="font-size:2rem;margin:6px 0 4px">${d.name}</h2>

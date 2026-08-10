@@ -131,8 +131,8 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   <!-- ============ 강점 3대 포인트 (직설적 진료 중심 — 책 메타포 제거) ============ -->
   <section class="section keypoints-sec" id="why">
     <div class="container">
-      ${raw(sectionHead('왜 올케어치과인가', '<em>어려운 케이스</em>일수록, 전문의 진료가 필요합니다',
-    '단순 식립을 넘어 진단·수술·보철의 전 과정을 전문의가 일관되게 책임집니다. 그 핵심을 세 가지로 정리했습니다.'))}
+      ${raw(sectionHead('왜 올케어치과인가', '<em>어려운 케이스</em>일수록,<br class="br-pc"> 전문의 진료가 필요합니다',
+    '단순 식립을 넘어 진단·수술·보철의 전 과정을 전문의가 일관되게 책임집니다.<br class="br-pc"> 그 핵심을 세 가지로 정리했습니다.'))}
       <div class="keypoints-grid">
         ${raw(CLINIC.strengths.slice(0, 3).map((s, i) => `
           <article class="keypoint reveal reveal-d${i + 1}">

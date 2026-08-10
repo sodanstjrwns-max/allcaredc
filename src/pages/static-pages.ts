@@ -85,7 +85,7 @@ export function MissionPage() {
     <div class="container">
       <div class="section-head reveal">
         <span class="sec-label"><span class="num">01-1</span> Everyday Care</span>
-        <h2>믿음직한 약수 치과로서, <em>일반 진료</em>도 든든하게</h2>
+        <h2>믿음직한 약수 치과로서,<br class="br-pc"> <em>일반 진료</em>도 든든하게</h2>
         <p>큰 수술뿐 아니라 충치·신경·잇몸 같은 일상적인 진료도 같은 전문성으로 봅니다. 멀리 갈 필요 없이, 동네에서 편하게.</p>
       </div>
       <div class="daily-tx-grid reveal">
@@ -105,28 +105,27 @@ export function MissionPage() {
       <div class="grid-2" style="align-items:center;gap:clamp(36px,5vw,72px)">
         <figure class="reveal about-figure">
           <img src="/static/img/about-exterior.webp" alt="약수역 올케어치과의원 외관 — 4층 통유리 건물의 치과 간판" width="1200" height="795" loading="lazy">
-          <figcaption>약수역 5번 출구 도보 1분 · 올케어치과의원</figcaption>
+          <figcaption>${CLINIC.familyStory.photoCaption}</figcaption>
         </figure>
         <div class="reveal reveal-d1">
           <span class="sec-label"><span class="num">02</span> Continuity of Care</span>
-          <h2 class="split-rise" style="font-size:clamp(1.6rem,3.4vw,2.4rem);margin:18px 0 18px">축적된 경험으로 이어가는<br><em>두 세대의 진료</em></h2>
-          <p class="subconcept-note reveal">오랜 임상 경험과 전문의의 세심한 진료가 만나, 기존 치료 이력부터 앞으로의 관리 방향까지 함께 살핍니다.</p>
+          <h2 class="split-rise" style="font-size:clamp(1.6rem,3.4vw,2.4rem);margin:18px 0 18px">${raw(CLINIC.familyStory.title)}</h2>
+          <p class="subconcept-note reveal">${CLINIC.familyStory.boxNote}</p>
           <div class="prose" style="font-size:1.05rem;line-height:1.9">
-            <p>서울대학교를 졸업하고 치의학박사 학위를 취득한 <strong>권종진 명예원장</strong>은 고려대병원 구강외과 교수로 30년 이상 재직한 뒤, 약수역 인근에서 진료를 이어왔습니다.</p>
-            <p>권종진 명예원장의 축적된 임상 경험과 구강악안면외과·통합치의학과 더블보드 전문의인 <strong>권민수 대표원장</strong>의 세심한 진료를 바탕으로, 기존 치료 이력과 관리 방향까지 면밀히 살피는 일관된 통합진료를 이어갑니다.</p>
+            ${raw(CLINIC.familyStory.paras.map(p => `<p>${p}</p>`).join(''))}
           </div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px">
-            ${raw(CLINIC.familyStory.points.map(p => `
-              <span style="display:inline-flex;align-items:center;gap:9px;background:var(--ivory-2);border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:.9rem;color:var(--ink-soft)"><i class="fa-solid fa-circle-check" style="color:var(--gold)"></i>${p}</span>`).join(''))}
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:26px">
+            ${raw(CLINIC.familyStory.facts.map(p => `
+              <span style="display:inline-flex;align-items:center;gap:11px;font-size:.98rem;color:var(--ink-soft)"><i class="fa-solid fa-circle-check" style="color:var(--gold)"></i>${p}</span>`).join(''))}
           </div>
         </div>
       </div>
 
-      <!-- §3 두 세대가 이어온 신뢰 — 타임라인 없이 명예원장 경력 중심 한 블록 (요청: 타임라인 전체 삭제) -->
-      <div class="continuity-block reveal" style="margin-top:clamp(48px,6vw,80px)">
+      <!-- §S6 지속 가능한 운영 콜아웃 — 다크블루 박스 (격주 일요일 휴진 등) -->
+      <div class="continuity-block reveal" style="margin-top:clamp(40px,5vw,64px)">
         <p class="sustainability-note reveal">
           <i class="fa-solid fa-leaf" aria-hidden="true"></i>
-          ${CLINIC.familyStory.sustainability}
+          ${CLINIC.familyStory.callout}
         </p>
       </div>
     </div>
@@ -183,8 +182,8 @@ export function MissionPage() {
       </figure>
       <div class="yaksu-copy reveal reveal-d1">
         <h3 class="yaksu-copy-head">지역과 함께 걸어온 치과</h3>
-        <p>올케어치과는 개원 초부터 약수시장상인회와 협약을 맺고, 지역 상권과 주민들의 곁을 지켜왔습니다. 약수동주민센터, 다온봉사단, 중구 산악회 등 여러 지역 단체와도 꾸준히 함께해 왔습니다.</p>
-        <p>잠깐 스쳐가는 병원이 아니라, 동네에 뿌리내리고 오래 머무는 치과. 그 자리를 지키는 것이 저희가 지역에 보답하는 방식이라 믿습니다.</p>
+        <p>올케어치과는 개원 초부터 약수시장상인회와 협약을 맺고,<br class="br-pc"> 지역 상권과 주민들의 곁을 지켜왔습니다.<br class="br-pc"> 약수동주민센터, 다온봉사단, 중구 산악회 등 여러 지역 단체와도 꾸준히 함께해 왔습니다.</p>
+        <p>잠깐 스쳐가는 병원이 아니라, 동네에 뿌리내리고 오래 머무는 치과.<br class="br-pc"> 그 자리를 지키는 것이 저희가 지역에 보답하는 방식이라 믿습니다.</p>
       </div>
     </div>
   </section>
