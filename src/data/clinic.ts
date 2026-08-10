@@ -258,13 +258,14 @@ export const CLINIC = {
   // 빈 값이면 해당 메타태그는 출력되지 않음
   siteVerification: {
     google: '',  // ✅ DNS(도메인 속성)로 인증 완료 — Cloudflare TXT 레코드 방식, 메타태그 불필요
-    naver: '549621162778717ac29187f2c19d93918f28c7b7',   // 네이버 서치어드바이저 소유확인 ✅
+    naver: '549621162778717ac29187f2c19d93918f28c7b7',   // 네이버 서치어드바이저 소유확인 ✅ (기존 계정)
+    naver2: '8904bf63fadffe3fde4bd9e9d48fb1d128eeb952',   // 네이버 서치어드바이저 소유확인 ✅ (추가 계정 — 계정별 코드 별도 발급)
     bing: '',    // Bing Webmaster Tools → 사이트 추가 → meta 태그 content 값 (또는 GSC 자동연동)
   },
   // 방문자 통계 — 측정 ID만 채우면 head에 자동 삽입됨 (코드 수정 불필요)
   analytics: {
-    ga4: '',          // 예: 'G-XXXXXXXXXX' (구글 애널리틱스 4 측정 ID)
-    naverWcs: '',     // 네이버 애널리틱스 wcs_add['wa'] 값 (예: 'xxxxxxxxxxxxxx')
+    ga4: 'G-GW5BCWPZZ4',        // 구글 애널리틱스 4 측정 ID
+    naverWcs: '25670873e0f56c0', // 네이버 애널리틱스 wcs_add['wa'] 값
   },
   // 사업자 정보 (푸터) — 사업자등록증 기준
   business: {

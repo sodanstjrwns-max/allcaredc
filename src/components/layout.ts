@@ -347,6 +347,7 @@ export function headTags(meta: Meta) {
     <meta name="theme-color" content="#062741" />
     ${CLINIC.siteVerification.google ? raw(`<meta name="google-site-verification" content="${CLINIC.siteVerification.google}" />`) : ''}
     ${CLINIC.siteVerification.naver ? raw(`<meta name="naver-site-verification" content="${CLINIC.siteVerification.naver}" />`) : ''}
+    ${(CLINIC.siteVerification as any).naver2 ? raw(`<meta name="naver-site-verification" content="${(CLINIC.siteVerification as any).naver2}" />`) : ''}
     ${CLINIC.siteVerification.bing ? raw(`<meta name="msvalidate.01" content="${CLINIC.siteVerification.bing}" />`) : ''}
     <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/static/img/favicon-32.png" sizes="32x32" type="image/png" />
@@ -371,6 +372,6 @@ export function headTags(meta: Meta) {
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" /></noscript>
     ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('')) : ''}
     ${(CLINIC as any).analytics?.ga4 ? raw(`<script async src="https://www.googletagmanager.com/gtag/js?id=${(CLINIC as any).analytics.ga4}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${(CLINIC as any).analytics.ga4}');</script>`) : ''}
-    ${(CLINIC as any).analytics?.naverWcs ? raw(`<script src="//wcs.naver.net/wcslog.js"></script><script>if(!wcs_add)var wcs_add={};wcs_add["wa"]="${(CLINIC as any).analytics.naverWcs}";if(window.wcs){wcs_do();}</script>`) : ''}
+    ${(CLINIC as any).analytics?.naverWcs ? raw(`<script src="//wcs.pstatic.net/wcslog.js"></script><script>if(!wcs_add)var wcs_add={};wcs_add["wa"]="${(CLINIC as any).analytics.naverWcs}";if(window.wcs){wcs_do();}</script>`) : ''}
   `
 }
