@@ -90,7 +90,9 @@
 - **배포**: `npm run build && npx wrangler pages deploy dist --project-name allcare-dental`
 - **운영 시크릿(미설정, 추후 주입 예정)**: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL` → `wrangler pages secret put <KEY> --project-name allcare-dental`
 - **남은 작업**: 운영 시크릿 주입(ADMIN_PASSWORD 등), GA4/서치콘솔/네이버 등록
-- **최종 업데이트**: 2026-06-24 (상호 `365올케어치과의원`→`올케어치과의원` 정리 / 서체 명조 절제(제목 고딕화·명조는 헤드라인 한정) / 병원소개 재구성 — 핵심진료 전면 배치 + 일반진료 별도 동선 + 2대(父子) 서사 보조 톤 강등 / 섹션 번호 체계 재정렬)
+- **최종 업데이트**: 2026-08-10 (PPTX 3차 S2~S11 반영: 히어로 행간·여백 확대(S2) / 의료진 프로필 사진 배수현 기준 사이즈 통일 — `imgPos` scale(S3) / 문단 줄바꿈 헬퍼 `br-pc`·`br-mo` + `word-break:keep-all`(S4) / 진료시간·휴게시간 점심12:30-14:00·저녁17:30-18:00·토일공휴일 점심X(S5·S11) / 예약완료 '전화하기' 골드 버튼(S7) / 공지 ※중요 강조(S8) / "남성 환자분" 표기(S9) / sitemap 점검 OK(S10))
+  - ⏳ **S6 CONTINUITY OF CARE**: 문구는 반영 완료, 교체 사진은 원장님 제공(구글드라이브) 대기 → 파일 수령 시 `clinic.ts`의 `familyStory.photo`만 교체
+- **이전 업데이트**: 2026-06-24 (상호 정리 / 서체 명조 절제 / 병원소개 재구성 / 섹션 번호 재정렬)
   - ⚠️ **미해결**: SNS 핸들 `365allcare`(인스타)·`365allcaredc`(블로그)는 실제 계정 주소라 미변경 — 새 계정 주소 확정 시 `src/data/clinic.ts`의 `sns.instagram`/`sns.blog` 교체 필요
 
 ## 스크립트
