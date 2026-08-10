@@ -155,6 +155,7 @@ export const CLINIC = {
       '2026년 4월 올케어치과 합류 ― 기존 진료 기록·치료 이력 그대로 이어서 케어',
     ],
     callout: '명예원장 합류를 계기로 병원 운영 방향도 더 지속 가능한 구조로 조정했습니다. 무리한 진료량보다 안정적인 환자 케어와 오래가는 진료 시스템을 우선하며, 격주 일요일 휴진을 도입했습니다.',
+    // §S6 TODO: 원장님 제공 사진(구글드라이브)으로 교체 예정 — 파일 전달 시 이 경로만 교체
     photo: '/static/img/about-exterior.webp',
     photoCaption: '약수역 5번 출구 도보 1분 · 365 올케어치과의원',
   },
@@ -360,8 +361,8 @@ export const DOCTORS: Doctor[] = [
     ],
     // §B 필터: 약점(심미/라미네이트) 노출 X → 강점(수술·외과·교수경력) 리프레이밍. 철학은 자료 원문
     intro: '어려운 치료도, 환자분이 이해하고 안심할 수 있게 설명하는 것을 목표로 합니다. 구강악안면외과 전문의로서 고난도 임플란트 수술, 매복 사랑니, 턱관절 등 외과 영역에 깊이를 두고, 경희대학교 치과병원 외래교수로 후학을 가르쳐 온 경험을 진료에 녹여냅니다. 통합치의학과 전문의 관점에서 입안 전체의 상태를 함께 살펴 오래 안정적인 치료를 지향하며, 환자가 두려워하는 진료일수록 더 차분하고 정밀하게 다가가고, 필요한 경우 의식하진정법(수면치료)을 병행해 불안과 부담을 줄입니다.',
-    photo: '/static/img/kwon-minsu-profile.webp',
-    imgPos: 'object-position:center 18%;transform:scale(1.28);transform-origin:center 20%',   // §S3: 인물이 작고 멀어 확대(scale)로 배수현 기준 프레이밍에 맞춤
+    imgPos: 'object-position:center 16%;transform:scale(1.45);transform-origin:center 12%',   // §S3: 인물이 작고 멀어 확대(scale)로 배수현 기준 프레이밍에 맞춤
+    imgPos: 'object-position:center 18%;transform:scale(1.35);transform-origin:center 22%',   // §S3: 인물이 작고 멀어 확대(scale)로 배수현 기준 프레이밍에 맞춤
     isHead: true,
   },
   {
