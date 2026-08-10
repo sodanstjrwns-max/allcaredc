@@ -162,7 +162,7 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
 
 // 미니 우화 한 줄: "옥수동 50대 K님의 4개월" 식의 스토리 타이틀 (§B: 사실 정보만 조합)
 function storyLine(c: CaseItem): string {
-  const who = [c.region, c.ageGroup, c.gender ? c.gender + '님' : '님'].filter(Boolean).join(' ')
+  const who = [c.region, c.ageGroup, c.gender ? c.gender + ' 환자분' : '환자분'].filter(Boolean).join(' ')
   const span = c.period ? `의 ${c.period}` : '의 이야기'
   return who ? `${who}${span}` : c.title
 }

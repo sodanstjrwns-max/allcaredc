@@ -44,8 +44,8 @@ export function NoticeIndex(notices: Notice[]) {
         <div class="notice-list reveal">
           ${raw(sorted.map(n => `
             <a href="/notice/${n.id}">
-              <span style="flex:1;display:flex;align-items:center">${n.pinned ? '<span class="pin">중요</span>' : ''}<span style="font-weight:600">${n.title}</span></span>
-              <span class="date">${new Date(n.createdAt).toLocaleDateString('ko-KR')}</span>
+              <span style="flex:1;display:flex;align-items:center">${n.pinned ? '<span class="pin">※중요</span>' : ''}<span style="font-weight:${n.pinned ? '800' : '600'};letter-spacing:${n.pinned ? '-.2px' : 'normal'};color:${n.pinned ? 'var(--navy-900,#062741)' : 'inherit'}">${n.title}</span></span>
+              <span class="date">${new Date(n.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</span>
             </a>`).join(''))}
         </div>
       `}

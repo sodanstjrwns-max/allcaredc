@@ -1723,6 +1723,13 @@ select.res-mini { background:#fff; }
   border-bottom: 1px solid var(--line); transition: background .25s var(--ease);
 }
 .notice-list a:hover { background: var(--ivory-2); }
+.notice-list .pin {
+  display: inline-flex; align-items: center; flex-shrink: 0;
+  background: var(--gold-600, #b08d57); color: #fff;
+  font-size: 12px; font-weight: 800; letter-spacing: .3px;
+  padding: 3px 9px; border-radius: 5px; margin-right: 10px;
+  box-shadow: 0 2px 6px -2px rgba(176,141,87,.5);
+}
 
 /* ============================================================
    RESPONSIVE

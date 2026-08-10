@@ -435,11 +435,16 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
                 <span style="color:var(--gray-600);font-family:var(--font-disp)">${h.time}</span>
               </div>`).join(''))}
             <div style="display:flex;justify-content:space-between;padding:15px 22px;background:var(--ivory-2)">
-              <span style="font-weight:600;color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심 휴게</span>
+              <span style="font-weight:600;color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심시간</span>
               <span style="color:var(--gray-600);font-family:var(--font-disp)">${CLINIC.lunch}</span>
             </div>
+            <div style="display:flex;justify-content:space-between;padding:15px 22px;background:var(--ivory-2);border-top:1px solid var(--line-soft)">
+              <span style="font-weight:600;color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 저녁시간</span>
+              <span style="color:var(--gray-600);font-family:var(--font-disp)">${CLINIC.dinner}</span>
+            </div>
           </div>
-          <p style="margin-top:14px;font-size:14px;color:var(--gray-600)"><i class="fa-solid fa-circle-info text-mint"></i> ${CLINIC.hoursNote}</p>
+          <p style="margin-top:14px;font-size:13px;color:var(--gray-500)"><i class="fa-solid fa-circle-info text-mint"></i> 토·일·공휴일은 점심시간 없이 진료합니다.</p>
+          <p style="margin-top:8px;font-size:14px;color:var(--gray-600)"><i class="fa-solid fa-circle-info text-mint"></i> ${CLINIC.hoursNote}</p>
           <p style="margin-top:10px;font-size:13px;color:var(--gray-500);line-height:1.6"><i class="fa-solid fa-square-parking text-mint"></i> <strong>주차 안내</strong> — 건물 기계식 주차 운영. 전기차·대형 SUV는 기계식 주차가 어려워 인근 공영주차장 이용을 권장드립니다.</p>
         </div>
         <div class="reveal reveal-d2">

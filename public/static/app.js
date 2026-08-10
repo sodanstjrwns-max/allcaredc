@@ -690,7 +690,7 @@
             done.innerHTML = '<div class="rd-icon"><i class="fa-solid fa-circle-check"></i></div>'
               + '<h3>예약 문의가 접수되었습니다</h3>'
               + '<p>진료시간 내에 순차적으로 연락드리겠습니다.<br>급하신 경우 <a href="tel:0222322911">02-2232-2911</a>로 바로 전화 주세요.</p>'
-              + '<div class="rd-actions"><a href="/" class="btn btn-outline">홈으로</a><a href="tel:0222322911" class="btn btn-primary"><i class="fa-solid fa-phone"></i> 바로 전화하기</a></div>';
+              + '<div class="rd-actions"><a href="/" class="btn btn-outline">홈으로</a><a href="tel:0222322911" class="btn" style="background:#b08d57;color:#fff;border:1px solid #b08d57;font-weight:700"><i class="fa-solid fa-phone"></i> 바로 전화하기</a></div>';
             form.style.display = 'none';
             card.appendChild(done);
           }

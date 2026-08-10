@@ -385,7 +385,7 @@ export function DirectionsPage() {
             <h3><i class="fa-solid fa-car text-mint"></i> 자가용 · 주차 안내</h3>
             <p>건물은 <strong>기계식 주차장</strong>을 운영합니다. 다만 <strong>전기차와 대형 SUV는 기계식 주차가 어려워</strong>, 해당 차량은 <strong>인근 공영주차장 이용</strong>을 권장드립니다. 주차 공간이 한정되어 있으니, 방문 전 전화(<a href="tel:${CLINIC.phoneRaw}">${CLINIC.phone}</a>)로 주차 가능 여부를 확인해 주시면 정확히 안내해 드립니다.</p>
             <h3><i class="fa-solid fa-clock text-mint"></i> 진료시간 안내</h3>
-            <p>월·화·목요일은 09:30~20:30 야간진료, <strong>수·금요일은 09:30~18:30</strong>까지 진료합니다. 토·일·공휴일은 09:30~14:00(일요일 격주)이며, 평일 <strong>점심 휴게시간은 ${CLINIC.lunch}</strong>입니다. 진료시간은 변동될 수 있으니, 방문 전 전화로 확인해 주시면 정확히 안내해 드립니다.</p>
+            <p>월·화·목요일은 09:30~20:30 야간진료, <strong>수·금요일은 09:30~18:30</strong>까지 진료합니다. 토·일·공휴일은 09:30~14:00(일요일 격주)이며, 평일 <strong>점심시간은 ${CLINIC.lunch}</strong>, <strong>저녁시간은 ${CLINIC.dinner}</strong>입니다. <strong>토·일·공휴일은 점심시간 없이 진료</strong>합니다. 진료시간은 변동될 수 있으니, 방문 전 전화로 확인해 주시면 정확히 안내해 드립니다.</p>
           </div>
         </div>
         <aside class="reveal reveal-d2">
@@ -399,8 +399,9 @@ export function DirectionsPage() {
           <div class="inlink-box">
             <h4><i class="fa-solid fa-clock text-mint"></i> 진료시간</h4>
             ${raw(CLINIC.hours.map(h => `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="font-weight:${h.night ? '700' : '400'};color:${h.night ? 'var(--brand)' : 'inherit'}">${h.day}</span><span style="color:var(--gray-600)">${h.time}</span></div>`).join(''))}
-            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심 휴게</span><span style="color:var(--gray-600)">${CLINIC.lunch}</span></div>
-            <p style="font-size:12.5px;color:var(--gray-400);margin-top:10px">${CLINIC.hoursNote}</p>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심시간</span><span style="color:var(--gray-600)">${CLINIC.lunch}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 저녁시간</span><span style="color:var(--gray-600)">${CLINIC.dinner}</span></div>
+            <p style="font-size:12.5px;color:var(--gray-400);margin-top:10px">토·일·공휴일은 점심시간 없이 진료합니다.<br>${CLINIC.hoursNote}</p>
           </div>
           <div class="inlink-box">
             <h4><i class="fa-solid fa-square-parking text-mint"></i> 주차 안내</h4>
