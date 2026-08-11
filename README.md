@@ -90,7 +90,8 @@
 - **배포**: `npm run build && npx wrangler pages deploy dist --project-name allcare-dental`
 - **운영 시크릿(미설정, 추후 주입 예정)**: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL` → `wrangler pages secret put <KEY> --project-name allcare-dental`
 - **남은 작업**: 운영 시크릿 주입(ADMIN_PASSWORD 등), GA4/서치콘솔/네이버 등록
-- **최종 업데이트**: 2026-08-10 (PPTX 3차 S2~S11 반영: 히어로 행간·여백 확대(S2) / 의료진 프로필 사진 배수현 기준 사이즈 통일 — `imgPos` scale(S3) / 문단 줄바꿈 헬퍼 `br-pc`·`br-mo` + `word-break:keep-all`(S4) / 진료시간·휴게시간 점심12:30-14:00·저녁17:30-18:00·토일공휴일 점심X(S5·S11) / 예약완료 '전화하기' 골드 버튼(S7) / 공지 ※중요 강조(S8) / "남성 환자분" 표기(S9) / sitemap 점검 OK(S10))
+- **트래킹/통계**: GA4 `G-GW5BCWPZZ4` / 네이버 애널리틱스 `25670873e0f56c0`(wcs.pstatic.net) / 네이버 소유확인 2건(`549621…`+`8904bf63…`) / **Meta 픽셀 `918552201020610`** — 공통 `PageView`, 세부페이지(`/treatments|encyclopedia|doctors|column|events|notice/:slug`) 자동 `Lead_custom`, 예약·문의 버튼 클릭 이벤트 위임(`Contact_custom`+`Contact_tel|kakao|naver`, 폼 제출 시 `Contact_custom`). 값은 모두 `clinic.ts`의 `analytics`/`siteVerification`에서 관리.
+- **최종 업데이트**: 2026-08-11 (Meta 픽셀 설치 + GA4·네이버 애널리틱스·네이버 소유확인 추가 태그 반영) / 2026-08-10 (PPTX 3차 S2~S11 반영: 히어로 행간·여백 확대(S2) / 의료진 프로필 사진 배수현 기준 사이즈 통일 — `imgPos` scale(S3) / 문단 줄바꿈 헬퍼 `br-pc`·`br-mo` + `word-break:keep-all`(S4) / 진료시간·휴게시간 점심12:30-14:00·저녁17:30-18:00·토일공휴일 점심X(S5·S11) / 예약완료 '전화하기' 골드 버튼(S7) / 공지 ※중요 강조(S8) / "남성 환자분" 표기(S9) / sitemap 점검 OK(S10))
   - ⏳ **S6 CONTINUITY OF CARE**: 문구는 반영 완료, 교체 사진은 원장님 제공(구글드라이브) 대기 → 파일 수령 시 `clinic.ts`의 `familyStory.photo`만 교체
 - **이전 업데이트**: 2026-06-24 (상호 정리 / 서체 명조 절제 / 병원소개 재구성 / 섹션 번호 재정렬)
   - ⚠️ **미해결**: SNS 핸들 `365allcare`(인스타)·`365allcaredc`(블로그)는 실제 계정 주소라 미변경 — 새 계정 주소 확정 시 `src/data/clinic.ts`의 `sns.instagram`/`sns.blog` 교체 필요
