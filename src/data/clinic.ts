@@ -266,6 +266,7 @@ export const CLINIC = {
   analytics: {
     ga4: 'G-GW5BCWPZZ4',        // 구글 애널리틱스 4 측정 ID
     naverWcs: '25670873e0f56c0', // 네이버 애널리틱스 wcs_add['wa'] 값
+    metaPixel: '918552201020610', // Meta(페이스북) 픽셀 ID — 빈 값이면 미설치
   },
   // 사업자 정보 (푸터) — 사업자등록증 기준
   business: {

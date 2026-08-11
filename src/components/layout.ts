@@ -309,11 +309,20 @@ export type Meta = {
   noindex?: boolean
   keywords?: string
   preloadImage?: string  // LCP 이미지 preload (성능 최적화)
+  isDetail?: boolean     // §Meta픽셀: 시술/진료 세부페이지 여부 → Lead_custom 이벤트 추가 (미지정 시 path로 자동 판별)
+}
+
+// §Meta픽셀: 세부페이지(상세) 판별 — slug가 붙는 상세 URL이면 Lead_custom 대상
+// /treatments/xxx, /encyclopedia/xxx, /doctors/xxx, /column/xxx, /cases 등
+function isDetailPath(path: string): boolean {
+  return /^\/(treatments|encyclopedia|doctors|column|events|notice)\/[^/]+/.test(path)
 }
 
 export function headTags(meta: Meta) {
   const url = `https://${CLINIC.domain}${meta.path}`
   const og = meta.ogImage || `https://${CLINIC.domain}/static/img/og.jpg`
+  const pixelId = (CLINIC as any).analytics?.metaPixel as string | undefined
+  const isDetail = meta.isDetail ?? isDetailPath(meta.path)
   return html`
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -373,5 +382,22 @@ export function headTags(meta: Meta) {
     ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('')) : ''}
     ${(CLINIC as any).analytics?.ga4 ? raw(`<script async src="https://www.googletagmanager.com/gtag/js?id=${(CLINIC as any).analytics.ga4}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${(CLINIC as any).analytics.ga4}');</script>`) : ''}
     ${(CLINIC as any).analytics?.naverWcs ? raw(`<script src="//wcs.pstatic.net/wcslog.js"></script><script>if(!wcs_add)var wcs_add={};wcs_add["wa"]="${(CLINIC as any).analytics.naverWcs}";if(window.wcs){wcs_do();}</script>`) : ''}
+    ${pixelId ? raw(`<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${pixelId}');
+fbq('track', 'PageView');${isDetail ? `\nfbq('track', 'Lead_custom');` : ''}
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->`) : ''}
   `
 }

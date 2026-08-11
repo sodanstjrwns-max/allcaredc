@@ -1185,3 +1185,51 @@
   lb.addEventListener('click', function (e) { if (e.target.hasAttribute('data-cl-close')) closeLb(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
 })();
+
+/* ============================================================
+   §Meta 픽셀 — 예약·문의 버튼 클릭 이벤트 (이벤트 위임)
+   요청서 3번: 버튼마다 [공통 이벤트 + 채널 이벤트] 세트로 발화.
+   이벤트명 철자/대소문자는 요청서 그대로 (수정 금지).
+   fbq 미로드 시(픽셀 미설치) 조용히 무시 → 안전.
+   ============================================================ */
+(function () {
+  'use strict';
+  function fire() {
+    if (typeof window.fbq !== 'function') return;
+    for (var i = 0; i < arguments.length; i++) {
+      try { window.fbq('track', arguments[i]); } catch (e) {}
+    }
+  }
+  // 채널 판별: href 기준
+  function channelOf(a) {
+    var href = (a.getAttribute('href') || '').toLowerCase();
+    if (href.indexOf('tel:') === 0) return 'tel';
+    if (href.indexOf('pf.kakao.com') > -1 || href.indexOf('kakao') > -1 && href.indexOf('open') > -1) return 'kakao';
+    if (href.indexOf('naver.me') > -1 || href.indexOf('booking.naver') > -1 || href.indexOf('m.booking.naver') > -1) return 'naver';
+    // 클래스/텍스트 보조 판별
+    var cls = (a.className || '') + ' ' + (a.textContent || '');
+    if (/kakao|카카오/i.test(cls)) return 'kakao';
+    if (/네이버\s*예약|naver/i.test(cls)) return 'naver';
+    return null;
+  }
+  // 전역 클릭 위임 — 모든 예약/문의 링크 커버 (헤더/푸터/CTA/플로팅바 등 전부)
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a');
+    if (!a) return;
+    var ch = channelOf(a);
+    if (ch === 'tel')   fire('Contact_custom', 'Contact_tel');
+    else if (ch === 'kakao') fire('Contact_custom', 'Contact_kakao');
+    else if (ch === 'naver') fire('Contact_custom', 'Contact_naver');
+  }, true);
+
+  // 자체 예약/문의 폼 제출 → Contact_custom 1개
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form || form.tagName !== 'FORM') return;
+    // 예약/문의 성격의 폼만 (로그인/검색 폼 제외)
+    var isReserve = /reserv|booking|inquiry|contact|문의|예약/i.test(
+      (form.id || '') + ' ' + (form.className || '') + ' ' + (form.getAttribute('action') || '')
+    );
+    if (isReserve) fire('Contact_custom');
+  }, true);
+})();
