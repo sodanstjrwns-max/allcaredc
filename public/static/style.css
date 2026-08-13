@@ -1025,8 +1025,9 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 }
 .np-card {
   position: relative; width: 100%; max-width: 420px;
+  max-height: 92vh; overflow-y: auto;   /* 세로 포스터가 커도 카드가 화면을 넘지 않도록 */
   background: var(--ivory, #fffeee); border-radius: var(--radius-lg, 4px);
-  box-shadow: 0 24px 60px rgba(6, 39, 65, .4); overflow: hidden;
+  box-shadow: 0 24px 60px rgba(6, 39, 65, .4);
   animation: npRise .38s cubic-bezier(.2, .8, .2, 1);
 }
 @keyframes npFade { from { opacity: 0 } to { opacity: 1 } }
@@ -1038,8 +1039,9 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
   display: flex; align-items: center; justify-content: center; transition: background .25s;
 }
 .np-x:hover { background: rgba(6, 39, 65, .82); }
-.np-img { display: block; }
-.np-img img { display: block; width: 100%; max-height: 240px; object-fit: cover; }
+.np-img { display: block; background: #f4efe3; }
+/* A4(세로) 포스터 잘림 방지: cover→contain + 넉넉한 높이. 이미지 전체가 보이도록 */
+.np-img img { display: block; width: 100%; max-height: 68vh; object-fit: contain; }
 .np-body { padding: 26px 28px 18px; }
 .np-label {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1068,7 +1070,7 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 .np-close-text:hover { text-decoration: underline; }
 @media (max-width: 480px) {
   .np-card { max-width: 100%; }
-  .np-img img { max-height: 180px; }
+  .np-img img { max-height: 62vh; }
   .np-body { padding: 22px 22px 14px; }
   .np-foot { padding: 12px 22px 14px; }
 }

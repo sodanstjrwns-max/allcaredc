@@ -486,7 +486,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   `
 
   const meta = {
-    title: '올케어치과 | 약수역 임플란트·교정·심미보철 치과 전문의 협진',
+    title: '올케어치과 | 약수역 임플란트·교정·심미보철·수면치료·전문의 협진 시스템',
     description: '약수역 5번 출구 올케어치과. 치과 전문의 협진 시스템으로 임플란트·치아교정·심미보철·일반진료를 진단부터 살핍니다. 수면진료·야간진료 운영.',
     path: '/',
     ogImage: `https://${CLINIC.domain}/og/home/main.svg`,
