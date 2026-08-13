@@ -1,5 +1,5 @@
 import { html, raw } from 'hono/html'
-import { CLINIC, TREATMENTS, DOCTORS } from '../data/clinic'
+import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName } from '../data/clinic'
 import { eventStatus } from './event'
 
 // 관리자 셸 (사이드바)
@@ -374,7 +374,7 @@ export function AdminColumns(items: any[], views: Record<string, number> = {}) {
       <table><thead><tr><th>작성일</th><th>제목</th><th>진료</th><th>작성자</th><th>조회수</th><th>상태</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(c => `<tr>
         <td>${new Date(c.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
-        <td><strong>${c.title}</strong></td><td>${TREATMENTS.find(t=>t.slug===c.category)?.name||'-'}</td>
+        <td><strong>${c.title}</strong></td><td>${columnCategoryName(c.category)}</td>
         <td>${DOCTORS.find(d=>d.slug===c.author)?.name||'-'}</td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
         <td><span class="badge ${c.published?'new':'done'}">${c.published?'게시':'임시'}</span></td>
@@ -494,7 +494,7 @@ export function AdminColumnForm(col?: any) {
           <div class="admin-card">
             <h3 style="margin:0 0 14px;font-size:1.05rem"><i class="fa-solid fa-gear" style="color:var(--gold,#b08d57)"></i> 발행 설정</h3>
             <div class="field"><label>진료 카테고리 <span class="req">*</span></label>
-              <select name="category" required>${raw(TREATMENTS.map(t => `<option value="${t.slug}" ${c.category === t.slug ? 'selected' : ''}>${t.name}</option>`).join(''))}</select></div>
+              <select name="category" required>${raw(COLUMN_CATEGORIES.map(t => `<option value="${t.slug}" ${c.category === t.slug ? 'selected' : ''}>${t.name}</option>`).join(''))}</select></div>
             <div class="field"><label>작성자(원장) <span class="req">*</span></label>
               <select name="author" required>${raw(DOCTORS.map(d => `<option value="${d.slug}" ${c.author === d.slug ? 'selected' : ''}>${d.name} ${d.role}</option>`).join(''))}</select></div>
             <div class="field"><label>대표(썸네일) 이미지 <span style="font-weight:500;color:var(--gray-400);font-size:12px">권장 1200×630px (카드·카톡·SNS 공유 공통)</span></label>
@@ -722,7 +722,7 @@ export function AdminNotices(items: any[], views: Record<string, number> = {}) {
         const popupLive = n.popup && (!n.popupUntil || n.popupUntil >= today)
         const popupExpired = n.popup && n.popupUntil && n.popupUntil < today
         const popupCell = popupLive
-          ? `<span class="badge new" style="background:#1f7a4d">노출중${n.popupUntil ? ` <span style="opacity:.8">~${n.popupUntil}</span>` : ''}</span>`
+          ? `<span class="badge new" style="background:var(--gold,#b08d57);color:#fffdf5">노출중${n.popupUntil ? ` <span style="opacity:.85">~${n.popupUntil}</span>` : ''}</span>`
           : popupExpired ? `<span class="badge" style="background:#aaa;color:#fff">만료</span>` : '-'
         return `<tr>
         <td>${new Date(n.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td><td><strong>${n.title}</strong></td>

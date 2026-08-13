@@ -1,7 +1,7 @@
 import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
-import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment } from '../data/clinic'
+import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName } from '../data/clinic'
 
 export type ColumnFAQ = { q: string; a: string }
 
@@ -24,7 +24,7 @@ export type Column = {
   updatedAt: number
 }
 
-const txName = (s: string) => getTreatment(s)?.name || s
+const txName = (s: string) => columnCategoryName(s)
 const docName = (s: string) => getDoctor(s)?.name || ''
 
 // §S7: 날짜 버그 방어 — createdAt이 없거나 1970-01-01 이전(0·undefined·Invalid)이면

@@ -26,7 +26,7 @@ export function DoctorsIndex() {
               <span class="role">${d.role}</span>
               <h2>${d.name}</h2>
               <p class="title-line">${d.titleLine}</p>
-              <p class="doc-career">${d.career[0]}</p>
+              <p class="doc-career">${d.cardLine || d.career[0]}</p>
               <div class="doc-tags">
                 ${d.treatItems.map(t => `<span>${t}</span>`).join('')}
               </div>
@@ -109,14 +109,14 @@ export function DoctorDetail(slug: string) {
           <div class="prose">
             <div class="answer-box" style="font-size:1.1rem">${d.intro}</div>
 
-            <h3><i class="fa-solid fa-graduation-cap text-mint"></i> 학력</h3>
-            <ul class="check">
-              ${raw(d.education.map(e => `<li>${e}</li>`).join(''))}
-            </ul>
-
             <h3><i class="fa-solid fa-briefcase-medical text-mint"></i> 경력 · 수련</h3>
             <ul class="check">
               ${raw(d.career.map(c => `<li>${c}</li>`).join(''))}
+            </ul>
+
+            <h3><i class="fa-solid fa-graduation-cap text-mint"></i> 학력</h3>
+            <ul class="check">
+              ${raw(d.education.map(e => `<li>${e}</li>`).join(''))}
             </ul>
           </div>
         </article>

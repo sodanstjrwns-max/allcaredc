@@ -245,7 +245,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         </div>
         <div class="lab-grid">
           <figure class="lab-cell lab-cell--wide">
-            <img src="/static/img/lab-cad.webp" alt="원내 기공실 CAD 보철 설계 모니터 — 3Shape 디지털 디자인" loading="lazy">
+            <img src="/static/img/lab-cad.webp" alt="원내 기공실 상주 기공사가 3Shape CAD 프로그램으로 보철물을 디지털 디자인하는 모습" loading="lazy">
             <figcaption>CAD 보철 설계 — 디지털 디자인</figcaption>
           </figure>
           <figure class="lab-cell">
@@ -261,7 +261,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
             <figcaption>3D 프린팅</figcaption>
           </figure>
           <figure class="lab-cell">
-            <img src="/static/img/lab-scan.webp" alt="원내 기공실 디지털 스캐너" loading="lazy">
+            <img src="/static/img/lab-scan.webp" alt="구강 스캐너로 환자의 치아를 디지털 스캔해 모니터에 3D로 확인하는 모습" loading="lazy">
             <figcaption>디지털 스캔</figcaption>
           </figure>
         </div>

@@ -146,8 +146,10 @@ export const CLINIC = {
     title: '끊김 없는 진료,<br class="br-pc"> 믿고 이어올 수 있는 곳',
     boxNote: "‘2대 부자 진료’는 저희가 내세우는 메인 컨셉이 아니라, 환자분들께 진료의 연속성과 안심을 드리는 서브 스토리입니다.",
     paras: [
+      // §D4: 요청자료-3(02·CONTINUITY OF CARE) 본문 반영
+      '오랜 임상 경험과 전문의의 세심한 진료가 만나, 기존 치료 이력부터 앞으로의 관리 방향까지 함께 살핍니다. 서울대학교를 졸업하고 치의학박사 학위를 취득한 권종진 명예원장은 고려대병원 구강외과 교수로 30년 이상 재직한 뒤, 약수역 인근에서 꾸준히 진료를 이어왔습니다.',
+      '권종진 명예원장의 축적된 임상 경험과 구강악안면외과·통합치의학과 더블보드 전문의인 권민수 대표원장의 세심한 진료를 바탕으로, 기존 치료 이력과 관리 방향까지 면밀히 살피는 일관된 통합진료를 이어갑니다.',
       '저희가 가장 중요하게 생각하는 가치는 단순히 “부자가 함께 진료한다”는 사실 자체가 아닙니다. 오랜 기간 한 원장님을 믿고 다녀오신 환자분들이 낯선 병원으로 흩어지지 않고, 아들이 책임감을 가지고 이어서 케어해드릴 수 있다는 점 ― 진료의 연속성입니다.',
-      '그래서 화려한 약속보다 환자 한 분 한 분의 불편함을 끝까지 들여다보는 일을 먼저 합니다. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과 ― 그것이 지역 안에서 인정받고 오래 머무는 길이라 믿습니다.',
     ],
     facts: [
       '고려대병원 구강외과 교수 약 30년',
@@ -295,6 +297,7 @@ export type Doctor = {
   photo: string
   imgPos?: string   // §S3: 카드 프로필 사진 크롭 통일용 (object-position / transform scale)
   isHead?: boolean
+  cardLine?: string  // §D1: 카드 3번째 줄 표기(미지정 시 career[0] 사용) — 학력·대표직함 요약
 }
 
 // §S9/S17 요청: 노출 순서 권종진(명예원장) → 권민수(대표원장) → 배수현(보철과 원장)
@@ -308,7 +311,6 @@ export const DOCTORS: Doctor[] = [
     treatItems: ['임플란트', '골이식', '턱관절', '주사치료'],  // §S8
     // §L: 추가자료.docx 원문. §B: 방송 출연·"명의/베스트닥터" 비노출, 교수·학회직 등 검증 가능 사실만
     career: [
-      '서울대학교 치과대학 동문',
       '고려대학교 의과대학 명예교수',
       '일본 도쿄의치과대학 교환교수',
       '미국 하버드 치과대학 교환교수',
@@ -328,6 +330,7 @@ export const DOCTORS: Doctor[] = [
     intro: '오랜 경험으로, 환자분께 더 편안한 치료 방향을 제안하는 것을 목표로 합니다. 고려대학교 의과대학에서 약 30년간 구강악안면외과를 가르치고 진료해 왔으며, 이후 약수역 인근 지역에서 오래 환자를 돌봐 온 경험을 바탕으로 임플란트와 턱관절 분야에 깊이를 두고 있습니다. 2026년 4월 올케어치과에 합류해, 오래 다니신 환자분들의 진료 기록과 치료 이력을 그대로 이어 케어합니다. 환자분의 불편을 줄이고 오래 안정적으로 사용할 수 있는 치료를 지향합니다.',
     photo: '/static/img/kwon-jongjin.webp',
     imgPos: 'object-position:center 22%',   // §S3: 얼굴이 큰 편 → 위쪽 여백 확보로 배수현 기준에 맞춤
+    cardLine: '서울대학교 치의학박사 · 고려대학교 의과대학 명예교수',  // §D1: 카드 3번째 줄
   },
   {
     slug: 'kwon-minsu',
@@ -339,7 +342,7 @@ export const DOCTORS: Doctor[] = [
     // §L: 신청서 원문(추가자료.docx) 그대로 — 검증 가능한 자격·학회 사실만. §B: 방송·"명의" 비노출
     career: [
       '경희대학교 치과병원 구강악안면외과 외래교수',
-      '경희대학교 치과병원 구강악안면외과 레지던트 수련',
+      '경희대학교 치과병원 구강악안면외과 레지던트',
       '경희의료원 마취통증의학과 · 응급의학과 연수',
       '대한악안면성형재건외과학회 인정의',
       '대한심미치과학회 인정의 (Fellow)',
@@ -363,7 +366,8 @@ export const DOCTORS: Doctor[] = [
     ],
     // §B 필터: 약점(심미/라미네이트) 노출 X → 강점(수술·외과·교수경력) 리프레이밍. 철학은 자료 원문
     intro: '어려운 치료도, 환자분이 이해하고 안심할 수 있게 설명하는 것을 목표로 합니다. 구강악안면외과 전문의로서 고난도 임플란트 수술, 매복 사랑니, 턱관절 등 외과 영역에 깊이를 두고, 경희대학교 치과병원 외래교수로 후학을 가르쳐 온 경험을 진료에 녹여냅니다. 통합치의학과 전문의 관점에서 입안 전체의 상태를 함께 살펴 오래 안정적인 치료를 지향하며, 환자가 두려워하는 진료일수록 더 차분하고 정밀하게 다가가고, 필요한 경우 의식하진정법(수면치료)을 병행해 불안과 부담을 줄입니다.',
-    imgPos: 'object-position:center 12%',   // §S3/§2차수정: transform:scale 제거(모바일 렌더 깨짐 원인) → object-position만으로 배수현 기준 프레이밍
+    photo: '/static/img/kwon-minsu-profile.webp',
+    imgPos: 'object-position:center 12%',   // §S3/§2차수정: transform:scale 제거(모바일 렌더 깨짐 원인) → object-position만으로 배수현 기준 프레이밍. §D2: photo 필드 복구(누락으로 카드 빈칸 렌더되던 버그)
     isHead: true,
   },
   {
@@ -376,7 +380,7 @@ export const DOCTORS: Doctor[] = [
     // §L: 추가자료.docx 원문 그대로. 철학은 자료 원문
     career: [
       '경북대학교 치과병원 치과보철과 외래교수',
-      '경북대학교 치과병원 치과보철과 레지던트 수련',
+      '경북대학교 치과병원 치과보철과 레지던트',
       '경북대학교 치과병원 치과보철과 인턴',
       '서울대학교 치의학대학원 교육연수원 임플란트 과정 수료',
       '대한치과보철학회(KAP) 정회원',
@@ -925,6 +929,39 @@ export const SUB_TREATMENTS = TREATMENTS.filter(t => !t.core).sort((a, b) => {
 
 export function getTreatment(slug: string) {
   return TREATMENTS.find(t => t.slug === slug)
+}
+
+// ============================================================
+// §D7: 칼럼 진료 카테고리 (칼럼 전용 — TREATMENTS와 분리)
+//   진료 페이지 slug를 그대로 쓰되, 칼럼에서만 쓰는 라벨/신설 카테고리를 여기서 관리.
+//   - 심미보철 → '심미치료' 로 표기(칼럼 한정)
+//   - '레진·인레이', '올케어 소식' 은 진료 페이지가 없는 칼럼 전용 신설 카테고리
+// ============================================================
+export type ColumnCategory = { slug: string; name: string }
+export const COLUMN_CATEGORIES: ColumnCategory[] = [
+  { slug: 'implant', name: '임플란트' },
+  { slug: 'ortho', name: '치아교정' },
+  { slug: 'esthetic', name: '심미치료' },          // §D7: 심미보철 → 심미치료
+  { slug: 'resin-inlay', name: '레진·인레이' },     // §D7: 신설
+  { slug: 'sleep', name: '수면치료' },
+  { slug: 'tmj', name: '턱관절' },
+  { slug: 'conservative', name: '충치·신경치료' },
+  { slug: 'gum', name: '잇몸치료' },
+  { slug: 'denture', name: '틀니' },
+  { slug: 'whitening', name: '미백' },
+  { slug: 'surgery', name: '구강외과·사랑니' },
+  { slug: 'news', name: '올케어 소식' },            // §D7: 신설
+]
+// 칼럼 카테고리 표기명 — 신설 카테고리 우선, 없으면 진료명 폴백
+// (구 seed 데이터의 영문 slug 별칭도 흡수해 영문 노출 방지)
+const COLUMN_CAT_ALIAS: Record<string, string> = {
+  periodontal: 'gum', orthodontics: 'ortho', prosthetics: 'esthetic',
+}
+export function columnCategoryName(slug: string): string {
+  const s = COLUMN_CAT_ALIAS[slug] || slug
+  return COLUMN_CATEGORIES.find(c => c.slug === s)?.name
+    || TREATMENTS.find(t => t.slug === s)?.name
+    || s
 }
 export function getDoctor(slug: string) {
   return DOCTORS.find(d => d.slug === slug)
