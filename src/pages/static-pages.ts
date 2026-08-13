@@ -104,7 +104,7 @@ export function MissionPage() {
     <div class="container">
       <div class="grid-2" style="align-items:center;gap:clamp(36px,5vw,72px)">
         <figure class="reveal about-figure">
-          <img src="/static/img/about-exterior.webp" alt="약수역 올케어치과의원 외관 — 4층 통유리 건물의 치과 간판" width="1200" height="795" loading="lazy">
+          <img src="${CLINIC.familyStory.photo}" alt="약수역 올케어치과의원 — 두 세대가 이어가는 진료" width="1200" height="795" loading="lazy">
           <figcaption>${CLINIC.familyStory.photoCaption}</figcaption>
         </figure>
         <div class="reveal reveal-d1">

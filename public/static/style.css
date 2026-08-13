@@ -3127,7 +3127,11 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 
 /* 2대 서사 보조 톤 — 시각 비중 낮춤(연한 배경) */
 .about-story-sub{ background:var(--ivory); }
-.about-story-sub .about-figure img{ filter:saturate(.96); }
+/* §S6: 두 세대 진료 컨셉 사진(권종진·권민수 + 약력) — 약력이 잘리지 않도록 전체 노출(contain) */
+.about-story-sub .about-figure img{
+  aspect-ratio:4/3; object-fit:contain; object-position:center;
+  background:#fbecdb; box-shadow:none;
+}
 
 @media (max-width:900px){
   .core-tx-grid{ grid-template-columns:repeat(2,1fr); }
