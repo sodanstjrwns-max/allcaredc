@@ -246,7 +246,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         <div class="lab-grid">
           <figure class="lab-cell lab-cell--wide">
             <img src="/static/img/lab-cad.webp" alt="원내 기공실 상주 기공사가 3Shape CAD 프로그램으로 보철물을 디지털 디자인하는 모습" loading="lazy">
-            <figcaption>CAD 보철 설계 — 디지털 디자인</figcaption>
+            <figcaption>디지털 디자인</figcaption>
           </figure>
           <figure class="lab-cell">
             <img src="/static/img/lab-mill.webp" alt="원내 기공실 지르코니아 밀링 머신" loading="lazy">

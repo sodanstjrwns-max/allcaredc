@@ -722,8 +722,8 @@ export function AdminNotices(items: any[], views: Record<string, number> = {}) {
         const popupLive = n.popup && (!n.popupUntil || n.popupUntil >= today)
         const popupExpired = n.popup && n.popupUntil && n.popupUntil < today
         const popupCell = popupLive
-          ? `<span class="badge new" style="background:var(--gold,#b08d57);color:#fffdf5">노출중${n.popupUntil ? ` <span style="opacity:.85">~${n.popupUntil}</span>` : ''}</span>`
-          : popupExpired ? `<span class="badge" style="background:#aaa;color:#fff">만료</span>` : '-'
+          ? `<span class="badge popup-live"><i class="fa-solid fa-bell" style="font-size:10px;margin-right:4px"></i>노출중${n.popupUntil ? ` <span style="opacity:.8;font-weight:600">~${n.popupUntil}</span>` : ''}</span>`
+          : popupExpired ? `<span class="badge popup-expired">만료</span>` : '-'
         return `<tr>
         <td>${new Date(n.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td><td><strong>${n.title}</strong></td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[n.id] || 0}</td>

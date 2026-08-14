@@ -1527,6 +1527,10 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 .badge.trying  { background: #fff4e0; color: #b06a00; }          /* 연락시도 = 주황 */
 .badge.confirm { background: var(--mint-tint); color: var(--mint-600); } /* 예약확정 = 민트 */
 .badge.done    { background: #eee; color: #777; }                /* 종결 = 회색 */
+/* 공지 팝업 상태 배지 — §N6: 골드+크림 대비 개선 */
+.badge.popup-live    { background: #eaf6ec; color: #1f7a3d; font-weight: 700; } /* 노출중 = 초록(활성) */
+.badge.popup-live i  { color: #1f7a3d; }
+.badge.popup-expired { background: #f0ede8; color: #8a7a5c; }    /* 만료 = 톤다운 베이지 */
 /* 미처리 경과시간 배지 (60분 노랑 / 4시간 빨강) */
 .elapsed { display:inline-block; margin-top:4px; padding:2px 8px; font-size:11px; font-weight:700; border-radius:var(--radius-pill); background:#f2f2f2; color:#888; }
 .elapsed.yellow { background:#fff3cd; color:#8a6d00; }
