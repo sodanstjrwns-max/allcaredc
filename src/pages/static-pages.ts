@@ -102,9 +102,9 @@ export function MissionPage() {
   <!-- ============ §B 진료의 연속성 (2대 父子) — 신뢰를 더하는 보조 톤으로 한 단계 강등 ============ -->
   <section class="section about-story-sub">
     <div class="container">
-      <div class="grid-2" style="align-items:center;gap:clamp(36px,5vw,72px)">
+      <div class="grid-2 continuity-grid" style="align-items:center;gap:clamp(36px,5vw,72px)">
         <figure class="reveal about-figure">
-          <img src="${CLINIC.familyStory.photo}" alt="약수역 올케어치과의원 — 두 세대가 이어가는 진료" width="1200" height="795" loading="lazy">
+          <img src="${CLINIC.familyStory.photo}" alt="약수역 올케어치과의원 — 두 세대가 이어가는 진료 · 권종진 명예원장 · 권민수 대표원장" width="2400" height="1800" loading="lazy">
           <figcaption>${CLINIC.familyStory.photoCaption}</figcaption>
         </figure>
         <div class="reveal reveal-d1">

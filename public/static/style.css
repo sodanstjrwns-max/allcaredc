@@ -3155,6 +3155,13 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
   aspect-ratio:4/3; object-fit:contain; object-position:center;
   background:#fbecdb; box-shadow:none;
 }
+/* §N4: 두 세대 진료 사진을 더 크게 — 이미지 컬럼을 텍스트보다 넓게(약 1.28:1),
+   고해상(2400x1800) 교체로 확대해도 화질 유지 */
+.continuity-grid{ grid-template-columns: 1.28fr 1fr; }
+.continuity-grid .about-figure img{ border-radius: var(--radius-lg); }
+@media (max-width:900px){
+  .continuity-grid{ grid-template-columns: 1fr; }
+}
 
 @media (max-width:900px){
   .core-tx-grid{ grid-template-columns:repeat(2,1fr); }
