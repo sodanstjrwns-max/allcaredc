@@ -3152,6 +3152,7 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 .about-story-sub{ background:var(--ivory); }
 /* §S6: 두 세대 진료 컨셉 사진(권종진·권민수 + 약력) — 약력이 잘리지 않도록 전체 노출(contain) */
 .about-story-sub .about-figure img{
+  width:100%; height:auto; display:block;
   aspect-ratio:4/3; object-fit:cover; object-position:center top;
   background:#fbecdb; box-shadow:var(--shadow);
 }
