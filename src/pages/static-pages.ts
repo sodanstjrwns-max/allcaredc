@@ -104,13 +104,12 @@ export function MissionPage() {
     <div class="container">
       <div class="grid-2 continuity-grid" style="align-items:center;gap:clamp(36px,5vw,72px)">
         <figure class="reveal about-figure">
-          <img src="${CLINIC.familyStory.photo}" alt="약수역 올케어치과의원 — 두 세대가 이어가는 진료 · 권종진 명예원장 · 권민수 대표원장" width="2400" height="1800" loading="lazy">
+          <img src="${CLINIC.familyStory.photo}" alt="약수역 올케어치과의원 — 두 세대가 이어가는 진료 · 권종진 명예원장 · 권민수 대표원장" width="2000" height="1500" loading="lazy">
           <figcaption>${CLINIC.familyStory.photoCaption}</figcaption>
         </figure>
         <div class="reveal reveal-d1">
           <span class="sec-label"><span class="num">02</span> Continuity of Care</span>
           <h2 class="split-rise" style="font-size:clamp(1.6rem,3.4vw,2.4rem);margin:18px 0 18px">${raw(CLINIC.familyStory.title)}</h2>
-          <p class="subconcept-note reveal">${CLINIC.familyStory.boxNote}</p>
           <div class="prose" style="font-size:1.05rem;line-height:1.9">
             ${raw(CLINIC.familyStory.paras.map(p => `<p>${p}</p>`).join(''))}
           </div>
