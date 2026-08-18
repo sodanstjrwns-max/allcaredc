@@ -240,6 +240,7 @@ export function Footer() {
             <li><span class="ico"><i class="fa-solid fa-location-dot"></i></span><span>${CLINIC.address}<br><small style="color:var(--brand-accent-2)">${CLINIC.directions}</small></span></li>
             <li><span class="ico"><i class="fa-solid fa-phone"></i></span><a href="tel:${CLINIC.phoneRaw}">${CLINIC.phone}</a></li>
             <li><span class="ico"><i class="fa-solid fa-clock"></i></span><span>평일 09:30~20:30 (월·화·목 야간)<br>${CLINIC.hoursNote}</span></li>
+            <li><span class="ico"><i class="fa-solid fa-bolt"></i></span><span>문의 응답: ${CLINIC.responseTime.short}</span></li>
           </ul>
         </div>
       </div>
@@ -270,6 +271,12 @@ export function Footer() {
     <a href="/directions" class="mcb-item"><i class="fa-solid fa-location-dot"></i><span>오시는 길</span></a>
   </nav>
 
+  <!-- §E2 상시 원탭 전화 버튼 (데스크톱·태블릿 전용, 모바일은 하단 CTA바가 대체) -->
+  <a href="tel:${CLINIC.phoneRaw}" class="floating-tel" id="floatingTel" aria-label="전화 걸기 ${CLINIC.phone}">
+    <span class="ft-ic"><i class="fa-solid fa-phone"></i></span>
+    <span class="ft-txt"><span class="ft-label">전화 상담</span><span class="ft-num">${CLINIC.phone}</span></span>
+  </a>
+
   <!-- floating consult widget (toggle + 영업상태) -->
   <div class="consult-widget" id="consultWidget">
     <div class="cw-panel" id="cwPanel" hidden>
@@ -284,6 +291,7 @@ export function Footer() {
         <a href="tel:${CLINIC.phoneRaw}" class="cw-btn tel"><i class="fa-solid fa-phone"></i> 전화 상담 <span class="cw-phone">${CLINIC.phone}</span></a>
         <a href="/reservation" class="cw-btn book"><i class="fa-solid fa-calendar-check"></i> 온라인 예약 문의</a>
       </div>
+      <p class="cw-response"><i class="fa-solid fa-bolt"></i> ${CLINIC.responseTime.short}</p>
     </div>
     <button type="button" class="cw-fab" id="cwToggle" aria-label="상담 메뉴 열기" aria-expanded="false">
       <i class="fa-solid fa-headset cw-ic-open"></i><i class="fa-solid fa-xmark cw-ic-close"></i>
@@ -292,7 +300,7 @@ export function Footer() {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260622k"></script>
+  <script src="/static/app.js?v=20260818a"></script>
   `
 }
 
@@ -371,7 +379,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20260622k" />
+    <link rel="stylesheet" href="/static/style.css?v=20260818a" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->

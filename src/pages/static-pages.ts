@@ -485,6 +485,8 @@ export function PricingPage() {
     { q: '표에 나온 금액이 최종 비용인가요?', a: "위 수가표는 표준 기준 금액입니다. 실제 진료비는 환자분의 구강 상태, 사용 재료, 치료 범위에 따라 달라지며, 정밀 진단 후 치료 계획과 함께 정확히 안내해 드립니다. 또한 '본인부담금'으로 표기된 항목은 건강보험 급여가 적용되어 본인부담률에 따라 산정됩니다." },
     { q: 'VAT(부가가치세)는 포함된 금액인가요?', a: '대부분의 항목은 VAT가 포함된 금액입니다. 다만 라미네이트와 1Day 전문가 미백은 부가세 10%가 별도로 부과됩니다.' },
     { q: '건강보험이 적용되나요?', a: '치료 항목에 따라 건강보험 적용 여부가 다릅니다. 보험 임플란트·보험 틀니·물리치료 등은 급여 적용 항목으로 본인부담금만 부담하시며, 정확한 적용 여부는 내원 후 진단을 통해 안내받으실 수 있습니다.' },
+    { q: '치료를 시작한 뒤에 비용이 갑자기 늘어나지는 않나요?', a: '치료 전 정밀 진단 후 총 예상 비용과 계획을 먼저 안내드리고, 동의하신 범위 안에서만 진행합니다. 진행 중 계획이 바뀌어야 할 경우에는 다시 설명드리고 동의를 받은 뒤 진행하므로, 사전 안내 없이 임의로 비용이 추가되지 않습니다.' },
+    { q: '한 번에 부담이 큰데, 분할 결제(할부)가 되나요?', a: '카드 할부 결제가 가능하며, 제로페이 간편결제와 소상공인 고유가 피해지원금도 사용하실 수 있습니다. 치료 범위가 큰 경우 진행 단계에 맞춰 비용을 나누어 안내드리니, 부담되는 부분은 상담 때 편하게 말씀해 주세요.' },
   ]
 
   const body = html`
@@ -496,8 +498,27 @@ export function PricingPage() {
   })}
   <section class="section">
     <div class="container" style="max-width:880px">
-      <div class="reveal" style="background:var(--beige-soft);border-radius:var(--radius);padding:22px 24px;margin-bottom:34px">
+      <div class="reveal" style="background:var(--beige-soft);border-radius:var(--radius);padding:22px 24px;margin-bottom:22px">
         <p style="font-size:14.5px;color:var(--ink-soft);margin:0"><i class="fa-solid fa-circle-info text-mint"></i> 단위: 원 / VAT 포함 (별도 표기 항목 제외). 아래는 표준 기준 금액이며, 실제 진료비는 환자분의 구강 상태와 치료 범위에 따라 정밀 진단 후 확정됩니다.</p>
+      </div>
+
+      <!-- §E4 비용 투명성: 우리 병원의 비용 원칙 3가지 -->
+      <div class="reveal price-promise" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:34px">
+        <div class="pp-card">
+          <span class="pp-ic"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+          <strong>치료 전 서면 견적</strong>
+          <span>진단 후 총 예상 비용과 치료 계획을 먼저 안내드린 뒤, 동의하신 범위 안에서만 진행합니다.</span>
+        </div>
+        <div class="pp-card">
+          <span class="pp-ic"><i class="fa-solid fa-ban"></i></span>
+          <strong>임의 추가 청구 없음</strong>
+          <span>사전 안내 없이 비용이 추가되지 않습니다. 계획이 바뀌면 다시 설명드리고 동의를 받습니다.</span>
+        </div>
+        <div class="pp-card">
+          <span class="pp-ic"><i class="fa-solid fa-shield-heart"></i></span>
+          <strong>보험 적용 우선 확인</strong>
+          <span>보험 임플란트·틀니 등 건강보험이 적용되는 항목은 급여 여부를 먼저 확인해 안내드립니다.</span>
+        </div>
       </div>
 
       ${raw(PRICE_TABLE.map((g) => `

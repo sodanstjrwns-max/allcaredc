@@ -109,21 +109,30 @@ export function ReservationPage() {
                 <label class="checkbox-row"><input type="checkbox" name="agree_health"> <span>[선택] 문의 내용에 증상 등 건강정보를 기재하는 경우, 상담 목적의 민감정보 수집·이용에 동의합니다. (미동의 시에도 예약 문의는 가능하나 상담에 제한이 있을 수 있습니다)</span></label>
               </div>
               <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">예약 문의 보내기</button>
-              <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--gray-400)">접수 후 진료시간 내에 순차적으로 연락드립니다.</p>
+              <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--gray-400)"><i class="fa-solid fa-bolt" style="color:var(--gold-600)"></i> ${CLINIC.responseTime.online}</p>
             </form>
           </div>
         </div>
         <aside class="reveal reveal-d2">
           <div class="inlink-box" style="background:#03c75a;color:#fff;margin-bottom:20px">
             <h2 style="color:#fff;margin-bottom:6px;font-size:15px;display:flex;align-items:center;gap:9px"><i class="fa-solid fa-calendar-check"></i> 네이버 예약 (가장 빠름)</h2>
-            <p style="font-size:13px;color:rgba(255,255,255,.85);margin-bottom:14px">네이버 예약으로 원하시는 시간을 직접 선택해 즉시 예약하실 수 있습니다.</p>
+            <p style="font-size:13px;color:rgba(255,255,255,.85);margin-bottom:10px">네이버 예약으로 원하시는 시간을 직접 선택해 즉시 예약하실 수 있습니다.</p>
+            <p style="font-size:12px;color:rgba(255,255,255,.8);margin:0 0 14px;display:flex;align-items:center;gap:6px"><i class="fa-solid fa-bolt"></i> ${CLINIC.responseTime.naver}</p>
             <a href="${CLINIC.sns.naverBooking}" target="_blank" rel="noopener" class="btn" style="width:100%;justify-content:center;background:#fff;color:#03c75a;font-weight:800"><i class="fa-solid fa-arrow-up-right-from-square"></i> 네이버 예약 바로가기</a>
           </div>
           <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
             <h2 style="color:#fffeee;font-size:15px;display:flex;align-items:center;gap:9px"><i class="fa-solid fa-phone text-mint"></i> 바로 전화 예약</h2>
             <a href="tel:${CLINIC.phoneRaw}" style="font-size:1.6rem;font-weight:800;color:#fffeee;display:block;margin:10px 0 6px">${CLINIC.phone}</a>
             <p style="font-size:13px;color:rgba(255,255,255,.75)">진료시간 내 전화 주시면 바로 안내해 드립니다.</p>
+            <p style="font-size:12px;color:var(--brand-accent-2,#d8c39c);margin:8px 0 0;display:flex;align-items:center;gap:6px"><i class="fa-solid fa-bolt"></i> 응답: ${CLINIC.responseTime.phone}</p>
           </div>
+          ${CLINIC.sns.kakao ? raw(`
+          <div class="inlink-box" style="background:#fee500;color:#3c1e1e;margin-bottom:20px">
+            <h2 style="color:#3c1e1e;font-size:15px;display:flex;align-items:center;gap:9px"><i class="fa-solid fa-comment"></i> 카카오톡 채팅 상담</h2>
+            <p style="font-size:13px;color:#5a3d2b;margin:8px 0 6px">간단한 문의는 카카오톡 채널로 편하게 물어보세요.</p>
+            <p style="font-size:12px;color:#7a5a3a;margin:0 0 12px;display:flex;align-items:flex-start;gap:6px"><i class="fa-solid fa-bolt" style="margin-top:3px"></i> <span>응답: ${CLINIC.responseTime.kakao}</span></p>
+            <a href="${CLINIC.sns.kakao}" target="_blank" rel="noopener" class="btn" style="width:100%;justify-content:center;background:#3c1e1e;color:#fee500;font-weight:800"><i class="fa-solid fa-comment"></i> 카카오톡 상담하기</a>
+          </div>` ) : ''}
           <div class="inlink-box">
             <h2 style="font-size:15px;display:flex;align-items:center;gap:9px"><i class="fa-solid fa-clock text-mint"></i> 진료시간</h2>
             ${raw(CLINIC.hours.map(h => `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span>${h.day}</span><span style="color:var(--gray-600)">${h.time}</span></div>`).join(''))}
