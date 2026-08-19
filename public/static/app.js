@@ -1194,17 +1194,23 @@
    ============================================================ */
 (function () {
   'use strict';
+  // Meta 표준 이벤트 화이트리스트 → 이건 track, 그 외(커스텀명)는 trackCustom 으로 보내야
+  // 이벤트 매니저에 정상 집계됨. (Contact_custom/Contact_tel/naver/kakao 는 모두 커스텀)
+  var STANDARD = { Contact: 1, Lead: 1, CompleteRegistration: 1, Schedule: 1, PageView: 1,
+    ViewContent: 1, Search: 1, AddToCart: 1, Purchase: 1, SubmitApplication: 1 };
   function fire() {
     if (typeof window.fbq !== 'function') return;
     for (var i = 0; i < arguments.length; i++) {
-      try { window.fbq('track', arguments[i]); } catch (e) {}
+      var name = arguments[i];
+      var method = STANDARD[name] ? 'track' : 'trackCustom';
+      try { window.fbq(method, name); } catch (e) {}
     }
   }
   // 채널 판별: href 기준
   function channelOf(a) {
     var href = (a.getAttribute('href') || '').toLowerCase();
     if (href.indexOf('tel:') === 0) return 'tel';
-    if (href.indexOf('pf.kakao.com') > -1 || href.indexOf('kakao') > -1 && href.indexOf('open') > -1) return 'kakao';
+    if (href.indexOf('pf.kakao.com') > -1 || href.indexOf('kakao') > -1) return 'kakao';
     if (href.indexOf('naver.me') > -1 || href.indexOf('booking.naver') > -1 || href.indexOf('m.booking.naver') > -1) return 'naver';
     // 클래스/텍스트 보조 판별
     var cls = (a.className || '') + ' ' + (a.textContent || '');
