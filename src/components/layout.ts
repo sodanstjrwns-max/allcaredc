@@ -366,6 +366,7 @@ export function headTags(meta: Meta) {
     ${CLINIC.siteVerification.naver ? raw(`<meta name="naver-site-verification" content="${CLINIC.siteVerification.naver}" />`) : ''}
     ${(CLINIC.siteVerification as any).naver2 ? raw(`<meta name="naver-site-verification" content="${(CLINIC.siteVerification as any).naver2}" />`) : ''}
     ${CLINIC.siteVerification.bing ? raw(`<meta name="msvalidate.01" content="${CLINIC.siteVerification.bing}" />`) : ''}
+    ${(CLINIC.siteVerification as any).facebook ? raw(`<meta name="facebook-domain-verification" content="${(CLINIC.siteVerification as any).facebook}" />`) : ''}
     <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/static/img/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/static/img/favicon-64.png" sizes="64x64" type="image/png" />

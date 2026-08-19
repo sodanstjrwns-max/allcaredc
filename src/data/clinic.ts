@@ -272,6 +272,7 @@ export const CLINIC = {
     naver: '549621162778717ac29187f2c19d93918f28c7b7',   // 네이버 서치어드바이저 소유확인 ✅ (기존 계정)
     naver2: '8904bf63fadffe3fde4bd9e9d48fb1d128eeb952',   // 네이버 서치어드바이저 소유확인 ✅ (추가 계정 — 계정별 코드 별도 발급)
     bing: '',    // Bing Webmaster Tools → 사이트 추가 → meta 태그 content 값 (또는 GSC 자동연동)
+    facebook: 'dab372g0koo9pesv9t2yugvboxs7bx', // Meta 비즈니스 도메인 인증 (facebook-domain-verification) ✅
   },
   // 방문자 통계 — 측정 ID만 채우면 head에 자동 삽입됨 (코드 수정 불필요)
   analytics: {
