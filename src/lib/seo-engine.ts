@@ -62,7 +62,7 @@ export function reviewSchema() {
 // ── 2. 동적 OG 이미지 (edge SVG 생성) ──
 // 정적 og.jpg 1장이 아니라 페이지 제목/카테고리별로 즉석 생성 → SNS·검색 미리보기 품질↑
 const OG_THEMES: Record<string, { bg: string; accent: string; label: string }> = {
-  default: { bg: '#122036', accent: '#d8c9a3', label: '올케어치과' },
+  default: { bg: '#122036', accent: '#d8c9a3', label: '365올케어치과' },
   implant: { bg: '#122036', accent: '#7fb3a8', label: '임플란트' },
   ortho: { bg: '#1a2a44', accent: '#9db8d8', label: '치아교정' },
   esthetic: { bg: '#2a1f30', accent: '#d8a3c9', label: '심미보철' },
@@ -104,7 +104,7 @@ export function ogImageSvg(theme: string, title: string, subtitle: string): stri
   <text x="80" y="130" font-family="'DM Mono',monospace" font-size="22" letter-spacing="4" fill="${t.accent}">${svgEsc(t.label.toUpperCase())}</text>
   ${titleTspans}
   <text x="80" y="${startY + titleLines.length * 76 + 30}" font-family="sans-serif" font-size="28" fill="#c8d0db">${svgEsc(subtitle)}</text>
-  <text x="80" y="560" font-family="sans-serif" font-size="24" fill="#8a94a3">올케어치과 · 약수역 5번 출구 · ${svgEsc(CLINIC.phone)}</text>
+  <text x="80" y="560" font-family="sans-serif" font-size="24" fill="#8a94a3">365올케어치과 · 약수역 5번 출구 · ${svgEsc(CLINIC.phone)}</text>
   <circle cx="1080" cy="120" r="44" fill="none" stroke="${t.accent}" stroke-width="3"/>
   <text x="1080" y="134" text-anchor="middle" font-family="'Nanum Myeongjo',serif" font-size="46" font-weight="800" fill="${t.accent}">올</text>
 </svg>`
@@ -126,7 +126,7 @@ export function resolveOg(type: string, slug: string): { theme: string; title: s
   if (type === 'doctor') {
     const d = DOCTORS.find(x => x.slug === slug)
     if (!d) return null
-    return { theme: 'default', title: `${d.name} ${d.role}`, subtitle: d.titleLine || '약수역 올케어치과' }
+    return { theme: 'default', title: `${d.name} ${d.role}`, subtitle: d.titleLine || '약수역 365올케어치과' }
   }
   if (type === 'area') {
     // slug = "yaksu-implant"
@@ -137,10 +137,10 @@ export function resolveOg(type: string, slug: string): { theme: string; title: s
     const tx = TREATMENTS.find(t => t.slug === txSlug)
     if (!area || !tx) return null
     const theme = ['implant', 'ortho', 'esthetic'].includes(txSlug) ? txSlug : 'area'
-    return { theme, title: `${area.name} ${tx.name}`, subtitle: `약수역 올케어치과 · ${tx.short || ''}`.slice(0, 50) }
+    return { theme, title: `${area.name} ${tx.name}`, subtitle: `약수역 365올케어치과 · ${tx.short || ''}`.slice(0, 50) }
   }
   if (type === 'home') {
-    return { theme: 'default', title: '올케어치과', subtitle: '약수역 치과 전문의 협진' }
+    return { theme: 'default', title: '365올케어치과', subtitle: '약수역 치과 전문의 협진' }
   }
   return null
 }

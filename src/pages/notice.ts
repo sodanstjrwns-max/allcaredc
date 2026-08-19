@@ -31,7 +31,7 @@ export function NoticeIndex(notices: Notice[]) {
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '공지사항', url: '/notice' }],
     title: '공지사항',
-    desc: '올케어치과의 진료 안내와 소식을 전해드립니다.',
+    desc: '365올케어치과의 진료 안내와 소식을 전해드립니다.',
   })}
   <section class="section">
     <div class="container" style="max-width:860px">
@@ -52,8 +52,8 @@ export function NoticeIndex(notices: Notice[]) {
     </div>
   </section>`
   return Page({
-    title: '공지사항 | 올케어치과',
-    description: '약수역 올케어치과 공지사항. 진료 안내, 휴진 안내 등 병원 소식을 확인하세요.',
+    title: '공지사항 | 365올케어치과',
+    description: '약수역 365올케어치과 공지사항. 진료 안내, 휴진 안내 등 병원 소식을 확인하세요.',
     path: '/notice',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '공지사항', url: '/notice' }])],
   }, body)
@@ -76,13 +76,13 @@ export function NoticeDetail(n: Notice) {
     </div>
   </section>`
   return Page({
-    title: `${n.title} | 공지사항 | 올케어치과`,
+    title: `${n.title} | 공지사항 | 365올케어치과`,
     description: n.body.slice(0, 150),
     path: `/notice/${n.id}`,
   }, body)
 }
 
 export const SEED_NOTICES: Notice[] = [
-  { id: 'n_seed1', title: '올케어치과 야간진료 안내 (월·화·목 오후 8시 30분까지)', body: '직장인 환자분들을 위해 매주 월·화·목요일 오후 8시 30분까지 야간진료를 운영하고 있습니다.\n\n바쁜 일정으로 낮 시간 내원이 어려우신 분들께서는 야간진료를 이용해 주세요. 야간 시간대는 예약이 빠르게 마감될 수 있으니 미리 예약해 주시면 감사하겠습니다.', pinned: true, createdAt: Date.now() - 86400000 * 5 },
-  { id: 'n_seed2', title: '주말·공휴일 진료 안내', body: '올케어치과는 토요일, 일요일, 공휴일에도 오전 9시 30분부터 오후 2시까지 진료합니다. (일요일은 격주 진료)\n\n주말 내원을 원하시는 분은 일요일 진료 여부를 전화로 미리 확인해 주시기 바랍니다.', pinned: false, createdAt: Date.now() - 86400000 * 12 },
+  { id: 'n_seed1', title: '365올케어치과 야간진료 안내 (월·화·목 오후 8시 30분까지)', body: '직장인 환자분들을 위해 매주 월·화·목요일 오후 8시 30분까지 야간진료를 운영하고 있습니다.\n\n바쁜 일정으로 낮 시간 내원이 어려우신 분들께서는 야간진료를 이용해 주세요. 야간 시간대는 예약이 빠르게 마감될 수 있으니 미리 예약해 주시면 감사하겠습니다.', pinned: true, createdAt: Date.now() - 86400000 * 5 },
+  { id: 'n_seed2', title: '주말·공휴일 진료 안내', body: '365올케어치과는 토요일, 일요일, 공휴일에도 오전 9시 30분부터 오후 2시까지 진료합니다. (일요일은 격주 진료)\n\n주말 내원을 원하시는 분은 일요일 진료 여부를 전화로 미리 확인해 주시기 바랍니다.', pinned: false, createdAt: Date.now() - 86400000 * 12 },
 ]

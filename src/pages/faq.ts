@@ -61,8 +61,8 @@ export function FaqPage() {
   `
 
   return Page({
-    title: '자주 묻는 질문(FAQ) | 올케어치과',
-    description: '약수역 올케어치과 자주 묻는 질문. 임플란트, 교정, 심미보철, 진료시간, 예약, 진료비 등 자주 묻는 질문을 모았습니다.',
+    title: '자주 묻는 질문(FAQ) | 365올케어치과',
+    description: '약수역 365올케어치과 자주 묻는 질문. 임플란트, 교정, 심미보철, 진료시간, 예약, 진료비 등 자주 묻는 질문을 모았습니다.',
     path: '/faq',
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '자주 묻는 질문', url: '/faq' }]),

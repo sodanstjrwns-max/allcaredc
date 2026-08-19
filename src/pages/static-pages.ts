@@ -38,7 +38,7 @@ export function MissionPage() {
   const body = html`
   <!-- ============ HERO — 매거진 톤 통일 ============ -->
   <section class="hero cinema" style="min-height:78vh">
-    <div class="hero-bg"><img src="/static/img/interior.webp" alt="올케어치과 진료 공간" data-drift="20"></div>
+    <div class="hero-bg"><img src="/static/img/interior.webp" alt="365올케어치과 진료 공간" data-drift="20"></div>
     <div class="hero-top">
       <span>ALLCARE DENTAL — SEOUL</span>
       <span class="hero-coord">37.5547°N · 127.0107°E</span>
@@ -59,8 +59,8 @@ export function MissionPage() {
     <div class="container">
       <div class="section-head reveal">
         <span class="sec-label"><span class="num">01</span> What We Do</span>
-        <h2>올케어치과는 <em>무엇을 잘하는가</em></h2>
-        <p>약수역 올케어치과가 가장 자신 있게 책임지는 핵심 진료입니다. 진단부터 회복까지 한 곳에서 흩어지지 않게 이어갑니다.</p>
+        <h2>365올케어치과는 <em>무엇을 잘하는가</em></h2>
+        <p>약수역 365올케어치과가 가장 자신 있게 책임지는 핵심 진료입니다. 진단부터 회복까지 한 곳에서 흩어지지 않게 이어갑니다.</p>
       </div>
       <div class="core-tx-grid reveal">
         ${raw(CORE_TX.map((t, i) => `
@@ -140,27 +140,27 @@ export function MissionPage() {
       </div>
       <div class="space-gallery reveal">
         <figure class="sg-item sg-wide">
-          <img src="/static/img/reception-desk.webp" alt="올케어치과 인포메이션 데스크 — 환자를 가장 먼저 맞이하는 통합진료센터 응대 공간" width="1024" height="683" loading="lazy">
+          <img src="/static/img/reception-desk.webp" alt="365올케어치과 인포메이션 데스크 — 환자를 가장 먼저 맞이하는 통합진료센터 응대 공간" width="1024" height="683" loading="lazy">
           <figcaption><span class="sg-cap">인포메이션</span><span class="sg-sub">처음 만나는 자리</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/about-lounge.webp" alt="올케어치과 쾌적한 대기실 — 넓고 밝은 소파형 대기 공간" width="960" height="720" loading="lazy">
+          <img src="/static/img/about-lounge.webp" alt="365올케어치과 쾌적한 대기실 — 넓고 밝은 소파형 대기 공간" width="960" height="720" loading="lazy">
           <figcaption><span class="sg-cap">쾌적한 대기실</span><span class="sg-sub">여유롭게 기다리는 공간</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/about-sterilization.webp" alt="올케어치과 철저한 멸균소독실 — 독일 MELAG 장비로 대학병원 수준의 감염관리 시스템" width="960" height="720" loading="lazy">
+          <img src="/static/img/about-sterilization.webp" alt="365올케어치과 철저한 멸균소독실 — 독일 MELAG 장비로 대학병원 수준의 감염관리 시스템" width="960" height="720" loading="lazy">
           <figcaption><span class="sg-cap">철저한 멸균소독</span><span class="sg-sub">대학병원급 감염관리</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/about-consult.webp" alt="올케어치과 치료계획 상담실 — 원장이 3D 자료로 임플란트·보철을 직접 설명하는 1:1 상담" width="1024" height="768" loading="lazy">
+          <img src="/static/img/about-consult.webp" alt="365올케어치과 치료계획 상담실 — 원장이 3D 자료로 임플란트·보철을 직접 설명하는 1:1 상담" width="1024" height="768" loading="lazy">
           <figcaption><span class="sg-cap">치료계획 상담실</span><span class="sg-sub">충분히 설명드립니다</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/sleep-implant-suite.webp" alt="올케어치과 수면임플란트 진료실 — 의식하진정요법으로 편안한 수면 진료 공간" width="1024" height="683" loading="lazy">
+          <img src="/static/img/sleep-implant-suite.webp" alt="365올케어치과 수면임플란트 진료실 — 의식하진정요법으로 편안한 수면 진료 공간" width="1024" height="683" loading="lazy">
           <figcaption><span class="sg-cap">수면임플란트 진료실</span><span class="sg-sub">의식하진정 진료</span></figcaption>
         </figure>
         <figure class="sg-item">
-          <img src="/static/img/sleep-recovery-room.webp" alt="올케어치과 수면치료회복실 — 수면 진료 후 안정을 취하는 독립 회복 공간" width="683" height="1024" loading="lazy">
+          <img src="/static/img/sleep-recovery-room.webp" alt="365올케어치과 수면치료회복실 — 수면 진료 후 안정을 취하는 독립 회복 공간" width="683" height="1024" loading="lazy">
           <figcaption><span class="sg-cap">수면치료회복실</span><span class="sg-sub">충분한 회복까지</span></figcaption>
         </figure>
       </div>
@@ -176,12 +176,12 @@ export function MissionPage() {
         <p style="color:rgba(255,254,238,.65)">멀리 어렵게 찾는 치과가 아니라, 우리 동네에서 믿고 편하게 갈 수 있는 치과.</p>
       </div>
       <figure class="reveal yaksu-banner">
-        <img src="/static/img/yaksu-mou-sign.webp" alt="올케어치과 - 약수상인회 업무협약식 — 권민수 대표원장이 상인회 대표와 상호협력 협약서에 서명하는 모습" width="1024" height="683" loading="lazy">
+        <img src="/static/img/yaksu-mou-sign.webp" alt="365올케어치과 - 약수상인회 업무협약식 — 권민수 대표원장이 상인회 대표와 상호협력 협약서에 서명하는 모습" width="1024" height="683" loading="lazy">
         <figcaption><i class="fa-solid fa-handshake" style="color:var(--gold-300);margin-right:8px"></i>2024.11.13 · 약수상인회 업무협약식 — 동네 상권과 상호협력을 약속했습니다</figcaption>
       </figure>
       <div class="yaksu-copy reveal reveal-d1">
         <h3 class="yaksu-copy-head">지역과 함께 걸어온 치과</h3>
-        <p>올케어치과는 개원 초부터 약수시장상인회와 협약을 맺고,<br class="br-pc"> 지역 상권과 주민들의 곁을 지켜왔습니다.<br class="br-pc"> 약수동주민센터, 다온봉사단, 중구 산악회 등 여러 지역 단체와도 꾸준히 함께해 왔습니다.</p>
+        <p>365올케어치과는 개원 초부터 약수시장상인회와 협약을 맺고,<br class="br-pc"> 지역 상권과 주민들의 곁을 지켜왔습니다.<br class="br-pc"> 약수동주민센터, 다온봉사단, 중구 산악회 등 여러 지역 단체와도 꾸준히 함께해 왔습니다.</p>
         <p>잠깐 스쳐가는 병원이 아니라, 동네에 뿌리내리고 오래 머무는 치과.<br class="br-pc"> 그 자리를 지키는 것이 저희가 지역에 보답하는 방식이라 믿습니다.</p>
       </div>
     </div>
@@ -254,7 +254,7 @@ export function MissionPage() {
     <div class="container">
       <div class="section-head reveal">
         <span class="sec-label"><span class="num">05</span> Why ALLCARE</span>
-        <h2>올케어치과가 <em>다른 이유</em></h2>
+        <h2>365올케어치과가 <em>다른 이유</em></h2>
         <p>규모와 시설을 넘어, 끝까지 잇는 섬세함으로 답합니다.</p>
       </div>
       <dl class="aeo-grid">
@@ -277,7 +277,7 @@ export function MissionPage() {
           <span class="sec-label"><span class="num">06</span> Our Vision</span>
           <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:18px 0 18px">지역 안에서 인정받고 <br><em>오래 머무는 치과</em></h2>
           <p class="vision-slogan reveal">${CLINIC.familyStory.slogan}</p>
-          <p class="prose" style="font-size:1.05rem">한때의 유행이 아니라, 동네에서 신뢰로 이어지는 치과. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과. 그것이 올케어치과가 그리는 미래입니다.</p>
+          <p class="prose" style="font-size:1.05rem">한때의 유행이 아니라, 동네에서 신뢰로 이어지는 치과. 한 번 오신 분이 가족과 이웃을 함께 모시고 오는 치과. 그것이 365올케어치과가 그리는 미래입니다.</p>
           <ul class="check prose" style="margin-top:22px">
             <li>친절은 기본, 원칙은 약속입니다.</li>
             <li>과잉 없이, 필요한 진료만 권합니다.</li>
@@ -300,13 +300,13 @@ export function MissionPage() {
   ${ctaBand()}
   `
   return Page({
-    title: '병원소개 | 올케어치과 — 약수역 치과 전문의 협진 통합진료',
-    description: '약수역 올케어치과는 구강악안면외과·통합치의학과·보철과 전문의 협진 시스템의 통합진료 치과입니다. 고난도 임플란트 수술 역량, 의식하진정법(수면진료) 병행, 원내 기공실로 불편함을 끝까지 살핍니다.',
+    title: '병원소개 | 365올케어치과 — 약수역 치과 전문의 협진 통합진료',
+    description: '약수역 365올케어치과는 구강악안면외과·통합치의학과·보철과 전문의 협진 시스템의 통합진료 치과입니다. 고난도 임플란트 수술 역량, 의식하진정법(수면진료) 병행, 원내 기공실로 불편함을 끝까지 살핍니다.',
     path: '/mission',
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '병원소개', url: '/mission' }]),
       faqSchema([
-        { q: '올케어치과의 치과 전문의 협진은 무엇이 다른가요?', a: CLINIC.collaboration.lead },
+        { q: '365올케어치과의 치과 전문의 협진은 무엇이 다른가요?', a: CLINIC.collaboration.lead },
         { q: '고령이거나 전신질환이 있어도 임플란트를 받을 수 있나요?', a: CLINIC.collaboration.points[0].desc },
         ...CLINIC.strengths.map(s => ({ q: s.head, a: s.desc })),
       ]),
@@ -351,7 +351,7 @@ export function DirectionsPage() {
   }
 
   const directionsFaqs = [
-    { q: '올케어치과는 약수역에서 얼마나 걸리나요?', a: `${CLINIC.subway}입니다. 5번 출구로 나오시면 스타벅스가 있는 건물 4층입니다.` },
+    { q: '365올케어치과는 약수역에서 얼마나 걸리나요?', a: `${CLINIC.subway}입니다. 5번 출구로 나오시면 스타벅스가 있는 건물 4층입니다.` },
     { q: '주차가 가능한가요?', a: '건물 기계식 주차장을 이용하실 수 있습니다. 전기차·대형 SUV는 기계식 주차가 어려워 인근 공영주차장 이용을 권장드리며, 방문 전 전화로 주차 가능 여부를 확인해 주세요.' },
     { q: '야간 진료를 하나요?', a: `${CLINIC.hoursNote}` },
   ]
@@ -373,7 +373,7 @@ export function DirectionsPage() {
           </div>
           <div style="margin-top:30px" class="prose">
             <h2>교통 안내</h2>
-            <p class="answer-box">올케어치과는 <strong>${CLINIC.subway}</strong> 거리에 있습니다. 3·6호선 환승역인 약수역과 바로 연결되어, 신당동·청구·동대입구·옥수 생활권 어디에서나 편하게 오실 수 있습니다.</p>
+            <p class="answer-box">365올케어치과는 <strong>${CLINIC.subway}</strong> 거리에 있습니다. 3·6호선 환승역인 약수역과 바로 연결되어, 신당동·청구·동대입구·옥수 생활권 어디에서나 편하게 오실 수 있습니다.</p>
             <h3><i class="fa-solid fa-train-subway text-mint"></i> 지하철</h3>
             <p><strong>3·6호선 약수역 5번 출구 도보 1분.</strong> 5번 출구로 나오시면 스타벅스가 있는 건물(더그레이스빌딩) 4층입니다. 3·6호선 환승역이라 강남·종로·은평 방면에서도 환승 한 번으로 닿습니다.</p>
             <h3><i class="fa-solid fa-person-walking text-mint"></i> 인근 지역에서</h3>
@@ -424,10 +424,10 @@ export function DirectionsPage() {
     </div>
   </section>`
   return Page({
-    title: '오시는 길 | 약수역 5번 출구 도보 1분 올케어치과',
-    description: `올케어치과 오시는 길. ${CLINIC.address}. ${CLINIC.subway}. 신당동·청구·동대입구 생활권. 주차·야간진료 안내. 전화 ${CLINIC.phone}.`,
+    title: '오시는 길 | 약수역 5번 출구 도보 1분 365올케어치과',
+    description: `365올케어치과 오시는 길. ${CLINIC.address}. ${CLINIC.subway}. 신당동·청구·동대입구 생활권. 주차·야간진료 안내. 전화 ${CLINIC.phone}.`,
     path: '/directions',
-    keywords: `약수역 치과,약수역 5번 출구 치과,신당동 치과,중구 치과,약수역 치과 위치,약수역 치과 주차,올케어치과 오시는길`,
+    keywords: `약수역 치과,약수역 5번 출구 치과,신당동 치과,중구 치과,약수역 치과 위치,약수역 치과 주차,365올케어치과 오시는길`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '오시는 길', url: '/directions' }]),
       placeSchema,
@@ -452,7 +452,7 @@ export function PricingPage() {
     name: '비급여 진료비 안내',
     url: pageUrl,
     inLanguage: 'ko',
-    description: '약수역 올케어치과 비급여 진료 수가표. 레진·보철·임플란트·교정·턱관절·미백 등 주요 비급여 항목 비용 안내.',
+    description: '약수역 365올케어치과 비급여 진료 수가표. 레진·보철·임플란트·교정·턱관절·미백 등 주요 비급여 항목 비용 안내.',
     isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website` },
     about: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
     mainEntity: {
@@ -558,10 +558,10 @@ export function PricingPage() {
   ${ctaBand()}
   `
   return Page({
-    title: '비급여 진료 수가표 | 약수역 올케어치과',
-    description: '약수역 올케어치과 비급여 진료 수가표. 레진·지르코니아 크라운·임플란트(오스템·IBS·스트라우만)·투명교정·라미네이트·미백·틀니·턱관절 비용을 투명하게 안내합니다.',
+    title: '비급여 진료 수가표 | 약수역 365올케어치과',
+    description: '약수역 365올케어치과 비급여 진료 수가표. 레진·지르코니아 크라운·임플란트(오스템·IBS·스트라우만)·투명교정·라미네이트·미백·틀니·턱관절 비용을 투명하게 안내합니다.',
     path: '/pricing',
-    keywords: `약수역 치과 비용,올케어치과 수가표,임플란트 비용,투명교정 비용,라미네이트 비용,지르코니아 크라운 가격,중구 치과 진료비,비급여 진료비 고지`,
+    keywords: `약수역 치과 비용,365올케어치과 수가표,임플란트 비용,투명교정 비용,라미네이트 비용,지르코니아 크라운 가격,중구 치과 진료비,비급여 진료비 고지`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '비용 안내', url: '/pricing' }]),
       offerSchema,

@@ -99,8 +99,8 @@ export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: 
   ${ctaBand()}
   `
   return Page({
-    title: filter.cat ? `${catName(filter.cat)} 비포애프터 | 진료사례 | 올케어치과` : '비포/애프터 진료사례 | 올케어치과',
-    description: '약수역 올케어치과의 실제 임플란트·치아교정·심미보철 치료 전후(Before/After) 진료사례 모음. 동의를 받은 케이스만 공개하며, 파노라마·구강 사진으로 치료 과정을 투명하게 안내합니다. 치료 결과는 개인의 구강 상태에 따라 차이가 있을 수 있습니다.',
+    title: filter.cat ? `${catName(filter.cat)} 비포애프터 | 진료사례 | 365올케어치과` : '비포/애프터 진료사례 | 365올케어치과',
+    description: '약수역 365올케어치과의 실제 임플란트·치아교정·심미보철 치료 전후(Before/After) 진료사례 모음. 동의를 받은 케이스만 공개하며, 파노라마·구강 사진으로 치료 과정을 투명하게 안내합니다. 치료 결과는 개인의 구강 상태에 따라 차이가 있을 수 있습니다.',
     path: '/cases',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료사례', url: '/cases' }])],
   }, body)

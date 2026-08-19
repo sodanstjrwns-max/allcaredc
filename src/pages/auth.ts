@@ -9,7 +9,7 @@ function authShell(title: string, inner: any) {
     <div class="container" style="max-width:480px">
       <div class="form-card reveal">
         <div style="text-align:center;margin-bottom:30px">
-          <a href="/" class="logo" style="justify-content:center;color:var(--brand)"><span class="mark"><i class="fa-solid fa-tooth"></i></span> 올케어치과</a>
+          <a href="/" class="logo" style="justify-content:center;color:var(--brand)"><span class="mark"><i class="fa-solid fa-tooth"></i></span> 365올케어치과</a>
           <h1 style="font-size:1.6rem;margin-top:18px">${title}</h1>
         </div>
         ${inner}
@@ -29,7 +29,7 @@ export function LoginPage(next = '/', error?: string) {
     </form>
     <p style="text-align:center;margin-top:20px;font-size:14px;color:var(--gray-600)">아직 회원이 아니신가요? <a href="/auth/register?next=${encodeURIComponent(next)}" style="color:var(--brand-accent);font-weight:700">회원가입</a></p>
   `)
-  return Page({ title: '로그인 | 올케어치과', description: '올케어치과 회원 로그인', path: '/auth/login' }, body)
+  return Page({ title: '로그인 | 365올케어치과', description: '365올케어치과 회원 로그인', path: '/auth/login' }, body)
 }
 
 export function RegisterPage(next = '/', error?: string) {
@@ -54,7 +54,7 @@ export function RegisterPage(next = '/', error?: string) {
     </form>
     <p style="text-align:center;margin-top:20px;font-size:14px;color:var(--gray-600)">이미 회원이신가요? <a href="/auth/login?next=${encodeURIComponent(next)}" style="color:var(--brand-accent);font-weight:700">로그인</a></p>
   `)
-  return Page({ title: '회원가입 | 올케어치과', description: '올케어치과 회원가입', path: '/auth/register' }, body)
+  return Page({ title: '회원가입 | 365올케어치과', description: '365올케어치과 회원가입', path: '/auth/register' }, body)
 }
 
 export function MyPage(user: { email: string; name: string }) {
@@ -76,5 +76,5 @@ export function MyPage(user: { email: string; name: string }) {
       </div>
     </div>
   </section>`
-  return Page({ title: '마이페이지 | 올케어치과', description: '올케어치과 마이페이지', path: '/auth/mypage' }, body)
+  return Page({ title: '마이페이지 | 365올케어치과', description: '365올케어치과 마이페이지', path: '/auth/mypage' }, body)
 }

@@ -22,7 +22,7 @@ export function TreatmentsIndex() {
     crumb: [{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }],
     chapter: 'Chapter 02 — The Meeting',
     title: '진료안내',
-    desc: '불편이 해답을 만나는 자리. 구강악안면외과·통합치의학과·보철과 전문의가 함께하는 올케어치과의 진료 영역입니다.',
+    desc: '불편이 해답을 만나는 자리. 구강악안면외과·통합치의학과·보철과 전문의가 함께하는 365올케어치과의 진료 영역입니다.',
   })}
 
   <section class="section">
@@ -60,8 +60,8 @@ export function TreatmentsIndex() {
   ${ctaBand()}
   `
   return Page({
-    title: '진료안내 | 임플란트·교정·심미보철·수면진료 | 올케어치과',
-    description: '약수역 올케어치과 진료안내. 임플란트, 치아교정, 심미보철 등 핵심 진료부터 충치·신경·잇몸·턱관절·사랑니까지 치과 전문의 협진으로 진료합니다.',
+    title: '진료안내 | 임플란트·교정·심미보철·수면진료 | 365올케어치과',
+    description: '약수역 365올케어치과 진료안내. 임플란트, 치아교정, 심미보철 등 핵심 진료부터 충치·신경·잇몸·턱관절·사랑니까지 치과 전문의 협진으로 진료합니다.',
     path: '/treatments',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }])],
   }, body)
@@ -252,13 +252,13 @@ export function TreatmentDetail(slug: string) {
   const subNames = (t.subProcedures || []).map(sp => sp.name).slice(0, 4).join('·')
   // t.short은 명사구로 끝나므로 마침표로 끊어 비문 방지, 의사 안내는 중복 없는 별도 문장
   const shortClean = t.short.replace(/[.\s]+$/, '')
-  const metaDesc = `약수역 5번 출구 1분, 올케어치과 ${t.name}. ${shortClean}.${docNames ? ` ${docNames} 전문의가 직접 진료합니다.` : ''}${subNames ? ` ${subNames} 등 안내.` : ''}`.slice(0, 158)
+  const metaDesc = `약수역 5번 출구 1분, 365올케어치과 ${t.name}. ${shortClean}.${docNames ? ` ${docNames} 전문의가 직접 진료합니다.` : ''}${subNames ? ` ${subNames} 등 안내.` : ''}`.slice(0, 158)
   return Page({
-    title: `${t.name} | 약수역 ${t.name} 치과 - 올케어치과`,
+    title: `${t.name} | 약수역 ${t.name} 치과 - 365올케어치과`,
     description: metaDesc,
     path: `/treatments/${slug}`,
     ogImage: `https://${CLINIC.domain}/og/treatment/${slug}.svg`,
-    keywords: `${t.name},약수역 ${t.name},약수역 치과,신당동 ${t.name},중구 치과,올케어치과${docNames ? ',' + docNames : ''}${subNames ? ',' + subNames.replace(/·/g, ',') : ''}`,
+    keywords: `${t.name},약수역 ${t.name},약수역 치과,신당동 ${t.name},중구 치과,365올케어치과${docNames ? ',' + docNames : ''}${subNames ? ',' + subNames.replace(/·/g, ',') : ''}`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }, { name: t.name, url: `/treatments/${slug}` }]),
       procedureSchema,

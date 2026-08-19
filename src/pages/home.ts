@@ -87,7 +87,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 의식하진정법(수면진료)</span>
         <h1 class="hh-title hh-title--ko">
           <span class="line-mask"><span class="hh-ko-line">믿고 찾는</span></span>
-          <span class="line-mask"><span class="hh-italic disp hh-ko-line">올케어치과</span></span>
+          <span class="line-mask"><span class="hh-italic disp hh-ko-line">365올케어치과</span></span>
         </h1>
         <p class="hh-lead reveal reveal-d2"><strong>고난도 임플란트는 전문성을 더하고,</strong><br>일반진료는 기본과 원칙에 충실합니다.</p>
         <p class="hh-lead hh-lead--sub reveal reveal-d2">고난도 임플란트부터 치아교정·심미보철·일반 치과진료까지.<br>치과 전문의 협진 시스템을 바탕으로 정확하게 진단하고 필요한 치료를 제안합니다.</p>
@@ -106,7 +106,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img class="hh-portrait" src="/static/img/doctors-main-3.webp" alt="올케어치과 치과 전문의 협진 시스템 — 약수역 통합진료팀" width="576" height="1024" fetchpriority="high" />
+          <img class="hh-portrait" src="/static/img/doctors-main-3.webp" alt="365올케어치과 치과 전문의 협진 시스템 — 약수역 통합진료팀" width="576" height="1024" fetchpriority="high" />
         </div>
         <figcaption class="hh-caption"><span class="hh-cap-eng disp">치과 전문의 협진 시스템</span> 진단부터 수술·보철·유지관리까지 한 곳에서</figcaption>
       </figure>
@@ -131,7 +131,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   <!-- ============ 강점 3대 포인트 (직설적 진료 중심 — 책 메타포 제거) ============ -->
   <section class="section keypoints-sec" id="why">
     <div class="container">
-      ${raw(sectionHead('왜 올케어치과인가', '<em>어려운 케이스</em>일수록,<br class="br-pc"> 전문의 진료가 필요합니다',
+      ${raw(sectionHead('왜 365올케어치과인가', '<em>어려운 케이스</em>일수록,<br class="br-pc"> 전문의 진료가 필요합니다',
     '단순 식립을 넘어 진단·수술·보철의 전 과정을 전문의가 일관되게 책임집니다.<br class="br-pc"> 그 핵심을 세 가지로 정리했습니다.'))}
       <div class="keypoints-grid">
         ${raw(CLINIC.strengths.slice(0, 3).map((s, i) => `
@@ -218,7 +218,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
             <a href="/mission" class="btn btn-outline" style="margin-top:28px">병원 이야기 더 보기 <i class="fa-solid fa-arrow-right"></i></a>
           </div>
           <div class="media-mask zoom-media reveal reveal-d2" data-drift="34" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)">
-            <img src="/static/img/interior.webp" alt="올케어치과 대기 라운지 — 약수역 더그레이스빌딩 4층" style="aspect-ratio:3/2;object-fit:cover;width:100%" loading="lazy">
+            <img src="/static/img/interior.webp" alt="365올케어치과 대기 라운지 — 약수역 더그레이스빌딩 4층" style="aspect-ratio:3/2;object-fit:cover;width:100%" loading="lazy">
             <span class="zm-label"><span class="zm-t">대기 라운지</span></span>
           </div>
         </div>
@@ -300,7 +300,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
       <div class="reveal" style="text-align:center;margin-bottom:54px">
         <span class="disp" style="font-size:13px;letter-spacing:.14em;color:var(--brand-accent);text-transform:uppercase">Your Care Journey</span>
         <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);margin:14px 0 12px">처음 오신 순간부터, <em>오래도록 곁에</em></h2>
-        <p style="color:var(--gray-600);max-width:600px;margin:0 auto">올케어치과는 한 번의 치료로 끝나지 않습니다. 인지부터 사후관리까지, 흩어지지 않는 다섯 단계로 함께합니다.</p>
+        <p style="color:var(--gray-600);max-width:600px;margin:0 auto">365올케어치과는 한 번의 치료로 끝나지 않습니다. 인지부터 사후관리까지, 흩어지지 않는 다섯 단계로 함께합니다.</p>
       </div>
       <ol class="journey-track">
         ${raw(CLINIC.journey.map((j, i) => `
@@ -395,7 +395,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         <div class="occ-left">
           <span class="occ-eyebrow disp"><i class="fa-solid fa-wand-magic-sparkles"></i> 1분 구강 셀프 스캔</span>
           <h2 class="occ-title">내 <em>구강나이</em>는 몇 살일까?</h2>
-          <p class="occ-lead">60초 셀프 스캔으로 내 치아·잇몸 상태를 리포트로 확인해 보세요. 올케어치과 의료진이 만든 무료 자가진단입니다.</p>
+          <p class="occ-lead">60초 셀프 스캔으로 내 치아·잇몸 상태를 리포트로 확인해 보세요. 365올케어치과 의료진이 만든 무료 자가진단입니다.</p>
           <span class="occ-cta">지금 무료로 확인하기 <i class="fa-solid fa-arrow-right"></i></span>
         </div>
         <div class="occ-right" aria-hidden="true">
@@ -486,12 +486,12 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   `
 
   const meta = {
-    title: '올케어치과 | 약수역 임플란트·교정·심미보철·수면치료·전문의 협진 시스템',
-    description: '약수역 5번 출구 올케어치과. 치과 전문의 협진 시스템으로 임플란트·치아교정·심미보철·일반진료를 진단부터 살핍니다. 수면진료·야간진료 운영.',
+    title: '365올케어치과 | 약수역 임플란트·교정·심미보철·수면치료·전문의 협진 시스템',
+    description: '약수역 5번 출구 365올케어치과. 치과 전문의 협진 시스템으로 임플란트·치아교정·심미보철·일반진료를 진단부터 살핍니다. 수면진료·야간진료 운영.',
     path: '/',
     ogImage: `https://${CLINIC.domain}/og/home/main.svg`,
     preloadImage: '/static/img/doctors-main-3.webp',
-    keywords: '약수역 치과,약수역 임플란트,약수역 교정,약수역 심미보철,올케어치과,약수동 치과,중구 치과',
+    keywords: '약수역 치과,약수역 임플란트,약수역 교정,약수역 심미보철,365올케어치과,약수동 치과,중구 치과',
     schema: [
       organizationSchema(),
       faqSchema([

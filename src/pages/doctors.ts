@@ -38,8 +38,8 @@ export function DoctorsIndex() {
   ${ctaBand()}
   `
   return Page({
-    title: '의료진 소개 | 구강악안면외과·통합치의학과·보철과 전문의 | 올케어치과',
-    description: '약수역 올케어치과 의료진. 구강악안면외과·통합치의학과 전문의, 보철과 전문의, 치의학박사가 함께하는 치과 전문의 협진 치과입니다.',
+    title: '의료진 소개 | 구강악안면외과·통합치의학과·보철과 전문의 | 365올케어치과',
+    description: '약수역 365올케어치과 의료진. 구강악안면외과·통합치의학과 전문의, 보철과 전문의, 치의학박사가 함께하는 치과 전문의 협진 치과입니다.',
     path: '/doctors',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }])],
   }, body)
@@ -147,10 +147,10 @@ export function DoctorDetail(slug: string) {
   `
   const txNames = txs.map(t => t.name).slice(0, 4).join('·')
   return Page({
-    title: `${d.name} ${d.role} | ${d.titleLine} | 약수역 올케어치과`,
-    description: `약수역 올케어치과 ${d.name} ${d.role}. ${d.titleLine}.${txNames ? ` ${txNames} 진료.` : ''} ${d.intro.slice(0, 80)}`.slice(0, 158),
+    title: `${d.name} ${d.role} | ${d.titleLine} | 약수역 365올케어치과`,
+    description: `약수역 365올케어치과 ${d.name} ${d.role}. ${d.titleLine}.${txNames ? ` ${txNames} 진료.` : ''} ${d.intro.slice(0, 80)}`.slice(0, 158),
     path: `/doctors/${slug}`,
-    keywords: `${d.name},올케어치과 ${d.name},약수역 치과 ${d.role}${txNames ? ',' + txNames.replace(/·/g, ',') : ''}`,
+    keywords: `${d.name},365올케어치과 ${d.name},약수역 치과 ${d.role}${txNames ? ',' + txNames.replace(/·/g, ',') : ''}`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }, { name: d.name, url: `/doctors/${slug}` }]),
       personSchema,

@@ -109,8 +109,8 @@ export function Header() {
   <header class="site-header" id="siteHeader">
     <div class="header-inner">
       <a href="/" class="logo" aria-label="${CLINIC.name} 홈">
-        <span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="올케어치과 로고" class="mark-img mark-ivory" width="32" height="32"/><img src="/static/img/logo-symbol.png" alt="올케어치과 로고" class="mark-img mark-navy" width="32" height="32"/></span>
-        <span>올케어치과</span>
+        <span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="365올케어치과 로고" class="mark-img mark-ivory" width="32" height="32"/><img src="/static/img/logo-symbol.png" alt="365올케어치과 로고" class="mark-img mark-navy" width="32" height="32"/></span>
+        <span>365올케어치과</span>
       </a>
       <nav aria-label="주메뉴">
         <ul class="gnb">
@@ -206,7 +206,7 @@ export function Footer() {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="올케어치과 로고" width="30" height="30" style="display:block"/></span> 올케어치과</div>
+          <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="365올케어치과 로고" width="30" height="30" style="display:block"/></span> 365올케어치과</div>
           <p style="line-height:1.7">${CLINIC.philosophy}<br>약수역에서 오래도록 곁을 지키는 치과를 만듭니다.</p>
           <div class="footer-sns">
             ${CLINIC.sns.instagram ? raw(`<a href="${CLINIC.sns.instagram}" aria-label="인스타그램" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>`) : ''}
@@ -372,7 +372,7 @@ export function headTags(meta: Meta) {
     <link rel="icon" href="/static/img/favicon-64.png" sizes="64x64" type="image/png" />
     <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
     <link rel="manifest" href="/static/manifest.json" />
-    <meta name="apple-mobile-web-app-title" content="올케어치과" />
+    <meta name="apple-mobile-web-app-title" content="365올케어치과" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />

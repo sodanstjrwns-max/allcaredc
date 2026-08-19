@@ -83,8 +83,8 @@ export function EncyclopediaPage() {
   <script>document.addEventListener('DOMContentLoaded',function(){if(window.initEncyclopedia)window.initEncyclopedia();});</script>
   `
   return Page({
-    title: `치과 백과사전 | 치과 용어 ${TERMS.length}선 | 올케어치과`,
-    description: `약수역 올케어치과 치과 백과사전. 임플란트, 교정, 충치, 잇몸치료 등 치과 용어 ${TERMS.length}개를 알기 쉽게 설명합니다. 핵심 용어는 정의·과정·주의사항·FAQ를 상세히 제공합니다.`,
+    title: `치과 백과사전 | 치과 용어 ${TERMS.length}선 | 365올케어치과`,
+    description: `약수역 365올케어치과 치과 백과사전. 임플란트, 교정, 충치, 잇몸치료 등 치과 용어 ${TERMS.length}개를 알기 쉽게 설명합니다. 핵심 용어는 정의·과정·주의사항·FAQ를 상세히 제공합니다.`,
     path: '/encyclopedia',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '치과 백과사전', url: '/encyclopedia' }]), defSchema],
   }, body)
@@ -207,11 +207,11 @@ export function EncyclopediaDetailPage(slug: string) {
   </section>
   `
   return Page({
-    title: `${term.term}${term.en ? ' (' + term.en + ')' : ''} | 치과 백과사전 | 올케어치과`,
+    title: `${term.term}${term.en ? ' (' + term.en + ')' : ''} | 치과 백과사전 | 365올케어치과`,
     description: c.intro.slice(0, 155),
     path: `/encyclopedia/${term.slug}`,
     ogImage: `https://${CLINIC.domain}/og/enc/${term.slug}.svg`,
-    keywords: `${term.term},${term.en},치과 용어,${txName(term.treatment)},올케어치과`,
+    keywords: `${term.term},${term.en},치과 용어,${txName(term.treatment)},365올케어치과`,
     schema: [
       breadcrumbSchema(crumb),
       definedTermSchema,

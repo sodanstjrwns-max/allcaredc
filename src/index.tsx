@@ -288,7 +288,7 @@ async function sendReservationEmail(env: Bindings, r: any) {
       method: 'POST',
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: '올케어치과 <noreply@allcaredc.kr>', to: [env.NOTIFICATION_EMAIL],
+        from: '365올케어치과 <noreply@allcaredc.kr>', to: [env.NOTIFICATION_EMAIL],
         reply_to: r.email || undefined,
         subject: `[예약문의] ${r.name} · ${r.treatment}`,
         html: `
@@ -344,17 +344,17 @@ app.notFound((c) => {
       </div>
     </div>
   </section>`
-  return c.html(Page({ title: '페이지를 찾을 수 없습니다 (404) | 올케어치과', description: '요청하신 페이지를 찾을 수 없습니다. 올케어치과 주요 메뉴로 이동하세요.', path: '/404' }, body).toString(), 404)
+  return c.html(Page({ title: '페이지를 찾을 수 없습니다 (404) | 365올케어치과', description: '요청하신 페이지를 찾을 수 없습니다. 365올케어치과 주요 메뉴로 이동하세요.', path: '/404' }, body).toString(), 404)
 })
 
 function legalPage(title: string, content: string, path: string) {
   const body = html`
   <section class="page-hero"><div class="container"><h1>${title}</h1></div></section>
   <section class="section"><div class="container" style="max-width:820px"><div class="prose" style="white-space:pre-line">${content}</div></div></section>`
-  return Page({ title: `${title} | 올케어치과`, description: title, path }, body)
+  return Page({ title: `${title} | 365올케어치과`, description: title, path }, body)
 }
 
-const PRIVACY = `올케어치과(이하 "병원")는 「개인정보 보호법」 등 관련 법령을 준수하며, 이용자의 개인정보를 소중히 보호합니다.
+const PRIVACY = `365올케어치과(이하 "병원")는 「개인정보 보호법」 등 관련 법령을 준수하며, 이용자의 개인정보를 소중히 보호합니다.
 
 1. 수집하는 개인정보 항목
 - 회원가입: 이름, 이메일, 전화번호
@@ -386,7 +386,7 @@ const PRIVACY = `올케어치과(이하 "병원")는 「개인정보 보호법�
 - 이용자는 언제든지 본인의 개인정보 열람·정정·삭제·처리정지를 요청할 수 있으며, 병원은 지체 없이 조치합니다.
 
 8. 개인정보 보호책임자
-- 개인정보 보호책임자: 올케어치과 관리책임자
+- 개인정보 보호책임자: 365올케어치과 관리책임자
 - 연락처: ${CLINIC.phone} / ${CLINIC.email}
 - 개인정보 관련 문의·불만·피해구제는 위 연락처로 접수하실 수 있습니다.
 
@@ -395,7 +395,7 @@ const PRIVACY = `올케어치과(이하 "병원")는 「개인정보 보호법�
 문의: ${CLINIC.phone}`
 
 const TERMS = `제1조(목적)
-본 약관은 올케어치과 웹사이트가 제공하는 서비스의 이용 조건 및 절차에 관한 사항을 규정합니다.
+본 약관은 365올케어치과 웹사이트가 제공하는 서비스의 이용 조건 및 절차에 관한 사항을 규정합니다.
 
 제2조(서비스의 내용)
 병원은 진료 안내, 예약 문의, 진료사례 및 칼럼 제공 등의 서비스를 제공합니다.

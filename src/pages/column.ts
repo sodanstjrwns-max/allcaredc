@@ -75,8 +75,8 @@ export function ColumnIndex(columns: Column[]) {
     </div>
   </section>`
   return Page({
-    title: '원장 칼럼 | 올케어치과',
-    description: '약수역 올케어치과 의료진이 직접 쓰는 치과 칼럼. 임플란트, 치아교정, 심미보철, 잇몸·사랑니·턱관절까지 꼭 알아야 할 진료 정보와 치료 전 체크포인트를 구강악안면외과·보철과 전문의가 환자 눈높이로 알기 쉽게 설명합니다.',
+    title: '원장 칼럼 | 365올케어치과',
+    description: '약수역 365올케어치과 의료진이 직접 쓰는 치과 칼럼. 임플란트, 치아교정, 심미보철, 잇몸·사랑니·턱관절까지 꼭 알아야 할 진료 정보와 치료 전 체크포인트를 구강악안면외과·보철과 전문의가 환자 눈높이로 알기 쉽게 설명합니다.',
     path: '/column',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }])],
   }, body)
@@ -174,7 +174,7 @@ export function ColumnDetail(col: Column, views: number) {
     </div>
   </section>`
   return Page({
-    title: col.metaTitle || `${col.title} | 원장 칼럼 | 올케어치과`,
+    title: col.metaTitle || `${col.title} | 원장 칼럼 | 365올케어치과`,
     description: col.metaDesc || col.excerpt,
     path: `/column/${col.slug}`,
     schema: [

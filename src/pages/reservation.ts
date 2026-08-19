@@ -17,7 +17,7 @@ export function ReservationPage() {
     '@type': 'WebPage',
     '@id': `${pageUrl}#webpage`,
     name: '예약 문의',
-    description: `약수역 올케어치과 온라인 예약 문의. 원하시는 날짜·시간을 남겨주시면 진료시간에 맞춰 연락드립니다.`,
+    description: `약수역 365올케어치과 온라인 예약 문의. 원하시는 날짜·시간을 남겨주시면 진료시간에 맞춰 연락드립니다.`,
     url: pageUrl,
     inLanguage: 'ko',
     isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website` },
@@ -145,10 +145,10 @@ export function ReservationPage() {
     </div>
   </section>`
   return Page({
-    title: '예약 문의 | 약수역 올케어치과 온라인 예약',
-    description: `약수역 올케어치과 온라인 예약 문의. 원하시는 날짜·시간을 남겨주시면 진료시간에 맞춰 연락드립니다. ${CLINIC.subway}. 전화 ${CLINIC.phone}.`,
+    title: '예약 문의 | 약수역 365올케어치과 온라인 예약',
+    description: `약수역 365올케어치과 온라인 예약 문의. 원하시는 날짜·시간을 남겨주시면 진료시간에 맞춰 연락드립니다. ${CLINIC.subway}. 전화 ${CLINIC.phone}.`,
     path: '/reservation',
-    keywords: `약수역 치과 예약,올케어치과 예약,약수역 치과 야간진료,중구 치과 예약,온라인 예약`,
+    keywords: `약수역 치과 예약,365올케어치과 예약,약수역 치과 야간진료,중구 치과 예약,온라인 예약`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '예약 문의', url: '/reservation' }]),
       reserveSchema,
