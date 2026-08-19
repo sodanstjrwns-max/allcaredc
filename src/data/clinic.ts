@@ -283,7 +283,7 @@ export const CLINIC = {
   // 사업자 정보 (푸터) — 사업자등록증 기준
   business: {
     owner: '권민수',
-    bizName: '올케어치과의원',
+    bizName: '365올케어치과의원',
     bizNumber: '822-45-00944',
     openDate: '2023.05.16',
   },
