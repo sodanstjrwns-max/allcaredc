@@ -2344,7 +2344,7 @@ body::after {
   width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block;
   filter: saturate(.96) contrast(1.02);
 }
-.hh-frame img.hh-portrait { aspect-ratio: 4/5; object-position: center 22%; }
+.hh-frame img.hh-portrait { aspect-ratio: 576/1024; object-fit: cover; object-position: center; }
 .hh-caption {
   display: flex; align-items: baseline; gap: 14px; margin-top: 16px;
   font-size: 13px; color: var(--gray-600);
