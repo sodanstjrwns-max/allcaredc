@@ -2299,7 +2299,7 @@ body::after {
 .hh-title .hh-italic { font-style: normal; font-weight: 380; color: var(--navy-600); }
 /* 한글 롱카피 히어로 — 가변폰트 모핑 OFF, 줄바꿈 허용 + 행간·자간 여유로 가독성 확보 */
 /* 특이도(.hero--heritage .hh-title)를 이기려 셀렉터 2개로 강화 */
-.hero--heritage .hh-title--ko, .hh-title--ko { font-size: clamp(1.9rem, 3.5vw, 2.9rem); line-height: 1.32; letter-spacing: -.03em; font-weight: 800; word-break: keep-all; }
+.hero--heritage .hh-title--ko, .hh-title--ko { font-size: clamp(3rem, 6vw, 5rem); line-height: 1.24; letter-spacing: -.03em; font-weight: 800; word-break: keep-all; }
 /* 8글자 '365올케어치과' 라인이 노란 컬럼을 넘지 않도록 클립 해제 + 안전 축소 */
 .hh-title--ko .line-mask { overflow: visible; }
 .hh-title--ko .hh-ko-line { white-space: normal; max-width: 100%; font-size: inherit; }
