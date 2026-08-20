@@ -1,14 +1,17 @@
 import { chromium } from 'playwright';
+const url = 'http://localhost:3000/?cb=' + Date.now();
 const b = await chromium.launch();
 // PC
-const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
-await p.goto('https://allcaredc.kr/?cb=' + Date.now(), { waitUntil: 'networkidle' });
-await p.waitForTimeout(1500);
+let p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+await p.goto(url, { waitUntil: 'networkidle' });
+await p.waitForTimeout(1200);
 await p.screenshot({ path: '/tmp/hero_pc.png' });
+await p.close();
 // Mobile
-const m = await b.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
-await m.goto('https://allcaredc.kr/?cb=' + Date.now(), { waitUntil: 'networkidle' });
-await m.waitForTimeout(1500);
-await m.screenshot({ path: '/tmp/hero_mobile.png' });
+p = await b.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+await p.goto(url, { waitUntil: 'networkidle' });
+await p.waitForTimeout(1200);
+await p.screenshot({ path: '/tmp/hero_mobile.png' });
+await p.close();
 await b.close();
 console.log('done');
