@@ -7,6 +7,14 @@ import { speakableSchema } from '../lib/seo-engine'
 const BASE = `https://${CLINIC.domain}`
 const DAY_CODE: Record<string, string> = { '월': 'Monday', '화': 'Tuesday', '수': 'Wednesday', '목': 'Thursday', '금': 'Friday', '토': 'Saturday', '일': 'Sunday' }
 
+// 협력 및 후원단체 — 상대측 얼굴은 개인정보 보호를 위해 모자이크 처리됨
+const PARTNER_ORGS = [
+  { name: '약수시장상인회', img: '/static/img/partner-yaksu-market.jpg', caption: '상호협력 발전을 위한 업무협약', alt: '365올케어치과 - 약수시장상인회 업무협약식, 권민수 대표원장이 상인회 측과 상호협력 협약서를 든 모습(상대측 얼굴 모자이크 처리)' },
+  { name: '다온봉사단', img: '/static/img/partner-daon.jpg', caption: '의료서비스 지원 협약', alt: '365올케어치과 - 다온봉사단 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
+  { name: '약수동주민센터', img: '/static/img/partner-community-center.jpg', caption: '취약계층 의료서비스 지원 협약', alt: '365올케어치과 - 약수동주민센터 취약계층 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
+  { name: '중구산악회', img: '/static/img/partner-junggu-alpine.jpg', caption: '지역 단체 의료서비스 지원 협약', alt: '365올케어치과 - 중구산악회 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
+]
+
 // 진료시간 → openingHoursSpecification 변환 (요일별 1줄 포맷: '월요일' / '09:30 - 20:30')
 function openingHoursSpec() {
   return CLINIC.hours
@@ -179,7 +187,20 @@ export function MissionPage() {
         <img src="/static/img/yaksu-mou-sign.webp" alt="365올케어치과 - 약수상인회 업무협약식 — 권민수 대표원장이 상인회 대표와 상호협력 협약서에 서명하는 모습" width="1024" height="683" loading="lazy">
         <figcaption><i class="fa-solid fa-handshake" style="color:var(--gold-300);margin-right:8px"></i>2024.11.13 · 약수상인회 업무협약식 — 동네 상권과 상호협력을 약속했습니다</figcaption>
       </figure>
-      <div class="yaksu-copy reveal reveal-d1">
+
+      <!-- 협력 및 후원단체 갤러리 (4개 단체) — 상대측 얼굴은 개인정보 보호를 위해 모자이크 처리 -->
+      <div class="partner-grid reveal reveal-d1">
+        ${raw(PARTNER_ORGS.map(p => `
+        <figure class="partner-item">
+          <div class="partner-photo"><img src="${p.img}" alt="${p.alt}" width="800" height="600" loading="lazy"></div>
+          <figcaption>
+            <strong>${p.name}</strong>
+            <span>${p.caption}</span>
+          </figcaption>
+        </figure>`).join(''))}
+      </div>
+
+      <div class="yaksu-copy reveal reveal-d2">
         <h3 class="yaksu-copy-head">지역과 함께 걸어온 치과</h3>
         <p>365올케어치과는 개원 초부터 약수시장상인회와 협약을 맺고,<br class="br-pc"> 지역 상권과 주민들의 곁을 지켜왔습니다.<br class="br-pc"> 약수동주민센터, 다온봉사단, 중구 산악회 등 여러 지역 단체와도 꾸준히 함께해 왔습니다.</p>
         <p>잠깐 스쳐가는 병원이 아니라, 동네에 뿌리내리고 오래 머무는 치과.<br class="br-pc"> 그 자리를 지키는 것이 저희가 지역에 보답하는 방식이라 믿습니다.</p>

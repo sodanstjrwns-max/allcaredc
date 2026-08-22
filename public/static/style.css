@@ -648,6 +648,34 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 }
 .yaksu-copy p:last-child { margin-bottom: 0; }
 
+/* ── 협력 및 후원단체 갤러리 (4개 단체) ── */
+.partner-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.6vw, 20px); margin: clamp(24px, 3vw, 36px) auto 0; max-width: 1100px;
+}
+.partner-item {
+  margin: 0; background: rgba(255,254,238,.04);
+  border: 1px solid rgba(214,178,122,.22); border-radius: 12px; overflow: hidden;
+}
+.partner-photo { aspect-ratio: 4/3; overflow: hidden; background: rgba(0,0,0,.15); }
+.partner-photo img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  display: block; transition: transform .5s ease;
+}
+.partner-item:hover .partner-photo img { transform: scale(1.04); }
+.partner-item figcaption { padding: 12px 14px 14px; text-align: center; }
+.partner-item figcaption strong {
+  display: block; color: var(--gold-300, #d6b27a);
+  font-size: clamp(14px, 1.4vw, 15.5px); font-weight: 700; margin-bottom: 4px;
+}
+.partner-item figcaption span {
+  display: block; color: rgba(255,254,238,.62);
+  font-size: clamp(11.5px, 1.1vw, 12.5px); line-height: 1.5;
+}
+@media (max-width: 768px) {
+  .partner-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+
 /* ============================================================
    §4 3인 협진 통합진료 — flow + 카드
    ============================================================ */

@@ -111,6 +111,7 @@ app.get('/treatments/:slug', (c) => {
 const DOCTOR_SLUG_REDIRECTS: Record<string, string> = {
   'doctor-integrated': 'kwon-jongjin', // 통합치의학과 placeholder → 권종진 명예원장
   'doctor-prostho': 'bae-suhyeon',     // 보철과 placeholder → 배수현 보철과 원장
+  'kwon-minsu': 'kwon-minsoo',         // 영문 표기 통일(Minsoo Kwon) → 구 URL 검색 색인 보호용 301
 }
 app.get('/doctors', (c) => c.html(DoctorsIndex().toString()))
 app.get('/doctors/:slug', (c) => {

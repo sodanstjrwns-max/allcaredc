@@ -190,7 +190,7 @@ export const SEED_COLUMNS: Column[] = [
   {
     id: 'c_seed1', slug: 'implant-bone-graft', title: '뼈가 부족해도 임플란트가 가능할까요?',
     excerpt: '다른 곳에서 뼈가 부족하다는 말을 들으셨다면, 골이식과 상악동 거상에 대해 알아두시면 도움이 됩니다.',
-    category: 'implant', author: 'kwon-minsu', published: true,
+    category: 'implant', author: 'kwon-minsoo', published: true,
     body: `<p>임플란트 상담을 받다 보면 "뼈가 부족해서 어렵다"는 말을 듣고 돌아서는 분들이 계십니다. 하지만 잇몸뼈가 부족하다고 해서 임플란트를 포기해야 하는 것은 아닙니다.</p>
 <h2>왜 뼈가 부족해지나요?</h2>
 <p>치아가 빠진 자리는 시간이 지나면서 잇몸뼈가 점점 흡수됩니다. 또한 잇몸 질환(치주염)이 오래 진행되었거나, 윗턱 어금니 부위는 상악동(부비동)이 가까워 식립에 필요한 뼈가 얕은 경우가 많습니다.</p>
@@ -205,7 +205,7 @@ export const SEED_COLUMNS: Column[] = [
   {
     id: 'c_seed2', slug: 'ortho-adult-timing', title: '성인 교정, 지금 시작해도 늦지 않을까요?',
     excerpt: '교정에 나이 제한은 없습니다. 다만 성인 교정에서 꼭 챙겨야 할 것이 있습니다.',
-    category: 'ortho', author: 'kwon-minsu', published: true,
+    category: 'ortho', author: 'kwon-minsoo', published: true,
     body: `<p>"이 나이에 교정해도 될까요?" 진료실에서 정말 자주 받는 질문입니다. 결론부터 말씀드리면, 교정에 나이 제한은 없습니다.</p>
 <h2>성인 교정의 장점</h2>
 <p>성인은 치료의 필요성을 스스로 이해하고 협조도가 높아, 오히려 계획대로 진행되는 경우가 많습니다. 직장 생활 중에도 눈에 덜 띄는 투명교정이나 세라믹 교정을 선택할 수 있습니다.</p>

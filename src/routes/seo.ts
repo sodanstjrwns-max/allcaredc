@@ -48,7 +48,7 @@ export async function sitemap(env: Bindings): Promise<string> {
     img: [{ url: `${BASE}/og/treatment/${t.slug}.svg`, title: `${t.name} - ${CLINIC.name}` }],
   }))
   // 의료진 (사진 포함)
-  ;['kwon-minsu', 'kwon-jongjin', 'bae-suhyeon'].forEach(s => urls.push({
+  ;['kwon-minsoo', 'kwon-jongjin', 'bae-suhyeon'].forEach(s => urls.push({
     loc: `/doctors/${s}`, pri: '0.7', freq: 'monthly',
     img: [{ url: `${BASE}/static/img/${s}.webp` }],
   }))
@@ -272,6 +272,26 @@ ${TREATMENTS.map(t => `- [${t.name}](${BASE}/treatments/${t.slug})`).join('\n')}
 }
 
 // ════════════════ 지역 SEO 페이지 /area/:combo ════════════════
+// ── 한국어 조사 자동 처리 (§지역페이지 1차: '을/를' 오류 일괄 수정) ──
+// 마지막 글자 받침 유무로 을/를 판별. 임플란트·치아교정·심미보철=받침○→을, 수면진료=받침✕→를
+function eulReul(word: string): '을' | '를' {
+  const last = word.charCodeAt(word.length - 1)
+  if (last < 0xac00 || last > 0xd7a3) return '를' // 한글 아니면 기본 '를'
+  return (last - 0xac00) % 28 === 0 ? '를' : '을'
+}
+// '거리' 중복 방지: area.access 값이 이미 '거리'로 끝나면 '거리'를 덧붙이지 않음
+function withGeori(access: string): string {
+  return /거리$/.test(access.trim()) ? access : `${access} 거리`
+}
+// '진료' 중복 방지: tx.name이 '진료'로 끝나면(수면진료) '진료' 표현 대신 '를 함께 봅니다'
+function txClause(txName: string): string {
+  return /진료$/.test(txName) ? `${txName}${eulReul(txName)} 함께 봅니다` : `${txName} 진료를 협진합니다`
+}
+// '수면진료 진료' 같은 '진료 진료' 중복 방지 — 뒤에 '진료' 붙일 때 사용
+function txWithJinryo(txName: string): string {
+  return /진료$/.test(txName) ? txName : `${txName} 진료`
+}
+
 export function AreaPage(combo: string) {
   // combo = "yaksu-implant"
   const parts = combo.split('-')
@@ -287,8 +307,11 @@ export function AreaPage(combo: string) {
   // 지역 특화 FAQ (AEO — 로컬 검색 질문 대응)
   const areaFaqs = [
     { q: `${area.name}에서 365올케어치과까지 어떻게 가나요?`, a: `${area.transit} 위치이며, ${area.name} 기준 ${area.access}입니다. 서울 중구 동호로 171 더그레이스빌딩 4층(약수역 5번 출구 스타벅스 건물)입니다.` },
-    { q: `${area.name}에서 가까운 ${tx.name} 치과를 찾고 있어요.`, a: `약수역 365올케어치과는 ${area.name}에서 ${area.access} 거리로, 구강악안면외과·치과보철과·통합치의학과 전문의가 ${tx.name} 진료를 협진합니다. 예약 문의는 ${CLINIC.phone}.` },
-    { q: `직장인인데 ${area.name} 근처에서 야간에 ${tx.name} 진료가 가능한가요?`, a: `네, 365올케어치과는 월·화·목요일 저녁 20:30까지 야간진료를 운영합니다. ${area.name}에서 퇴근 후 내원하시기 편리합니다.` },
+    { q: `${area.name}에서 가까운 ${tx.name} 치과를 찾고 있어요.`, a: `약수역 365올케어치과는 ${area.name}에서 ${withGeori(area.access)}로, 구강악안면외과·치과보철과·통합치의학과 전문의가 ${txClause(tx.name)}. 예약 문의는 ${CLINIC.phone}.` },
+    { q: `직장인인데 ${area.name} 근처에서 야간에 ${txWithJinryo(tx.name)}가 가능한가요?`, a: `네, 365올케어치과는 월·화·목요일 저녁 20:30까지 야간진료를 운영합니다. ${area.name}에서 퇴근 후 내원하시기 편리합니다.` },
+    // §지역페이지 1차: 주차 안내 FAQ 공통 추가
+    { q: '차를 가지고 가도 주차할 수 있나요?', a: '네, 건물 뒤편 무료 주차장을 이용하실 수 있습니다. 다만 자주식과 기계식이 함께 있어 대형 세단이나 큰 SUV는 자리가 맞지 않을 수 있습니다. 이 경우 인근 공영주차장을 이용해 주시면 됩니다. 평일 낮에는 주차 관리자가 도와드리고, 야간과 주말, 공휴일에는 직접 주차하시게 됩니다.' },
+    { q: '야간진료나 주말에도 주차가 되나요?', a: '주차는 가능합니다. 다만 야간과 주말, 공휴일에는 주차 관리자가 없어 직접 주차하셔야 하며, 차량이 크신 경우 인근 공영주차장이 더 편할 수 있습니다.' },
     ...(tx.faqs && tx.faqs.length ? [{ q: tx.faqs[0].q, a: tx.faqs[0].a }] : []),
   ]
 
@@ -304,7 +327,7 @@ export function AreaPage(combo: string) {
     '@type': 'MedicalWebPage',
     name: `${area.name} ${tx.name} - ${CLINIC.name}`,
     url: pageUrl,
-    description: `${area.name} 인근 ${tx.name} 진료 안내 — 약수역 365올케어치과`,
+    description: `${area.name} 인근 ${txWithJinryo(tx.name)} 안내 — 약수역 365올케어치과`,
     about: { '@type': 'AdministrativeArea', name: area.adminArea },
     mainEntity: {
       '@type': 'MedicalProcedure',
@@ -326,7 +349,7 @@ export function AreaPage(combo: string) {
   ${PageHero({
     crumb,
     title: `${area.name} ${tx.name}`,
-    desc: `${area.name}에서 ${area.access}, 약수역 365올케어치과에서 ${tx.name}을(를) 안내해 드립니다.`,
+    desc: `${area.name}에서 ${area.access}, 약수역 365올케어치과에서 ${tx.name}${eulReul(tx.name)} 안내해 드립니다.`,
   })}
   <section class="section">
     <div class="container">
@@ -338,12 +361,23 @@ export function AreaPage(combo: string) {
           <p>${tx.intro}</p>
 
           <h2>${area.name}에서 365올케어치과 오시는 길</h2>
-          <p><strong>${area.transit}</strong> — ${area.name} 기준 약 ${area.access} 거리입니다. 주소는 ${CLINIC.address}(${CLINIC.directions})입니다.</p>
+          <p><strong>${area.transit}</strong> — ${area.name} 기준 약 ${withGeori(area.access)}입니다. 주소는 ${CLINIC.address}(${CLINIC.directions})입니다.</p>
           <ul class="check">
             <li>3·6호선 약수역 5번 출구 도보 1분 — 더블 역세권으로 ${area.name}에서 환승·직통 접근 용이</li>
             <li>분야별 전문의가 진단부터 마무리까지 함께 살피는 협진</li>
             <li>원내 기공실(상주 기공사)과 의식하진정법(수면치료) 세팅을 갖춘 진료 환경</li>
             <li>월·화·목 야간진료(20:30까지)로 ${area.name} 직장인도 편하게 내원 가능</li>
+          </ul>
+
+          <h3><i class="fa-solid fa-square-parking text-mint"></i> 주차 안내</h3>
+          <p>건물 뒤편에 <strong>무료 주차장</strong>이 있습니다. 자주식과 기계식이 함께 있어 자리에 따라 차량 크기 제한이 있습니다. 대형 세단이나 큰 SUV는 주차가 어려울 수 있으니, 차량이 크신 경우 인근 공영주차장을 이용하시면 편합니다. 평일 낮에는 주차 관리자가 상주해 안내를 도와드리며, 야간 진료 시간과 주말·공휴일에는 관리자가 없어 직접 주차하셔야 합니다.</p>
+
+          <h3><i class="fa-solid fa-bus text-mint"></i> 버스 안내</h3>
+          <p>버스는 <strong>147번</strong>과 <strong>301번</strong>이 약수역 5번 출구(병원 앞)와 4번 출구 정류장에 섭니다. 5번 출구에서는 내리신 자리에서 병원 건물까지 도보 1분 내외입니다. 마을버스는 <strong>성동05번</strong>과 <strong>성동12번</strong>이 약수역 주변(약수지구대·약수시장 방면) 정류장에 섭니다.</p>
+          <ul class="check">
+            <li><strong>약수역 5번 출구</strong>(금호터널입구, 병원 앞·도보 1분 내외) — 147, 301</li>
+            <li>약수역 4번 출구(금호터널입구, 길 건너편) — 147, 301</li>
+            <li>마을버스(약수역 주변, 약수지구대·약수시장 방면) — 성동05, 성동12</li>
           </ul>
 
           ${tx.sections[0] ? html`<h2>${tx.sections[0].h}</h2><p>${tx.sections[0].p}</p>` : ''}
@@ -374,7 +408,7 @@ export function AreaPage(combo: string) {
   </section>`
   return Page({
     title: `${area.name} ${tx.name} | 약수역 ${tx.name} 치과 - 365올케어치과`,
-    description: `${area.name} ${tx.name}을(를) 찾으신다면 약수역 365올케어치과. ${area.transit}, ${area.access}. ${tx.short} 치과 전문의 협진, 원내 기공실, 야간진료.`,
+    description: `${area.name} ${tx.name}${eulReul(tx.name)} 찾으신다면 약수역 365올케어치과. ${area.transit}, ${area.access}. ${tx.short} 치과 전문의 협진, 원내 기공실, 야간진료.`,
     path: `/area/${combo}`,
     ogImage: `${BASE}/og/area/${combo}.svg`,
     schema: [bc, localSchema, areaSchema, faqLd, speakableSchema()],

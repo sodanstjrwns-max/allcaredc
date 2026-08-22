@@ -66,6 +66,7 @@ export function DoctorDetail(slug: string) {
     '@type': ['Physician', 'Person'],
     '@id': `${pageUrl}#physician`,
     name: d.name,
+    ...(d.nameEn ? { alternateName: d.nameEn } : {}),
     jobTitle: `${d.role} / ${d.titleLine}`,
     description: d.intro,
     url: pageUrl,
@@ -97,7 +98,8 @@ export function DoctorDetail(slug: string) {
             <div class="doc-photo" style="border-radius:var(--radius-lg);box-shadow:var(--shadow);aspect-ratio:4/4.6;overflow:hidden"><img src="${d.photo}" alt="${d.name} ${d.role}" style="width:100%;height:100%;object-fit:cover;${d.imgPos || 'object-position:top center'}"></div>
             <div>
               <span class="role" style="color:var(--brand-accent);font-weight:700">${d.role}</span>
-              <h2 style="font-size:2rem;margin:6px 0 4px">${d.name}</h2>
+              <h2 style="font-size:2rem;margin:6px 0 2px">${d.name}</h2>
+              ${d.nameEn ? html`<p style="color:var(--gold-600);font-size:.9rem;letter-spacing:.02em;font-weight:600;margin:0 0 8px">${d.nameEn}</p>` : ''}
               <p style="color:var(--gray-600);font-size:1.05rem;margin-bottom:20px">${d.titleLine}</p>
               <p style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-600);font-weight:700;margin-bottom:10px">진료과목</p>
               <div class="doc-tags">
