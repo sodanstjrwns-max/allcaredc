@@ -300,7 +300,7 @@ export function Footer() {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260820b"></script>
+  <script src="/static/app.js?v=20260823c"></script>
   `
 }
 

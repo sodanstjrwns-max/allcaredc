@@ -111,6 +111,7 @@
     var pxEls = document.querySelectorAll('[data-parallax]');
     var hero = document.querySelector('.hero');
     var heroInner = document.querySelector('.hero-inner');
+    var heroDriftMQ = window.matchMedia('(min-width: 1025px)');
     var ticking = false;
     function frame() {
       var y = window.scrollY;
@@ -119,17 +120,27 @@
         el.style.transform = 'translate3d(0,' + (y * sp) + 'px,0) scale(1.05)';
       });
       // hero content drifts up + fades as you scroll (scroll-linked)
+      // ★모바일(≤1024px)에서는 적용 금지: 히어로가 뷰포트보다 훨씬 길어
+      //  사진이 화면에 남아있는 상태에서 translateY로 밀려 overflow:hidden에
+      //  잘리고, opacity 페이드로 반투명해지는 버그가 생긴다 (데스크톱 전용 연출)
       if (hero && heroInner) {
-        var hh = hero.offsetHeight || 1;
-        var p = Math.min(y / hh, 1);
-        heroInner.style.transform = 'translateY(' + (y * 0.25) + 'px)';
-        heroInner.style.opacity = String(1 - p * 1.15);
+        if (heroDriftMQ.matches) {
+          var hh = hero.offsetHeight || 1;
+          var p = Math.min(y / hh, 1);
+          heroInner.style.transform = 'translateY(' + (y * 0.25) + 'px)';
+          heroInner.style.opacity = String(1 - p * 1.15);
+        } else if (heroInner.style.transform || heroInner.style.opacity) {
+          heroInner.style.transform = '';
+          heroInner.style.opacity = '';
+        }
       }
       ticking = false;
     }
     window.addEventListener('scroll', function () {
       if (!ticking) { requestAnimationFrame(frame); ticking = true; }
     }, { passive: true });
+    // 브레이크포인트 넘나들 때(태블릿 회전 등) 즉시 재계산/리셋
+    if (heroDriftMQ.addEventListener) heroDriftMQ.addEventListener('change', frame);
     frame();
   }
 
