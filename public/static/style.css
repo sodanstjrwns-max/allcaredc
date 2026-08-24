@@ -2501,6 +2501,16 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
 
 /* ---- 반응형 ---- */
 @media (max-width: 1024px) {
+  /* §모바일 헤더 경계 지저분함 수정:
+     반투명(.86)+블러 헤더는 스크롤 시 히어로 글씨가 경계에서 유령처럼
+     비쳐 보인다(iOS 사파리 주소창 반투명과 겹치면 더 심함).
+     모바일에서는 완전 불투명 — 글씨가 경계에서 깨끗하게 사라짐 */
+  .site-header.scrolled {
+    background: #FBFAF7;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 1px 12px rgba(14, 27, 48, .06);
+  }
   .hh-grid { grid-template-columns: 1fr; gap: 48px; }
   .hero--heritage { justify-content: flex-start; padding-top: 130px; }
   .hero--heritage .hh-panel { top: auto; height: 52%; width: 100%; }
