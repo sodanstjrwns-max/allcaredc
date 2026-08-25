@@ -2511,6 +2511,23 @@ body:has(.hero--heritage) .site-header:not(.scrolled) .logo .mark-navy { opacity
     -webkit-backdrop-filter: none;
     box-shadow: 0 1px 12px rgba(14, 27, 48, .06);
   }
+  /* §iOS 헤더 '위쪽' 유령 글씨 수정:
+     iOS 사파리는 주소창이 접히면 페이지를 상태바 영역(헤더보다 위)까지
+     확장해 그린다. fixed 헤더는 top:0(레이아웃 뷰포트)까지만 덮으므로
+     그 위 구간에 히어로 글씨가 비쳐 보였다(스크린샷: '믿고 찾는' 잔상).
+     해결: 스크롤된 헤더 위로 불투명 가림막을 200px 연장해 원천 차단.
+     헤더가 fixed라 ::before도 함께 고정 — 상태바/접힌 주소창 구간을 항상 덮는다.
+     주의: .scrolled일 때만 — 페이지 최상단(투명 헤더)에서는 히어로 디자인을 가리면 안 됨 */
+  .site-header.scrolled::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -200px;
+    height: 200px;
+    background: #FBFAF7;
+    pointer-events: none;
+  }
   .hh-grid { grid-template-columns: 1fr; gap: 48px; }
   .hero--heritage { justify-content: flex-start; padding-top: 130px; }
   .hero--heritage .hh-panel { top: auto; height: 52%; width: 100%; }
