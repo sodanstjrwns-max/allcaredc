@@ -196,7 +196,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
               <span class="role">${d.role}</span>
               <h3>${d.name}</h3>
               <p class="title-line">${d.titleLine}</p>
-              <p class="doc-career">${d.career[0]}</p>
+              <p class="doc-career">${d.cardLine || d.career[0]}</p>
               <div class="doc-tags">
                 ${d.treatItems.map(t => `<span>${t}</span>`).join('')}
               </div>

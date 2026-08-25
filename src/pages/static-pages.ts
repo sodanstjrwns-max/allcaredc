@@ -8,6 +8,9 @@ const BASE = `https://${CLINIC.domain}`
 const DAY_CODE: Record<string, string> = { '월': 'Monday', '화': 'Tuesday', '수': 'Wednesday', '목': 'Thursday', '금': 'Friday', '토': 'Saturday', '일': 'Sunday' }
 
 // 협력 및 후원단체 — 상대측 얼굴은 개인정보 보호를 위해 모자이크 처리됨
+// §S18(2026-08-25 원장님 확정): 섹션 상단에 있던 큰 협약식 사진(yaksu-mou-sign.webp)은
+//   ① 아래 갤러리 첫 썸네일과 중복 ② 모자이크 미처리로 상대측 얼굴 노출(개인정보) 사유로
+//   마크업과 이미지 파일 모두 삭제함. 다시 추가하지 말 것 — 모자이크된 4장 갤러리만 유지.
 const PARTNER_ORGS = [
   { name: '약수시장상인회', img: '/static/img/partner-yaksu-market.jpg', caption: '상호협력 발전을 위한 업무협약', alt: '365올케어치과 - 약수시장상인회 업무협약식, 권민수 대표원장이 상인회 측과 상호협력 협약서를 든 모습(상대측 얼굴 모자이크 처리)' },
   { name: '다온봉사단', img: '/static/img/partner-daon.jpg', caption: '의료서비스 지원 협약', alt: '365올케어치과 - 다온봉사단 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
@@ -183,11 +186,6 @@ export function MissionPage() {
         <h2 style="color:#fffeee">약수 생활권과 <em style="color:var(--gold-300)">함께</em></h2>
         <p style="color:rgba(255,254,238,.65)">멀리 어렵게 찾는 치과가 아니라, 우리 동네에서 믿고 편하게 갈 수 있는 치과.</p>
       </div>
-      <figure class="reveal yaksu-banner">
-        <img src="/static/img/yaksu-mou-sign.webp" alt="365올케어치과 - 약수상인회 업무협약식 — 권민수 대표원장이 상인회 대표와 상호협력 협약서에 서명하는 모습" width="1024" height="683" loading="lazy">
-        <figcaption><i class="fa-solid fa-handshake" style="color:var(--gold-300);margin-right:8px"></i>2024.11.13 · 약수상인회 업무협약식 — 동네 상권과 상호협력을 약속했습니다</figcaption>
-      </figure>
-
       <!-- 협력 및 후원단체 갤러리 (4개 단체) — 상대측 얼굴은 개인정보 보호를 위해 모자이크 처리 -->
       <div class="partner-grid reveal reveal-d1">
         ${raw(PARTNER_ORGS.map(p => `
