@@ -95,6 +95,49 @@ ${body}
 </urlset>`
 }
 
+// ════════════════ RSS 피드 (§S20⑧: 칼럼·공지 자동 갱신) ════════════════
+// 네이버 서치어드바이저 '웹마스터 도구 > RSS 제출', 구글은 sitemap이 주력이지만
+// RSS도 함께 제출하면 신규 글 발견 속도가 빨라진다.
+export async function rssFeed(env: Bindings): Promise<string> {
+  const items: { title: string; link: string; desc: string; date: number; category?: string }[] = []
+  try {
+    const cols = await listCollection<any>(env, 'columns')
+    cols.filter((c: any) => c.published).forEach((c: any) => items.push({
+      title: c.title, link: `${BASE}/column/${c.slug}`,
+      desc: c.metaDesc || c.excerpt || '', date: c.createdAt || c.updatedAt || Date.now(),
+      category: c.category,
+    }))
+  } catch {}
+  try {
+    const notices = await listCollection<any>(env, 'notices')
+    notices.forEach((n: any) => items.push({
+      title: n.title, link: `${BASE}/notice/${n.id}`,
+      desc: (n.body || '').replace(/<[^>]+>/g, '').slice(0, 160), date: n.createdAt || Date.now(),
+    }))
+  } catch {}
+  items.sort((a, b) => b.date - a.date)
+  const rows = items.slice(0, 50).map(it => `    <item>
+      <title>${xmlEsc(it.title)}</title>
+      <link>${xmlEsc(it.link)}</link>
+      <guid isPermaLink="true">${xmlEsc(it.link)}</guid>
+      <description>${xmlEsc(it.desc)}</description>
+      <pubDate>${new Date(it.date).toUTCString()}</pubDate>${it.category ? `
+      <category>${xmlEsc(it.category)}</category>` : ''}
+    </item>`).join('\n')
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${xmlEsc(CLINIC.name)} 원장 칼럼·소식</title>
+    <link>${BASE}/column</link>
+    <atom:link href="${BASE}/rss.xml" rel="self" type="application/rss+xml"/>
+    <description>약수역 365올케어치과 의료진이 직접 쓰는 치과 칼럼과 병원 소식</description>
+    <language>ko-KR</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+${rows}
+  </channel>
+</rss>`
+}
+
 // ════════════════ robots.txt ════════════════
 export function robotsTxt(): string {
   // 검색 + AI/LLM 크롤러를 명시적으로 허용해 AEO(답변엔진 최적화) 노출 극대화

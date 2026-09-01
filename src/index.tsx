@@ -18,7 +18,7 @@ import { Bindings, getMember, setMemberSession, clearSession, hashPassword, veri
 import { listCollection, addToCollection, uid, r2GetBinary, trackView, getViews } from './lib/store'
 import { CLINIC } from './data/clinic'
 import { admin, ensureSeed } from './routes/admin'
-import { sitemap, robotsTxt, llmsTxt, AreaPage } from './routes/seo'
+import { sitemap, robotsTxt, llmsTxt, rssFeed, AreaPage } from './routes/seo'
 import { aiTxt, ogImageSvg, resolveOg } from './lib/seo-engine'
 import { INDEXNOW_KEY } from './lib/indexnow'
 import { HANDOVER_DOC_B64 } from './lib/handover-doc'
@@ -53,6 +53,9 @@ const TXT = 'text/plain; charset=utf-8'
 const SEO_CACHE = 'public, max-age=3600'
 app.get('/sitemap.xml', async (c) => c.body(await sitemap(c.env), 200, { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': SEO_CACHE }))
 app.get('/robots.txt', (c) => c.body(robotsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
+// §S20⑧: RSS 피드 — 칼럼·공지 자동 갱신 (네이버 서치어드바이저 RSS 제출용)
+app.get('/rss.xml', async (c) => c.body(await rssFeed(c.env), 200, { 'Content-Type': 'application/rss+xml; charset=utf-8', 'Cache-Control': SEO_CACHE }))
+app.get('/feed', (c) => c.redirect('/rss.xml', 301))
 // IndexNow 키 검증 파일 (빙/네이버가 소유권 확인용으로 요청)
 app.get(`/${INDEXNOW_KEY}.txt`, (c) => c.body(INDEXNOW_KEY, 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
 // 네이버 서치어드바이저 HTML 파일 소유확인 (메타태그 방식과 병행)
@@ -102,8 +105,10 @@ app.get('/encyclopedia/:slug', (c) => {
 
 // 진료
 app.get('/treatments', (c) => c.html(TreatmentsIndex().toString()))
-app.get('/treatments/:slug', (c) => {
-  const page = TreatmentDetail(c.req.param('slug'))
+app.get('/treatments/:slug', async (c) => {
+  // §S20④: 같은 분야 최신 칼럼 3개를 진료 페이지 하단에 노출
+  const cols = await listCollection<Column>(c.env, 'columns')
+  const page = TreatmentDetail(c.req.param('slug'), cols)
   return page ? c.html(page.toString()) : c.notFound()
 })
 
@@ -131,7 +136,8 @@ app.get('/area/:combo', (c) => {
 // ── 칼럼 ──
 app.get('/column', async (c) => {
   const cols = await listCollection<Column>(c.env, 'columns')
-  return c.html(ColumnIndex(cols).toString())
+  // §S20⑤: ?cat= 카테고리 필터 — 비포애프터/진료 페이지에서 역링크 진입
+  return c.html(ColumnIndex(cols, c.req.query('cat')).toString())
 })
 app.get('/column/:slug', async (c) => {
   const cols = await listCollection<Column>(c.env, 'columns')
@@ -139,7 +145,8 @@ app.get('/column/:slug', async (c) => {
   if (!col) return c.notFound()
   const bot = isBot(c.req.header('User-Agent'))
   const views = (await trackView(c.env, 'column', col.id, bot)).human
-  return c.html(ColumnDetail(col, views).toString())
+  // §S20②: 전체 칼럼 전달 → '함께 보면 좋은 글' 3카드
+  return c.html(ColumnDetail(col, views, cols).toString())
 })
 
 // ── 공지 ──

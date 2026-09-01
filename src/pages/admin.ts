@@ -385,10 +385,13 @@ export function AdminColumns(items: any[], views: Record<string, number> = {}) {
 }
 
 // ── 칼럼 작성/수정 폼 ──
-export function AdminColumnForm(col?: any) {
+export function AdminColumnForm(col?: any, allColumns: any[] = []) {
   const c = col || {}
   const esc = (s: any) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   const keywordsStr = Array.isArray(c.keywords) ? c.keywords.join(', ') : (c.keywords || '')
+  // §S20②: '함께 보면 좋은 글' 수동 지정 후보 (자기 자신 제외, 발행된 글만)
+  const relCandidates = allColumns.filter((x: any) => x.published && x.id !== c.id)
+  const relSelected: string[] = Array.isArray(c.relatedSlugs) ? c.relatedSlugs : []
   const faqsJson = JSON.stringify(c.faqs || [])
   const defaultBody = '<p>여기에 본문을 작성하세요. 상단 툴바로 제목·굵게·인용·목록 등을 적용하고, 사진은 본문으로 끌어다 놓으면 커서 위치에 바로 삽입됩니다.</p>'
   return adminShell('columns', col ? '칼럼 수정' : '칼럼 작성', html`
@@ -507,6 +510,17 @@ export function AdminColumnForm(col?: any) {
             </div>
             <div class="field"><label>대표 이미지 대체텍스트(alt)</label>
               <input name="thumbnailAlt" value="${raw(esc(c.thumbnailAlt))}" placeholder="이미지 설명 (SEO·접근성)"></div>
+            <div class="field"><label>함께 보면 좋은 글 <span style="font-weight:500;color:var(--gray-400);font-size:12px">미선택 시 같은 카테고리 최신순 자동 (최대 3개)</span></label>
+              ${relCandidates.length ? html`
+                <div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+                  ${raw(relCandidates.map((x: any) => `
+                    <label class="checkbox-row" style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:13px;cursor:pointer">
+                      <input type="checkbox" name="relatedSlugs" value="${esc(x.slug)}" ${relSelected.includes(x.slug) ? 'checked' : ''} style="margin-top:3px">
+                      <span>${esc(x.title)} <span style="color:var(--gray-400)">· ${columnCategoryName(x.category)}</span></span>
+                    </label>`).join(''))}
+                </div>
+              ` : html`<p style="font-size:13px;color:var(--gray-400)">다른 발행 칼럼이 생기면 여기서 직접 선택할 수 있습니다.</p>`}
+            </div>
             <div class="field"><label class="checkbox-row"><input type="checkbox" name="published" ${c.published !== false ? 'checked' : ''}> <span>즉시 게시</span></label></div>
             <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center"><i class="fa-solid fa-floppy-disk"></i> 저장하기</button>
             <a href="/admin/columns" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;margin-top:8px">취소</a>

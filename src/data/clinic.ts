@@ -981,8 +981,38 @@ export function columnCategoryName(slug: string): string {
     || TREATMENTS.find(t => t.slug === s)?.name
     || s
 }
+// §S20: 칼럼 카테고리 → 진료 페이지 매핑 (칼럼 하단 CTA·관련진료 자동 연결용)
+//   진료 페이지가 없는 카테고리(news)는 undefined → 전체 진료 목록으로 폴백
+const COLUMN_CAT_TO_TREATMENT: Record<string, string> = {
+  'resin-inlay': 'conservative',   // 레진·인레이 → 충치·신경치료
+  'sleep': 'sleep',
+}
+export function treatmentForColumnCategory(catSlug: string) {
+  const s = COLUMN_CAT_ALIAS[catSlug] || catSlug
+  const mapped = COLUMN_CAT_TO_TREATMENT[s] || s
+  return TREATMENTS.find(t => t.slug === mapped)
+}
+// §S20: 진료 slug → 해당 진료와 연결되는 칼럼 카테고리들 (진료 페이지 하단 최신 칼럼 노출용)
+export function columnCategoriesForTreatment(treatmentSlug: string): string[] {
+  const cats = [treatmentSlug]
+  for (const [colCat, tx] of Object.entries(COLUMN_CAT_TO_TREATMENT)) {
+    if (tx === treatmentSlug && !cats.includes(colCat)) cats.push(colCat)
+  }
+  // 구 seed 별칭도 흡수 (periodontal→gum 등)
+  for (const [alias, real] of Object.entries(COLUMN_CAT_ALIAS)) {
+    if (real === treatmentSlug && !cats.includes(alias)) cats.push(alias)
+  }
+  return cats
+}
+// §S20: 구 데이터의 의료진 placeholder slug 흡수 — 칼럼 카드 작성자 공백 방지
+const DOCTOR_SLUG_ALIAS: Record<string, string> = {
+  'doctor-integrated': 'kwon-jongjin',
+  'doctor-prostho': 'bae-suhyeon',
+  'kwon-minsu': 'kwon-minsoo',
+}
 export function getDoctor(slug: string) {
-  return DOCTORS.find(d => d.slug === slug)
+  const s = DOCTOR_SLUG_ALIAS[slug] || slug
+  return DOCTORS.find(d => d.slug === s)
 }
 export function doctorsForTreatment(slug: string) {
   return DOCTORS.filter(d => d.specialties.includes(slug))

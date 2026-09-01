@@ -3,8 +3,9 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, schemaTag } from '../components/layout'
 import {
   CLINIC, TREATMENTS, CORE_TREATMENTS, SUB_TREATMENTS, TX_IMAGES,
-  getTreatment, doctorsForTreatment, Treatment,
+  getTreatment, doctorsForTreatment, Treatment, columnCategoriesForTreatment,
 } from '../data/clinic'
+import { Column, columnCardHtml } from './column'
 import { speakableSchema, autoLinkBody } from '../lib/seo-engine'
 import { truncate } from '../lib/text'
 
@@ -70,10 +71,16 @@ export function TreatmentsIndex() {
 // ============================================================
 // 진료 상세 페이지 /treatments/:slug
 // ============================================================
-export function TreatmentDetail(slug: string) {
+export function TreatmentDetail(slug: string, allColumns: Column[] = []) {
   const t = getTreatment(slug)
   if (!t) return null
   const docs = doctorsForTreatment(slug)
+  // §S20④: 같은 분야 최신 칼럼 3개 (resin-inlay→conservative 등 카테고리 별칭 흡수)
+  const txCats = columnCategoriesForTreatment(slug)
+  const txColumns = allColumns
+    .filter(c => c.published && txCats.includes(c.category))
+    .sort((a, b) => (b.createdAt || b.updatedAt || 0) - (a.createdAt || a.updatedAt || 0))
+    .slice(0, 3)
   const related = TREATMENTS.filter(x => x.slug !== slug).slice(0, 5)
   const BASE = `https://${CLINIC.domain}`
   const pageUrl = `${BASE}/treatments/${slug}`
@@ -243,6 +250,19 @@ export function TreatmentDetail(slug: string) {
           </div>
         </aside>
       </div>
+
+      ${txColumns.length ? html`
+        <!-- §S20④: 이 분야 최신 칼럼 -->
+        <section aria-label="${t.name} 관련 칼럼" style="margin-top:70px">
+          <div class="section-head reveal" style="margin-bottom:26px;display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap">
+            <h2 style="font-size:1.5rem"><i class="fa-solid fa-pen-nib text-mint"></i> ${t.name}, 의료진이 직접 쓴 글</h2>
+            <a href="/column?cat=${slug}" style="font-size:14px;font-weight:700;color:var(--brand-accent)">칼럼 전체 보기 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></a>
+          </div>
+          <div class="doc-grid">
+            ${raw(txColumns.map((col, i) => columnCardHtml(col, i)).join(''))}
+          </div>
+        </section>
+      ` : ''}
     </div>
   </section>
   ${ctaBand()}

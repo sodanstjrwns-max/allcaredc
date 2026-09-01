@@ -95,6 +95,11 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
           <a href="/treatments" class="btn btn-primary">전체 진료 보기 <i class="fa-solid fa-arrow-right"></i></a>
           <a href="/reservation" class="btn btn-outline">상담·진단 예약</a>
         </div>
+        <!-- §S20①: 원장칼럼·비포애프터 바로가기 (모바일 우선 노출) -->
+        <nav class="hero-quick reveal reveal-d3" aria-label="콘텐츠 바로가기">
+          <a href="/column" class="hero-quick-link" id="hero-link-column"><i class="fa-solid fa-pen-nib"></i> 원장칼럼</a>
+          <a href="/cases" class="hero-quick-link" id="hero-link-cases"><i class="fa-solid fa-images"></i> 비포애프터</a>
+        </nav>
         <div class="hh-meta reveal reveal-d4">
           <div class="item"><span class="num num-ko">협진</span><span class="lbl">치과 전문의 협진 시스템</span></div>
           <div class="item"><span class="num num-ko">수면</span><span class="lbl">의식하진정법(수면진료)</span></div>

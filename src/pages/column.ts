@@ -1,7 +1,7 @@
 import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
-import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName } from '../data/clinic'
+import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName, treatmentForColumnCategory, COLUMN_CATEGORIES } from '../data/clinic'
 
 export type ColumnFAQ = { q: string; a: string }
 
@@ -19,6 +19,7 @@ export type Column = {
   metaDesc?: string
   keywords?: string[]   // SEO 키워드
   faqs?: ColumnFAQ[]    // 자주 묻는 질문 → FAQPage 스키마
+  relatedSlugs?: string[] // §S20②: '함께 보면 좋은 글' 관리자 수동 지정(칼럼 slug) — 비면 같은 카테고리 최신순 자동
   published: boolean
   createdAt: number
   updatedAt: number
@@ -39,18 +40,65 @@ function safeDate(...cands: (number | undefined)[]): number {
 const fmtDate = (createdAt?: number, updatedAt?: number) =>
   new Date(safeDate(createdAt, updatedAt)).toLocaleDateString('ko-KR')
 
-// ── 칼럼 목록 /column ──
-export function ColumnIndex(columns: Column[]) {
-  const pub = columns.filter(c => c.published)
+// §S20②: '함께 보면 좋은 글' 선정 — 수동 지정(relatedSlugs) 우선, 부족분은
+//   같은 카테고리 최신순 → 그래도 부족하면 전체 최신순으로 채움 (항상 최대 3개)
+export function pickRelatedColumns(current: Column, all: Column[], max = 3): Column[] {
+  const pool = all.filter(c => c.published && c.id !== current.id)
+  const picked: Column[] = []
+  for (const slug of current.relatedSlugs || []) {
+    const f = pool.find(c => c.slug === slug)
+    if (f && !picked.includes(f)) picked.push(f)
+    if (picked.length >= max) return picked
+  }
+  const byDate = (a: Column, b: Column) => safeDate(b.createdAt, b.updatedAt) - safeDate(a.createdAt, a.updatedAt)
+  for (const c of pool.filter(c => c.category === current.category).sort(byDate)) {
+    if (!picked.includes(c)) picked.push(c)
+    if (picked.length >= max) return picked
+  }
+  for (const c of pool.sort(byDate)) {
+    if (!picked.includes(c)) picked.push(c)
+    if (picked.length >= max) return picked
+  }
+  return picked
+}
+
+// 칼럼 카드 마크업 (목록·함께 보면 좋은 글·진료페이지 하단 공용)
+export function columnCardHtml(col: Column, i = 0): string {
+  return `
+    <a href="/column/${col.slug}" class="doc-card reveal reveal-d${(i % 3) + 1}">
+      <div class="doc-photo" style="aspect-ratio:1200/630;background:linear-gradient(135deg,var(--brand),var(--brand-accent))">
+        ${col.thumbnail ? `<img src="${col.thumbnail}" alt="${col.title}" loading="lazy">` : `<div class="ph" style="color:rgba(255,255,255,.5)"><i class="fa-solid fa-pen-nib"></i></div>`}
+      </div>
+      <div class="doc-body">
+        <span class="role">${txName(col.category)}</span>
+        <h3 style="font-size:1.1rem;line-height:1.4">${col.title}</h3>
+        <p class="title-line" style="min-height:auto;margin-top:8px;font-size:14px">${col.excerpt}</p>
+        <p style="font-size:13px;color:var(--gray-400);margin-top:12px">${docName(col.author) ? `${docName(col.author)} 원장 · ` : ''}${fmtDate(col.createdAt, col.updatedAt)}</p>
+      </div>
+    </a>`
+}
+
+// ── 칼럼 목록 /column (§S20⑤: ?cat= 카테고리 필터 지원 — 비포애프터에서 역링크로 진입) ──
+export function ColumnIndex(columns: Column[], cat?: string) {
+  let pub = columns.filter(c => c.published)
+  const catName = cat ? txName(cat) : ''
+  // 구 별칭 카테고리(periodontal→gum 등)도 같은 표기명이면 함께 노출
+  if (cat) pub = pub.filter(c => c.category === cat || txName(c.category) === catName)
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }],
     chapter: 'Notes from the Clinic',
-    title: '원장 칼럼',
+    title: cat ? `원장 칼럼 — ${catName}` : '원장 칼럼',
     desc: '진료실에서 자주 받는 질문, 알아두면 좋은 치과 이야기를 의료진이 직접 씁니다.',
   })}
   <section class="section">
     <div class="container">
+      <!-- §S20⑤: 카테고리 필터 핌 -->
+      <div class="reveal" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px">
+        <a href="/column" class="tag-pill${!cat ? ' active' : ''}">전체</a>
+        ${raw(COLUMN_CATEGORIES.filter(cc => columns.some(c => c.published && txName(c.category) === cc.name)).map(cc =>
+          `<a href="/column?cat=${cc.slug}" class="tag-pill${cat === cc.slug ? ' active' : ''}">${cc.name}</a>`).join(''))}
+      </div>
       ${pub.length === 0 ? html`
         <div class="reveal" style="text-align:center;padding:80px 0;color:var(--gray-600)">
           <i class="fa-solid fa-pen-nib" style="font-size:48px;color:var(--gray-200);margin-bottom:16px"></i>
@@ -58,24 +106,13 @@ export function ColumnIndex(columns: Column[]) {
         </div>
       ` : html`
         <div class="doc-grid">
-          ${raw(pub.map((col, i) => `
-            <a href="/column/${col.slug}" class="doc-card reveal reveal-d${(i % 3) + 1}">
-              <div class="doc-photo" style="aspect-ratio:1200/630;background:linear-gradient(135deg,var(--brand),var(--brand-accent))">
-                ${col.thumbnail ? `<img src="${col.thumbnail}" alt="${col.title}" loading="lazy">` : `<div class="ph" style="color:rgba(255,255,255,.5)"><i class="fa-solid fa-pen-nib"></i></div>`}
-              </div>
-              <div class="doc-body">
-                <span class="role">${txName(col.category)}</span>
-                <h2 style="font-size:1.25rem;line-height:1.4">${col.title}</h2>
-                <p class="title-line" style="min-height:auto;margin-top:8px">${col.excerpt}</p>
-                <p style="font-size:13px;color:var(--gray-400);margin-top:14px">${docName(col.author)} 원장 · ${fmtDate(col.createdAt, col.updatedAt)}</p>
-              </div>
-            </a>`).join(''))}
+          ${raw(pub.map((col, i) => columnCardHtml(col, i)).join(''))}
         </div>
       `}
     </div>
   </section>`
   return Page({
-    title: '원장 칼럼 | 365올케어치과',
+    title: cat ? `${catName} 칼럼 | 원장 칼럼 | 365올케어치과` : '원장 칼럼 | 365올케어치과',
     description: '약수역 365올케어치과 의료진이 직접 쓰는 치과 칼럼. 임플란트, 치아교정, 심미보철, 잇몸·사랑니·턱관절까지 꼭 알아야 할 진료 정보와 치료 전 체크포인트를 구강악안면외과·보철과 전문의가 환자 눈높이로 알기 쉽게 설명합니다.',
     path: '/column',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }])],
@@ -83,9 +120,12 @@ export function ColumnIndex(columns: Column[]) {
 }
 
 // ── 칼럼 상세 /column/:slug ──
-export function ColumnDetail(col: Column, views: number) {
+// §S20: allColumns 전달 → '함께 보면 좋은 글' 3카드 자동 노출
+export function ColumnDetail(col: Column, views: number, allColumns: Column[] = []) {
   const author = getDoctor(col.author)
-  const related = TREATMENTS.filter(t => t.slug === col.category)[0]
+  // §S20③: 카테고리→진료 페이지 자동 매핑 (resin-inlay→conservative 등 별칭 흡수)
+  const related = treatmentForColumnCategory(col.category)
+  const relatedCols = pickRelatedColumns(col, allColumns)
 
   const articleSchema: any = {
     '@context': 'https://schema.org',
@@ -145,14 +185,22 @@ export function ColumnDetail(col: Column, views: number) {
 
           ${author ? html`
             <div style="background:var(--beige-soft);border-radius:var(--radius);padding:24px;margin-top:40px;display:flex;gap:16px;align-items:center">
-              <div style="width:60px;height:60px;border-radius:50%;background:var(--brand);color:#fffeee;display:grid;place-items:center;font-size:24px;flex-shrink:0"><i class="fa-solid fa-user-doctor"></i></div>
+              ${author.photo ? html`<img src="${author.photo}" alt="${author.name} ${author.role}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0" loading="lazy">` : html`<div style="width:60px;height:60px;border-radius:50%;background:var(--brand);color:#fffeee;display:grid;place-items:center;font-size:24px;flex-shrink:0"><i class="fa-solid fa-user-doctor"></i></div>`}
               <div>
                 <p style="font-size:13px;color:var(--gray-600)">이 글을 작성·감수한 의료진</p>
                 <a href="/doctors/${author.slug}" style="font-weight:800;font-size:1.1rem;color:var(--brand)">${author.name} ${author.role}</a>
                 <p style="font-size:13px;color:var(--gray-600)">${author.titleLine}</p>
               </div>
+              <a href="/doctors/${author.slug}" class="btn btn-outline" style="margin-left:auto;padding:9px 16px;font-size:13px;white-space:nowrap">프로필 보기</a>
             </div>
           ` : ''}
+
+          <!-- §S20③: 본문 하단 CTA — 카테고리별 진료 페이지 자동 연결 (모바일에서는 사이드바가 맨 아래로 밀려나는 문제 보완) -->
+          <div class="col-cta-row">
+            <a href="${related ? `/treatments/${related.slug}` : '/treatments'}" class="btn btn-primary"><i class="fa-solid fa-tooth"></i> ${related ? `${related.name} 진료 소개` : '진료 소개'}</a>
+            <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
+            <a href="tel:${CLINIC.phoneRaw}" class="btn btn-outline"><i class="fa-solid fa-phone"></i> 전화 상담</a>
+          </div>
           <p style="font-size:12.5px;color:var(--gray-400);margin-top:20px">※ 본 칼럼은 일반적인 정보 제공을 위한 것으로 개인의 진단·치료를 대신하지 않습니다. 최종 검토일: ${fmtDate(col.updatedAt, col.createdAt)}</p>
         </article>
 
@@ -171,12 +219,30 @@ export function ColumnDetail(col: Column, views: number) {
           </div>
         </aside>
       </div>
+
+      ${relatedCols.length ? html`
+        <!-- §S20②: 함께 보면 좋은 글 (수동 지정 우선, 자동 보충) -->
+        <section aria-label="함께 보면 좋은 글" style="margin-top:70px">
+          <div class="section-head reveal" style="margin-bottom:26px">
+            <h2 style="font-size:1.5rem"><i class="fa-solid fa-book-open text-mint"></i> 함께 보면 좋은 글</h2>
+          </div>
+          <div class="doc-grid">
+            ${raw(relatedCols.map((r, i) => columnCardHtml(r, i)).join(''))}
+          </div>
+        </section>
+      ` : ''}
     </div>
   </section>`
+  // §S20⑨: 대표 이미지 → OG 썸네일 (카톡·인스타 공유 미리보기). 상대경로면 절대 URL로 변환
+  const ogImage = col.thumbnail
+    ? (col.thumbnail.startsWith('http') ? col.thumbnail : `https://${CLINIC.domain}${col.thumbnail}`)
+    : undefined
   return Page({
     title: col.metaTitle || `${col.title} | 원장 칼럼 | 365올케어치과`,
     description: col.metaDesc || col.excerpt,
     path: `/column/${col.slug}`,
+    ogImage,
+    ogType: 'article',
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }, { name: col.title, url: `/column/${col.slug}` }]),
       articleSchema,

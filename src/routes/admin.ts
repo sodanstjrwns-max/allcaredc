@@ -216,9 +216,12 @@ admin.get('/columns', async (c) => {
   const items = await listCollection<Column>(c.env, 'columns')
   return c.html(AdminColumns(items, await viewsMap(c.env, 'column', items)).toString())
 })
-admin.get('/columns/new', (c) => c.html(AdminColumnForm().toString()))
+admin.get('/columns/new', async (c) => {
+  const items = await listCollection<Column>(c.env, 'columns')
+  return c.html(AdminColumnForm(undefined, items).toString())
+})
 admin.post('/columns/new', async (c) => {
-  const form = await c.req.parseBody()
+  const form = await c.req.parseBody({ all: true }) // §S20②: relatedSlugs 체크박스 복수 수집
   const title = String(form.title || '')
   const slug = String(form.slug || '').trim() || slugify(title)
   const now = Date.now()
@@ -233,6 +236,7 @@ admin.post('/columns/new', async (c) => {
     metaDesc: String(form.metaDesc || '') || undefined,
     keywords: parseKeywords(form.keywords),
     faqs: parseFaqs(form.faqs),
+    relatedSlugs: parseRelatedSlugs(form.relatedSlugs),
     published, createdAt: now, updatedAt: now,
   })
   // 자동 색인: 발행된 글만 검색엔진에 즉시 통보 (임시저장은 제외)
@@ -243,10 +247,10 @@ admin.get('/columns/:id/edit', async (c) => {
   const items = await listCollection<Column>(c.env, 'columns')
   const col = items.find(x => x.id === c.req.param('id'))
   if (!col) return c.notFound()
-  return c.html(AdminColumnForm(col).toString())
+  return c.html(AdminColumnForm(col, items).toString())
 })
 admin.post('/columns/:id/edit', async (c) => {
-  const form = await c.req.parseBody()
+  const form = await c.req.parseBody({ all: true }) // §S20②: relatedSlugs 체크박스 복수 수집
   const title = String(form.title || '')
   const editSlug = String(form.slug || '').trim() || slugify(title)
   const published = !!form.published
@@ -260,6 +264,7 @@ admin.post('/columns/:id/edit', async (c) => {
     metaDesc: String(form.metaDesc || '') || undefined,
     keywords: parseKeywords(form.keywords),
     faqs: parseFaqs(form.faqs),
+    relatedSlugs: parseRelatedSlugs(form.relatedSlugs),
     published, updatedAt: Date.now(),
   })
   // 자동 색인: 발행 상태로 수정된 글은 갱신 통보 (구글이 lastmod 보고 재크롤)
@@ -387,6 +392,13 @@ admin.post('/events/:id/delete', async (c) => {
 
 function slugify(s: string): string {
   return s.toLowerCase().replace(/[^\w가-힣]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'post-' + Date.now().toString(36)
+}
+
+// §S20②: relatedSlugs 체크박스 → 배열 (단일 선택 시 문자열로 오는 케이스 흡수, 최대 3개)
+function parseRelatedSlugs(raw: any): string[] | undefined {
+  const arr = (Array.isArray(raw) ? raw : raw != null ? [raw] : [])
+    .map((s: any) => String(s).trim()).filter(Boolean)
+  return arr.length ? arr.slice(0, 3) : undefined
 }
 
 function parseKeywords(raw: any): string[] | undefined {

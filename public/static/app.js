@@ -1165,6 +1165,7 @@
   var elDesc = document.getElementById('clDesc');
   var elTags = document.getElementById('clTags');
   var elDoctor = document.getElementById('clDoctor');
+  var elColumn = document.getElementById('clColumn'); // §S20⑤: 사례→칼럼 역링크
 
   function openLb(card) {
     var before = card.getAttribute('data-before');
@@ -1182,6 +1183,12 @@
     var docName = card.getAttribute('data-doctor-name');
     if (doc && docName) { elDoctor.textContent = '담당: ' + docName + ' →'; elDoctor.href = '/doctors/' + doc; elDoctor.hidden = false; }
     else elDoctor.hidden = true;
+    // §S20⑤: 같은 분야 칼럼 바로가기 (카테고리 있을 때만)
+    if (elColumn) {
+      var cat = card.getAttribute('data-cat');
+      if (cat && cat !== 'all') { elColumn.href = '/column?cat=' + cat; elColumn.hidden = false; }
+      else elColumn.hidden = true;
+    }
     lb.hidden = false;
     document.body.style.overflow = 'hidden';
   }

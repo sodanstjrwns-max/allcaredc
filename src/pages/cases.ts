@@ -92,6 +92,8 @@ export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: 
         <a id="clDoctor" class="cl-doctor" href="#" hidden></a>
         <div class="cl-cta">
           <a href="/reservation" class="btn btn-accent" style="font-size:14px"><i class="fa-solid fa-calendar-check"></i> 비슷한 고민, 상담받기</a>
+          <!-- §S20⑤: 사례 → 같은 분야 칼럼 역링크 (JS가 카테고리 주입) -->
+          <a id="clColumn" href="/column" class="btn btn-outline" style="font-size:14px" hidden><i class="fa-solid fa-pen-nib"></i> 관련 칼럼 읽기</a>
         </div>
       </div>
     </div>
@@ -155,6 +157,7 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
         ${c.region ? `<i class="fa-solid fa-location-dot"></i> ${c.region}` : ''}
       </div>
       ${c.doctor ? `<a href="/doctors/${c.doctor}" style="display:inline-block;margin-top:10px;font-size:13px;font-weight:600;color:var(--brand-accent)">담당: ${docName(c.doctor)} 원장 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></a>` : ''}
+      <a href="/column?cat=${esc(c.category)}" style="display:inline-block;margin-top:10px;margin-left:${c.doctor ? '12px' : '0'};font-size:13px;font-weight:600;color:var(--gray-600)"><i class="fa-solid fa-pen-nib" style="font-size:11px"></i> ${catName(c.category)} 칼럼</a>
       <button type="button" class="case-detail-btn" aria-label="진료사례 자세히 보기"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> 자세히 보기</button>
     </div>
   </article>`
