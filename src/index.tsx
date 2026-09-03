@@ -58,6 +58,8 @@ app.get('/rss.xml', async (c) => c.body(await rssFeed(c.env), 200, { 'Content-Ty
 app.get('/feed', (c) => c.redirect('/rss.xml', 301))
 // IndexNow 키 검증 파일 (빙/네이버가 소유권 확인용으로 요청)
 app.get(`/${INDEXNOW_KEY}.txt`, (c) => c.body(INDEXNOW_KEY, 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
+// Claude Code(외부 작업)가 등록한 IndexNow 키 파일도 병행 서빙 — _routes.json이 루트 정적파일을 워커로 보내므로 명시 라우트 필요
+app.get('/5ef0a873577149fb9640ac78183136ff.txt', (c) => c.body('5ef0a873577149fb9640ac78183136ff', 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
 // 네이버 서치어드바이저 HTML 파일 소유확인 (메타태그 방식과 병행)
 app.get('/naver22a12bf996862862e0b64978f42923d9.html', (c) =>
   c.body('naver-site-verification: naver22a12bf996862862e0b64978f42923d9.html', 200, { 'Content-Type': 'text/html; charset=utf-8' }))
