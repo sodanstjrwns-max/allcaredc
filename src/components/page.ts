@@ -7,6 +7,9 @@ export function Page(meta: Meta, body: any) {
 <html lang="ko">
 <head>
   ${headTags(meta)}
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-65JNN9W083"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65JNN9W083',{anonymize_ip:true});</script>
+  <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","yc7sdhjwgd");</script>
 </head>
 <body>
   ${Header()}
