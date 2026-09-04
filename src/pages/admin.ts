@@ -6,6 +6,7 @@ import { eventStatus } from './event'
 function adminShell(active: string, title: string, content: any) {
   const nav = [
     ['dashboard', '대시보드', 'gauge-high', '/admin'],
+    ['stats', '사이트 통계', 'chart-line', '/admin/stats'],
     ['reservations', '예약 관리', 'calendar-check', '/admin/reservations'],
     ['cases', '비포애프터', 'images', '/admin/cases'],
     ['columns', '원장 칼럼', 'pen-nib', '/admin/columns'],

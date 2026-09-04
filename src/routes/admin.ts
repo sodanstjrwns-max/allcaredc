@@ -9,6 +9,7 @@ import {
   AdminColumns, AdminColumnForm, AdminNotices, AdminNoticeForm,
   AdminEvents, AdminEventForm,
 } from '../pages/admin'
+import { fetchSiteStats, renderStatsPage } from './stats'
 import { SEED_COLUMNS, Column } from '../pages/column'
 import { SEED_NOTICES, Notice } from '../pages/notice'
 import { SEED_EVENTS, EventItem } from '../pages/event'
@@ -78,6 +79,9 @@ admin.get('/', async (c) => {
     topContent: ranked,
   }).toString())
 })
+
+// ── 사이트 통계 (중앙 대시보드 연동) ──
+admin.get('/stats', async (c) => c.html(renderStatsPage(await fetchSiteStats())))
 
 // ── 예약 ──
 admin.get('/reservations', async (c) => {
