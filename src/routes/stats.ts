@@ -6,7 +6,12 @@
 
 const STATS_DOMAIN = 'allcaredc.kr'
 const STATS_TOKEN = 'ac5ea5fa7f4a3c94c6cf74029a75969780baba164d859343'
+const STATS_MASTER_KEY = 'pfwe-b4f42f06'
 const STATS_API = 'https://pf-dashboard-2nt.pages.dev/api/stats/' + STATS_DOMAIN
+
+// ?key= 접근 검사 — 사이트 토큰 또는 마스터 키 일치 시 통과
+export const isValidStatsKey = (key?: string): boolean =>
+  !!key && (key === STATS_TOKEN || key === STATS_MASTER_KEY)
 
 // ── 60초 메모리 캐시 (isolate 생존 동안) ──
 let _statsCache: { at: number; data: any } | null = null

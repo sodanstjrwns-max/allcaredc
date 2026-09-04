@@ -9,7 +9,7 @@ import {
   AdminColumns, AdminColumnForm, AdminNotices, AdminNoticeForm,
   AdminEvents, AdminEventForm,
 } from '../pages/admin'
-import { fetchSiteStats, renderStatsPage } from './stats'
+import { fetchSiteStats, renderStatsPage, isValidStatsKey } from './stats'
 import { SEED_COLUMNS, Column } from '../pages/column'
 import { SEED_NOTICES, Notice } from '../pages/notice'
 import { SEED_EVENTS, EventItem } from '../pages/event'
@@ -24,6 +24,8 @@ function ADMIN_PW(env: Bindings) { return env.ADMIN_PASSWORD || 'kms218588' }
 admin.use('*', async (c, next) => {
   const path = c.req.path
   if (path === '/admin/login' || path === '/admin/logout') return next()
+  // /admin/stats 는 ?key=<사이트 토큰|마스터 키> 로도 접근 허용
+  if (path === '/admin/stats' && isValidStatsKey(c.req.query('key'))) return next()
   if (!(await getAdmin(c))) return c.redirect('/admin/login')
   return next()
 })
