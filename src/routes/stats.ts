@@ -8,6 +8,8 @@ const STATS_DOMAIN = 'allcaredc.kr'
 const STATS_TOKEN = 'ac5ea5fa7f4a3c94c6cf74029a75969780baba164d859343'
 const STATS_MASTER_KEY = 'pfwe-b4f42f06'
 const STATS_API = 'https://pf-dashboard-2nt.pages.dev/api/stats/' + STATS_DOMAIN
+const CLARITY_ID = 'yc7sdhjwgd'
+const CLARITY_URL = 'https://clarity.microsoft.com/projects/view/' + CLARITY_ID + '/dashboard'
 
 // ?key= 접근 검사 — 사이트 토큰 또는 마스터 키 일치 시 통과
 export const isValidStatsKey = (key?: string): boolean =>
@@ -179,6 +181,55 @@ function expectationCard(early: boolean): string {
   </details>`
 }
 
+// ── Clarity 행동 분석 (최근 3일) ──
+const secFmt = (v: any): string => {
+  const s = Math.round(num(v))
+  return s >= 60 ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}` : `${s}초`
+}
+
+const pct1 = (v: any): string => num(v).toFixed(1).replace(/\.0$/, '') + '%'
+
+function clarityInsights(c: any): string[] {
+  const out: string[] = []
+  if (num(c.rageClickPct) >= 1 || num(c.deadClickPct) >= 5)
+    out.push('화면 반응이 없어 반복 클릭하는 사용자가 있습니다 (UI 답답 신호)')
+  if (num(c.avgScrollDepth) < 40 && num(c.sessions) >= 30)
+    out.push('첫 화면에서 이탈이 많습니다')
+  if (num(c.scriptErrors) > 0)
+    out.push(`스크립트 오류 ${fmt(num(c.scriptErrors))}건 감지 — 점검 필요`)
+  if (num(c.quickbackPct) >= 8)
+    out.push('들어왔다 바로 나가는 비율이 높습니다 (기대 불일치)')
+  if (out.length === 0 && num(c.sessions) > 0) out.push('특이 신호 없음')
+  return out.slice(0, 3)
+}
+
+function claritySection(c: any): string {
+  const head = `<div class="clarity-head">
+    <h2>행동 분석 (Clarity · 최근 3일)</h2>
+    <a class="clarity-link" href="${CLARITY_URL}" target="_blank" rel="noopener noreferrer">Clarity 대시보드 ↗</a>
+  </div>`
+  if (!c) {
+    return `<section class="clarity">${head}
+    <div class="card"><div class="empty">Clarity 행동 데이터 수집 대기 중입니다. 방문 기록이 쌓이면 스크롤·클릭 행동 분석이 자동 표시됩니다.</div></div>
+  </section>`
+  }
+  const warn = (bad: boolean, s: string) => `<span class="delta ${bad ? 'down' : 'flat'}">${s}</span>`
+  const cards = `
+  <div class="grid metrics">
+    <div class="card metric"><span class="m-label">세션 <small>3일</small></span><strong>${fmt(num(c.sessions))}</strong><span class="delta flat">봇 세션 ${fmt(num(c.botSessions))}건</span></div>
+    <div class="card metric"><span class="m-label">사용자</span><strong>${fmt(num(c.users))}</strong><span class="delta flat">세션당 ${num(c.pagesPerSession).toFixed(1)}페이지</span></div>
+    <div class="card metric"><span class="m-label">평균 스크롤 깊이</span><strong>${pct1(c.avgScrollDepth)}</strong></div>
+    <div class="card metric"><span class="m-label">평균 참여시간</span><strong>${secFmt(c.engagementSec)}</strong><span class="delta flat">활성 ${secFmt(c.activeSec)}</span></div>
+    <div class="card metric"><span class="m-label">레이지 클릭 <small>반복 클릭</small></span><strong>${fmt(num(c.rageClicks))}건</strong>${warn(num(c.rageClickPct) >= 1, `세션의 ${pct1(c.rageClickPct)}`)}</div>
+    <div class="card metric"><span class="m-label">데드 클릭 <small>무반응 클릭</small></span><strong>${fmt(num(c.deadClicks))}건</strong>${warn(num(c.deadClickPct) >= 5, `세션의 ${pct1(c.deadClickPct)}`)}</div>
+    <div class="card metric"><span class="m-label">퀵백 <small>즉시 이탈</small></span><strong>${fmt(num(c.quickbacks))}건</strong>${warn(num(c.quickbackPct) >= 8, `세션의 ${pct1(c.quickbackPct)}`)}</div>
+    <div class="card metric"><span class="m-label">스크립트 오류</span><strong>${fmt(num(c.scriptErrors))}건</strong>${warn(num(c.scriptErrors) > 0, `세션의 ${pct1(c.scriptErrorPct)}`)}</div>
+  </div>`
+  const ins = clarityInsights(c)
+  const insHtml = ins.length ? `<div class="card insights clarity-note"><ul>${ins.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>` : ''
+  return `<section class="clarity">${head}${cards}${insHtml}</section>`
+}
+
 // ── 페이지 렌더 ──
 export function renderStatsPage(d: any): string {
   const configured = !!(d && d.configured !== false)
@@ -223,6 +274,7 @@ export function renderStatsPage(d: any): string {
   const usersDaily = dailyNums(a.dailyUsers, ['users', 'value', 'count'])
 
   const insights = buildInsights(d)
+  const clarity = (d && d.clarity) || null
 
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -292,6 +344,12 @@ td.rank{width:28px;color:var(--sub);font-weight:700}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 td.txt{word-break:break-all}
 .empty{padding:26px 10px;text-align:center;color:var(--sub);font-size:.88rem}
+/* Clarity 행동 분석 */
+.clarity-head{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:14px}
+.clarity-head h2{margin-bottom:0}
+.clarity-link{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--accent);text-decoration:none;border:1px solid var(--border);padding:6px 12px;border-radius:8px;background:var(--card)}
+.clarity-link:hover{border-color:var(--accent)}
+.clarity .grid.metrics{margin-bottom:12px}
 @media(max-width:860px){
   .grid.metrics{grid-template-columns:repeat(2,1fr)}
   .charts,.tables{grid-template-columns:1fr}
@@ -321,6 +379,8 @@ td.txt{word-break:break-all}
     <div class="card"><h3>일별 검색 클릭</h3>${sparkline(clicksDaily, '#b08d57')}</div>
     <div class="card"><h3>일별 방문자</h3>${sparkline(usersDaily, '#0e4f8a')}</div>
   </section>
+
+  ${claritySection(clarity)}
 
   <section class="tables">
     <div class="card"><h3>상위 검색어 TOP 10</h3>${tbl(queryRows, '검색어 데이터가 쌓이는 중입니다', '<th></th><th>검색어</th><th class="num">클릭</th><th class="num">노출</th>')}</div>
