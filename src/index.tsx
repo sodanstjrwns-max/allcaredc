@@ -18,6 +18,7 @@ import { Bindings, getMember, setMemberSession, clearSession, hashPassword, veri
 import { listCollection, addToCollection, uid, r2GetBinary, trackView, getViews } from './lib/store'
 import { CLINIC } from './data/clinic'
 import { admin, ensureSeed } from './routes/admin'
+import { isValidStatsKey } from './routes/stats'
 import { sitemap, robotsTxt, llmsTxt, rssFeed, AreaPage } from './routes/seo'
 import { aiTxt, ogImageSvg, resolveOg } from './lib/seo-engine'
 import { INDEXNOW_KEY } from './lib/indexnow'
@@ -329,6 +330,22 @@ async function sendReservationEmail(env: Bindings, r: any) {
 // 약관/개인정보
 app.get('/privacy', (c) => c.html(legalPage('개인정보 처리방침', PRIVACY, '/privacy').toString()))
 app.get('/terms', (c) => c.html(legalPage('이용약관', TERMS, '/terms').toString()))
+
+// ── 실예약 로컬 통계 (중앙 대시보드 수집용 — 건수만, 개인정보 없음) ──
+// ?key=<사이트 토큰|마스터 키> 필수. 불일치 시 404.
+app.get('/api/local-stats', async (c) => {
+  if (!isValidStatsKey(c.req.query('key'))) return c.notFound()
+  const now = Date.now()
+  const P = 28 * 86400_000
+  let items: any[] = []
+  try { items = await listCollection<any>(c.env, 'reservations') } catch {}
+  const cur = items.filter((x) => Number(x?.createdAt || 0) >= now - P).length
+  const prev = items.filter((x) => {
+    const t = Number(x?.createdAt || 0)
+    return t >= now - 2 * P && t < now - P
+  }).length
+  return c.json({ supported: true, tables: [{ name: 'reservations', cur, prev }], total: { cur, prev } })
+})
 
 // ════════════════ 404 ════════════════
 app.notFound((c) => {

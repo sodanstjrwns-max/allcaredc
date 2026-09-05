@@ -391,6 +391,7 @@ export function headTags(meta: Meta) {
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" /></noscript>
     ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('')) : ''}
     ${(CLINIC as any).analytics?.ga4 ? raw(`<script async src="https://www.googletagmanager.com/gtag/js?id=${(CLINIC as any).analytics.ga4}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${(CLINIC as any).analytics.ga4}');</script>`) : ''}
+    <script defer src="https://pf-dashboard-2nt.pages.dev/beacon.js"></script>
     ${(CLINIC as any).analytics?.naverWcs ? raw(`<script src="//wcs.pstatic.net/wcslog.js"></script><script>if(!wcs_add)var wcs_add={};wcs_add["wa"]="${(CLINIC as any).analytics.naverWcs}";if(window.wcs){wcs_do();}</script>`) : ''}
     ${pixelId ? raw(`<!-- Meta Pixel Code -->
 <script>
