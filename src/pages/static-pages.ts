@@ -457,8 +457,10 @@ export function DirectionsPage() {
 }
 
 // ════════════════ 비용 안내 ════════════════
-export function PricingPage() {
+export function PricingPage(groups?: import('../data/clinic').PriceGroup[]) {
   const pageUrl = `${BASE}/pricing`
+  // 편집본(공개 항목만)이 넘어오면 사용, 없으면 하드코딩 시드로 폴백 → 절대 빈 페이지 없음
+  const table = groups && groups.length ? groups : PRICE_TABLE
 
   const isNumeric = (p: string) => /^[0-9,]+$/.test(p.replace(/\s/g, ''))
   const lowPrice = (p: string) => p.replace(/[^0-9,]/g, '').split('~')[0].replace(/,/g, '')
@@ -478,7 +480,7 @@ export function PricingPage() {
       '@type': 'OfferCatalog',
       name: '비급여 진료 수가표',
       provider: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
-      itemListElement: PRICE_TABLE.flatMap((g) =>
+      itemListElement: table.flatMap((g) =>
         g.rows.map((r) => {
           const procName = r.type ? `${g.category} · ${r.item} (${r.type})` : `${g.category} · ${r.item}`
           const offer: any = {
@@ -540,7 +542,7 @@ export function PricingPage() {
         </div>
       </div>
 
-      ${raw(PRICE_TABLE.map((g) => `
+      ${raw(table.map((g) => `
         <div class="reveal price-block" style="margin-bottom:34px">
           <h2 class="price-cat"><i class="fa-solid fa-${g.icon}"></i> ${g.category}</h2>
           ${g.note ? `<p class="price-cat-note">${g.note}</p>` : ''}

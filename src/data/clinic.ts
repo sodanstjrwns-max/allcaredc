@@ -845,7 +845,7 @@ export const TX_IMAGES: Record<string, string> = {
 }
 
 // ── 비급여 진료 수가표 (사업자 제출 자료 기준 · 단위: 원, VAT 포함 / 별도 표기 항목 제외) ──
-export interface PriceRow { item: string; type?: string; price: string }
+export interface PriceRow { item: string; type?: string; price: string; published?: boolean }
 export interface PriceGroup { category: string; icon: string; note?: string; rows: PriceRow[] }
 export const PRICE_TABLE: PriceGroup[] = [
   {

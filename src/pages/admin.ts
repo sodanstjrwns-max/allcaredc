@@ -1,5 +1,5 @@
 import { html, raw } from 'hono/html'
-import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName } from '../data/clinic'
+import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName, type PriceGroup } from '../data/clinic'
 import { eventStatus } from './event'
 
 // 관리자 셸 (사이드바)
@@ -12,6 +12,7 @@ function adminShell(active: string, title: string, content: any) {
     ['columns', '원장 칼럼', 'pen-nib', '/admin/columns'],
     ['notices', '공지사항', 'bullhorn', '/admin/notices'],
     ['events', '이벤트', 'gift', '/admin/events'],
+    ['pricing', '비급여 수가', 'won-sign', '/admin/pricing'],
     ['members', '회원 관리', 'users', '/admin/members'],
   ]
   return html`<!DOCTYPE html>
@@ -858,5 +859,123 @@ export function AdminEventForm(ev?: any) {
         <a href="/admin/events" class="btn btn-outline" style="margin-left:8px">취소</a>
       </form>
     </div>
+  `)
+}
+
+// ── 비급여 수가 관리 (항목별 공개/비공개 토글) ──
+export function AdminPricing(table: PriceGroup[], saved = false) {
+  // 편집 대상 JSON을 안전하게 주입 (</script> 방지)
+  const json = JSON.stringify(table).replace(/</g, '\\u003c')
+  return adminShell('pricing', '비급여 수가 관리', html`
+    <div class="admin-head">
+      <h1>비급여 수가 관리</h1>
+      <span style="color:var(--gray-600)">항목별 공개/비공개 · 원장 직접 수정</span>
+    </div>
+    ${saved ? html`<div style="background:#e6f7f5;color:#0d8174;padding:12px 16px;border-radius:10px;margin-bottom:18px;font-size:14px"><i class="fa-solid fa-circle-check"></i> 저장되었습니다. 비용 안내 페이지에 즉시 반영됩니다.</div>` : ''}
+
+    <div class="admin-card" style="margin-bottom:18px">
+      <p style="font-size:14px;color:var(--gray-600);margin:0;line-height:1.7">
+        <i class="fa-solid fa-circle-info" style="color:var(--brand-accent)"></i>
+        각 항목의 <strong>공개</strong> 체크를 끄면 해당 항목은 <strong>비용 안내(/pricing) 페이지에 노출되지 않습니다.</strong>
+        모든 항목이 꺼진 그룹(카테고리)은 페이지에서 통째로 숨겨집니다. 수정 후 반드시 하단 <strong>저장</strong>을 눌러주세요.
+        가격에는 숫자(예: <code>500,000</code>) 또는 문구(예: <code>본인부담금</code>, <code>4,000,000 ~</code>)를 입력할 수 있습니다.
+      </p>
+    </div>
+
+    <form method="POST" action="/admin/pricing" id="price-form">
+      <input type="hidden" name="data" id="price-data">
+      <div id="price-groups"></div>
+      <div style="margin:18px 0 30px">
+        <button type="button" class="btn btn-outline" id="add-group"><i class="fa-solid fa-plus"></i> 카테고리 추가</button>
+      </div>
+      <div style="position:sticky;bottom:0;background:var(--gray-100);padding:16px 0;border-top:1px solid var(--gray-200,#e5e5e5)">
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+        <a href="/pricing" target="_blank" class="btn btn-outline" style="margin-left:8px"><i class="fa-solid fa-arrow-up-right-from-square"></i> 공개 페이지 미리보기</a>
+      </div>
+    </form>
+
+    <style>
+      .pg-card{background:#fffeee;border-radius:14px;padding:20px 22px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-100);margin-bottom:18px}
+      .pg-head{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+      .pg-head input{padding:9px 11px;border:1px solid var(--gray-200,#ddd);border-radius:8px;font-size:14px}
+      .pg-cat{font-weight:700;flex:1;min-width:160px}
+      .pg-icon{width:120px}
+      .pg-note{width:100%;padding:8px 11px;border:1px solid var(--gray-200,#ddd);border-radius:8px;font-size:13px;margin-bottom:12px}
+      .pr-row{display:grid;grid-template-columns:1.3fr 1.1fr 1fr auto auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--gray-100)}
+      .pr-row input[type=text]{padding:8px 10px;border:1px solid var(--gray-200,#ddd);border-radius:7px;font-size:13.5px;width:100%}
+      .pr-row.hidden-row{opacity:.42}
+      .pr-pub{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--gray-600);white-space:nowrap;font-weight:600}
+      .pr-pub input{width:17px;height:17px}
+      .pr-del,.pg-del{background:transparent;border:none;color:#c0392b;cursor:pointer;font-size:14px;padding:6px 8px}
+      .pr-head{display:grid;grid-template-columns:1.3fr 1.1fr 1fr auto auto;gap:8px;font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;padding-bottom:4px}
+      .pg-actions{margin-top:12px}
+      @media(max-width:768px){.pr-row,.pr-head{grid-template-columns:1fr 1fr;}.pr-head{display:none}}
+    </style>
+
+    <script>${raw(`
+    (function(){
+      var DATA = ${json};
+      var ICON_HINT = '아이콘(FontAwesome 이름, 예: tooth, crown, screwdriver-wrench)';
+      var root = document.getElementById('price-groups');
+      function el(tag, cls, attrs){ var n=document.createElement(tag); if(cls)n.className=cls; if(attrs)for(var k in attrs)n.setAttribute(k,attrs[k]); return n; }
+      function rowEl(r){
+        var row = el('div','pr-row');
+        if(r.published===false) row.classList.add('hidden-row');
+        var i1=el('input',null,{type:'text',placeholder:'항목명 (예: 크라운)'}); i1.value=r.item||''; i1.dataset.f='item';
+        var i2=el('input',null,{type:'text',placeholder:'세부 (예: 지르코니아, 선택)'}); i2.value=r.type||''; i2.dataset.f='type';
+        var i3=el('input',null,{type:'text',placeholder:'가격 (예: 500,000)'}); i3.value=r.price||''; i3.dataset.f='price';
+        var pub=el('label','pr-pub');
+        var cb=el('input',null,{type:'checkbox'}); cb.checked=(r.published!==false); cb.dataset.f='published';
+        cb.addEventListener('change',function(){ row.classList.toggle('hidden-row', !cb.checked); });
+        pub.appendChild(cb); pub.appendChild(document.createTextNode('공개'));
+        var del=el('button','pr-del',{type:'button',title:'행 삭제'}); del.innerHTML='<i class="fa-solid fa-trash"></i>';
+        del.addEventListener('click',function(){ row.remove(); });
+        row.appendChild(i1); row.appendChild(i2); row.appendChild(i3); row.appendChild(pub); row.appendChild(del);
+        return row;
+      }
+      function groupEl(g){
+        var card=el('div','pg-card');
+        var head=el('div','pg-head');
+        var cat=el('input','pg-cat',{type:'text',placeholder:'카테고리 (예: 보철치료)'}); cat.value=g.category||''; cat.dataset.f='category';
+        var icon=el('input','pg-icon',{type:'text',placeholder:'아이콘',title:ICON_HINT}); icon.value=g.icon||'tooth'; icon.dataset.f='icon';
+        var gdel=el('button','pg-del',{type:'button',title:'카테고리 삭제'}); gdel.innerHTML='<i class="fa-solid fa-trash-can"></i> 카테고리 삭제';
+        gdel.addEventListener('click',function(){ if(confirm('이 카테고리와 하위 항목을 모두 삭제할까요?')) card.remove(); });
+        head.appendChild(cat); head.appendChild(icon); head.appendChild(gdel);
+        var note=el('input','pg-note',{type:'text',placeholder:'카테고리 설명 (선택)'}); note.value=g.note||''; note.dataset.f='note';
+        var hd=el('div','pr-head'); hd.innerHTML='<span>항목명</span><span>세부</span><span>가격</span><span>공개</span><span></span>';
+        var rows=el('div'); rows.className='pg-rows';
+        (g.rows||[]).forEach(function(r){ rows.appendChild(rowEl(r)); });
+        var act=el('div','pg-actions');
+        var addr=el('button','btn btn-outline btn-sm',{type:'button'}); addr.innerHTML='<i class="fa-solid fa-plus"></i> 항목 추가';
+        addr.addEventListener('click',function(){ rows.appendChild(rowEl({published:true})); });
+        act.appendChild(addr);
+        card.appendChild(head); card.appendChild(note); card.appendChild(hd); card.appendChild(rows); card.appendChild(act);
+        return card;
+      }
+      DATA.forEach(function(g){ root.appendChild(groupEl(g)); });
+      document.getElementById('add-group').addEventListener('click',function(){
+        root.appendChild(groupEl({category:'',icon:'tooth',rows:[{published:true}]}));
+      });
+      document.getElementById('price-form').addEventListener('submit',function(){
+        var out=[];
+        root.querySelectorAll('.pg-card').forEach(function(card){
+          var g={category:'',icon:'tooth',note:'',rows:[]};
+          card.querySelector('.pg-head .pg-cat') && (g.category=card.querySelector('.pg-cat').value.trim());
+          g.icon=(card.querySelector('.pg-icon').value.trim())||'tooth';
+          g.note=card.querySelector('.pg-note').value.trim();
+          card.querySelectorAll('.pr-row').forEach(function(row){
+            var r={};
+            row.querySelectorAll('[data-f]').forEach(function(inp){
+              if(inp.dataset.f==='published') r.published=inp.checked;
+              else r[inp.dataset.f]=inp.value.trim();
+            });
+            if(r.item||r.price) g.rows.push(r);
+          });
+          if(g.category && g.rows.length) out.push(g);
+        });
+        document.getElementById('price-data').value=JSON.stringify(out);
+      });
+    })();
+    `)}</script>
   `)
 }

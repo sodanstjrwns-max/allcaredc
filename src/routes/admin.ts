@@ -7,8 +7,10 @@ import { notifySearchEngines } from '../lib/indexnow'
 import {
   AdminLogin, AdminDashboard, AdminReservations, AdminMembers, AdminCases, AdminCaseForm,
   AdminColumns, AdminColumnForm, AdminNotices, AdminNoticeForm,
-  AdminEvents, AdminEventForm,
+  AdminEvents, AdminEventForm, AdminPricing,
 } from '../pages/admin'
+import { loadPriceTable, savePriceTable } from '../lib/pricing'
+import type { PriceGroup } from '../data/clinic'
 import { fetchSiteStats, renderStatsPage, isValidStatsKey } from './stats'
 import { SEED_COLUMNS, Column } from '../pages/column'
 import { SEED_NOTICES, Notice } from '../pages/notice'
@@ -394,6 +396,31 @@ admin.post('/events/:id/edit', async (c) => {
 admin.post('/events/:id/delete', async (c) => {
   await removeFromCollection(c.env, 'events', c.req.param('id'))
   return c.redirect('/admin/events')
+})
+
+// ── 비급여 수가 관리 (항목별 공개/비공개 토글) ──
+admin.get('/pricing', async (c) => {
+  const table = await loadPriceTable(c.env)
+  return c.html(AdminPricing(table, c.req.query('saved') === '1').toString())
+})
+admin.post('/pricing', async (c) => {
+  const form = await c.req.parseBody()
+  let parsed: any = []
+  try { parsed = JSON.parse(String(form.data || '[]')) } catch { parsed = [] }
+  const clean: PriceGroup[] = (Array.isArray(parsed) ? parsed : []).map((g: any) => ({
+    category: String(g?.category || '').trim(),
+    icon: String(g?.icon || 'tooth').trim() || 'tooth',
+    note: String(g?.note || '').trim() || undefined,
+    rows: (Array.isArray(g?.rows) ? g.rows : []).map((r: any) => ({
+      item: String(r?.item || '').trim(),
+      type: String(r?.type || '').trim() || undefined,
+      price: String(r?.price || '').trim(),
+      published: r?.published !== false,
+    })).filter((r: any) => r.item || r.price),
+  })).filter((g) => g.category && g.rows.length)
+  await savePriceTable(c.env, clean)
+  c.executionCtx.waitUntil(notifySearchEngines('/pricing', '/pricing'))
+  return c.redirect('/admin/pricing?saved=1')
 })
 
 function slugify(s: string): string {

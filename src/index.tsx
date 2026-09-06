@@ -22,6 +22,7 @@ import { isValidStatsKey } from './routes/stats'
 import { sitemap, robotsTxt, llmsTxt, rssFeed, AreaPage } from './routes/seo'
 import { aiTxt, ogImageSvg, resolveOg } from './lib/seo-engine'
 import { INDEXNOW_KEY } from './lib/indexnow'
+import { loadPriceTable, publicTable } from './lib/pricing'
 import { HANDOVER_DOC_B64 } from './lib/handover-doc'
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -97,7 +98,10 @@ app.get('/', async (c) => {
 })
 app.get('/mission', (c) => c.html(MissionPage().toString()))
 app.get('/directions', (c) => c.html(DirectionsPage().toString()))
-app.get('/pricing', (c) => c.html(PricingPage().toString()))
+app.get('/pricing', async (c) => {
+  const groups = publicTable(await loadPriceTable(c.env))
+  return c.html(PricingPage(groups).toString())
+})
 app.get('/faq', (c) => c.html(FaqPage().toString()))
 app.get('/reservation', (c) => c.html(ReservationPage().toString()))
 app.get('/encyclopedia', (c) => c.html(EncyclopediaPage().toString()))
