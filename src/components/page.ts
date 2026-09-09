@@ -1,6 +1,24 @@
 import { html, raw } from 'hono/html'
 import { Header, Footer, headTags, Meta } from './layout'
 
+
+// 2026-09-09 AEO 보완(A6): id 없는 h2/h3 소제목에 본문 텍스트 기반 앵커 id 자동 부여 (AI·검색엔진 딥링크용)
+function withHeadingIds(htmlStr: string): string {
+  const seen = new Set<string>()
+  return htmlStr.replace(/<h([23])((?:\s[^>]*)?)>([\s\S]*?)<\/h\1>/g, (m, lvl, attrs, inner) => {
+    if (/\sid\s*=/.test(attrs)) return m
+    const text = inner.replace(/<[^>]+>/g, '').replace(/&[a-z#0-9]+;/gi, ' ').trim()
+    if (!text) return m
+    let id = text.replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, 60).replace(/-+$/, '')
+    if (!id) return m
+    if (/^\d/.test(id)) id = 'h-' + id
+    const base = id; let n = 2
+    while (seen.has(id)) id = `${base}-${n++}`
+    seen.add(id)
+    return `<h${lvl}${attrs} id="${id}">${inner}</h${lvl}>`
+  })
+}
+
 // 전체 페이지 셸 — SSR HTML 문자열 반환
 export function Page(meta: Meta, body: any) {
   return html`<!DOCTYPE html>
@@ -14,7 +32,7 @@ export function Page(meta: Meta, body: any) {
 <body>
   ${Header()}
   <main id="main">
-    ${body}
+    ${raw(withHeadingIds(String(body)))}
   </main>
   ${Footer()}
 </body>

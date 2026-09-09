@@ -933,8 +933,17 @@ export const PRICE_NOTES = [
 
 // 추가 FAQ 병합 — 과목당 20개+ 충족
 import { EXTRA_FAQS } from './faqs-extra'
+const normFaqQ = (q: string) => q.replace(/\s+/g, '').replace(/[?？.!,·'"“”()\/]/g, '').replace(/받아야/g, '해야').replace(/완전틀니/g, '전체틀니').replace(/꼭/g, '')
+// 완전 일치 또는 앞 10자가 같고 길이 차 4자 이내면 같은 질문으로 본다 ("…꼭 치료해야 하나요" / "…치료해야 하나요")
+export const isDupFaqQ = (a: string, b: string) => {
+  const x = normFaqQ(a), y = normFaqQ(b)
+  if (x === y) return true
+  const n = Math.min(10, x.length, y.length)
+  return n >= 8 && x.slice(0, n) === y.slice(0, n) && Math.abs(x.length - y.length) <= 4
+}
 for (const t of TREATMENTS) {
-  if (EXTRA_FAQS[t.slug]) t.faqs = [...t.faqs, ...EXTRA_FAQS[t.slug]]
+  // 2026-09-09: 같은 질문이 기본 FAQ와 추가 FAQ에 중복 등록되던 문제 → 정규화 비교로 중복 제거 (기본 FAQ 답변 유지)
+  if (EXTRA_FAQS[t.slug]) for (const f of EXTRA_FAQS[t.slug]) { if (!t.faqs.some(e => isDupFaqQ(e.q, f.q))) t.faqs.push(f) }
 }
 
 export const CORE_TREATMENTS = TREATMENTS.filter(t => t.core)
@@ -1006,7 +1015,7 @@ export function columnCategoriesForTreatment(treatmentSlug: string): string[] {
 }
 // §S20: 구 데이터의 의료진 placeholder slug 흡수 — 칼럼 카드 작성자 공백 방지
 const DOCTOR_SLUG_ALIAS: Record<string, string> = {
-  'doctor-integrated': 'kwon-jongjin',
+  'doctor-integrated': 'kwon-minsoo', // 2026-09-09 원장 요청: 통합치의학과 전문의 = 권민수 대표원장
   'doctor-prostho': 'bae-suhyeon',
   'kwon-minsu': 'kwon-minsoo',
 }

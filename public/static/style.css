@@ -3325,3 +3325,5 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
   color:var(--gold-600,#97774a); margin:0 0 18px;
   padding-left:16px; border-left:3px solid var(--gold,#b08d57);
 }
+/* 2026-09-09 원장 요청: 하단 CTA 배너 강조어(있으신가요)가 --mint(네이비)라 어두운 배경에 묻힘 → 밝은 골드 */
+.cta-band .split-rise em{color:var(--gold-300)}

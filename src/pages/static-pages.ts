@@ -357,7 +357,7 @@ export function DirectionsPage() {
       addressCountry: 'KR',
     },
     geo: { '@type': 'GeoCoordinates', latitude: CLINIC.geo.lat, longitude: CLINIC.geo.lng },
-    hasMap: `https://maps.google.com/maps?q=${encodeURIComponent(CLINIC.address)}`,
+    hasMap: `https://map.kakao.com/link/map/2031808279`,
     publicAccess: true,
     areaServed: [
       { '@type': 'City', name: '서울특별시 중구' },
@@ -386,9 +386,19 @@ export function DirectionsPage() {
     <div class="container">
       <div class="grid-detail">
         <div class="reveal">
-          <div style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);aspect-ratio:16/10;background:var(--gray-100)">
-            <iframe width="100%" height="100%" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-              src="https://maps.google.com/maps?q=${encodeURIComponent('서울 중구 동호로 171')}&t=&z=16&ie=UTF8&iwloc=&output=embed"></iframe>
+          <!-- 2026-09-09 원장 요청: 구글지도 → 카카오맵 (정적 지도 + 중심 핀, 카카오맵/네이버지도 바로가기). 좌표는 카카오맵 퍼가기 기준 WCONG 502500/1126113 -->
+          <div class="kmap-wrap" style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);aspect-ratio:16/10;background:var(--gray-100);position:relative">
+            <a href="https://map.kakao.com/link/map/2031808279" target="_blank" rel="noopener" aria-label="카카오맵에서 365올케어치과 위치 크게 보기" style="display:block;width:100%;height:100%">
+              <img src="https://staticmap.kakao.com/map/mapservice?FORMAT=PNG&SCALE=1.25&MX=502500&MY=1126113&S=0&IW=1024&IH=640&LANG=0&COORDSTM=WCONGNAMUL&logo=kakao_logo" alt="365올케어치과 위치 지도 — 서울 중구 동호로 171 더그레이스빌딩 4층, 약수역 5번 출구 도보 1분" width="1024" height="640" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+            </a>
+            <div class="kmap-pin" aria-hidden="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);pointer-events:none;display:flex;flex-direction:column;align-items:center">
+              <span style="background:var(--brand);color:#fffeee;font-size:12.5px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.25);margin-bottom:4px">365올케어치과 4층</span>
+              <i class="fa-solid fa-location-dot" style="font-size:34px;color:#c0392b;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))"></i>
+            </div>
+            <div class="kmap-links" style="position:absolute;left:12px;bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+              <a href="https://map.kakao.com/link/to/2031808279" target="_blank" rel="noopener" class="btn" style="background:#fee500;color:#3c1e1e;font-size:13px;padding:9px 14px;border-radius:999px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.18)"><i class="fa-solid fa-route"></i> 카카오맵 길찾기</a>
+              <a href="https://map.naver.com/p/search/${encodeURIComponent('365올케어치과의원 약수역')}" target="_blank" rel="noopener" class="btn" style="background:#03c75a;color:#fff;font-size:13px;padding:9px 14px;border-radius:999px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.18)"><i class="fa-solid fa-map-location-dot"></i> 네이버 지도</a>
+            </div>
           </div>
           <div style="margin-top:30px" class="prose">
             <h2>교통 안내</h2>

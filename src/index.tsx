@@ -121,7 +121,7 @@ app.get('/treatments/:slug', async (c) => {
 
 // 의료진
 const DOCTOR_SLUG_REDIRECTS: Record<string, string> = {
-  'doctor-integrated': 'kwon-jongjin', // 통합치의학과 placeholder → 권종진 명예원장
+  'doctor-integrated': 'kwon-minsoo', // 통합치의학과 전문의 → 권민수 대표원장 (2026-09-09 원장 요청, 기존 권종진 연결 수정)
   'doctor-prostho': 'bae-suhyeon',     // 보철과 placeholder → 배수현 보철과 원장
   'kwon-minsu': 'kwon-minsoo',         // 영문 표기 통일(Minsoo Kwon) → 구 URL 검색 색인 보호용 301
 }

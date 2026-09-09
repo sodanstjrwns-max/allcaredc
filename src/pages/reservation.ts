@@ -95,14 +95,30 @@ export function ReservationPage() {
                 <div class="field"><label>희망 날짜</label><input type="date" name="date"></div>
                 <div class="field">
                   <label>희망 시간대</label>
-                  <select name="timeslot">
+                  <select name="timeslot" id="rsv-timeslot">
                     <option value="">상관없음</option>
-                    <option>오전 (09:30~12:00)</option>
-                    <option>오후 (13:00~18:00)</option>
-                    <option>야간 (18:00~20:30, 월·화·목)</option>
+                    <option>오전 (09:30~12:30)</option>
+                    <option>오후 (14:00~17:30)</option>
+                    <option>야간 (18:00~20:30 · 월·화·목 / 수·금은 18:30까지)</option>
                   </select>
                 </div>
               </div>
+              <p class="rsv-hours-hint" style="font-size:12.5px;color:var(--gray-400);margin:-6px 0 14px;display:flex;gap:6px;align-items:flex-start"><i class="fa-regular fa-clock" style="margin-top:3px;color:var(--gold-600)"></i><span>월·화·목 09:30~20:30 · 수·금 09:30~18:30 · 토·일(격주)·공휴일 09:30~14:00<br>휴게: 점심 12:30~14:00 · 저녁 17:30~18:00 (토·일·공휴일은 점심시간 없이 진료)</span></p>
+              <script>(function(){
+                var d=document.querySelector('input[name=date]'),s=document.getElementById('rsv-timeslot');if(!d||!s)return;
+                function opts(day){
+                  var o=[['','상관없음']];
+                  if(day===0||day===6){o.push(['am','오전 (09:30~14:00 · 점심시간 없이 진료)']);}
+                  else{o.push(['am','오전 (09:30~12:30)'],['pm','오후 (14:00~17:30)']);
+                    if(day===3||day===5)o.push(['ev','저녁 (18:00~18:30)']);
+                    else if(day===1||day===2||day===4)o.push(['ev','야간 (18:00~20:30)']);
+                    else o.push(['ev','야간 (18:00~20:30 · 월·화·목 / 수·금은 18:30까지)']);}
+                  return o;}
+                function render(){var day=-1;if(d.value){var dt=new Date(d.value+'T00:00:00');if(!isNaN(dt))day=dt.getDay();}
+                  var cur=s.value;s.innerHTML='';opts(day).forEach(function(o){var op=document.createElement('option');op.value=o[0]?o[1]:'';op.textContent=o[1];s.appendChild(op);});
+                  for(var i=0;i<s.options.length;i++){if(s.options[i].value===cur){s.value=cur;break;}}}
+                d.addEventListener('change',render);d.addEventListener('input',render);
+              })();</script>
               <div class="field"><label>문의 내용</label><textarea name="message" placeholder="불편하신 점이나 궁금하신 점을 자유롭게 적어주세요. (증상 등 건강 관련 내용을 적으실 경우 아래 민감정보 동의가 필요합니다)"></textarea></div>
               <div class="field">
                 <label class="checkbox-row"><input type="checkbox" name="agree" required> <span>[필수] 예약 상담을 위한 개인정보(이름, 연락처) 수집·이용에 동의합니다.</span></label>
