@@ -283,6 +283,8 @@
     var handle = slider.querySelector('.ba-handle');
     if (!afterWrap || !handle) return;
     var dragging = false;
+    function sizeAfter() { afterWrap.style.setProperty('--ba-w', slider.clientWidth + 'px'); }
+    sizeAfter(); window.addEventListener('resize', sizeAfter);
     function setPos(clientX) {
       var rect = slider.getBoundingClientRect();
       var x = Math.max(0, Math.min(clientX - rect.left, rect.width));

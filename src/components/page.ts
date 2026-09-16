@@ -28,6 +28,9 @@ export function Page(meta: Meta, body: any) {
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-65JNN9W083"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65JNN9W083',{anonymize_ip:true});</script>
   <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","yc7sdhjwgd");</script>
+  <!-- 네이버 광고 전환추적 공통 스크립트 (원장 요청 2026-09-16) -->
+  <script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+  <script type="text/javascript">if(!window.wcs_add)var wcs_add={};wcs_add["wa"]="s_248ae32299dd";if(!window._nasa)var _nasa={};if(window.wcs){wcs.inflow();wcs_do();}</script>
 </head>
 <body>
   ${Header()}
@@ -35,6 +38,8 @@ export function Page(meta: Meta, body: any) {
     ${raw(withHeadingIds(String(body)))}
   </main>
   ${Footer()}
+  <script>/* 네이버 전환: 전화(lead+custom001)·카카오(lead+custom002)·네이버예약(lead+custom003) 클릭 시 발화 */
+  document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href]');if(!a||!window.wcs||!window.wcs.trans)return;var h=a.getAttribute('href')||'';var c=null;if(/^tel:/i.test(h))c='custom001';else if(/pf\.kakao\.com|open\.kakao\.com|kakao:\/\//i.test(h))c='custom002';else if(/booking\.naver\.com|naver\.me\/|m\.booking\.naver|smartplace\.naver/i.test(h))c='custom003';if(!c)return;try{var l={};l["type"]="lead";wcs.trans(l);var v={};v["type"]=c;wcs.trans(v);}catch(_){}},true);</script>
 </body>
 </html>`
 }

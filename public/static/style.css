@@ -3327,3 +3327,16 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 }
 /* 2026-09-09 원장 요청: 하단 CTA 배너 강조어(있으신가요)가 --mint(네이비)라 어두운 배경에 묻힘 → 밝은 골드 */
 .cta-band .split-rise em{color:var(--gold-300)}
+
+/* 모바일 첫 방문: 공지는 직접 펼치고, 진료 소개·예약은 바로 읽는다. */
+.np-expand{display:none}
+.notice-pop.np-compact{inset:90px 16px auto auto;padding:0;display:block;max-width:calc(100vw - 32px)}
+.np-compact .np-card,.np-compact .np-backdrop{display:none}
+.np-compact .np-expand{display:block;min-height:44px;padding:10px 18px;border:1px solid var(--gold);border-radius:4px;background:var(--ivory,#fffeee);color:var(--navy-800,#062741);font:600 14px var(--font-sans,sans-serif);box-shadow:0 4px 16px #06274122;cursor:pointer}
+.np-x{width:44px;height:44px}
+.np-foot{position:sticky;bottom:0;background:var(--ivory,#fffeee)}
+.np-close-text{min-height:44px;min-width:44px}
+@media(max-width:767px){.np-card{max-height:78svh}.np-img img{max-height:42svh}}
+/* 2026-09-16 원장 요청: PC에서 비포애프터 사진이 크롭되지 않고 원본 비율 그대로 전체가 보이도록 (contain) */
+.ba-slider > img { object-fit: contain; background: var(--ivory-2); }
+.ba-after-wrap img { width: var(--ba-w, 100%); object-fit: contain; background: var(--ivory-2); }

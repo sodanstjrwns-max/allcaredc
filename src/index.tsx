@@ -27,6 +27,17 @@ import { HANDOVER_DOC_B64 } from './lib/handover-doc'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
+// 동적 HTML 응답에도 기본 헤더 적용 (_headers는 정적 자산에만 적용됨).
+app.use('*', async (c, next) => {
+  await next()
+  c.header('X-Content-Type-Options', 'nosniff')
+  c.header('X-Frame-Options', 'SAMEORIGIN')
+  c.header('Referrer-Policy', 'strict-origin-when-cross-origin')
+  if (new URL(c.req.url).protocol === 'https:') {
+    c.header('Strict-Transport-Security', 'max-age=31536000')
+  }
+})
+
 // www → non-www 301 통합 (네이버 권장: canonical보다 301을 우선)
 // 커스텀 도메인(allcaredc.kr)에서만 동작 — pages.dev/미리보기는 그대로 둠
 app.use('*', async (c, next) => {

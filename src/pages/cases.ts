@@ -125,7 +125,7 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
   return `
   <article class="case-card reveal reveal-d${(i % 3) + 1}" data-cat="${esc(c.category)}"
     data-before="${esc(beforeSrc)}" data-after="${esc(afterSrc)}" data-locked="${loggedIn ? '0' : '1'}"
-    data-title="${esc(storyLine(c))}" data-cat-name="${esc(catName(c.category))}"
+    data-title="${esc(storyLine(c, catName))}" data-cat-name="${esc(catName(c.category))}"
     data-desc="${esc(c.description)}" data-tags="${esc(tagsHtml)}"
     data-doctor="${esc(c.doctor || '')}" data-doctor-name="${esc(docName(c.doctor) ? docName(c.doctor) + ' 원장' : '')}">
     
@@ -149,7 +149,7 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
     </div>
     <div class="case-meta">
       <span class="case-story-no">Story ${String(i + 1).padStart(2, '0')} · ${catName(c.category)}</span>
-      <h2 class="case-story-line">${storyLine(c)}</h2>
+      <h2 class="case-story-line">${storyLine(c, catName)}</h2>
       <p style="font-size:14px;color:var(--gray-600);margin-bottom:8px">${c.description}</p>
       <div class="tags">
         ${c.ageGroup ? `<i class="fa-solid fa-user"></i> ${c.ageGroup} ${c.gender || ''} · ` : ''}
@@ -163,11 +163,13 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
   </article>`
 }
 
-// 미니 우화 한 줄: "옥수동 50대 K님의 4개월" 식의 스토리 타이틀 (§B: 사실 정보만 조합)
-function storyLine(c: CaseItem): string {
-  const who = [c.region, c.ageGroup, c.gender ? c.gender + ' 환자분' : '환자분'].filter(Boolean).join(' ')
-  const span = c.period ? `의 ${c.period}` : '의 이야기'
-  return who ? `${who}${span}` : c.title
+// 사례 제목: 원장이 입력한 제목(치료 내용)을 우선 사용, 없으면 "진료명 치료 사례" (원장 요청 2026-09-16 — 지역·연령·성별·기간은 별도 태그로만 표시)
+function storyLine(c: CaseItem, catName?: (slug: string) => string): string {
+  const t = (c.title || '').trim()
+  const generic = /환자분의|이야기$/.test(t)
+  if (t && !generic) return t
+  const cat = catName ? catName(c.category) : c.category
+  return `${cat} 치료 사례`
 }
 
 function ctaBand() {

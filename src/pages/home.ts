@@ -27,6 +27,7 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
   const popupHtml = popup ? `
   <!-- ============ 공지 팝업 (관리자 설정) ============ -->
   <div class="notice-pop" id="noticePop" data-pop-id="${popup.id}" role="dialog" aria-modal="true" aria-label="공지사항" hidden>
+    <button type="button" class="np-expand" aria-expanded="false">진료 공지 보기</button>
     <div class="np-backdrop" data-np-close></div>
     <div class="np-card" role="document">
       <button type="button" class="np-x" data-np-close aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
@@ -54,7 +55,14 @@ export function HomePage(popup?: { id: string; title: string; body: string; imag
         if (until && Date.now() < parseInt(until, 10)) return; // 아직 숨김 기간
       } catch(e){}
       pop.hidden = false;
-      document.body.style.overflow = 'hidden';
+      var compact = matchMedia('(max-width: 767px)').matches;
+      if(compact){ pop.classList.add('np-compact'); pop.setAttribute('role','region'); pop.removeAttribute('aria-modal'); }
+      else document.body.style.overflow = 'hidden';
+      pop.querySelector('.np-expand').addEventListener('click',function(){
+        pop.classList.remove('np-compact'); pop.setAttribute('role','dialog'); pop.setAttribute('aria-modal','true');
+        this.setAttribute('aria-expanded','true'); document.body.style.overflow = 'hidden';
+        pop.querySelector('.np-x').focus();
+      });
       function close(){
         pop.hidden = true;
         document.body.style.overflow = '';
