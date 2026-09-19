@@ -392,7 +392,7 @@ export function headTags(meta: Meta) {
     ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('')) : ''}
     ${(CLINIC as any).analytics?.ga4 ? raw(`<script async src="https://www.googletagmanager.com/gtag/js?id=${(CLINIC as any).analytics.ga4}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${(CLINIC as any).analytics.ga4}');</script>`) : ''}
     <script defer src="https://pf-dashboard-2nt.pages.dev/beacon.js"></script>
-    ${(CLINIC as any).analytics?.naverWcs ? raw(`<script src="//wcs.pstatic.net/wcslog.js"></script><script>if(!wcs_add)var wcs_add={};wcs_add["wa"]="${(CLINIC as any).analytics.naverWcs}";if(window.wcs){wcs_do();}</script>`) : ''}
+    <!-- 네이버 애널리틱스 공통 스크립트는 page.ts의 광고 전환 공통 스크립트(wa s_248ae32299dd)와 중복이라 제거 (2026-09-19). wcs_do 이중 호출·키 충돌 방지 -->
     ${pixelId ? raw(`<!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
