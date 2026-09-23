@@ -9,6 +9,7 @@ import { LoginPage, RegisterPage, MyPage } from './pages/auth'
 import { ReservationPage } from './pages/reservation'
 import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
 import { ColumnIndex, ColumnDetail, Column } from './pages/column'
+import { getColumnCategories } from './lib/column-categories'
 import { NoticeIndex, NoticeDetail, Notice, activePopupNotice } from './pages/notice'
 import { EventIndex, EventDetail, EventItem } from './pages/event'
 import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
@@ -126,7 +127,7 @@ app.get('/treatments', (c) => c.html(TreatmentsIndex().toString()))
 app.get('/treatments/:slug', async (c) => {
   // §S20④: 같은 분야 최신 칼럼 3개를 진료 페이지 하단에 노출
   const cols = await listCollection<Column>(c.env, 'columns')
-  const page = TreatmentDetail(c.req.param('slug'), cols)
+  const page = TreatmentDetail(c.req.param('slug'), cols, await getColumnCategories(c.env))
   return page ? c.html(page.toString()) : c.notFound()
 })
 
@@ -155,7 +156,7 @@ app.get('/area/:combo', (c) => {
 app.get('/column', async (c) => {
   const cols = await listCollection<Column>(c.env, 'columns')
   // §S20⑤: ?cat= 카테고리 필터 — 비포애프터/진료 페이지에서 역링크 진입
-  return c.html(ColumnIndex(cols, c.req.query('cat')).toString())
+  return c.html(ColumnIndex(cols, c.req.query('cat'), await getColumnCategories(c.env)).toString())
 })
 app.get('/column/:slug', async (c) => {
   const cols = await listCollection<Column>(c.env, 'columns')
@@ -164,7 +165,7 @@ app.get('/column/:slug', async (c) => {
   const bot = isBot(c.req.header('User-Agent'))
   const views = (await trackView(c.env, 'column', col.id, bot)).human
   // §S20②: 전체 칼럼 전달 → '함께 보면 좋은 글' 3카드
-  return c.html(ColumnDetail(col, views, cols).toString())
+  return c.html(ColumnDetail(col, views, cols, await getColumnCategories(c.env)).toString())
 })
 
 // ── 공지 ──

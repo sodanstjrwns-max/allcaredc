@@ -7,8 +7,9 @@ import { notifySearchEngines } from '../lib/indexnow'
 import {
   AdminLogin, AdminDashboard, AdminReservations, AdminMembers, AdminCases, AdminCaseForm,
   AdminColumns, AdminColumnForm, AdminNotices, AdminNoticeForm,
-  AdminEvents, AdminEventForm, AdminPricing,
+  AdminEvents, AdminEventForm, AdminPricing, AdminColumnCategories,
 } from '../pages/admin'
+import { getColumnCategories, saveColumnCategories, slugifyCategory, CATEGORY_SLUG_RE } from '../lib/column-categories'
 import { loadPriceTable, savePriceTable } from '../lib/pricing'
 import type { PriceGroup } from '../data/clinic'
 import { fetchSiteStats, renderStatsPage, isValidStatsKey } from './stats'
@@ -222,11 +223,11 @@ admin.post('/cases/:id/delete', async (c) => {
 // ── 칼럼 ──
 admin.get('/columns', async (c) => {
   const items = await listCollection<Column>(c.env, 'columns')
-  return c.html(AdminColumns(items, await viewsMap(c.env, 'column', items)).toString())
+  return c.html(AdminColumns(items, await viewsMap(c.env, 'column', items), await getColumnCategories(c.env)).toString())
 })
 admin.get('/columns/new', async (c) => {
   const items = await listCollection<Column>(c.env, 'columns')
-  return c.html(AdminColumnForm(undefined, items).toString())
+  return c.html(AdminColumnForm(undefined, items, await getColumnCategories(c.env)).toString())
 })
 admin.post('/columns/new', async (c) => {
   const form = await c.req.parseBody({ all: true }) // §S20②: relatedSlugs 체크박스 복수 수집
@@ -255,7 +256,7 @@ admin.get('/columns/:id/edit', async (c) => {
   const items = await listCollection<Column>(c.env, 'columns')
   const col = items.find(x => x.id === c.req.param('id'))
   if (!col) return c.notFound()
-  return c.html(AdminColumnForm(col, items).toString())
+  return c.html(AdminColumnForm(col, items, await getColumnCategories(c.env)).toString())
 })
 admin.post('/columns/:id/edit', async (c) => {
   const form = await c.req.parseBody({ all: true }) // §S20②: relatedSlugs 체크박스 복수 수집
@@ -282,6 +283,73 @@ admin.post('/columns/:id/edit', async (c) => {
 admin.post('/columns/:id/delete', async (c) => {
   await removeFromCollection(c.env, 'columns', c.req.param('id'))
   return c.redirect('/admin/columns')
+})
+
+// ── 칼럼 카테고리 (2026-09-23 원장 요청: 관리자 직접 추가·이름변경·삭제·순서) ──
+//   R2 data/column-categories.json — 저장본이 없으면 기본값(COLUMN_CATEGORIES)을 시드로 저장
+async function categoryUsage(env: Bindings): Promise<Record<string, number>> {
+  const cols = await listCollection<Column>(env, 'columns')
+  const usage: Record<string, number> = {}
+  for (const col of cols) usage[col.category] = (usage[col.category] || 0) + 1
+  return usage
+}
+async function renderCategories(c: any, msg?: { ok?: string; error?: string }) {
+  return c.html(AdminColumnCategories(await getColumnCategories(c.env), await categoryUsage(c.env), msg).toString())
+}
+const catRedirect = (c: any, q: string) => c.redirect(`/admin/column-categories?${q}`)
+admin.get('/column-categories', async (c) => {
+  const ok = c.req.query('ok'), error = c.req.query('error')
+  const MSG: Record<string, string> = {
+    added: '카테고리를 추가했습니다.', renamed: '이름을 저장했습니다.', deleted: '카테고리를 삭제했습니다.', moved: '순서를 변경했습니다.',
+    slug: 'slug 형식이 올바르지 않습니다 (영문 소문자·숫자·하이픈 2~30자). 한글 이름만으로 변환이 안 되면 slug를 직접 입력해 주세요.',
+    dup: '이미 같은 slug의 카테고리가 있습니다.', name: '표기명을 입력해 주세요.', inuse: '칼럼이 사용 중인 카테고리는 삭제할 수 없습니다.',
+    notfound: '해당 카테고리를 찾을 수 없습니다.', last: '마지막 남은 카테고리는 삭제할 수 없습니다.',
+  }
+  return renderCategories(c, { ok: ok ? MSG[ok] : undefined, error: error ? MSG[error] || '처리하지 못했습니다.' : undefined })
+})
+admin.post('/column-categories/new', async (c) => {
+  const form = await c.req.parseBody()
+  const name = String(form.name || '').trim().slice(0, 30)
+  if (!name) return catRedirect(c, 'error=name')
+  const slug = (String(form.slug || '').trim().toLowerCase() || slugifyCategory(name))
+  if (!CATEGORY_SLUG_RE.test(slug)) return catRedirect(c, 'error=slug')
+  const cats = await getColumnCategories(c.env)
+  if (cats.some(x => x.slug === slug)) return catRedirect(c, 'error=dup')
+  await saveColumnCategories(c.env, [...cats, { slug, name, sort: cats.length }])
+  return catRedirect(c, 'ok=added')
+})
+admin.post('/column-categories/:slug/rename', async (c) => {
+  const form = await c.req.parseBody()
+  const name = String(form.name || '').trim().slice(0, 30)
+  if (!name) return catRedirect(c, 'error=name')
+  const cats = await getColumnCategories(c.env)
+  const i = cats.findIndex(x => x.slug === c.req.param('slug'))
+  if (i < 0) return catRedirect(c, 'error=notfound')
+  cats[i] = { ...cats[i], name }   // 표기명만 변경 — 기존 칼럼의 category slug는 그대로
+  await saveColumnCategories(c.env, cats)
+  return catRedirect(c, 'ok=renamed')
+})
+admin.post('/column-categories/:slug/delete', async (c) => {
+  const slug = c.req.param('slug')
+  const cats = await getColumnCategories(c.env)
+  if (!cats.some(x => x.slug === slug)) return catRedirect(c, 'error=notfound')
+  if (cats.length <= 1) return catRedirect(c, 'error=last')
+  const usage = await categoryUsage(c.env)
+  if ((usage[slug] || 0) > 0) return catRedirect(c, 'error=inuse')
+  await saveColumnCategories(c.env, cats.filter(x => x.slug !== slug))
+  return catRedirect(c, 'ok=deleted')
+})
+admin.post('/column-categories/:slug/move', async (c) => {
+  const form = await c.req.parseBody()
+  const dir = String(form.dir) === 'up' ? -1 : 1
+  const cats = await getColumnCategories(c.env)
+  const i = cats.findIndex(x => x.slug === c.req.param('slug'))
+  if (i < 0) return catRedirect(c, 'error=notfound')
+  const j = i + dir
+  if (j < 0 || j >= cats.length) return catRedirect(c, 'ok=moved')
+  ;[cats[i], cats[j]] = [cats[j], cats[i]]
+  await saveColumnCategories(c.env, cats.map((x, k) => ({ ...x, sort: k })))
+  return catRedirect(c, 'ok=moved')
 })
 
 // ── 공지 ──

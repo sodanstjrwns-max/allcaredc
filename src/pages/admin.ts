@@ -1,5 +1,5 @@
 import { html, raw } from 'hono/html'
-import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName, type PriceGroup } from '../data/clinic'
+import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName, type PriceGroup, type ColumnCategory } from '../data/clinic'
 import { eventStatus } from './event'
 
 // 관리자 셸 (사이드바)
@@ -10,6 +10,7 @@ function adminShell(active: string, title: string, content: any) {
     ['reservations', '예약 관리', 'calendar-check', '/admin/reservations'],
     ['cases', '비포애프터', 'images', '/admin/cases'],
     ['columns', '원장 칼럼', 'pen-nib', '/admin/columns'],
+    ['column-categories', '칼럼 카테고리', 'tags', '/admin/column-categories'],
     ['notices', '공지사항', 'bullhorn', '/admin/notices'],
     ['events', '이벤트', 'gift', '/admin/events'],
     ['pricing', '비급여 수가', 'won-sign', '/admin/pricing'],
@@ -188,6 +189,7 @@ export function AdminDashboard(stats: {
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <a href="/admin/cases/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 비포애프터 등록</a>
         <a href="/admin/columns/new" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i> 칼럼 작성</a>
+        <a href="/admin/column-categories" class="btn btn-outline btn-sm"><i class="fa-solid fa-tags"></i> 칼럼 카테고리</a>
         <a href="/admin/notices/new" class="btn btn-outline btn-sm"><i class="fa-solid fa-bullhorn"></i> 공지 작성</a>
         <a href="/admin/events/new" class="btn btn-outline btn-sm"><i class="fa-solid fa-gift"></i> 이벤트 작성</a>
         <a href="/admin/reservations" class="btn btn-outline btn-sm"><i class="fa-solid fa-calendar"></i> 예약 확인</a>
@@ -369,14 +371,14 @@ export function AdminCaseForm(item?: any) {
 }
 
 // ── 칼럼 관리 ──
-export function AdminColumns(items: any[], views: Record<string, number> = {}) {
+export function AdminColumns(items: any[], views: Record<string, number> = {}, cats: ColumnCategory[] = COLUMN_CATEGORIES) {
   return adminShell('columns', '원장 칼럼', html`
-    <div class="admin-head"><h1>원장 칼럼</h1><a href="/admin/columns/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 칼럼</a></div>
+    <div class="admin-head"><h1>원장 칼럼</h1><div style="display:flex;gap:8px"><a href="/admin/column-categories" class="btn btn-outline btn-sm"><i class="fa-solid fa-tags"></i> 카테고리 관리</a><a href="/admin/columns/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 칼럼</a></div></div>
     <div class="admin-card">
       <table><thead><tr><th>작성일</th><th>제목</th><th>진료</th><th>작성자</th><th>조회수</th><th>상태</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(c => `<tr>
         <td>${new Date(c.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
-        <td><strong>${c.title}</strong></td><td>${columnCategoryName(c.category)}</td>
+        <td><strong>${c.title}</strong></td><td>${columnCategoryName(c.category, cats)}</td>
         <td>${DOCTORS.find(d=>d.slug===c.author)?.name||'-'}</td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
         <td><span class="badge ${c.published?'new':'done'}">${c.published?'게시':'임시'}</span></td>
@@ -387,8 +389,12 @@ export function AdminColumns(items: any[], views: Record<string, number> = {}) {
 }
 
 // ── 칼럼 작성/수정 폼 ──
-export function AdminColumnForm(col?: any, allColumns: any[] = []) {
+export function AdminColumnForm(col?: any, allColumns: any[] = [], cats: ColumnCategory[] = COLUMN_CATEGORIES) {
   const c = col || {}
+  // 기존 칼럼의 category가 목록에서 삭제된 slug라면 선택지에 그대로 남겨 값이 유실되지 않게 한다
+  const catOptions: ColumnCategory[] = (c.category && !cats.some(x => x.slug === c.category))
+    ? [...cats, { slug: c.category, name: `${columnCategoryName(c.category, cats)} (목록에 없음)` }]
+    : cats
   const esc = (s: any) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   const keywordsStr = Array.isArray(c.keywords) ? c.keywords.join(', ') : (c.keywords || '')
   // §S20②: '함께 보면 좋은 글' 수동 지정 후보 (자기 자신 제외, 발행된 글만)
@@ -498,8 +504,8 @@ export function AdminColumnForm(col?: any, allColumns: any[] = []) {
 
           <div class="admin-card">
             <h3 style="margin:0 0 14px;font-size:1.05rem"><i class="fa-solid fa-gear" style="color:var(--gold,#b08d57)"></i> 발행 설정</h3>
-            <div class="field"><label>진료 카테고리 <span class="req">*</span></label>
-              <select name="category" required>${raw(COLUMN_CATEGORIES.map(t => `<option value="${t.slug}" ${c.category === t.slug ? 'selected' : ''}>${t.name}</option>`).join(''))}</select></div>
+            <div class="field"><label>진료 카테고리 <span class="req">*</span> <a href="/admin/column-categories" style="font-weight:500;color:var(--gray-400);font-size:12px;margin-left:6px"><i class="fa-solid fa-tags"></i> 카테고리 관리</a></label>
+              <select name="category" required>${raw(catOptions.map(t => `<option value="${esc(t.slug)}" ${c.category === t.slug ? 'selected' : ''}>${esc(t.name)}</option>`).join(''))}</select></div>
             <div class="field"><label>작성자(원장) <span class="req">*</span></label>
               <select name="author" required>${raw(DOCTORS.map(d => `<option value="${d.slug}" ${c.author === d.slug ? 'selected' : ''}>${d.name} ${d.role}</option>`).join(''))}</select></div>
             <div class="field"><label>대표(썸네일) 이미지 <span style="font-weight:500;color:var(--gray-400);font-size:12px">권장 1200×630px (카드·카톡·SNS 공유 공통)</span></label>
@@ -518,7 +524,7 @@ export function AdminColumnForm(col?: any, allColumns: any[] = []) {
                   ${raw(relCandidates.map((x: any) => `
                     <label class="checkbox-row" style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:13px;cursor:pointer">
                       <input type="checkbox" name="relatedSlugs" value="${esc(x.slug)}" ${relSelected.includes(x.slug) ? 'checked' : ''} style="margin-top:3px">
-                      <span>${esc(x.title)} <span style="color:var(--gray-400)">· ${columnCategoryName(x.category)}</span></span>
+                      <span>${esc(x.title)} <span style="color:var(--gray-400)">· ${columnCategoryName(x.category, cats)}</span></span>
                     </label>`).join(''))}
                 </div>
               ` : html`<p style="font-size:13px;color:var(--gray-400)">다른 발행 칼럼이 생기면 여기서 직접 선택할 수 있습니다.</p>`}
@@ -974,6 +980,78 @@ export function AdminPricing(table: PriceGroup[], saved = false) {
           if(g.category && g.rows.length) out.push(g);
         });
         document.getElementById('price-data').value=JSON.stringify(out);
+      });
+    })();
+    `)}</script>
+  `)
+}
+
+// ── 칼럼 카테고리 관리 (2026-09-23 원장 요청: 추가·이름변경·삭제·순서 직접 관리) ──
+//   usage: slug별 사용 중인 칼럼 수 — 1개 이상이면 삭제 비활성
+export function AdminColumnCategories(cats: ColumnCategory[], usage: Record<string, number>, msg?: { ok?: string; error?: string }) {
+  const last = cats.length - 1
+  return adminShell('column-categories', '칼럼 카테고리', html`
+    <div class="admin-head">
+      <h1>칼럼 카테고리</h1>
+      <a href="/admin/columns" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen-nib"></i> 칼럼 목록</a>
+    </div>
+    ${msg?.ok ? html`<div style="background:#e6f7f5;color:#0d8174;padding:12px 16px;border-radius:10px;margin-bottom:18px;font-size:14px"><i class="fa-solid fa-circle-check"></i> ${msg.ok}</div>` : ''}
+    ${msg?.error ? html`<div style="background:#fdecea;color:#c0392b;padding:12px 16px;border-radius:10px;margin-bottom:18px;font-size:14px"><i class="fa-solid fa-triangle-exclamation"></i> ${msg.error}</div>` : ''}
+
+    <div class="admin-card" style="margin-bottom:18px">
+      <p style="font-size:14px;color:var(--gray-600);margin:0;line-height:1.7">
+        <i class="fa-solid fa-circle-info" style="color:var(--brand-accent)"></i>
+        칼럼 작성 화면의 <strong>진료 카테고리</strong> 선택지와 <strong>/column</strong> 필터가 이 목록 순서대로 노출됩니다.
+        <strong>이름 변경</strong>은 표기명만 바뀌고 기존 칼럼의 분류(주소 <code>?cat=slug</code>)는 그대로 유지됩니다.
+        칼럼이 1개 이상 속한 카테고리는 삭제할 수 없습니다(먼저 해당 칼럼의 카테고리를 옮겨 주세요).
+      </p>
+    </div>
+
+    <div class="admin-card">
+      <table><thead><tr><th style="width:90px">순서</th><th>표기명</th><th>slug (주소)</th><th>칼럼 수</th><th style="width:240px">관리</th></tr></thead><tbody>
+      ${raw(cats.map((cat, i) => {
+        const n = usage[cat.slug] || 0
+        return `<tr>
+        <td style="white-space:nowrap">
+          <form method="POST" action="/admin/column-categories/${esc(cat.slug)}/move" style="display:inline"><input type="hidden" name="dir" value="up"><button class="btn-sm" title="위로" ${i === 0 ? 'disabled style="opacity:.3"' : ''}><i class="fa-solid fa-arrow-up"></i></button></form>
+          <form method="POST" action="/admin/column-categories/${esc(cat.slug)}/move" style="display:inline"><input type="hidden" name="dir" value="down"><button class="btn-sm" title="아래로" ${i === last ? 'disabled style="opacity:.3"' : ''}><i class="fa-solid fa-arrow-down"></i></button></form>
+        </td>
+        <td>
+          <form method="POST" action="/admin/column-categories/${esc(cat.slug)}/rename" style="display:flex;gap:6px;align-items:center">
+            <input type="text" name="name" value="${esc(cat.name)}" required maxlength="30" style="padding:8px 10px;border:1px solid var(--gray-200,#ddd);border-radius:7px;font-size:14px;min-width:160px">
+            <button class="btn-sm btn-outline" type="submit">이름 저장</button>
+          </form>
+        </td>
+        <td><code>${esc(cat.slug)}</code> <a href="/column?cat=${esc(cat.slug)}" target="_blank" style="font-size:12px;color:var(--gray-400);margin-left:6px"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></td>
+        <td>${n}</td>
+        <td>
+          ${n > 0
+            ? `<button class="btn-sm" disabled title="칼럼 ${n}개가 사용 중" style="color:var(--gray-400);cursor:not-allowed"><i class="fa-solid fa-trash"></i> 삭제 불가 (${n}개 사용)</button>`
+            : `<form method="POST" action="/admin/column-categories/${esc(cat.slug)}/delete" style="display:inline" onsubmit="return confirm('「${esc(cat.name).replace(/'/g, '')}」 카테고리를 삭제할까요?')"><button class="btn-sm" style="color:#c0392b"><i class="fa-solid fa-trash"></i> 삭제</button></form>`}
+        </td></tr>`
+      }).join(''))}
+      </tbody></table>
+    </div>
+
+    <div class="admin-card">
+      <h2 style="font-size:1.2rem;margin-bottom:16px"><i class="fa-solid fa-plus" style="color:var(--brand-accent)"></i> 카테고리 추가</h2>
+      <form method="POST" action="/admin/column-categories/new" style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end">
+        <div class="field" style="margin:0"><label>표기명 <span class="req">*</span></label>
+          <input type="text" name="name" id="catName" required maxlength="30" placeholder="예: 소아치과"></div>
+        <div class="field" style="margin:0"><label>slug (주소용 영문, 비우면 자동) <span style="font-weight:500;color:var(--gray-400);font-size:12px">소문자·숫자·하이픈 2~30자</span></label>
+          <input type="text" name="slug" id="catSlug" maxlength="30" pattern="[a-z0-9-]{2,30}" placeholder="예: pediatric"></div>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> 추가</button>
+      </form>
+      <p style="font-size:12.5px;color:var(--gray-400);margin-top:10px">slug는 한 번 정하면 바꿀 수 없습니다(주소·검색 색인에 사용). 영문 이름은 그대로, 한글 이름은 로마자로 자동 변환됩니다.</p>
+    </div>
+    <script>${raw(`
+    (function(){
+      var name=document.getElementById('catName'), slug=document.getElementById('catSlug'); if(!name||!slug) return;
+      var touched=false; slug.addEventListener('input',function(){ touched=slug.value.length>0; });
+      name.addEventListener('input',function(){
+        if(touched) return;
+        var s=name.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,30);
+        slug.value=s.length>=2?s:'';
       });
     })();
     `)}</script>

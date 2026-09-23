@@ -964,7 +964,9 @@ export function getTreatment(slug: string) {
 //   - 심미보철 → '심미치료' 로 표기(칼럼 한정)
 //   - '레진·인레이', '올케어 소식' 은 진료 페이지가 없는 칼럼 전용 신설 카테고리
 // ============================================================
-export type ColumnCategory = { slug: string; name: string }
+//   - 2026-09-23 원장 요청: 'English' 신설. 이 상수는 기본값(시드)이며, 실제 목록은
+//     R2 data/column-categories.json(관리자 /admin/column-categories)에서 편집 → src/lib/column-categories.ts
+export type ColumnCategory = { slug: string; name: string; sort?: number }
 export const COLUMN_CATEGORIES: ColumnCategory[] = [
   { slug: 'implant', name: '임플란트' },
   { slug: 'ortho', name: '치아교정' },
@@ -978,15 +980,19 @@ export const COLUMN_CATEGORIES: ColumnCategory[] = [
   { slug: 'whitening', name: '미백' },
   { slug: 'surgery', name: '구강외과·사랑니' },
   { slug: 'news', name: '올케어 소식' },            // §D7: 신설
+  { slug: 'english', name: 'English' },            // 2026-09-23 원장 요청: 영문 칼럼 (진료 페이지 매핑 없음)
 ]
 // 칼럼 카테고리 표기명 — 신설 카테고리 우선, 없으면 진료명 폴백
 // (구 seed 데이터의 영문 slug 별칭도 흡수해 영문 노출 방지)
 const COLUMN_CAT_ALIAS: Record<string, string> = {
   periodontal: 'gum', orthodontics: 'ortho', prosthetics: 'esthetic',
 }
-export function columnCategoryName(slug: string): string {
+// cats: 관리자가 편집한 동적 목록(getColumnCategories). 생략 시 기본값 상수 사용.
+//   이름 변경은 표기명만 바뀌고 칼럼의 category slug는 그대로 유지된다.
+export function columnCategoryName(slug: string, cats: ColumnCategory[] = COLUMN_CATEGORIES): string {
   const s = COLUMN_CAT_ALIAS[slug] || slug
-  return COLUMN_CATEGORIES.find(c => c.slug === s)?.name
+  return cats.find(c => c.slug === s)?.name
+    || COLUMN_CATEGORIES.find(c => c.slug === s)?.name
     || TREATMENTS.find(t => t.slug === s)?.name
     || s
 }
@@ -996,7 +1002,8 @@ const COLUMN_CAT_TO_TREATMENT: Record<string, string> = {
   'resin-inlay': 'conservative',   // 레진·인레이 → 충치·신경치료
   'sleep': 'sleep',
 }
-export function treatmentForColumnCategory(catSlug: string) {
+//   진료 매핑은 slug 기준이므로 동적 목록(cats)은 참고용 — 목록에 없는 slug도 진료 slug와 같으면 연결
+export function treatmentForColumnCategory(catSlug: string, _cats: ColumnCategory[] = COLUMN_CATEGORIES) {
   const s = COLUMN_CAT_ALIAS[catSlug] || catSlug
   const mapped = COLUMN_CAT_TO_TREATMENT[s] || s
   return TREATMENTS.find(t => t.slug === mapped)

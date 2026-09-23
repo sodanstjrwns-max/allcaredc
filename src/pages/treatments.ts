@@ -3,7 +3,7 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, schemaTag } from '../components/layout'
 import {
   CLINIC, TREATMENTS, CORE_TREATMENTS, SUB_TREATMENTS, TX_IMAGES,
-  getTreatment, doctorsForTreatment, Treatment, columnCategoriesForTreatment,
+  getTreatment, doctorsForTreatment, Treatment, columnCategoriesForTreatment, type ColumnCategory,
 } from '../data/clinic'
 import { Column, columnCardHtml } from './column'
 import { speakableSchema, autoLinkBody } from '../lib/seo-engine'
@@ -71,7 +71,7 @@ export function TreatmentsIndex() {
 // ============================================================
 // 진료 상세 페이지 /treatments/:slug
 // ============================================================
-export function TreatmentDetail(slug: string, allColumns: Column[] = []) {
+export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: ColumnCategory[]) {
   const t = getTreatment(slug)
   if (!t) return null
   const docs = doctorsForTreatment(slug)
@@ -259,7 +259,7 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = []) {
             <a href="/column?cat=${slug}" style="font-size:14px;font-weight:700;color:var(--brand-accent)">칼럼 전체 보기 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></a>
           </div>
           <div class="doc-grid">
-            ${raw(txColumns.map((col, i) => columnCardHtml(col, i)).join(''))}
+            ${raw(txColumns.map((col, i) => columnCardHtml(col, i, cats)).join(''))}
           </div>
         </section>
       ` : ''}

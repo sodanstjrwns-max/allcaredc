@@ -1,7 +1,7 @@
 import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
-import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName, treatmentForColumnCategory, COLUMN_CATEGORIES } from '../data/clinic'
+import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName, treatmentForColumnCategory, COLUMN_CATEGORIES, type ColumnCategory } from '../data/clinic'
 
 export type ColumnFAQ = { q: string; a: string }
 
@@ -25,7 +25,8 @@ export type Column = {
   updatedAt: number
 }
 
-const txName = (s: string) => columnCategoryName(s)
+// cats: 관리자 편집 카테고리 목록(R2). 생략 시 기본값.
+const txName = (s: string, cats: ColumnCategory[] = COLUMN_CATEGORIES) => columnCategoryName(s, cats)
 const docName = (s: string) => getDoctor(s)?.name || ''
 
 // §S7: 날짜 버그 방어 — createdAt이 없거나 1970-01-01 이전(0·undefined·Invalid)이면
@@ -63,14 +64,14 @@ export function pickRelatedColumns(current: Column, all: Column[], max = 3): Col
 }
 
 // 칼럼 카드 마크업 (목록·함께 보면 좋은 글·진료페이지 하단 공용)
-export function columnCardHtml(col: Column, i = 0): string {
+export function columnCardHtml(col: Column, i = 0, cats: ColumnCategory[] = COLUMN_CATEGORIES): string {
   return `
     <a href="/column/${col.slug}" class="doc-card reveal reveal-d${(i % 3) + 1}">
       <div class="doc-photo" style="aspect-ratio:1200/630;background:linear-gradient(135deg,var(--brand),var(--brand-accent))">
         ${col.thumbnail ? `<img src="${col.thumbnail}" alt="${col.title}" loading="lazy">` : `<div class="ph" style="color:rgba(255,255,255,.5)"><i class="fa-solid fa-pen-nib"></i></div>`}
       </div>
       <div class="doc-body">
-        <span class="role">${txName(col.category)}</span>
+        <span class="role">${txName(col.category, cats)}</span>
         <h3 style="font-size:1.1rem;line-height:1.4">${col.title}</h3>
         <p class="title-line" style="min-height:auto;margin-top:8px;font-size:14px">${col.excerpt}</p>
         <p style="font-size:13px;color:var(--gray-400);margin-top:12px">${docName(col.author) ? `${docName(col.author)} 원장 · ` : ''}${fmtDate(col.createdAt, col.updatedAt)}</p>
@@ -79,11 +80,11 @@ export function columnCardHtml(col: Column, i = 0): string {
 }
 
 // ── 칼럼 목록 /column (§S20⑤: ?cat= 카테고리 필터 지원 — 비포애프터에서 역링크로 진입) ──
-export function ColumnIndex(columns: Column[], cat?: string) {
+export function ColumnIndex(columns: Column[], cat?: string, cats: ColumnCategory[] = COLUMN_CATEGORIES) {
   let pub = columns.filter(c => c.published)
-  const catName = cat ? txName(cat) : ''
+  const catName = cat ? txName(cat, cats) : ''
   // 구 별칭 카테고리(periodontal→gum 등)도 같은 표기명이면 함께 노출
-  if (cat) pub = pub.filter(c => c.category === cat || txName(c.category) === catName)
+  if (cat) pub = pub.filter(c => c.category === cat || txName(c.category, cats) === catName)
   const body = html`
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }],
@@ -96,7 +97,7 @@ export function ColumnIndex(columns: Column[], cat?: string) {
       <!-- §S20⑤: 카테고리 필터 핌 -->
       <div class="reveal" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px">
         <a href="/column" class="tag-pill${!cat ? ' active' : ''}">전체</a>
-        ${raw(COLUMN_CATEGORIES.filter(cc => columns.some(c => c.published && txName(c.category) === cc.name)).map(cc =>
+        ${raw(cats.filter(cc => cc.slug === cat || columns.some(c => c.published && txName(c.category, cats) === cc.name)).map(cc =>
           `<a href="/column?cat=${cc.slug}" class="tag-pill${cat === cc.slug ? ' active' : ''}">${cc.name}</a>`).join(''))}
       </div>
       ${pub.length === 0 ? html`
@@ -106,7 +107,7 @@ export function ColumnIndex(columns: Column[], cat?: string) {
         </div>
       ` : html`
         <div class="doc-grid">
-          ${raw(pub.map((col, i) => columnCardHtml(col, i)).join(''))}
+          ${raw(pub.map((col, i) => columnCardHtml(col, i, cats)).join(''))}
         </div>
       `}
     </div>
@@ -121,10 +122,10 @@ export function ColumnIndex(columns: Column[], cat?: string) {
 
 // ── 칼럼 상세 /column/:slug ──
 // §S20: allColumns 전달 → '함께 보면 좋은 글' 3카드 자동 노출
-export function ColumnDetail(col: Column, views: number, allColumns: Column[] = []) {
+export function ColumnDetail(col: Column, views: number, allColumns: Column[] = [], cats: ColumnCategory[] = COLUMN_CATEGORIES) {
   const author = getDoctor(col.author)
   // §S20③: 카테고리→진료 페이지 자동 매핑 (resin-inlay→conservative 등 별칭 흡수)
-  const related = treatmentForColumnCategory(col.category)
+  const related = treatmentForColumnCategory(col.category, cats)
   const relatedCols = pickRelatedColumns(col, allColumns)
 
   const articleSchema: any = {
@@ -164,7 +165,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
       <div class="grid-detail">
         <article class="reveal">
           <div style="display:flex;align-items:center;gap:14px;padding-bottom:24px;margin-bottom:30px;border-bottom:1px solid var(--gray-200);flex-wrap:wrap">
-            <span class="tag-pill cat-tag">${txName(col.category)}</span>
+            <span class="tag-pill cat-tag">${txName(col.category, cats)}</span>
             ${author ? html`<a href="/doctors/${author.slug}" style="font-weight:700;color:var(--brand)">${author.name} ${author.role}</a>` : ''}
             <span style="color:var(--gray-400);font-size:14px">${fmtDate(col.createdAt, col.updatedAt)}</span>
             <span style="color:var(--gray-400);font-size:14px;margin-left:auto"><i class="fa-solid fa-eye"></i> ${views.toLocaleString()}</span>
@@ -227,7 +228,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
             <h2 style="font-size:1.5rem"><i class="fa-solid fa-book-open text-mint"></i> 함께 보면 좋은 글</h2>
           </div>
           <div class="doc-grid">
-            ${raw(relatedCols.map((r, i) => columnCardHtml(r, i)).join(''))}
+            ${raw(relatedCols.map((r, i) => columnCardHtml(r, i, cats)).join(''))}
           </div>
         </section>
       ` : ''}
