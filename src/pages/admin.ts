@@ -1,6 +1,7 @@
 import { html, raw } from 'hono/html'
 import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName, type PriceGroup, type ColumnCategory } from '../data/clinic'
 import { eventStatus } from './event'
+import { POPUP_MAX, kstToday, allActivePopupNotices } from './notice'
 
 // 관리자 셸 (사이드바)
 function adminShell(active: string, title: string, content: any) {
@@ -734,17 +735,31 @@ function columnEditorScript(faqsJson: string): string {
 }
 
 // ── 공지 관리 ──
+// 팝업 동시 노출 안내 + 5개 초과 경고 (공지 목록·에디터 공용)
+function popupLimitNote(activeCount: number): string {
+  const over = activeCount > POPUP_MAX
+  return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px;font-size:13px;color:var(--gray-600,#777)">
+    <span><i class="fa-solid fa-circle-info" style="color:var(--gold,#b08d57);margin-right:5px"></i>팝업은 최대 ${POPUP_MAX}개까지 동시에 표시됩니다 (PC는 나란히, 모바일은 넘겨보기)</span>
+    ${over ? `<span class="badge popup-expired" style="background:#fdf1e4;color:#b35c12;font-weight:700"><i class="fa-solid fa-triangle-exclamation" style="font-size:10px;margin-right:4px"></i>표시 중 ${POPUP_MAX}/${activeCount} — 오래된 것은 숨겨짐</span>` : ''}
+  </div>`
+}
+
 export function AdminNotices(items: any[], views: Record<string, number> = {}) {
+  const today = kstToday()
+  const live = allActivePopupNotices(items, today)
+  const shown = new Set(live.slice(0, POPUP_MAX).map(n => n.id))
   return adminShell('notices', '공지사항', html`
     <div class="admin-head"><h1>공지사항</h1><a href="/admin/notices/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 공지</a></div>
+    ${raw(popupLimitNote(live.length))}
     <div class="admin-card">
       <table><thead><tr><th>작성일</th><th>제목</th><th>조회수</th><th>고정</th><th>팝업</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(n => {
-        const today = new Date().toISOString().slice(0, 10)
         const popupLive = n.popup && (!n.popupUntil || n.popupUntil >= today)
         const popupExpired = n.popup && n.popupUntil && n.popupUntil < today
         const popupCell = popupLive
-          ? `<span class="badge popup-live"><i class="fa-solid fa-bell" style="font-size:10px;margin-right:4px"></i>노출중${n.popupUntil ? ` <span style="opacity:.8;font-weight:600">~${n.popupUntil}</span>` : ''}</span>`
+          ? (shown.has(n.id)
+            ? `<span class="badge popup-live"><i class="fa-solid fa-bell" style="font-size:10px;margin-right:4px"></i>노출중${n.popupUntil ? ` <span style="opacity:.8;font-weight:600">~${n.popupUntil}</span>` : ''}</span>`
+            : `<span class="badge popup-expired" title="활성 팝업이 ${POPUP_MAX}개를 넘어 이 공지는 표시되지 않습니다">숨겨짐 (${POPUP_MAX}개 초과)</span>`)
           : popupExpired ? `<span class="badge popup-expired">만료</span>` : '-'
         return `<tr>
         <td>${new Date(n.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td><td><strong>${n.title}</strong></td>
@@ -761,7 +776,7 @@ export function AdminNotices(items: any[], views: Record<string, number> = {}) {
   `)
 }
 
-export function AdminNoticeForm(n?: any) {
+export function AdminNoticeForm(n?: any, activePopupCount = 0) {
   const edit = !!n
   const action = edit ? `/admin/notices/${n.id}/edit` : '/admin/notices/new'
   const esc = (s: string) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -782,7 +797,8 @@ export function AdminNoticeForm(n?: any) {
             <input type="checkbox" name="popup" id="popupToggle" ${n?.popup ? 'checked' : ''}>
             <span><i class="fa-solid fa-bell" style="color:var(--gold,#b08d57);margin-right:6px"></i>홈 화면 팝업으로 띄우기</span>
           </label>
-          <p style="margin:8px 0 12px;font-size:13px;color:var(--gray-600,#777)">체크하면 메인 페이지 방문 시 이 공지가 팝업 창으로 표시됩니다. (동시에 1건만 노출 — 여러 건이면 고정·최신 공지 우선)</p>
+          <p style="margin:8px 0 8px;font-size:13px;color:var(--gray-600,#777)">체크하면 메인 페이지 방문 시 이 공지가 팝업 창으로 표시됩니다. 여러 건이면 고정 공지 → 최신 공지 순으로 노출됩니다.</p>
+          ${raw(popupLimitNote(activePopupCount))}
           <div id="popupOpts" style="${n?.popup ? '' : 'display:none'}">
             <label style="font-size:13px;color:var(--gray-600,#777)">팝업 종료일 <span style="opacity:.6">(비우면 무기한 노출)</span></label>
             <input type="date" name="popupUntil" value="${raw(esc(n?.popupUntil))}" style="margin-top:6px;max-width:220px">

@@ -23,58 +23,148 @@ function sectionHead(label: string, title: string, lead?: string, center = true)
   </header>`
 }
 
-export function HomePage(popup?: { id: string; title: string; body: string; image?: string } | null) {
-  const popupHtml = popup ? `
-  <!-- ============ 공지 팝업 (관리자 설정) ============ -->
-  <div class="notice-pop" id="noticePop" data-pop-id="${popup.id}" role="dialog" aria-modal="true" aria-label="공지사항" hidden>
-    <button type="button" class="np-expand" aria-expanded="false">진료 공지 보기</button>
-    <div class="np-backdrop" data-np-close></div>
-    <div class="np-card" role="document">
-      <button type="button" class="np-x" data-np-close aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
-      ${popup.image ? `<a href="/notice/${popup.id}" class="np-img"><img src="${popup.image}" alt="${popup.title.replace(/"/g, '&quot;')}" loading="lazy"></a>` : ''}
+type HomePopup = { id: string; title: string; body: string; image?: string }
+
+const escAttr = (s: unknown) => String(s ?? '')
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+
+// 공지 팝업 카드 1장 — 카드별 고유 id·aria-labelledby
+function noticePopCard(p: HomePopup): string {
+  const id = escAttr(p.id)
+  const href = `/notice/${encodeURIComponent(p.id)}`
+  const text = p.body.length > 140 ? p.body.slice(0, 140) + '…' : p.body
+  return `
+    <div class="np-card" id="np-card-${id}" data-pop-id="${id}" role="group" aria-labelledby="np-title-${id}">
+      <button type="button" class="np-x" data-np-act="close" aria-label="${escAttr(p.title)} 공지 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      ${p.image ? `<a href="${href}" class="np-img"><img src="${escAttr(p.image)}" alt="${escAttr(p.title)}" loading="lazy"></a>` : ''}
       <div class="np-body">
-        <span class="np-label"><i class="fa-solid fa-bullhorn"></i> 공지사항</span>
-        <h3 class="np-title">${popup.title}</h3>
-        <p class="np-text">${popup.body.replace(/</g, '&lt;').slice(0, 140)}${popup.body.length > 140 ? '…' : ''}</p>
-        <a href="/notice/${popup.id}" class="btn btn-primary np-more">자세히 보기 <i class="fa-solid fa-arrow-right"></i></a>
+        <span class="np-label"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> 공지사항</span>
+        <h3 class="np-title" id="np-title-${id}">${escAttr(p.title)}</h3>
+        <p class="np-text">${escAttr(text)}</p>
+        <a href="${href}" class="btn btn-primary np-more">자세히 보기 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
       <div class="np-foot">
-        <label class="np-dismiss"><input type="checkbox" id="npDismiss"> <span>오늘 하루 보지 않기</span></label>
-        <button type="button" class="np-close-text" data-np-close>닫기</button>
+        <button type="button" class="np-dismiss" data-np-act="hide"><input type="checkbox" tabindex="-1" aria-hidden="true"> <span>오늘 하루 보지 않기</span></button>
+        <button type="button" class="np-close-text" data-np-act="close">닫기</button>
       </div>
+    </div>`
+}
+
+// 동작 스크립트 — 서버 값 삽입 없음(카드의 data-pop-id만 사용)
+// 숨김 키는 기존 형식 유지: localStorage np_dismiss_{id} = 만료 시각(ms)
+const NOTICE_POP_JS = `
+(function(){
+  var ov=document.getElementById('noticePop');
+  if(!ov) return;
+  var stack=ov.querySelector('.np-stack'),nav=ov.querySelector('.np-nav'),ind=ov.querySelector('.np-ind'),chip=ov.querySelector('.np-expand');
+  function key(id){return 'np_dismiss_'+id;}
+  function cards(){return Array.prototype.slice.call(stack.querySelectorAll('.np-card:not(.np-out)'));}
+  // 오늘 숨긴 카드는 렌더 전에 제거
+  Array.prototype.slice.call(stack.querySelectorAll('.np-card')).forEach(function(c){
+    try{ var u=localStorage.getItem(key(c.getAttribute('data-pop-id'))); if(u && Date.now()<parseInt(u,10)) c.parentNode.removeChild(c); }catch(e){}
+  });
+  if(!cards().length){ ov.parentNode.removeChild(ov); return; }
+  var mq=matchMedia('(max-width: 767px)');
+  var compact=mq.matches, idx=0, prevOverflow='', locked=false;
+  function lock(){ if(!locked){ prevOverflow=document.body.style.overflow; document.body.style.overflow='hidden'; locked=true; } }
+  function unlock(){ if(locked){ document.body.style.overflow=prevOverflow; locked=false; } }
+  function setDialog(on){
+    if(on){ ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); }
+    else{ ov.setAttribute('role','region'); ov.removeAttribute('aria-modal'); }
+  }
+  function updateChip(){
+    var n=cards().length;
+    chip.innerHTML=n>1?'진료 공지 <span class="np-count">'+n+'</span>':'진료 공지 보기';
+    chip.setAttribute('aria-label','진료 공지 '+n+'건 보기');
+  }
+  function show(i,dir){
+    var cs=cards(); if(!cs.length) return;
+    idx=(i+cs.length)%cs.length;
+    cs.forEach(function(c,k){ c.classList.toggle('np-active',k===idx); c.style.setProperty('--np-dx',dir?(dir*36)+'px':'0px'); });
+    ind.textContent=(idx+1)+' / '+cs.length;
+    nav.hidden=cs.length<2;
+  }
+  function focusFirst(){
+    var c=ov.classList.contains('np-single')?stack.querySelector('.np-card.np-active'):cards()[0];
+    var b=c&&c.querySelector('.np-x'); if(b){ try{ b.focus({preventScroll:true}); }catch(e){ b.focus(); } }
+  }
+  function applyMode(){
+    if(compact){ ov.classList.add('np-compact'); ov.classList.remove('np-single'); setDialog(false); updateChip(); return; }
+    ov.classList.remove('np-compact'); setDialog(true);
+    ov.classList.toggle('np-single',mq.matches);
+    if(mq.matches) show(idx,0);
+  }
+  function closeAll(){ ov.hidden=true; unlock(); }
+  function removeCard(c){
+    c.classList.add('np-out');
+    var single=ov.classList.contains('np-single');
+    var left=cards().length;
+    if(!left){ closeAll(); return; }
+    if(single){ c.parentNode.removeChild(c); show(Math.min(idx,left-1),0); }
+    else setTimeout(function(){ if(c.parentNode) c.parentNode.removeChild(c); },240);
+    updateChip();
+    setTimeout(focusFirst,single?0:250);
+  }
+  stack.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-np-act]');
+    if(!b){ if(e.target===stack && !ov.classList.contains('np-single')) closeAll(); return; }
+    e.preventDefault();
+    var c=b.closest('.np-card');
+    if(b.getAttribute('data-np-act')==='hide'){
+      var cb=b.querySelector('input'); if(cb) cb.checked=true;
+      try{ localStorage.setItem(key(c.getAttribute('data-pop-id')),String(Date.now()+86400000)); }catch(err){}
+    }
+    removeCard(c);
+  });
+  chip.addEventListener('click',function(){
+    compact=false; chip.setAttribute('aria-expanded','true');
+    applyMode(); lock(); focusFirst();
+  });
+  ov.querySelector('.np-prev').addEventListener('click',function(){ show(idx-1,-1); focusFirst(); });
+  ov.querySelector('.np-next').addEventListener('click',function(){ show(idx+1,1); focusFirst(); });
+  // 모바일 스와이프로 넘겨보기
+  var sx=0,sy=0,tracking=false;
+  stack.addEventListener('touchstart',function(e){ if(!ov.classList.contains('np-single')||e.touches.length!==1) return; tracking=true; sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+  stack.addEventListener('touchend',function(e){
+    if(!tracking) return; tracking=false;
+    var t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3){ if(dx<0) show(idx+1,1); else show(idx-1,-1); }
+  },{passive:true});
+  ov.addEventListener('click',function(e){ if(e.target===ov && !compact) closeAll(); });
+  document.addEventListener('keydown',function(e){
+    if(ov.hidden) return;
+    if(e.key==='Escape') closeAll();
+    else if(ov.classList.contains('np-single')&&!compact){ if(e.key==='ArrowRight') show(idx+1,1); else if(e.key==='ArrowLeft') show(idx-1,-1); }
+  });
+  var onMq=function(){ if(!compact && !ov.hidden) applyMode(); };
+  if(mq.addEventListener) mq.addEventListener('change',onMq); else if(mq.addListener) mq.addListener(onMq);
+  applyMode();
+  ov.hidden=false;
+  if(!compact){ lock(); setTimeout(focusFirst,60); }
+})();
+`
+
+// 공지 팝업 (관리자 설정) — 최대 5건. PC는 나란히, 모바일은 칩 → 한 장씩 넘겨보기
+function noticePopHtml(popups: HomePopup[]): string {
+  if (!popups.length) return ''
+  return `
+  <!-- ============ 공지 팝업 (관리자 설정, 최대 5건) ============ -->
+  <div class="notice-pop" id="noticePop" role="dialog" aria-modal="true" aria-label="공지사항" hidden>
+    <button type="button" class="np-expand" aria-expanded="false" aria-controls="npStack">진료 공지 보기</button>
+    <div class="np-stack" id="npStack">${popups.map(noticePopCard).join('')}
+    </div>
+    <div class="np-nav" hidden>
+      <button type="button" class="np-prev" aria-label="이전 공지">&lsaquo;</button>
+      <span class="np-ind" aria-live="polite">1 / ${popups.length}</span>
+      <button type="button" class="np-next" aria-label="다음 공지">&rsaquo;</button>
     </div>
   </div>
-  <script>
-    (function(){
-      var pop = document.getElementById('noticePop');
-      if (!pop) return;
-      var id = pop.getAttribute('data-pop-id');
-      var key = 'np_dismiss_' + id;
-      try {
-        var until = localStorage.getItem(key);
-        if (until && Date.now() < parseInt(until, 10)) return; // 아직 숨김 기간
-      } catch(e){}
-      pop.hidden = false;
-      var compact = matchMedia('(max-width: 767px)').matches;
-      if(compact){ pop.classList.add('np-compact'); pop.setAttribute('role','region'); pop.removeAttribute('aria-modal'); }
-      else document.body.style.overflow = 'hidden';
-      pop.querySelector('.np-expand').addEventListener('click',function(){
-        pop.classList.remove('np-compact'); pop.setAttribute('role','dialog'); pop.setAttribute('aria-modal','true');
-        this.setAttribute('aria-expanded','true'); document.body.style.overflow = 'hidden';
-        pop.querySelector('.np-x').focus();
-      });
-      function close(){
-        pop.hidden = true;
-        document.body.style.overflow = '';
-        var cb = document.getElementById('npDismiss');
-        if (cb && cb.checked) {
-          try { localStorage.setItem(key, String(Date.now() + 86400000)); } catch(e){}
-        }
-      }
-      pop.querySelectorAll('[data-np-close]').forEach(function(el){ el.addEventListener('click', close); });
-      document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !pop.hidden) close(); });
-    })();
-  </script>` : ''
+  <script>${NOTICE_POP_JS}</script>`
+}
+
+export function HomePage(popups: HomePopup[] = []) {
+  const popupHtml = noticePopHtml(popups.slice(0, 5))
 
   const body = html`
   ${raw(popupHtml)}

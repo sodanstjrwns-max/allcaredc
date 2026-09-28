@@ -14,7 +14,7 @@ import { loadPriceTable, savePriceTable } from '../lib/pricing'
 import type { PriceGroup } from '../data/clinic'
 import { fetchSiteStats, renderStatsPage, isValidStatsKey } from './stats'
 import { SEED_COLUMNS, Column } from '../pages/column'
-import { SEED_NOTICES, Notice } from '../pages/notice'
+import { SEED_NOTICES, Notice, allActivePopupNotices } from '../pages/notice'
 import { SEED_EVENTS, EventItem } from '../pages/event'
 import { CaseItem } from '../pages/cases'
 
@@ -357,7 +357,10 @@ admin.get('/notices', async (c) => {
   const items = await listCollection<Notice>(c.env, 'notices')
   return c.html(AdminNotices(items, await viewsMap(c.env, 'notice', items)).toString())
 })
-admin.get('/notices/new', (c) => c.html(AdminNoticeForm().toString()))
+admin.get('/notices/new', async (c) => {
+  const items = await listCollection<Notice>(c.env, 'notices')
+  return c.html(AdminNoticeForm(undefined, allActivePopupNotices(items).length).toString())
+})
 admin.post('/notices/new', async (c) => {
   const form = await c.req.parseBody()
   let image = String(form.image || '') || undefined
@@ -380,7 +383,7 @@ admin.get('/notices/:id/edit', async (c) => {
   const items = await listCollection<Notice>(c.env, 'notices')
   const n = items.find(x => x.id === c.req.param('id'))
   if (!n) return c.notFound()
-  return c.html(AdminNoticeForm(n).toString())
+  return c.html(AdminNoticeForm(n, allActivePopupNotices(items).length).toString())
 })
 admin.post('/notices/:id/edit', async (c) => {
   const form = await c.req.parseBody()

@@ -16,13 +16,24 @@ export type Notice = {
   popupUntil?: string
 }
 
-/** 현재 활성 팝업 공지 1건 반환 (popup=true, 만료 전, 최신 우선) */
-export function activePopupNotice(notices: Notice[]): Notice | null {
-  const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD (UTC 기준 충분)
-  const live = notices.filter(n => n.popup && (!n.popupUntil || n.popupUntil >= today))
-  if (live.length === 0) return null
-  live.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.createdAt - a.createdAt)
-  return live[0]
+/** 홈 팝업 동시 노출 최대 개수 */
+export const POPUP_MAX = 5
+
+/** 한국 시간(KST) 기준 오늘 YYYY-MM-DD — 홈 팝업 스크립트와 동일 계산 */
+export function kstToday(): string {
+  return new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10)
+}
+
+/** 노출 조건을 만족하는 팝업 공지 전체 (popup=true, 종료일 미경과) — 고정 우선 → 최신순 */
+export function allActivePopupNotices(notices: Notice[], today = kstToday()): Notice[] {
+  return notices
+    .filter(n => n.popup && (!n.popupUntil || n.popupUntil >= today))
+    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.createdAt - a.createdAt)
+}
+
+/** 홈에 실제로 띄울 팝업 공지 (최대 POPUP_MAX건) */
+export function activePopupNotices(notices: Notice[]): Notice[] {
+  return allActivePopupNotices(notices).slice(0, POPUP_MAX)
 }
 
 export function NoticeIndex(notices: Notice[]) {

@@ -1051,21 +1051,26 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
    공지 팝업 (관리자 설정 → 홈 노출)
    ============================================================ */
 .notice-pop[hidden] { display: none; }
+/* 여러 장이면 PC는 공통 딤 위에 좌→우 나란히(줄바꿈), 넘치면 오버레이 자체가 스크롤 */
 .notice-pop {
   position: fixed; inset: 0; z-index: 9999;
-  display: flex; align-items: center; justify-content: center; padding: 20px;
+  display: flex; padding: 24px 20px; overflow-y: auto; overscroll-behavior: contain;
+  background: rgba(6, 39, 65, .62); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  animation: npFade .25s var(--ease, ease);
 }
-.np-backdrop {
-  position: absolute; inset: 0; background: rgba(6, 39, 65, .62);
-  backdrop-filter: blur(3px); animation: npFade .25s var(--ease, ease);
+.np-stack {
+  margin: auto; display: flex; flex-wrap: wrap; gap: 16px;
+  justify-content: center; align-items: flex-start; max-width: 100%;
 }
 .np-card {
-  position: relative; width: 100%; max-width: 420px;
-  max-height: 92vh; overflow-y: auto;   /* 세로 포스터가 커도 카드가 화면을 넘지 않도록 */
+  position: relative; width: 380px; max-width: 100%;
+  max-height: 88vh; overflow-y: auto;   /* 세로 포스터가 커도 카드가 화면을 넘지 않도록 */
   background: var(--ivory, #fffeee); border-radius: var(--radius-lg, 4px);
   box-shadow: 0 24px 60px rgba(6, 39, 65, .4);
   animation: npRise .38s cubic-bezier(.2, .8, .2, 1);
+  transition: opacity .22s ease, transform .22s ease;
 }
+.np-card.np-out { opacity: 0; transform: translateY(10px) scale(.95); pointer-events: none; }
 @keyframes npFade { from { opacity: 0 } to { opacity: 1 } }
 @keyframes npRise { from { opacity: 0; transform: translateY(18px) scale(.97) } to { opacity: 1; transform: none } }
 .np-x {
@@ -1077,7 +1082,7 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 .np-x:hover { background: rgba(6, 39, 65, .82); }
 .np-img { display: block; background: #f4efe3; }
 /* A4(세로) 포스터 잘림 방지: cover→contain + 넉넉한 높이. 이미지 전체가 보이도록 */
-.np-img img { display: block; width: 100%; max-height: 68vh; object-fit: contain; }
+.np-img img { display: block; width: 100%; max-height: 60vh; object-fit: contain; }
 .np-body { padding: 26px 28px 18px; }
 .np-label {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1087,8 +1092,9 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 .np-title {
   font-family: 'Nanum Myeongjo', serif; font-weight: 800;
   font-size: 1.32rem; line-height: 1.4; color: var(--navy-800, #062741); margin: 0 0 10px;
+  word-break: keep-all; padding-right: 36px;
 }
-.np-text { margin: 0 0 18px; color: var(--ink-soft, #5a6b78); line-height: 1.7; font-size: .94rem; }
+.np-text { margin: 0 0 18px; color: var(--ink-soft, #5a6b78); line-height: 1.7; font-size: .94rem; white-space: pre-line; word-break: keep-all; }
 .np-more { width: 100%; justify-content: center; }
 .np-foot {
   display: flex; align-items: center; justify-content: space-between;
@@ -1096,16 +1102,18 @@ em, i, cite, var, address, .italic, .hh-italic, .disp, .eng,
 }
 .np-dismiss {
   display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
-  font-size: .85rem; color: var(--ink-soft, #5a6b78);
+  font: inherit; font-size: .85rem; color: var(--ink-soft, #5a6b78);
+  background: none; border: none; padding: 4px 2px;
 }
-.np-dismiss input { width: 15px; height: 15px; accent-color: var(--gold, #b08d57); }
+.np-dismiss:hover { color: var(--navy-800, #062741); }
+.np-dismiss input { width: 15px; height: 15px; accent-color: var(--gold, #b08d57); pointer-events: none; }
 .np-close-text {
-  background: none; border: none; cursor: pointer;
+  background: none; border: none; cursor: pointer; font-family: inherit;
   font-size: .85rem; color: var(--navy-800, #062741); font-weight: 600; padding: 4px 6px;
 }
 .np-close-text:hover { text-decoration: underline; }
 @media (max-width: 480px) {
-  .np-card { max-width: 100%; }
+  .np-card { width: 100%; }
   .np-img img { max-height: 62vh; }
   .np-body { padding: 22px 22px 14px; }
   .np-foot { padding: 12px 22px 14px; }
@@ -3330,13 +3338,26 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 
 /* 모바일 첫 방문: 공지는 직접 펼치고, 진료 소개·예약은 바로 읽는다. */
 .np-expand{display:none}
-.notice-pop.np-compact{inset:90px 16px auto auto;padding:0;display:block;max-width:calc(100vw - 32px)}
-.np-compact .np-card,.np-compact .np-backdrop{display:none}
+.notice-pop.np-compact{inset:90px 16px auto auto;padding:0;display:block;max-width:calc(100vw - 32px);background:none;backdrop-filter:none;-webkit-backdrop-filter:none;overflow:visible;animation:none}
+.np-compact .np-stack,.np-compact .np-nav{display:none}
 .np-compact .np-expand{display:block;min-height:44px;padding:10px 18px;border:1px solid var(--gold);border-radius:4px;background:var(--ivory,#fffeee);color:var(--navy-800,#062741);font:600 14px var(--font-sans,sans-serif);box-shadow:0 4px 16px #06274122;cursor:pointer}
+.np-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:6px;padding:0 6px;border-radius:3px;background:var(--navy-800,#062741);color:var(--ivory,#fffeee);font-size:12px;font-weight:700;vertical-align:1px}
 .np-x{width:44px;height:44px}
 .np-foot{position:sticky;bottom:0;background:var(--ivory,#fffeee)}
-.np-close-text{min-height:44px;min-width:44px}
-@media(max-width:767px){.np-card{max-height:78svh}.np-img img{max-height:42svh}}
+.np-close-text,.np-dismiss{min-height:44px;min-width:44px}
+/* 모바일 펼침: 한 장씩 넘겨보기(스와이프 · ‹ › · 1 / N) */
+.np-nav{display:none}
+.notice-pop.np-single{flex-direction:column;align-items:center}
+.np-single .np-stack{margin:auto auto 0;width:100%;max-width:420px;flex-wrap:nowrap}
+.np-single .np-card{display:none;width:100%}
+.np-single .np-card.np-active{display:block;animation:npSlide .25s ease}
+.np-single .np-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin:12px auto auto}
+.np-single .np-nav[hidden]{display:none}
+.np-nav button{width:44px;height:44px;border-radius:4px;border:1px solid var(--gold,#b08d57);background:var(--ivory,#fffeee);color:var(--navy-800,#062741);font-size:1.5rem;line-height:1;cursor:pointer;box-shadow:0 4px 14px #06274133}
+.np-ind{min-width:64px;text-align:center;font:600 14px var(--font-mono,monospace);color:#fff;letter-spacing:.06em;text-shadow:0 1px 4px #0006}
+@keyframes npSlide{from{opacity:0;transform:translateX(var(--np-dx,0px))}to{opacity:1;transform:none}}
+@media(max-width:767px){.np-card{max-height:78svh}.np-img img{max-height:42svh}.np-single .np-card{max-height:calc(100svh - 110px)}}
+@media(prefers-reduced-motion:reduce){.notice-pop,.np-card,.np-single .np-card.np-active{animation:none;transition:none}}
 /* 2026-09-16 원장 요청: PC에서 비포애프터 사진이 크롭되지 않고 원본 비율 그대로 전체가 보이도록 (contain) */
 .ba-slider > img { object-fit: contain; background: var(--ivory-2); }
 .ba-after-wrap img { width: var(--ba-w, 100%); object-fit: contain; background: var(--ivory-2); }

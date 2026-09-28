@@ -10,7 +10,7 @@ import { ReservationPage } from './pages/reservation'
 import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
 import { ColumnIndex, ColumnDetail, Column } from './pages/column'
 import { getColumnCategories } from './lib/column-categories'
-import { NoticeIndex, NoticeDetail, Notice, activePopupNotice } from './pages/notice'
+import { NoticeIndex, NoticeDetail, Notice, activePopupNotices } from './pages/notice'
 import { EventIndex, EventDetail, EventItem } from './pages/event'
 import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
 import { SeoHealthPage } from './pages/seo-health'
@@ -105,8 +105,8 @@ app.get('/seo-health', (c) => c.html(SeoHealthPage().toString()))
 // ════════════════ 공개 페이지 ════════════════
 app.get('/', async (c) => {
   const notices = await listCollection<Notice>(c.env, 'notices')
-  const pop = activePopupNotice(notices)
-  return c.html(HomePage(pop ? { id: pop.id, title: pop.title, body: pop.body, image: pop.image } : null).toString())
+  const pops = activePopupNotices(notices).map(p => ({ id: p.id, title: p.title, body: p.body, image: p.image }))
+  return c.html(HomePage(pops).toString())
 })
 app.get('/mission', (c) => c.html(MissionPage().toString()))
 app.get('/directions', (c) => c.html(DirectionsPage().toString()))
