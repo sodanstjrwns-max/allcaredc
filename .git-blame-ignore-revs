@@ -1,0 +1,8 @@
+# 콘텐츠 수정일 산출(scripts/content-dates.mjs)에서 건너뛸 커밋 — 본문(화면 문장·데이터) 변화 없이
+# 스키마·og 이미지·링크 대상·메타 제목만 바꾼 커밋. 사이트맵 lastmod 가 이런 커밋 날짜로 바뀌지 않게 한다.
+# (git blame --ignore-revs-file .git-blame-ignore-revs 로도 사용 가능)
+
+# 2026-09-29 GSC 감사: 홈 의료진 링크 대상(301 회피)·중복 용어 301·/treatments 메타 제목
+faf5fcacae66907cc795290078a689aa7aa2a8f2
+# 2026-09-29 SEO/AEO 감사: og:image SVG→JPG, 감수 줄, WebSite 엔티티, breadcrumb @id, speakable
+dec2a3b70c8e917807a83cedf66dcbd26f6f538e

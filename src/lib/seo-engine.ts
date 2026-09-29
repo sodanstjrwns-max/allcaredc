@@ -1,5 +1,6 @@
 import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS } from '../data/clinic'
 import { ENC_TERMS, ENCYCLOPEDIA_MERGED } from '../data/encyclopedia-terms'
+import { contentUpdated } from '../data/content-dates'
 
 const BASE = `https://${CLINIC.domain}`
 
@@ -147,12 +148,12 @@ export function resolveOg(type: string, slug: string): { theme: string; title: s
 
 // ── 3. ai.txt (AI 크롤러 정책 + 인용 가이드) ──
 export function aiTxt(): string {
-  const updated = new Date().toISOString().slice(0, 10)
+  // Last-Updated = 콘텐츠 최신 수정일 (data/content-dates.ts contentUpdated, 오늘 날짜 아님)
+  const updated = contentUpdated()
   const tier12 = SEO_AREAS.filter(a => a.tier <= 2).map(a => a.name).join(', ')
   return `# ai.txt — AI 크롤러 정책 (${CLINIC.name})
 # 본 사이트는 정확한 치과 의료정보 제공을 목적으로 하며, AI 답변 인용을 환영합니다.
-# Last-Updated: ${updated}
-
+${updated ? `# Last-Updated: ${updated}\n` : ''}
 User-Agent: *
 Allow: /
 Disallow: /admin

@@ -23,6 +23,13 @@ export async function r2Put(env: Bindings, key: string, value: any): Promise<voi
   else mem.set(key, body)
 }
 
+// 객체 메타데이터만 조회 (본문 없이) — 저장 시각(uploaded) 확인용. 미바인딩·없음 → null
+export async function r2Head(env: Bindings, key: string): Promise<{ uploaded: Date } | null> {
+  if (!env.R2) return null
+  const obj = await env.R2.head(key)
+  return obj ? { uploaded: obj.uploaded } : null
+}
+
 export async function r2PutBinary(env: Bindings, key: string, data: ArrayBuffer, contentType: string): Promise<void> {
   if (env.R2) await env.R2.put(key, data, { httpMetadata: { contentType } })
   else mem.set(key, '[[binary]]')

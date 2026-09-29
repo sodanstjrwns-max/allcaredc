@@ -7,6 +7,8 @@ import type { Bindings } from '../lib/auth'
 import { listCollection } from '../lib/store'
 import { ENCYCLOPEDIA_DETAIL_SLUGS } from '../pages/encyclopedia'
 import { ENC_TERMS } from '../data/encyclopedia-terms'
+import { CONTENT_DATES, latestDate, contentUpdated } from '../data/content-dates'
+import { r2Head } from '../lib/store'
 
 const BASE = `https://${CLINIC.domain}`
 
@@ -16,40 +18,64 @@ type SitemapUrl = { loc: string; pri: string; freq: string; mod?: string; img?: 
 function xmlEsc(s: string) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
+// 날짜 없음·무효 → '' (lastmod 생략). ※ 예전엔 new Date()(오늘)로 채웠다 (2026-09-29 교정)
 function isoDate(d?: string | number | Date) {
-  const dt = d ? new Date(d) : new Date()
-  return isNaN(dt.getTime()) ? new Date().toISOString() : dt.toISOString()
+  if (d === undefined || d === null || d === '') return ''
+  const dt = new Date(d)
+  return isNaN(dt.getTime()) || dt.getTime() <= 0 ? '' : dt.toISOString()
 }
 
+// 동적 콘텐츠(R2) 날짜 모음 — 목록 페이지 lastmod = 최신 항목 날짜
+async function dynamicDates(env: Bindings) {
+  const safe = async <T>(p: Promise<T[]>) => { try { return await p } catch { return [] as T[] } }
+  const [cols, notices, events, cases] = await Promise.all([
+    safe(listCollection<any>(env, 'columns')),
+    safe(listCollection<any>(env, 'notices')),
+    safe(listCollection<any>(env, 'events')),
+    safe(listCollection<any>(env, 'cases')),
+  ])
+  let pricingSaved = ''
+  try { pricingSaved = isoDate((await r2Head(env, 'data/pricing.json'))?.uploaded) } catch {}
+  return { cols: cols.filter((c: any) => c.published), notices, events, cases, pricingSaved }
+}
+const itemDate = (x: any) => isoDate(x.updatedAt || x.createdAt)
+const newest = (items: any[]) => latestDate(...items.map(x => [x.updatedAt, x.createdAt]))
+
+// 사이트맵 lastmod = 콘텐츠 실제 수정일
+//  - 정적·데이터 페이지: src/data/content-dates.ts (본문 줄의 마지막 수정 커밋 날짜, 빌드 시 고정)
+//  - 칼럼·공지·이벤트·케이스(R2): 각 항목 updatedAt/createdAt, 목록 페이지 = 최신 항목
+//  - 비용 안내: 관리자 편집본(R2 data/pricing.json) 저장 시각, 없으면 기본 수가표 커밋 날짜
+//  - 날짜를 알 수 없으면 lastmod 생략 (오늘 날짜로 채우지 않음)
 export async function sitemap(env: Bindings): Promise<string> {
-  const now = new Date().toISOString()
-  const today = now.slice(0, 10)
+  const P = CONTENT_DATES.pages
+  const dyn = await dynamicDates(env)
   const urls: SitemapUrl[] = [
-    { loc: '/', pri: '1.0', freq: 'weekly', mod: now },
-    { loc: '/mission', pri: '0.8', freq: 'monthly' },
-    { loc: '/doctors', pri: '0.8', freq: 'monthly' },
-    { loc: '/treatments', pri: '0.8', freq: 'monthly' },
-    { loc: '/cases', pri: '0.7', freq: 'weekly' },
-    { loc: '/column', pri: '0.7', freq: 'weekly' },
-    { loc: '/encyclopedia', pri: '0.6', freq: 'monthly' },
-    { loc: '/faq', pri: '0.7', freq: 'monthly' },
-    { loc: '/directions', pri: '0.7', freq: 'monthly' },
-    { loc: '/pricing', pri: '0.6', freq: 'monthly' },
-    { loc: '/notice', pri: '0.5', freq: 'weekly' },
-    { loc: '/events', pri: '0.6', freq: 'weekly' },
-    { loc: '/reservation', pri: '0.7', freq: 'monthly' },
+    { loc: '/', pri: '1.0', freq: 'weekly', mod: P.home },
+    { loc: '/mission', pri: '0.8', freq: 'monthly', mod: P.mission },
+    { loc: '/doctors', pri: '0.8', freq: 'monthly', mod: P.doctors },
+    { loc: '/treatments', pri: '0.8', freq: 'monthly', mod: P.treatments },
+    { loc: '/cases', pri: '0.7', freq: 'weekly', mod: newest(dyn.cases) },
+    { loc: '/column', pri: '0.7', freq: 'weekly', mod: newest(dyn.cols) },
+    { loc: '/encyclopedia', pri: '0.6', freq: 'monthly', mod: latestDate(Object.values(CONTENT_DATES.encyclopedia)) },
+    { loc: '/faq', pri: '0.7', freq: 'monthly', mod: P.faq },
+    { loc: '/directions', pri: '0.7', freq: 'monthly', mod: P.directions },
+    { loc: '/pricing', pri: '0.6', freq: 'monthly', mod: dyn.pricingSaved || P.pricing },
+    { loc: '/notice', pri: '0.5', freq: 'weekly', mod: newest(dyn.notices) },
+    { loc: '/events', pri: '0.6', freq: 'weekly', mod: newest(dyn.events) },
+    { loc: '/reservation', pri: '0.7', freq: 'monthly', mod: P.reservation },
   ]
   // 진료 (핵심진료는 대표 이미지 포함 → image sitemap)
   TREATMENTS.forEach(t => urls.push({
     loc: `/treatments/${t.slug}`,
     pri: t.core ? '0.9' : '0.6',
     freq: 'monthly',
+    mod: CONTENT_DATES.treatments[t.slug],
     // OG 라우트(/og/:type/:file)는 type=treatment 로 해석한다. type을 slug로 쓰면 404가 나므로 고정.
     img: [{ url: `${BASE}/static/og/treatment/${t.slug}.jpg`, title: `${t.name} - ${CLINIC.name}` }],
   }))
   // 의료진 (사진 포함)
   ;['kwon-minsoo', 'kwon-jongjin', 'bae-suhyeon'].forEach(s => urls.push({
-    loc: `/doctors/${s}`, pri: '0.7', freq: 'monthly',
+    loc: `/doctors/${s}`, pri: '0.7', freq: 'monthly', mod: CONTENT_DATES.doctors[s],
     img: [{ url: `${BASE}/static/img/${s}.webp` }],
   }))
   // 지역 SEO (지역 × 핵심진료) — tier 우선순위 반영
@@ -57,36 +83,29 @@ export async function sitemap(env: Bindings): Promise<string> {
     loc: `/area/${a.slug}-${t.slug}`,
     pri: a.tier === 1 ? '0.7' : a.tier === 2 ? '0.6' : '0.5',
     freq: 'monthly',
+    // 지역 페이지 = 지역 템플릿(routes/seo.ts AreaPage) + 지역 데이터 + 진료 데이터 중 최신
+    mod: latestDate(CONTENT_DATES.pages.areaTemplate, CONTENT_DATES.areas[a.slug], CONTENT_DATES.treatments[t.slug]),
   })))
   // 용어 백과 상세
-  ENCYCLOPEDIA_DETAIL_SLUGS.forEach(s => urls.push({ loc: `/encyclopedia/${s}`, pri: '0.5', freq: 'monthly' }))
+  ENCYCLOPEDIA_DETAIL_SLUGS.forEach(s => urls.push({ loc: `/encyclopedia/${s}`, pri: '0.5', freq: 'monthly', mod: CONTENT_DATES.encyclopedia[s] }))
   // 칼럼 (동적 — 실제 수정일 lastmod + 썸네일 이미지)
-  try {
-    const cols = await listCollection<any>(env, 'columns')
-    cols.filter((c: any) => c.published).forEach((c: any) => urls.push({
-      loc: `/column/${c.slug}`,
-      pri: '0.7',
-      freq: 'monthly',
-      mod: isoDate(c.updatedAt || c.createdAt),
-      img: c.thumbnail ? [{ url: c.thumbnail.startsWith('http') ? c.thumbnail : `${BASE}${c.thumbnail}`, title: c.metaTitle || c.title }] : undefined,
-    }))
-  } catch {}
+  dyn.cols.forEach((c: any) => urls.push({
+    loc: `/column/${c.slug}`,
+    pri: '0.7',
+    freq: 'monthly',
+    mod: itemDate(c),
+    img: c.thumbnail ? [{ url: c.thumbnail.startsWith('http') ? c.thumbnail : `${BASE}${c.thumbnail}`, title: c.metaTitle || c.title }] : undefined,
+  }))
   // 공지 (동적)
-  try {
-    const notices = await listCollection<any>(env, 'notices')
-    notices.forEach((n: any) => urls.push({ loc: `/notice/${n.id}`, pri: '0.4', freq: 'monthly', mod: isoDate(n.updatedAt || n.createdAt) }))
-  } catch {}
+  dyn.notices.forEach((n: any) => urls.push({ loc: `/notice/${n.id}`, pri: '0.4', freq: 'monthly', mod: itemDate(n) }))
   // 이벤트 (동적)
-  try {
-    const events = await listCollection<any>(env, 'events')
-    events.forEach((e: any) => urls.push({ loc: `/events/${e.id}`, pri: '0.5', freq: 'weekly', mod: isoDate(e.updatedAt || e.createdAt) }))
-  } catch {}
+  dyn.events.forEach((e: any) => urls.push({ loc: `/events/${e.id}`, pri: '0.5', freq: 'weekly', mod: itemDate(e) }))
 
   const body = urls.map(u => {
     const imgXml = (u.img || []).map(im =>
       `\n    <image:image><image:loc>${xmlEsc(im.url)}</image:loc>${im.title ? `<image:title>${xmlEsc(im.title)}</image:title>` : ''}</image:image>`
     ).join('')
-    return `  <url><loc>${BASE}${u.loc}</loc><lastmod>${(u.mod || now).slice(0, 10) === today ? (u.mod || now) : u.mod || now}</lastmod><changefreq>${u.freq}</changefreq><priority>${u.pri}</priority>${imgXml}${imgXml ? '\n  ' : ''}</url>`
+    return `  <url><loc>${BASE}${u.loc}</loc>${u.mod ? `<lastmod>${u.mod}</lastmod>` : ''}<changefreq>${u.freq}</changefreq><priority>${u.pri}</priority>${imgXml}${imgXml ? '\n  ' : ''}</url>`
   }).join('\n')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -104,7 +123,7 @@ export async function rssFeed(env: Bindings): Promise<string> {
     const cols = await listCollection<any>(env, 'columns')
     cols.filter((c: any) => c.published).forEach((c: any) => items.push({
       title: c.title, link: `${BASE}/column/${c.slug}`,
-      desc: c.metaDesc || c.excerpt || '', date: c.createdAt || c.updatedAt || Date.now(),
+      desc: c.metaDesc || c.excerpt || '', date: Date.parse(isoDate(c.createdAt || c.updatedAt)) || 0,
       category: c.category,
     }))
   } catch {}
@@ -112,7 +131,7 @@ export async function rssFeed(env: Bindings): Promise<string> {
     const notices = await listCollection<any>(env, 'notices')
     notices.forEach((n: any) => items.push({
       title: n.title, link: `${BASE}/notice/${n.id}`,
-      desc: (n.body || '').replace(/<[^>]+>/g, '').slice(0, 160), date: n.createdAt || Date.now(),
+      desc: (n.body || '').replace(/<[^>]+>/g, '').slice(0, 160), date: Date.parse(isoDate(n.createdAt)) || 0,
     }))
   } catch {}
   items.sort((a, b) => b.date - a.date)
@@ -120,8 +139,8 @@ export async function rssFeed(env: Bindings): Promise<string> {
       <title>${xmlEsc(it.title)}</title>
       <link>${xmlEsc(it.link)}</link>
       <guid isPermaLink="true">${xmlEsc(it.link)}</guid>
-      <description>${xmlEsc(it.desc)}</description>
-      <pubDate>${new Date(it.date).toUTCString()}</pubDate>${it.category ? `
+      <description>${xmlEsc(it.desc)}</description>${it.date ? `
+      <pubDate>${new Date(it.date).toUTCString()}</pubDate>` : ''}${it.category ? `
       <category>${xmlEsc(it.category)}</category>` : ''}
     </item>`).join('\n')
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -132,8 +151,7 @@ export async function rssFeed(env: Bindings): Promise<string> {
     <atom:link href="${BASE}/rss.xml" rel="self" type="application/rss+xml"/>
     <description>약수역 365올케어치과 의료진이 직접 쓰는 치과 칼럼과 병원 소식</description>
     <language>ko-KR</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-${rows}
+${items[0]?.date ? `    <lastBuildDate>${new Date(items[0].date).toUTCString()}</lastBuildDate>\n` : ''}${rows}
   </channel>
 </rss>`
 }
@@ -207,7 +225,8 @@ Host: ${CLINIC.domain}`
 
 // ════════════════ llms.txt ════════════════
 export function llmsTxt(full = false): string {
-  const updated = new Date().toISOString().slice(0, 10)
+  // 최종 갱신 = 이 문서에 담긴 콘텐츠(병원 정보·진료·의료진·지역·용어)의 최신 수정일 (오늘 날짜 아님)
+  const updated = contentUpdated(full)
   const tier1 = SEO_AREAS.filter(a => a.tier === 1)
   const tier2 = SEO_AREAS.filter(a => a.tier === 2)
   const tier3 = SEO_AREAS.filter(a => a.tier === 3)
@@ -216,7 +235,7 @@ export function llmsTxt(full = false): string {
 
 > ${CLINIC.philosophy} 서울 약수역 5번 출구 도보 1분에 위치한 치과 전문의 협진 치과입니다. 구강악안면외과·치과보철과·통합치의학과 전문의가 임플란트·치아교정·심미보철·잇몸·사랑니·턱관절을 진료하며, 원내 기공실과 의식하진정법(수면치료)을 갖추고 있습니다.
 
-<!-- 최종 갱신: ${updated} | 출처 표기: 365올케어치과(${BASE}) -->
+<!-- ${updated ? `최종 갱신: ${updated} | ` : ''}출처 표기: 365올케어치과(${BASE}) -->
 
 ## 빠른 사실 (AI 답변용 핵심 정보)
 - 병원명: ${CLINIC.name} (영문 ${CLINIC.nameEn})
