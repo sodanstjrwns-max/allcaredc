@@ -3,10 +3,10 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, schemaTag } from '../components/layout'
 import {
   CLINIC, TREATMENTS, CORE_TREATMENTS, SUB_TREATMENTS, TX_IMAGES,
-  getTreatment, doctorsForTreatment, Treatment, columnCategoriesForTreatment, type ColumnCategory,
+  getTreatment, doctorsForTreatment, DOCTORS, Treatment, columnCategoriesForTreatment, type ColumnCategory,
 } from '../data/clinic'
 import { Column, columnCardHtml } from './column'
-import { speakableSchema, autoLinkBody } from '../lib/seo-engine'
+import { autoLinkBody } from '../lib/seo-engine'
 import { truncate } from '../lib/text'
 
 const SPEC_LABEL: Record<string, string> = {
@@ -71,10 +71,15 @@ export function TreatmentsIndex() {
 // ============================================================
 // 진료 상세 페이지 /treatments/:slug
 // ============================================================
+// 진료 페이지 최종 검토일 — 기존 스키마에 있던 고정값(오늘 날짜 자동 채움 금지). 화면 감수 줄과 스키마가 같은 값을 씁니다.
+const TX_LAST_REVIEWED = '2026-05-20'
+
 export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: ColumnCategory[]) {
   const t = getTreatment(slug)
   if (!t) return null
   const docs = doctorsForTreatment(slug)
+  // 감수자: 해당 진료 담당 의료진 첫 번째(기존 스키마와 동일), 담당 지정이 없으면 대표원장
+  const reviewer = docs[0] || DOCTORS.find(d => d.role === '대표원장')
   // §S20④: 같은 분야 최신 칼럼 3개 (resin-inlay→conservative 등 카테고리 별칭 흡수)
   const txCats = columnCategoriesForTreatment(slug)
   const txColumns = allColumns
@@ -138,15 +143,17 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: 
     url: pageUrl,
     description: t.short,
     inLanguage: 'ko',
-    lastReviewed: '2026-05-20',
-    reviewedBy: docs.length
-      ? { '@type': 'Physician', name: docs[0].name, medicalSpecialty: (docs[0] as any).titleLine || docs[0].role }
+    lastReviewed: TX_LAST_REVIEWED,
+    reviewedBy: reviewer
+      ? { '@type': ['Physician', 'Person'], '@id': `${BASE}/doctors/${reviewer.slug}#physician`, name: reviewer.name, jobTitle: reviewer.role, medicalSpecialty: (reviewer as any).titleLine || reviewer.role, url: `${BASE}/doctors/${reviewer.slug}` }
       : { '@type': 'Organization', name: CLINIC.name },
     about: { '@id': `${pageUrl}#procedure` },
     mainEntity: { '@id': `${pageUrl}#procedure` },
     isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website`, name: CLINIC.name },
     significantLink: related.map(r => `${BASE}/treatments/${r.slug}`),
     audience: { '@type': 'MedicalAudience', name: 'Patient', geographicArea: { '@type': 'AdministrativeArea', name: '서울특별시 중구' } },
+    // 음성·AI 답변용: 실제 DOM에 있는 제목·도입 요약만 지정
+    speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', '.tx-intro-lead'] },
   }
 
   const body = html`
@@ -165,6 +172,7 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: 
           ${t.core && TX_IMAGES[t.slug] ? html`<img src="${TX_IMAGES[t.slug]}" alt="${t.name}" style="border-radius:var(--radius-lg);margin-bottom:30px;width:100%;aspect-ratio:16/9;object-fit:cover" loading="lazy">` : ''}
 
           <p class="tx-intro-lead" style="font-size:1.2rem;color:var(--ink);font-weight:500">${t.intro}</p>
+          <p class="tx-reviewed" style="font-size:13px;color:var(--gray-600);margin:-6px 0 28px">${reviewer ? raw(`감수: <a href="/doctors/${reviewer.slug}" style="color:inherit;text-decoration:underline">${reviewer.name} ${reviewer.role}</a> · `) : ''}최종 검토 <time datetime="${TX_LAST_REVIEWED}">${TX_LAST_REVIEWED}</time></p>
 
           ${(() => {
             const curPath = `/treatments/${slug}`
@@ -277,14 +285,13 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: 
     title: `${t.name} | 약수역 ${t.name} 치과 - 365올케어치과`,
     description: metaDesc,
     path: `/treatments/${slug}`,
-    ogImage: `https://${CLINIC.domain}/og/treatment/${slug}.svg`,
+    ogImage: `https://${CLINIC.domain}/static/og/treatment/${slug}.jpg`,
     keywords: `${t.name},약수역 ${t.name},약수역 치과,신당동 ${t.name},중구 치과,365올케어치과${docNames ? ',' + docNames : ''}${subNames ? ',' + subNames.replace(/·/g, ',') : ''}`,
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }, { name: t.name, url: `/treatments/${slug}` }]),
       procedureSchema,
       ...(howToSchema ? [howToSchema] : []),
       medWebPage, faqSchema(t.faqs),
-      speakableSchema(['.tx-intro-lead', '.answer-box', 'h1', 'h2']),
     ],
   }, body)
 }

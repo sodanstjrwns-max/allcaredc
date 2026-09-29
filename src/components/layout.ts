@@ -15,7 +15,7 @@ export function organizationSchema() {
     url: `${BASE}/`,
     telephone: CLINIC.phone,
     email: CLINIC.email,
-    image: [`${BASE}/static/img/og.jpg`, `${BASE}/og/home/main.svg`],
+    image: [`${BASE}/static/img/og.jpg`, `${BASE}/static/og/home/main.jpg`],
     logo: `${BASE}/static/img/logo-horizontal.svg`,
     description: '약수역 5번 출구 1분, 구강악안면외과·보철과·통합치의학과 전문의가 진단부터 회복까지 살피는 동네 치과. 고난도 임플란트·수면치료(의식하진정법)·치아교정·심미보철·잇몸·사랑니·턱관절 진료.',
     slogan: CLINIC.tagline,
@@ -75,10 +75,26 @@ export function organizationSchema() {
   }
 }
 
-export function breadcrumbSchema(items: { name: string; url: string }[]) {
+// WebSite 엔티티 — 각 페이지 isPartOf(#website)가 가리키는 대상. 병원(#clinic)이 발행 주체.
+export function websiteSchema() {
+  const BASE = `https://${CLINIC.domain}`
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${BASE}/#website`,
+    url: `${BASE}/`,
+    name: CLINIC.name,
+    alternateName: CLINIC.nameEn,
+    inLanguage: 'ko-KR',
+    publisher: { '@id': `${BASE}/#clinic` },
+  }
+}
+
+export function breadcrumbSchema(items: { name: string; url: string }[], id?: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
+    ...(id ? { '@id': id } : {}),
     itemListElement: items.map((it, i) => ({
       '@type': 'ListItem', position: i + 1, name: it.name,
       item: `https://${CLINIC.domain}${it.url}`,

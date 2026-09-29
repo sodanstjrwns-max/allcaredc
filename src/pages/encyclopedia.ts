@@ -210,14 +210,14 @@ export function EncyclopediaDetailPage(slug: string) {
     title: `${term.term}${term.en ? ' (' + term.en + ')' : ''} | 치과 백과사전 | 365올케어치과`,
     description: c.intro.slice(0, 155),
     path: `/encyclopedia/${term.slug}`,
-    ogImage: `https://${CLINIC.domain}/og/enc/${term.slug}.svg`,
+    ogImage: `https://${CLINIC.domain}/static/og/enc/_default.jpg`,
     keywords: `${term.term},${term.en},치과 용어,${txName(term.treatment)},365올케어치과`,
     schema: [
       breadcrumbSchema(crumb),
       definedTermSchema,
       medicalPageSchema,
       faqSchema(c.faq),
-      speakableSchema(['.enc-intro', '.answer-box', 'h1', 'h2']),
+      speakableSchema(['.enc-intro', 'h1', 'h2']),
     ],
   }, body)
 }

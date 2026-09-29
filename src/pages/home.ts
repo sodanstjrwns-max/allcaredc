@@ -1,6 +1,6 @@
 import { html, raw } from 'hono/html'
 import { Page } from '../components/page'
-import { organizationSchema, faqSchema } from '../components/layout'
+import { organizationSchema, websiteSchema, faqSchema } from '../components/layout'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../data/clinic'
 import { STORY_BRANCHES } from '../data/story'
 import { speakableSchema } from '../lib/seo-engine'
@@ -592,11 +592,12 @@ export function HomePage(popups: HomePopup[] = []) {
     title: '365올케어치과 | 약수역 임플란트·교정·심미보철·수면치료·전문의 협진 시스템',
     description: '약수역 5번 출구 365올케어치과. 치과 전문의 협진 시스템으로 임플란트·치아교정·심미보철·일반진료를 진단부터 살핍니다. 수면진료·야간진료 운영.',
     path: '/',
-    ogImage: `https://${CLINIC.domain}/og/home/main.svg`,
+    ogImage: `https://${CLINIC.domain}/static/og/home/main.jpg`,
     preloadImage: '/static/img/doctors-main-3.webp',
     keywords: '약수역 치과,약수역 임플란트,약수역 교정,약수역 심미보철,365올케어치과,약수동 치과,중구 치과',
     schema: [
       organizationSchema(),
+      websiteSchema(),
       faqSchema([
         ...CLINIC.strengths.map(s => ({ q: s.head, a: s.desc })),
         ...STORY_BRANCHES.slice(0, 4).map(b => b.faq),

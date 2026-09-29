@@ -70,7 +70,7 @@ export function DoctorDetail(slug: string) {
     jobTitle: `${d.role} / ${d.titleLine}`,
     description: d.intro,
     url: pageUrl,
-    image: `${BASE}/og/doctor/${slug}.svg`,
+    image: `${BASE}/static/og/doctor/${slug}.jpg`,
     worksFor: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name, url: `${BASE}/` },
     workLocation: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
     alumniOf: d.education.map(e => ({ '@type': 'EducationalOrganization', name: e })),

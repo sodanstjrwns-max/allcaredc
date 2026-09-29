@@ -22,7 +22,7 @@ export function ReservationPage() {
     inLanguage: 'ko',
     isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website` },
     about: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
-    primaryImageOfPage: `${BASE}/og/home/home.svg`,
+    primaryImageOfPage: `${BASE}/static/og/home/main.jpg`,
     potentialAction: {
       '@type': 'ReserveAction',
       name: '예약 문의하기',

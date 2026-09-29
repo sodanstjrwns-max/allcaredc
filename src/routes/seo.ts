@@ -45,7 +45,7 @@ export async function sitemap(env: Bindings): Promise<string> {
     pri: t.core ? '0.9' : '0.6',
     freq: 'monthly',
     // OG 라우트(/og/:type/:file)는 type=treatment 로 해석한다. type을 slug로 쓰면 404가 나므로 고정.
-    img: [{ url: `${BASE}/og/treatment/${t.slug}.svg`, title: `${t.name} - ${CLINIC.name}` }],
+    img: [{ url: `${BASE}/static/og/treatment/${t.slug}.jpg`, title: `${t.name} - ${CLINIC.name}` }],
   }))
   // 의료진 (사진 포함)
   ;['kwon-minsoo', 'kwon-jongjin', 'bae-suhyeon'].forEach(s => urls.push({
@@ -383,7 +383,7 @@ export function AreaPage(combo: string) {
   }
   // ③ FAQPage + ④ BreadcrumbList + ⑤ Speakable
   const faqLd = faqSchema(areaFaqs)
-  const bc = breadcrumbSchema(crumb)
+  const bc = breadcrumbSchema(crumb, `${pageUrl}#breadcrumb`)
 
   const nearby = SEO_AREAS.filter(a => a.slug !== areaSlug).slice(0, 8)
   const otherTx = CORE_TREATMENTS.filter(t => t.slug !== tx.slug)
@@ -453,7 +453,8 @@ export function AreaPage(combo: string) {
     title: `${area.name} ${tx.name} | 약수역 ${tx.name} 치과 - 365올케어치과`,
     description: `${area.name} ${tx.name}${eulReul(tx.name)} 찾으신다면 약수역 365올케어치과. ${area.transit}, ${area.access}. ${tx.short} 치과 전문의 협진, 원내 기공실, 야간진료.`,
     path: `/area/${combo}`,
-    ogImage: `${BASE}/og/area/${combo}.svg`,
-    schema: [bc, localSchema, areaSchema, faqLd, speakableSchema()],
+    // 정적 JPG는 사이트맵 대상(지역×핵심 진료) 조합만 생성 — 그 외 조합은 진료 대표 이미지 사용
+    ogImage: CORE_TREATMENTS.some(t => t.slug === tx.slug) ? `${BASE}/static/og/area/${combo}.jpg` : `${BASE}/static/og/treatment/${tx.slug}.jpg`,
+    schema: [bc, localSchema, areaSchema, faqLd, speakableSchema(['.answer-box', 'h1', 'h2'])],
   }, body)
 }

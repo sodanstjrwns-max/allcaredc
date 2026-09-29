@@ -345,7 +345,7 @@ export function DirectionsPage() {
     name: CLINIC.name,
     url: `${BASE}/`,
     telephone: CLINIC.phone,
-    image: `${BASE}/og/home/home.svg`,
+    image: `${BASE}/static/og/home/main.jpg`,
     priceRange: '₩₩',
     currenciesAccepted: 'KRW',
     paymentAccepted: '현금, 카드, 계좌이체',
