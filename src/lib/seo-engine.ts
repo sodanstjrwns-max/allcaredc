@@ -1,10 +1,10 @@
 import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS } from '../data/clinic'
-import encData from '../data/encyclopedia.json'
+import { ENC_TERMS, ENCYCLOPEDIA_MERGED } from '../data/encyclopedia-terms'
 
 const BASE = `https://${CLINIC.domain}`
 
 type Term = { term: string; en: string; desc: string; treatment: string; initial: string; slug: string; content?: any }
-const TERMS = encData as Term[]
+const TERMS = ENC_TERMS as Term[]
 
 // ════════════════════════════════════════════════════════════
 // SEO/AEO 슈퍼머신 — 중앙 SEO 엔진
@@ -226,6 +226,11 @@ const LINK_DICT: { kw: string; url: string; label: string }[] = (() => {
     add(t.term, url, t.term)
     // 용어명에 공백/가운뎃점이 있으면 핵심 명사 부분도 별칭으로 (단, 너무 짧은 건 제외)
     t.term.split(/[·・/\s]/).forEach(part => { if (part.trim().length >= 3) add(part.trim(), url, t.term) })
+  })
+  // 통합된 중복 용어(크로스바이트·크랙 투스·시린이)의 이름은 대표 용어 페이지로 연결
+  TERMS.filter(t => ENCYCLOPEDIA_MERGED[t.slug]).forEach(t => {
+    const target = TERMS.find(x => x.slug === ENCYCLOPEDIA_MERGED[t.slug])
+    if (target?.content) add(t.term, `/encyclopedia/${target.slug}`, target.term)
   })
   // 긴 키워드 우선 매칭 (부분 매칭으로 인한 오링크 방지)
   return dict.sort((a, b) => b.kw.length - a.kw.length)

@@ -2,14 +2,14 @@ import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, schemaTag } from '../components/layout'
 import { CLINIC, TREATMENTS } from '../data/clinic'
-import encData from '../data/encyclopedia.json'
+import { ENC_TERMS } from '../data/encyclopedia-terms'
 import { speakableSchema, autoLinkBody, suggestInternalLinks } from '../lib/seo-engine'
 
 type Section = { h: string; p: string }
 type Faq = { q: string; a: string }
 type Content = { intro: string; sections: Section[]; faq: Faq[] }
 type Term = { term: string; en: string; desc: string; treatment: string; initial: string; slug: string; content?: Content }
-const TERMS = encData as Term[]
+const TERMS = ENC_TERMS as Term[]
 const txName = (slug: string) => TREATMENTS.find(t => t.slug === slug)?.name || slug
 const BY_SLUG = new Map(TERMS.map(t => [t.slug, t]))
 const DETAIL_COUNT = TERMS.filter(t => t.content).length

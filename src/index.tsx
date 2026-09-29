@@ -8,6 +8,7 @@ import { CasesPage, CaseItem } from './pages/cases'
 import { LoginPage, RegisterPage, MyPage } from './pages/auth'
 import { ReservationPage } from './pages/reservation'
 import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
+import { ENCYCLOPEDIA_MERGED } from './data/encyclopedia-terms'
 import { ColumnIndex, ColumnDetail, Column } from './pages/column'
 import { getColumnCategories } from './lib/column-categories'
 import { NoticeIndex, NoticeDetail, Notice, activePopupNotices } from './pages/notice'
@@ -118,6 +119,8 @@ app.get('/faq', (c) => c.html(FaqPage().toString()))
 app.get('/reservation', (c) => c.html(ReservationPage().toString()))
 app.get('/encyclopedia', (c) => c.html(EncyclopediaPage().toString()))
 app.get('/encyclopedia/:slug', (c) => {
+  const merged = ENCYCLOPEDIA_MERGED[c.req.param('slug')]
+  if (merged) return c.redirect(`/encyclopedia/${merged}`, 301)
   const page = EncyclopediaDetailPage(c.req.param('slug'))
   return page ? c.html(page.toString()) : c.notFound()
 })

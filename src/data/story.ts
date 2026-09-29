@@ -26,7 +26,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
     guide: '충치의 깊이를 정확히 진단해 필요한 만큼만 치료하는 것이 자연치아를 오래 쓰는 길입니다.',
     treatment: 'conservative',
     treatmentName: '충치·신경치료',
-    doctor: 'doctor-integrated',
+    doctor: 'kwon-minsoo', // 통합치의학과 전문의 (구 doctor-integrated → 301 거치지 않게 직접 연결)
     doctorName: '통합치의학과 전문의',
     faq: { q: '충치는 작아도 꼭 치료해야 하나요?', a: '작은 충치일 때 치료하는 것이 가장 유리합니다. 방치하면 신경까지 진행돼 치료 범위가 크게 늘어납니다.' },
   },
@@ -74,7 +74,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
     guide: '보철과 전문의와 원내 기공실이 색·형태·잇몸선을 함께 설계해, 티 나지 않는 어울림을 추구합니다.',
     treatment: 'esthetic',
     treatmentName: '심미보철',
-    doctor: 'doctor-prostho',
+    doctor: 'bae-suhyeon', // 보철과 전문의 (구 doctor-prostho)
     doctorName: '보철과 전문의',
     faq: { q: '보철이 너무 하얘서 부자연스러울까 걱정돼요.', a: '주변 치아와 어울리는 색을 선택하는 것이 원칙입니다. 본래 얼굴에 자연스럽게 녹아드는 색을 함께 정합니다.' },
   },
@@ -110,7 +110,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
     guide: '잇몸 질환은 소리 없이 진행됩니다. 정기 점검과 단계에 맞는 치료로 토대를 지킵니다.',
     treatment: 'gum',
     treatmentName: '잇몸치료',
-    doctor: 'doctor-integrated',
+    doctor: 'kwon-minsoo', // 통합치의학과 전문의 (구 doctor-integrated → 301 거치지 않게 직접 연결)
     doctorName: '통합치의학과 전문의',
     faq: { q: '잇몸에서 피가 나는데 괜찮나요?', a: '칫솔질 시 출혈은 잇몸 염증의 신호일 수 있어 점검을 받는 것이 좋습니다.' },
   },
