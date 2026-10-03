@@ -2,6 +2,7 @@ import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema } from '../components/layout'
 import { CLINIC, TREATMENTS } from '../data/clinic'
+import { txIcon } from '../data/tx-icons'
 
 // 진료별 FAQ를 한 곳에 모은 통합 FAQ 페이지 (§E-6)
 export function FaqPage() {
@@ -37,7 +38,7 @@ export function FaqPage() {
       <!-- 진료별 -->
       ${raw(TREATMENTS.map(t => `
         <div class="reveal" style="margin-bottom:50px" id="faq-${t.slug}">
-          <h2 style="font-size:1.6rem;margin-bottom:8px"><i class="fa-solid fa-${t.icon} text-mint"></i> ${t.name}</h2>
+          <h2 style="font-size:1.6rem;margin-bottom:8px">${txIcon(t.slug, t.icon, 'text-mint tx-svg-inline')} ${t.name}</h2>
           <div class="faq">
             ${t.faqs.map(f => faqItem(f)).join('')}
           </div>

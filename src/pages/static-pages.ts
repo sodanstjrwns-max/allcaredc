@@ -3,6 +3,7 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, PRICE_TABLE, PRICE_NOTES } from '../data/clinic'
 import { speakableSchema } from '../lib/seo-engine'
+import { txIcon } from '../data/tx-icons'
 
 const BASE = `https://${CLINIC.domain}`
 const DAY_CODE: Record<string, string> = { '월': 'Monday', '화': 'Tuesday', '수': 'Wednesday', '목': 'Thursday', '금': 'Friday', '토': 'Saturday', '일': 'Sunday' }
@@ -76,7 +77,7 @@ export function MissionPage() {
       <div class="core-tx-grid reveal">
         ${raw(CORE_TX.map((t, i) => `
           <a href="/treatments/${t.slug}" class="core-tx-card reveal reveal-d${(i % 3) + 1}">
-            <span class="ctx-ico"><i class="fa-solid fa-${t.icon}"></i></span>
+            <span class="ctx-ico">${txIcon(t.slug, t.icon)}</span>
             <h3 class="ctx-name">${t.name}</h3>
             <p class="ctx-short">${t.short}</p>
             <span class="ctx-go">자세히 보기 <i class="fa-solid fa-arrow-right"></i></span>
@@ -102,7 +103,7 @@ export function MissionPage() {
       <div class="daily-tx-grid reveal">
         ${raw(DAILY_TX.map((t, i) => `
           <a href="/treatments/${t.slug}" class="daily-tx-chip reveal reveal-d${(i % 3) + 1}">
-            <i class="fa-solid fa-${t.icon}"></i>
+            <span class="dtx-ico">${txIcon(t.slug, t.icon)}</span>
             <span class="dtx-name">${t.name}</span>
             <span class="dtx-short">${t.short}</span>
           </a>`).join(''))}

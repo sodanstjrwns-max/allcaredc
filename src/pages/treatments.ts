@@ -8,6 +8,7 @@ import {
 import { Column, columnCardHtml } from './column'
 import { autoLinkBody } from '../lib/seo-engine'
 import { truncate } from '../lib/text'
+import { txIcon } from '../data/tx-icons'
 
 const SPEC_LABEL: Record<string, string> = {
   implant: '임플란트', surgery: '구강외과', tmj: '턱관절', conservative: '보존치료',
@@ -52,7 +53,7 @@ export function TreatmentsIndex() {
       <div class="tx-sub-grid">
         ${raw(SUB_TREATMENTS.map((t, i) => `
           <a href="/treatments/${t.slug}" class="tx-sub reveal reveal-d${(i % 3) + 1}">
-            <span class="ico"><i class="fa-solid fa-${t.icon}"></i></span>
+            <span class="ico">${txIcon(t.slug, t.icon)}</span>
             <span><strong>${t.name}</strong><br><span>${truncate(t.short, 28)}</span></span>
           </a>`).join(''))}
       </div>

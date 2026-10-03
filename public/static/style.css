@@ -3261,7 +3261,7 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
   transition:transform .3s var(--ease), border-color .3s, background .3s;
 }
 .daily-tx-chip:hover{ transform:translateY(-3px); border-color:var(--gold-300); background:#fff; }
-.daily-tx-chip > i{
+.daily-tx-chip > i, .daily-tx-chip > .dtx-ico{
   flex:none; width:40px; height:40px; display:grid; place-items:center;
   background:var(--ivory-2); color:var(--gold-600); border-radius:50%; font-size:16px; margin-top:2px;
 }
@@ -3361,3 +3361,11 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 /* 2026-09-16 원장 요청: PC에서 비포애프터 사진이 크롭되지 않고 원본 비율 그대로 전체가 보이도록 (contain) */
 .ba-slider > img { object-fit: contain; background: var(--ivory-2); }
 .ba-after-wrap img { width: var(--ba-w, 100%); object-fit: contain; background: var(--ivory-2); }
+
+/* ============================================================
+   진료별 아이콘 — 자체 제작 인라인 SVG (src/data/tx-icons.ts)
+   기존 아이콘 자리의 font-size·color 토큰을 그대로 따른다 (1em 기준)
+   ============================================================ */
+.tx-svg{ width:1.5em; height:1.5em; display:block; flex-shrink:0; overflow:visible; }
+.core-tx-card .ctx-ico .tx-svg{ width:1.45em; height:1.45em; }
+.tx-svg.tx-svg-inline{ display:inline-block; width:1.15em; height:1.15em; vertical-align:-.2em; }

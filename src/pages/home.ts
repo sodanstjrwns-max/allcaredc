@@ -5,6 +5,7 @@ import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../
 import { STORY_BRANCHES } from '../data/story'
 import { speakableSchema } from '../lib/seo-engine'
 import { truncate } from '../lib/text'
+import { txIcon } from '../data/tx-icons'
 
 // 핵심 진료별 영문 캐치프레이즈
 const TX_ENG: Record<string, string> = {
@@ -522,7 +523,7 @@ export function HomePage(popups: HomePopup[] = []) {
       <div class="tx-sub-grid">
         ${raw(SUB_TREATMENTS.map((t, i) => `
           <a href="/treatments/${t.slug}" class="tx-sub reveal reveal-d${(i % 3) + 1}">
-            <span class="ico"><i class="fa-solid fa-${t.icon}"></i></span>
+            <span class="ico">${txIcon(t.slug, t.icon)}</span>
             <span><strong>${t.name}</strong><br><span>${truncate(t.short, 26)}</span></span>
           </a>`).join(''))}
       </div>

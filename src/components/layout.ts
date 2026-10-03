@@ -1,5 +1,6 @@
 import { html, raw } from 'hono/html'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, TREATMENTS, DOCTORS, SEO_AREAS } from '../data/clinic'
+import { txIcon } from '../data/tx-icons'
 
 // ============================================================
 // JSON-LD 스키마 빌더 (§G-2)
@@ -139,13 +140,13 @@ export function Header() {
                 <span class="mega-col-title">핵심 진료</span>
                 ${raw(CORE_TREATMENTS.map(t => `
                   <a href="/treatments/${t.slug}" class="core">
-                    <span class="ico"><i class="fa-solid fa-${t.icon}"></i></span>
+                    <span class="ico">${txIcon(t.slug, t.icon)}</span>
                     <span><strong>${t.name}</strong><span>${t.hero}</span></span>
                   </a>`).join(''))}
                 <span class="mega-col-title">일반 진료</span>
                 ${raw(SUB_TREATMENTS.map(t => `
                   <a href="/treatments/${t.slug}">
-                    <span class="ico"><i class="fa-solid fa-${t.icon}"></i></span>
+                    <span class="ico">${txIcon(t.slug, t.icon)}</span>
                     <span><strong>${t.name}</strong></span>
                   </a>`).join(''))}
               </div>
@@ -397,7 +398,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20260928" />
+    <link rel="stylesheet" href="/static/style.css?v=20261003" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->
