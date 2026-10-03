@@ -335,6 +335,7 @@ export type Meta = {
   keywords?: string
   preloadImage?: string  // LCP 이미지 preload (성능 최적화)
   isDetail?: boolean     // §Meta픽셀: 시술/진료 세부페이지 여부 → Lead_custom 이벤트 추가 (미지정 시 path로 자동 판별)
+  article?: { published?: string; modified?: string; section?: string }  // og:type=article 일 때 article:* 메타
 }
 
 // §Meta픽셀: 세부페이지(상세) 판별 — slug가 붙는 상세 URL이면 Lead_custom 대상
@@ -360,6 +361,11 @@ export function headTags(meta: Meta) {
     <link rel="alternate" hreflang="ko-KR" href="${url}" />
     <link rel="alternate" hreflang="x-default" href="${url}" />
     <meta property="og:type" content="${meta.ogType || 'website'}" />
+    ${meta.ogType === 'article' && meta.article ? raw([
+      meta.article.published ? `<meta property="article:published_time" content="${meta.article.published}" />` : '',
+      meta.article.modified ? `<meta property="article:modified_time" content="${meta.article.modified}" />` : '',
+      meta.article.section ? `<meta property="article:section" content="${meta.article.section.replace(/"/g, '&quot;')}" />` : '',
+    ].filter(Boolean).join('\n    ')) : ''}
     <meta property="og:site_name" content="${CLINIC.name}" />
     <meta property="og:title" content="${meta.title}" />
     <meta property="og:description" content="${meta.description}" />
@@ -398,7 +404,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20261003" />
+    <link rel="stylesheet" href="/static/style.css?v=20261003b" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 디스플레이/명조/모노: display=swap 으로 FOIT 방지 -->
@@ -406,7 +412,7 @@ export function headTags(meta: Meta) {
     <!-- FontAwesome: 비동기 로드(렌더 차단 제거) -->
     <link rel="stylesheet" media="print" onload="this.media='all'" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" /></noscript>
-    ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('')) : ''}
+    ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s).replace(/</g, '\\u003c')}</script>`).join('')) : ''}
     ${(CLINIC as any).analytics?.ga4 ? raw(`<script async src="https://www.googletagmanager.com/gtag/js?id=${(CLINIC as any).analytics.ga4}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${(CLINIC as any).analytics.ga4}');</script>`) : ''}
     <script defer src="https://pf-dashboard-2nt.pages.dev/beacon.js"></script>
     <!-- 네이버 애널리틱스 공통 스크립트는 page.ts의 광고 전환 공통 스크립트(wa s_248ae32299dd)와 중복이라 제거 (2026-09-19). wcs_do 이중 호출·키 충돌 방지 -->

@@ -75,7 +75,7 @@ export function TreatmentsIndex() {
 // 진료 페이지 최종 검토일 — 기존 스키마에 있던 고정값(오늘 날짜 자동 채움 금지). 화면 감수 줄과 스키마가 같은 값을 씁니다.
 const TX_LAST_REVIEWED = '2026-05-20'
 
-export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: ColumnCategory[]) {
+export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: ColumnCategory[], txCases: { id: string; title: string }[] = []) {
   const t = getTreatment(slug)
   if (!t) return null
   const docs = doctorsForTreatment(slug)
@@ -248,6 +248,7 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: 
 
           <div class="inlink-box" style="margin-bottom:20px">
             <h3><i class="fa-solid fa-images text-mint"></i> 관련 진료사례</h3>
+            ${raw(txCases.map(x => `<a href="/cases/${x.id}"><span>${x.title.replace(/</g, '&lt;')}</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>`).join(''))}
             <a href="/cases?cat=${t.slug}"><span>${t.name} 비포/애프터</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
             <a href="/cases"><span>전체 진료사례 보기</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
           </div>

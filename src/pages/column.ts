@@ -2,6 +2,33 @@ import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName, treatmentForColumnCategory, COLUMN_CATEGORIES, type ColumnCategory } from '../data/clinic'
+import { answerSummary, faqsFromArticleHtml, mergeFaqs, enhanceArticleImages, flatText, clipSentences, validTs, isoOf, kstYmd } from '../lib/column-seo'
+
+const BASE = `https://${CLINIC.domain}`
+export const COLUMN_PER = 12
+
+/** 서버 렌더 페이지네이션 — 1페이지는 쿼리 없는 주소, 나머지 ?page=N (a 링크) */
+export function pagerHtml(base: string, page: number, pages: number): string {
+  if (pages <= 1) return ''
+  const href = (n: number) => (n === 1 ? base.replace(/[?&]$/, '') : `${base}page=${n}`)
+  return `<nav class="list-pager" aria-label="페이지">${Array.from({ length: pages }, (_, i) => i + 1).map(n => `<a href="${href(n)}"${n === page ? ' aria-current="page"' : ''}>${n}</a>`).join('')}</nav>`
+}
+
+/** 목록 CollectionPage + ItemList + Breadcrumb (@graph) */
+export function collectionGraph(opts: { path: string; name: string; total: number; offset: number; items: { name: string; path: string }[]; crumbs: { name: string; url: string }[] }) {
+  const url = `${BASE}${opts.path}`
+  const bc = breadcrumbSchema(opts.crumbs, `${url}#breadcrumb`) as any
+  delete bc['@context']
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'CollectionPage', '@id': `${url}#webpage`, url, name: opts.name, inLanguage: 'ko-KR', isPartOf: { '@id': `${BASE}/#website` }, mainEntity: { '@id': `${url}#itemlist` }, breadcrumb: { '@id': `${url}#breadcrumb` } },
+      { '@type': 'ItemList', '@id': `${url}#itemlist`, name: opts.name, numberOfItems: opts.total, itemListOrder: 'https://schema.org/ItemListOrderDescending',
+        itemListElement: opts.items.map((it, i) => ({ '@type': 'ListItem', position: opts.offset + i + 1, name: it.name, url: `${BASE}${it.path}` })) },
+      bc,
+    ],
+  }
+}
 
 export type ColumnFAQ = { q: string; a: string }
 
@@ -79,27 +106,37 @@ export function columnCardHtml(col: Column, i = 0, cats: ColumnCategory[] = COLU
     </a>`
 }
 
-// ── 칼럼 목록 /column (§S20⑤: ?cat= 카테고리 필터 지원 — 비포애프터에서 역링크로 진입) ──
-export function ColumnIndex(columns: Column[], cat?: string, cats: ColumnCategory[] = COLUMN_CATEGORIES) {
+// ── 칼럼 목록 /column (§S20⑤: ?cat= 카테고리 필터 — 비포애프터에서 역링크로 진입, ?page=N 서버 페이지네이션) ──
+export function ColumnIndex(columns: Column[], cat?: string, cats: ColumnCategory[] = COLUMN_CATEGORIES, pageQ = 1) {
   let pub = columns.filter(c => c.published)
   const catName = cat ? txName(cat, cats) : ''
   // 구 별칭 카테고리(periodontal→gum 등)도 같은 표기명이면 함께 노출
   if (cat) pub = pub.filter(c => c.category === cat || txName(c.category, cats) === catName)
+  pub = pub.sort((a, b) => (validTs(b.createdAt, b.updatedAt) || 0) - (validTs(a.createdAt, a.updatedAt) || 0))
+  const total = pub.length
+  const pages = Math.max(1, Math.ceil(total / COLUMN_PER))
+  const page = Math.min(Math.max(1, pageQ), pages)
+  const shown = pub.slice((page - 1) * COLUMN_PER, page * COLUMN_PER)
+  const qs = [cat ? `cat=${cat}` : '', page > 1 ? `page=${page}` : ''].filter(Boolean).join('&')
+  const path = `/column${qs ? `?${qs}` : ''}`
+  const pageSuffix = page > 1 ? ` (${page}페이지)` : ''
+  const tx = cat ? treatmentForColumnCategory(cat, cats) : undefined
   const body = html`
   ${PageHero({
-    crumb: [{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }],
+    crumb: [{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }, ...(cat ? [{ name: catName, url: `/column?cat=${cat}` }] : [])],
     chapter: 'Notes from the Clinic',
     title: cat ? `원장 칼럼 — ${catName}` : '원장 칼럼',
     desc: '진료실에서 자주 받는 질문, 알아두면 좋은 치과 이야기를 의료진이 직접 씁니다.',
   })}
   <section class="section">
     <div class="container">
-      <!-- §S20⑤: 카테고리 필터 핌 -->
-      <div class="reveal" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px">
+      <!-- §S20⑤: 카테고리 필터 (서버 렌더 링크) -->
+      <nav class="reveal" aria-label="분야별 칼럼" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px">
         <a href="/column" class="tag-pill${!cat ? ' active' : ''}">전체</a>
         ${raw(cats.filter(cc => cc.slug === cat || columns.some(c => c.published && txName(c.category, cats) === cc.name)).map(cc =>
           `<a href="/column?cat=${cc.slug}" class="tag-pill${cat === cc.slug ? ' active' : ''}">${cc.name}</a>`).join(''))}
-      </div>
+      </nav>
+      ${tx ? raw(`<p class="reveal" style="margin:-10px 0 24px;font-size:14px;color:var(--gray-600)">${catName} 칼럼 ${total}편 · <a href="/treatments/${tx.slug}" style="font-weight:700;color:var(--brand-accent)">${tx.name} 진료 안내</a> · <a href="/cases?cat=${tx.slug}" style="font-weight:700;color:var(--brand-accent)">${tx.name} 진료사례</a></p>`) : ''}
       ${pub.length === 0 ? html`
         <div class="reveal" style="text-align:center;padding:80px 0;color:var(--gray-600)">
           <i class="fa-solid fa-pen-nib" style="font-size:48px;color:var(--gray-200);margin-bottom:16px"></i>
@@ -107,57 +144,98 @@ export function ColumnIndex(columns: Column[], cat?: string, cats: ColumnCategor
         </div>
       ` : html`
         <div class="doc-grid">
-          ${raw(pub.map((col, i) => columnCardHtml(col, i, cats)).join(''))}
+          ${raw(shown.map((col, i) => columnCardHtml(col, i, cats)).join(''))}
         </div>
+        ${raw(pagerHtml(`/column?${cat ? `cat=${cat}&` : ''}`, page, pages))}
       `}
     </div>
   </section>`
   return Page({
-    title: cat ? `${catName} 칼럼 | 원장 칼럼 | 365올케어치과` : '원장 칼럼 | 365올케어치과',
-    description: '약수역 365올케어치과 의료진이 직접 쓰는 치과 칼럼. 임플란트, 치아교정, 심미보철, 잇몸·사랑니·턱관절까지 꼭 알아야 할 진료 정보와 치료 전 체크포인트를 구강악안면외과·보철과 전문의가 환자 눈높이로 알기 쉽게 설명합니다.',
-    path: '/column',
-    schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }])],
+    title: cat ? `${catName} 칼럼${pageSuffix} | 원장 칼럼 | 365올케어치과` : `원장 칼럼${pageSuffix} | 365올케어치과`,
+    description: (cat
+      ? `약수역 365올케어치과 ${catName} 칼럼 ${total}편. 의료진이 직접 쓰는 ${catName} 진료 정보와 치료 전 체크포인트.`
+      : '약수역 365올케어치과 의료진이 직접 쓰는 치과 칼럼. 임플란트, 치아교정, 심미보철, 잇몸·사랑니·턱관절까지 꼭 알아야 할 진료 정보와 치료 전 체크포인트를 구강악안면외과·보철과 전문의가 환자 눈높이로 알기 쉽게 설명합니다.') + pageSuffix,
+    path,
+    schema: [collectionGraph({
+      path, name: `${cat ? `${catName} ` : ''}원장 칼럼 목록${pageSuffix}`, total, offset: (page - 1) * COLUMN_PER,
+      items: shown.map(c => ({ name: c.title, path: `/column/${c.slug}` })),
+      crumbs: [{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }, ...(cat ? [{ name: catName, url: `/column?cat=${cat}` }] : [])],
+    })],
   }, body)
 }
 
 // ── 칼럼 상세 /column/:slug ──
 // §S20: allColumns 전달 → '함께 보면 좋은 글' 3카드 자동 노출
-export function ColumnDetail(col: Column, views: number, allColumns: Column[] = [], cats: ColumnCategory[] = COLUMN_CATEGORIES) {
+export function ColumnDetail(col: Column, views: number, allColumns: Column[] = [], cats: ColumnCategory[] = COLUMN_CATEGORIES, relCases: { id: string; title: string }[] = []) {
   const author = getDoctor(col.author)
   // §S20③: 카테고리→진료 페이지 자동 매핑 (resin-inlay→conservative 등 별칭 흡수)
   const related = treatmentForColumnCategory(col.category, cats)
   const relatedCols = pickRelatedColumns(col, allColumns)
 
-  const articleSchema: any = {
-    '@context': 'https://schema.org',
-    '@type': ['Article', 'MedicalWebPage'],
-    headline: col.metaTitle || col.title,
-    description: col.metaDesc || col.excerpt,
-    datePublished: new Date(safeDate(col.createdAt, col.updatedAt)).toISOString(),
-    dateModified: new Date(safeDate(col.updatedAt, col.createdAt)).toISOString(),
-    author: author ? { '@type': 'Person', name: `${author.name} ${author.role}`, jobTitle: author.titleLine } : undefined,
-    reviewedBy: author ? { '@type': 'Person', name: `${author.name} ${author.role}` } : undefined,
-    publisher: { '@type': 'Organization', name: CLINIC.name },
-    ...(col.thumbnail ? { image: col.thumbnail } : {}),
-    ...(col.keywords && col.keywords.length ? { keywords: col.keywords.join(', ') } : {}),
-    inLanguage: 'ko-KR',
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://${CLINIC.domain}/column/${col.slug}` },
-  }
+  const pageUrl = `${BASE}/column/${col.slug}`
+  const published = isoOf(validTs(col.createdAt, col.updatedAt))
+  const modified = isoOf(validTs(col.updatedAt, col.createdAt))
+  const reviewed = kstYmd(validTs(col.updatedAt, col.createdAt))
+  const summary = answerSummary(col.body, col.excerpt)
+  const desc = col.metaDesc || clipSentences(flatText(col.excerpt) || summary, 160, 60)
+  const physicianId = author ? `${BASE}/doctors/${author.slug}#physician` : undefined
+  const ogImageAbs = col.thumbnail ? (col.thumbnail.startsWith('http') ? col.thumbnail : `${BASE}${col.thumbnail}`) : undefined
+  const catLabel = txName(col.category, cats)
 
-  // FAQ 스키마 (구글 리치 결과 노출)
+  // FAQ: 원장 입력 FAQ(화면 하단) + 본문 질문형 소제목(화면 본문) — 중복 제거
   const faqs = (col.faqs || []).filter(f => f.q && f.a)
-  const faqSchema = faqs.length ? {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map(f => ({
-      '@type': 'Question', name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a },
-    })),
-  } : null
+  const ldFaqs = mergeFaqs(faqs, faqsFromArticleHtml(col.body))
+
+  // @graph: BlogPosting(#article) + MedicalWebPage(#webpage) + BreadcrumbList + FAQPage — @id 상호참조
+  const graph: any[] = [
+    {
+      '@type': 'BlogPosting',
+      '@id': `${pageUrl}#article`,
+      headline: (col.metaTitle || col.title).slice(0, 110),
+      name: col.title,
+      description: desc,
+      ...(published ? { datePublished: published } : {}),
+      ...(modified ? { dateModified: modified } : {}),
+      ...(physicianId ? { author: { '@id': physicianId }, reviewedBy: { '@id': physicianId } } : {}),
+      publisher: { '@id': `${BASE}/#clinic` },
+      image: { '@type': 'ImageObject', url: ogImageAbs || `${BASE}/static/img/og.jpg` },
+      ...(col.keywords && col.keywords.length ? { keywords: col.keywords.join(', ') } : {}),
+      articleSection: catLabel,
+      inLanguage: 'ko-KR',
+      mainEntityOfPage: { '@id': `${pageUrl}#webpage` },
+      isPartOf: { '@id': `${BASE}/#website` },
+      ...(related ? { about: { '@id': `${BASE}/treatments/${related.slug}#procedure` } } : {}),
+      speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', '.answer-summary'] },
+    },
+    {
+      '@type': 'MedicalWebPage',
+      '@id': `${pageUrl}#webpage`,
+      url: pageUrl,
+      name: col.metaTitle || col.title,
+      description: desc,
+      inLanguage: 'ko-KR',
+      isPartOf: { '@id': `${BASE}/#website` },
+      mainEntity: { '@id': `${pageUrl}#article` },
+      breadcrumb: { '@id': `${pageUrl}#breadcrumb` },
+      ...(related ? { about: { '@id': `${BASE}/treatments/${related.slug}#procedure` } } : {}),
+      ...(physicianId ? { reviewedBy: { '@id': physicianId } } : {}),
+      ...(reviewed ? { lastReviewed: reviewed } : {}),
+      ...(published ? { datePublished: published } : {}),
+      ...(modified ? { dateModified: modified } : {}),
+      medicalAudience: { '@type': 'MedicalAudience', audienceType: 'Patient' },
+      speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', '.answer-summary'] },
+    },
+    (() => { const b: any = breadcrumbSchema([{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }, { name: catLabel, url: `/column?cat=${col.category}` }, { name: col.title, url: `/column/${col.slug}` }], `${pageUrl}#breadcrumb`); delete b['@context']; return b })(),
+    ...(ldFaqs.length ? [{
+      '@type': 'FAQPage',
+      '@id': `${pageUrl}#faq`,
+      mainEntity: ldFaqs.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    }] : []),
+  ]
 
   const body = html`
   ${PageHero({
-    crumb: [{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }, { name: col.title, url: `/column/${col.slug}` }],
+    crumb: [{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }, { name: catLabel, url: `/column?cat=${col.category}` }, { name: col.title, url: `/column/${col.slug}` }],
     title: col.title,
   })}
   <section class="section">
@@ -170,8 +248,9 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
             <span style="color:var(--gray-400);font-size:14px">${fmtDate(col.createdAt, col.updatedAt)}</span>
             <span style="color:var(--gray-400);font-size:14px;margin-left:auto"><i class="fa-solid fa-eye"></i> ${views.toLocaleString()}</span>
           </div>
-          ${col.thumbnail ? html`<img src="${col.thumbnail}" alt="${col.thumbnailAlt || col.title}" style="border-radius:var(--radius-lg);margin-bottom:30px" loading="lazy">` : ''}
-          <div class="prose">${raw(col.body)}</div>
+          ${summary ? html`<div class="answer-summary-box"><p class="answer-summary-label"><i class="fa-solid fa-lightbulb"></i> 핵심 답변</p><p class="answer-summary">${summary}</p></div>` : ''}
+          ${col.thumbnail ? html`<img src="${col.thumbnail}" alt="${col.thumbnailAlt || col.title}" style="border-radius:var(--radius-lg);margin-bottom:30px" fetchpriority="high" decoding="async">` : ''}
+          <div class="prose">${raw(enhanceArticleImages(col.body, col.title).replace(/<(\/?)h1\b/gi, '<$1h2'))}</div>
 
           ${faqs.length ? html`
             <section class="col-faq" aria-label="자주 묻는 질문">
@@ -191,6 +270,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
                 <p style="font-size:13px;color:var(--gray-600)">이 글을 작성·감수한 의료진</p>
                 <a href="/doctors/${author.slug}" style="font-weight:800;font-size:1.1rem;color:var(--brand)">${author.name} ${author.role}</a>
                 <p style="font-size:13px;color:var(--gray-600)">${author.titleLine}</p>
+                ${reviewed ? html`<p style="font-size:12.5px;color:var(--gray-400);margin-top:2px">게시 ${kstYmd(validTs(col.createdAt, col.updatedAt))} · 최종 검토 ${reviewed}</p>` : ''}
               </div>
               <a href="/doctors/${author.slug}" class="btn btn-outline" style="margin-left:auto;padding:9px 16px;font-size:13px;white-space:nowrap">프로필 보기</a>
             </div>
@@ -202,7 +282,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
             <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
             <a href="tel:${CLINIC.phoneRaw}" class="btn btn-outline"><i class="fa-solid fa-phone"></i> 전화 상담</a>
           </div>
-          <p style="font-size:12.5px;color:var(--gray-400);margin-top:20px">※ 본 칼럼은 일반적인 정보 제공을 위한 것으로 개인의 진단·치료를 대신하지 않습니다. 최종 검토일: ${fmtDate(col.updatedAt, col.createdAt)}</p>
+          <p style="font-size:12.5px;color:var(--gray-400);margin-top:20px">※ 본 칼럼은 일반적인 정보 제공을 위한 것으로 개인의 진단·치료를 대신하지 않으며, 치료 결과는 개인의 상태에 따라 차이가 있을 수 있습니다. 최종 검토일: ${fmtDate(col.updatedAt, col.createdAt)}</p>
         </article>
 
         <aside class="reveal reveal-d2">
@@ -212,6 +292,11 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
               <a href="/treatments/${related.slug}"><span>${related.name} 자세히 보기</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
               <a href="/cases?cat=${related.slug}"><span>${related.name} 진료사례</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>
             </div>
+            ${relCases.length ? html`
+            <div class="inlink-box" style="margin-bottom:20px">
+              <h3><i class="fa-solid fa-images text-mint"></i> ${related.name} 사례</h3>
+              ${raw(relCases.map(rc => `<a href="/cases/${rc.id}"><span>${rc.title.replace(/</g, '&lt;')}</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>`).join(''))}
+            </div>` : ''}
           ` : ''}
           <div class="inlink-box" style="background:var(--brand);color:#fffeee">
             <h3 style="color:#fffeee">상담이 필요하신가요?</h3>
@@ -234,21 +319,14 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
       ` : ''}
     </div>
   </section>`
-  // §S20⑨: 대표 이미지 → OG 썸네일 (카톡·인스타 공유 미리보기). 상대경로면 절대 URL로 변환
-  const ogImage = col.thumbnail
-    ? (col.thumbnail.startsWith('http') ? col.thumbnail : `https://${CLINIC.domain}${col.thumbnail}`)
-    : undefined
   return Page({
     title: col.metaTitle || `${col.title} | 원장 칼럼 | 365올케어치과`,
-    description: col.metaDesc || col.excerpt,
+    description: desc,
     path: `/column/${col.slug}`,
-    ogImage,
+    ogImage: ogImageAbs, // §S20⑨: 대표 이미지 → OG 썸네일
     ogType: 'article',
-    schema: [
-      breadcrumbSchema([{ name: '홈', url: '/' }, { name: '원장 칼럼', url: '/column' }, { name: col.title, url: `/column/${col.slug}` }]),
-      articleSchema,
-      ...(faqSchema ? [faqSchema] : []),
-    ],
+    article: { published, modified, section: catLabel },
+    schema: [{ '@context': 'https://schema.org', '@graph': graph }],
   }, body)
 }
 

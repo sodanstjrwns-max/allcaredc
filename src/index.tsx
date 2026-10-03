@@ -4,7 +4,7 @@ import { HomePage } from './pages/home'
 import { TreatmentsIndex, TreatmentDetail } from './pages/treatments'
 import { FaqPage } from './pages/faq'
 import { DoctorsIndex, DoctorDetail } from './pages/doctors'
-import { CasesPage, CaseItem } from './pages/cases'
+import { CasesPage, CaseItem, CaseDetailPage, caseColumnCats } from './pages/cases'
 import { LoginPage, RegisterPage, MyPage } from './pages/auth'
 import { ReservationPage } from './pages/reservation'
 import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
@@ -18,7 +18,8 @@ import { SeoHealthPage } from './pages/seo-health'
 import { Page } from './components/page'
 import { Bindings, getMember, setMemberSession, clearSession, hashPassword, verifyPassword, isBot } from './lib/auth'
 import { listCollection, addToCollection, uid, r2GetBinary, trackView, getViews } from './lib/store'
-import { CLINIC } from './data/clinic'
+import { CLINIC, treatmentForColumnCategory, getDoctor } from './data/clinic'
+import { answerSummary } from './lib/column-seo'
 import { admin, ensureSeed } from './routes/admin'
 import { isValidStatsKey } from './routes/stats'
 import { sitemap, robotsTxt, llmsTxt, rssFeed, AreaPage } from './routes/seo'
@@ -78,8 +79,22 @@ app.get('/5ef0a873577149fb9640ac78183136ff.txt', (c) => c.body('5ef0a873577149fb
 // 네이버 서치어드바이저 HTML 파일 소유확인 (메타태그 방식과 병행)
 app.get('/naver22a12bf996862862e0b64978f42923d9.html', (c) =>
   c.body('naver-site-verification: naver22a12bf996862862e0b64978f42923d9.html', 200, { 'Content-Type': 'text/html; charset=utf-8' }))
-app.get('/llms.txt', (c) => c.body(llmsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
-app.get('/llms-full.txt', (c) => c.body(llmsTxt(true), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
+// 원장 칼럼 목록(llms.txt) / 칼럼별 핵심 답변(llms-full.txt) — 공개 글만, R2 실패 시 생략
+async function llmsColumns(env: any, full: boolean): Promise<string> {
+  try {
+    const cols = (await listCollection<Column>(env, 'columns')).filter(x => x.published)
+      .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+    if (!cols.length) return ''
+    const base = `https://${CLINIC.domain}`
+    return `\n## 원장 칼럼 (의료진 작성·감수, ${cols.length}편)\n` + cols.map(x => {
+      const doc = getDoctor(x.author)
+      const line = `- [${x.title}](${base}/column/${x.slug})${doc ? ` — ${doc.name} ${doc.role}` : ''}`
+      return full ? `${line}\n  ${answerSummary(x.body, x.excerpt)}` : line
+    }).join('\n') + '\n'
+  } catch { return '' }
+}
+app.get('/llms.txt', async (c) => c.body(llmsTxt() + await llmsColumns(c.env, false), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
+app.get('/llms-full.txt', async (c) => c.body(llmsTxt(true) + await llmsColumns(c.env, true), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
 app.get('/ai.txt', (c) => c.body(aiTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
 // 납품 안내서 (비공개 — noindex, sitemap 미포함). 원장님 전달용.
 app.get('/handover-allcare-2026.html', (c) => {
@@ -130,7 +145,14 @@ app.get('/treatments', (c) => c.html(TreatmentsIndex().toString()))
 app.get('/treatments/:slug', async (c) => {
   // §S20④: 같은 분야 최신 칼럼 3개를 진료 페이지 하단에 노출
   const cols = await listCollection<Column>(c.env, 'columns')
-  const page = TreatmentDetail(c.req.param('slug'), cols, await getColumnCategories(c.env))
+  // 같은 진료 최신 진료사례 3건 → 개별 사례 페이지로 인링크
+  let txCases: { id: string; title: string }[] = []
+  try {
+    txCases = (await listCollection<CaseItem>(c.env, 'cases')).filter(x => x.category === c.req.param('slug'))
+      .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3)
+      .map(x => ({ id: x.id, title: (x.title || '').trim() || '진료 사례' }))
+  } catch {}
+  const page = TreatmentDetail(c.req.param('slug'), cols, await getColumnCategories(c.env), txCases)
   return page ? c.html(page.toString()) : c.notFound()
 })
 
@@ -159,7 +181,8 @@ app.get('/area/:combo', (c) => {
 app.get('/column', async (c) => {
   const cols = await listCollection<Column>(c.env, 'columns')
   // §S20⑤: ?cat= 카테고리 필터 — 비포애프터/진료 페이지에서 역링크 진입
-  return c.html(ColumnIndex(cols, c.req.query('cat'), await getColumnCategories(c.env)).toString())
+  const page = Math.max(1, parseInt(c.req.query('page') || '1') || 1)
+  return c.html(ColumnIndex(cols, c.req.query('cat'), await getColumnCategories(c.env), page).toString())
 })
 app.get('/column/:slug', async (c) => {
   const cols = await listCollection<Column>(c.env, 'columns')
@@ -167,8 +190,18 @@ app.get('/column/:slug', async (c) => {
   if (!col) return c.notFound()
   const bot = isBot(c.req.header('User-Agent'))
   const views = (await trackView(c.env, 'column', col.id, bot)).human
-  // §S20②: 전체 칼럼 전달 → '함께 보면 좋은 글' 3카드
-  return c.html(ColumnDetail(col, views, cols, await getColumnCategories(c.env)).toString())
+  // §S20②: 전체 칼럼 전달 → '함께 보면 좋은 글' 3카드 / 같은 진료 진료사례 3건(개별 URL)
+  const cats = await getColumnCategories(c.env)
+  const tx = treatmentForColumnCategory(col.category, cats)
+  let relCases: { id: string; title: string }[] = []
+  if (tx) {
+    try {
+      relCases = (await listCollection<CaseItem>(c.env, 'cases')).filter(x => x.category === tx.slug)
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3)
+        .map(x => ({ id: x.id, title: (x.title || '').trim() || `${tx.name} 치료 사례` }))
+    } catch {}
+  }
+  return c.html(ColumnDetail(col, views, cols, cats, relCases).toString())
 })
 
 // ── 공지 ──
@@ -208,7 +241,23 @@ app.get('/uploads/columns/:file', async (c) => {
 app.get('/cases', async (c) => {
   const member = await getMember(c)
   const cases = await listCollection<CaseItem>(c.env, 'cases')
-  return c.html(CasesPage(cases, !!member, { cat: c.req.query('cat'), doctor: c.req.query('doctor') }).toString())
+  const page = Math.max(1, parseInt(c.req.query('page') || '1') || 1)
+  return c.html(CasesPage(cases, !!member, { cat: c.req.query('cat'), doctor: c.req.query('doctor'), page }).toString())
+})
+// 진료사례 개별 페이지 — 텍스트 공개 색인, After 사진은 로그인 회원만 (/api/case-image 게이트 그대로)
+app.get('/cases/:id', async (c) => {
+  const member = await getMember(c)
+  const cases = await listCollection<CaseItem>(c.env, 'cases')
+  const item = cases.find(x => x.id === c.req.param('id'))
+  if (!item) return c.notFound()
+  const siblings = cases.filter(x => x.id !== item.id && x.category === item.category).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3)
+  let relCols: { slug: string; title: string }[] = []
+  try {
+    const colCats = caseColumnCats(item.category)
+    relCols = (await listCollection<Column>(c.env, 'columns')).filter(x => x.published && colCats.includes(x.category))
+      .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3).map(x => ({ slug: x.slug, title: x.title }))
+  } catch {}
+  return c.html(CaseDetailPage(item, !!member, siblings, relCols).toString())
 })
 // 케이스 이미지 — After는 로그인 게이팅 (2차 보호)
 app.get('/api/case-image/:id/:type', async (c) => {

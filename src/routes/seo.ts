@@ -96,6 +96,8 @@ export async function sitemap(env: Bindings): Promise<string> {
     mod: itemDate(c),
     img: c.thumbnail ? [{ url: c.thumbnail.startsWith('http') ? c.thumbnail : `${BASE}${c.thumbnail}`, title: c.metaTitle || c.title }] : undefined,
   }))
+  // 진료사례 개별 페이지 (텍스트 공개 색인 — After 사진은 로그인 게이트 그대로)
+  dyn.cases.forEach((x: any) => urls.push({ loc: `/cases/${x.id}`, pri: '0.6', freq: 'monthly', mod: itemDate(x) }))
   // 공지 (동적)
   dyn.notices.forEach((n: any) => urls.push({ loc: `/notice/${n.id}`, pri: '0.4', freq: 'monthly', mod: itemDate(n) }))
   // 이벤트 (동적)

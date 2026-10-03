@@ -169,8 +169,8 @@ admin.post('/cases/new', async (c) => {
     }
   }
   await addToCollection(c.env, 'cases', item)
-  // 자동 색인: 새 케이스 등록 → 검색엔진 즉시 통보 (백그라운드, 응답 지연 없음)
-  c.executionCtx.waitUntil(notifySearchEngines('/cases', '/cases'))
+  // 자동 색인: 새 케이스 등록 → 개별 사례 URL + 목록 통보 (백그라운드, 응답 지연 없음)
+  c.executionCtx.waitUntil(notifySearchEngines(`/cases/${item.id}`, '/cases'))
   return c.redirect('/admin/cases')
 })
 // 관리자 폼 미리보기용 케이스 이미지 서빙 (인증된 admin 영역 · 게이팅 없이 원본)
@@ -195,6 +195,7 @@ admin.post('/cases/:id/edit', async (c) => {
   const id = c.req.param('id')
   const form = await c.req.parseBody()
   const patch: any = {
+    updatedAt: Date.now(), // 사례 수정일 → 사이트맵 lastmod·lastReviewed
     title: String(form.title || ''), description: String(form.description || ''),
     ageGroup: String(form.ageGroup || ''), gender: String(form.gender || ''),
     category: String(form.category || ''), region: String(form.region || ''),
@@ -212,7 +213,7 @@ admin.post('/cases/:id/edit', async (c) => {
     }
   }
   await updateInCollection<CaseItem>(c.env, 'cases', id, patch)
-  c.executionCtx.waitUntil(notifySearchEngines('/cases', '/cases'))
+  c.executionCtx.waitUntil(notifySearchEngines(`/cases/${id}`, '/cases'))
   return c.redirect('/admin/cases')
 })
 admin.post('/cases/:id/delete', async (c) => {

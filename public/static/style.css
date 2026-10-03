@@ -3369,3 +3369,25 @@ body.pt-out{opacity:0;transition:opacity .26s ease}
 .tx-svg{ width:1.5em; height:1.5em; display:block; flex-shrink:0; overflow:visible; }
 .core-tx-card .ctx-ico .tx-svg{ width:1.45em; height:1.45em; }
 .tx-svg.tx-svg-inline{ display:inline-block; width:1.15em; height:1.15em; vertical-align:-.2em; }
+
+/* ── 칼럼·진료사례 핵심 답변/사례 요약 박스 · 목록 페이지네이션 (PFWE-COLUMN-CASE-SEO 2026-10-03, 사이트 토큰 사용) ── */
+.answer-summary-box { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--brand-accent); border-radius: var(--radius); padding: 22px 26px; margin-bottom: 30px; }
+.answer-summary-label { font-size: 13px; font-weight: 700; color: var(--brand-accent); margin-bottom: 8px; letter-spacing: .02em; }
+.answer-summary-label i { margin-right: 6px; }
+.answer-summary { font-size: 1.05rem; line-height: 1.8; color: var(--ink); margin: 0; }
+.case-facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 16px 0 0; font-size: 14px; }
+.case-facts dt { color: var(--gray-600); font-size: 12.5px; }
+.case-facts dd { margin: 2px 0 0; font-weight: 700; color: var(--ink); }
+.case-facts a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+.case-detail-media { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.case-detail-media figure { margin: 0; position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: var(--ivory); }
+.case-detail-media img { width: 100%; display: block; }
+.case-detail-media figcaption { position: absolute; top: 10px; left: 10px; background: var(--navy-900); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: var(--radius-pill); }
+.case-after-locked { display: grid; place-items: center; min-height: 240px; text-align: center; padding: 24px; color: var(--gray-600); }
+.case-after-locked i { font-size: 26px; color: var(--brand-accent); margin-bottom: 8px; }
+.case-after-locked p { margin-bottom: 8px; font-size: 14px; }
+.case-story-line a { color: inherit; }
+.list-pager { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+.list-pager a { min-width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--ivory); font-weight: 700; color: var(--navy-700); }
+.list-pager a:hover { border-color: var(--navy-800); }
+.list-pager a[aria-current] { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
