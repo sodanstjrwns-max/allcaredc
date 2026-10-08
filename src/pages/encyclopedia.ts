@@ -3,6 +3,7 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, schemaTag } from '../components/layout'
 import { CLINIC, TREATMENTS } from '../data/clinic'
 import { ENC_TERMS } from '../data/encyclopedia-terms'
+import { CONTENT_DATES } from '../data/content-dates'
 import { speakableSchema, autoLinkBody, suggestInternalLinks } from '../lib/seo-engine'
 
 type Section = { h: string; p: string }
@@ -145,8 +146,9 @@ export function EncyclopediaDetailPage(slug: string) {
     description: c.intro,
     inLanguage: 'ko',
     about: { '@type': 'MedicalEntity', name: term.term },
-    lastReviewed: '2026-06-15',
-    publisher: { '@type': 'Dentist', name: CLINIC.name, url: `https://${CLINIC.domain}/` },
+    // 원장 검토 기록 없음 → lastReviewed 미표기 (2026-10-08). dateModified = 용어 본문 실제 수정일(git blame 산출 고정값)
+    ...(CONTENT_DATES.encyclopedia[term.slug] ? { dateModified: CONTENT_DATES.encyclopedia[term.slug] } : {}),
+    publisher: { '@id': `https://${CLINIC.domain}/#clinic` },
   }
 
   const body = html`
