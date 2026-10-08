@@ -188,6 +188,7 @@ export function EncyclopediaDetailPage(slug: string) {
           <a href="/treatments/${term.treatment}" class="btn btn-navy"><i class="fa-solid fa-tooth"></i> ${esc(txName(term.treatment))} 진료 안내</a>
           <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 상담 예약하기</a>
         </div>
+        <p class="enc-hub-link" style="margin-top:20px;font-size:14.5px;color:var(--gray-600)">진료 상담·위치 안내: <a href="/" style="color:var(--brand);font-weight:700;text-decoration:underline;text-underline-offset:3px">약수역 치과</a> 365올케어치과</p>
       </article>
 
       <aside class="enc-aside">

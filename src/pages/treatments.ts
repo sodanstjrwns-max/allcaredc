@@ -273,6 +273,7 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: 
           </div>
         </section>
       ` : ''}
+      <p class="tx-hub-link" style="margin-top:40px;text-align:center;font-size:15px;color:var(--gray-600)">진료시간·오시는 길·주차 안내: <a href="/" style="color:var(--brand);font-weight:700;text-decoration:underline;text-underline-offset:3px">약수역 치과</a> 365올케어치과</p>
     </div>
   </section>
   ${ctaBand()}

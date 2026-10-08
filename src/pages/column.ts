@@ -3,6 +3,7 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName, treatmentForColumnCategory, COLUMN_CATEGORIES, type ColumnCategory } from '../data/clinic'
 import { answerSummary, faqsFromArticleHtml, mergeFaqs, enhanceArticleImages, flatText, clipSentences, validTs, isoOf, kstYmd } from '../lib/column-seo'
+import { columnHubNote } from '../lib/hub-link'
 
 const BASE = `https://${CLINIC.domain}`
 export const COLUMN_PER = 12
@@ -262,6 +263,8 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
                 </details>`).join(''))}
             </section>
           ` : ''}
+
+          ${/href="(?:https:\/\/allcaredc\.kr)?\/"[^>]*>약수역 치과</.test(col.body) ? '' : raw(columnHubNote(String(col.slug || ''), related?.name))}
 
           ${author ? html`
             <div style="background:var(--beige-soft);border-radius:var(--radius);padding:24px;margin-top:40px;display:flex;gap:16px;align-items:center">

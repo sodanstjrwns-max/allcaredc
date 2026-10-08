@@ -420,6 +420,7 @@ export function AreaPage(combo: string) {
       <div class="grid-detail">
         <article class="prose reveal">
           <div class="answer-box" style="font-size:1.1rem">${area.name}(${area.adminArea})에서 ${area.access}, ${area.transit}에 위치한 365올케어치과에서 ${tx.name} 상담을 받으실 수 있습니다. 구강악안면외과·치과보철과·통합치의학과 전문의가 함께합니다.</div>
+          <p class="area-hub-link">진료시간·의료진·진료 과목 전체는 <a href="/" style="color:var(--brand);font-weight:700;text-decoration:underline;text-underline-offset:3px">약수역 치과</a> 365올케어치과 홈에서 한 번에 보실 수 있습니다.</p>
 
           <h2>${area.name} 주민을 위한 ${tx.name} 안내</h2>
           <p>${tx.intro}</p>

@@ -1,6 +1,7 @@
 import { html, raw } from 'hono/html'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, TREATMENTS, DOCTORS, SEO_AREAS } from '../data/clinic'
 import { txIcon } from '../data/tx-icons'
+import { footerHubLink } from '../lib/hub-link'
 
 // ============================================================
 // JSON-LD 스키마 빌더 (§G-2)
@@ -217,7 +218,7 @@ export function Header() {
 // ============================================================
 // FOOTER (§H 필수 정보)
 // ============================================================
-export function Footer() {
+export function Footer(path = '') {
   return html`
   <footer class="site-footer">
     <div class="container">
@@ -243,6 +244,7 @@ export function Footer() {
         <div>
           <p class="footer-col-title">바로가기</p>
           <ul class="footer-links">
+            ${footerHubLink(path) ? raw('<li><a href="/">약수역 치과</a></li>') : ''}
             <li><a href="/mission">병원소개</a></li>
             <li><a href="/cases">비포/애프터</a></li>
             <li><a href="/column">원장 칼럼</a></li>
