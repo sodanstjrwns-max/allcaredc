@@ -41,11 +41,11 @@ app.use('*', async (c, next) => {
   }
 })
 
-// www → non-www 301 통합 (네이버 권장: canonical보다 301을 우선)
-// 커스텀 도메인(allcaredc.kr)에서만 동작 — pages.dev/미리보기는 그대로 둠
+// www·pages.dev 프로덕션 별칭 → 본 도메인 301 통합 (네이버 권장: canonical보다 301을 우선)
+// 배포별 미리보기(<hash>.allcare-dental.pages.dev)는 검증용으로 그대로 둠 (2026-10-08)
 app.use('*', async (c, next) => {
   const url = new URL(c.req.url)
-  if (url.hostname === 'www.allcaredc.kr') {
+  if (url.hostname === 'www.allcaredc.kr' || url.hostname === 'allcare-dental.pages.dev') {
     url.hostname = 'allcaredc.kr'
     return c.redirect(url.toString(), 301)
   }
@@ -358,7 +358,7 @@ app.post('/api/reservation', async (c) => {
 
 async function sendReservationEmail(env: Bindings, r: any) {
   try {
-    const base = (env.SITE_URL || 'https://allcare-dental.pages.dev').replace(/\/$/, '')
+    const base = (env.SITE_URL || 'https://allcaredc.kr').replace(/\/$/, '')
     const adminUrl = `${base}/admin/reservations`
     const when = new Date(r.createdAt).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Seoul' })
     const phoneDigits = String(r.phone || '').replace(/[^0-9]/g, '')
