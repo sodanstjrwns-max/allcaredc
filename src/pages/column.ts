@@ -4,6 +4,7 @@ import { breadcrumbSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName, treatmentForColumnCategory, COLUMN_CATEGORIES, type ColumnCategory } from '../data/clinic'
 import { answerSummary, faqsFromArticleHtml, mergeFaqs, enhanceArticleImages, flatText, clipSentences, validTs, isoOf, kstYmd } from '../lib/column-seo'
 import { columnHubNote } from '../lib/hub-link'
+import { uploadImgUrl, versionUploadImgs } from '../lib/img-url'
 
 const BASE = `https://${CLINIC.domain}`
 export const COLUMN_PER = 12
@@ -92,11 +93,12 @@ export function pickRelatedColumns(current: Column, all: Column[], max = 3): Col
 }
 
 // 칼럼 카드 마크업 (목록·함께 보면 좋은 글·진료페이지 하단 공용)
-export function columnCardHtml(col: Column, i = 0, cats: ColumnCategory[] = COLUMN_CATEGORIES): string {
+// eager=true: 목록 첫 화면 카드(앞 3장)는 지연 로딩 없이 우선 요청
+export function columnCardHtml(col: Column, i = 0, cats: ColumnCategory[] = COLUMN_CATEGORIES, eager = false): string {
   return `
     <a href="/column/${col.slug}" class="doc-card reveal reveal-d${(i % 3) + 1}">
       <div class="doc-photo" style="aspect-ratio:1200/630;background:linear-gradient(135deg,var(--brand),var(--brand-accent))">
-        ${col.thumbnail ? `<img src="${col.thumbnail}" alt="${col.title}" loading="lazy">` : `<div class="ph" style="color:rgba(255,255,255,.5)"><i class="fa-solid fa-pen-nib"></i></div>`}
+        ${col.thumbnail ? `<img src="${uploadImgUrl(col.thumbnail)}" alt="${col.title}" width="1200" height="630" ${i < 3 && eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">` : `<div class="ph" style="color:rgba(255,255,255,.5)"><i class="fa-solid fa-pen-nib"></i></div>`}
       </div>
       <div class="doc-body">
         <span class="role">${txName(col.category, cats)}</span>
@@ -145,7 +147,7 @@ export function ColumnIndex(columns: Column[], cat?: string, cats: ColumnCategor
         </div>
       ` : html`
         <div class="doc-grid">
-          ${raw(shown.map((col, i) => columnCardHtml(col, i, cats)).join(''))}
+          ${raw(shown.map((col, i) => columnCardHtml(col, i, cats, true)).join(''))}
         </div>
         ${raw(pagerHtml(`/column?${cat ? `cat=${cat}&` : ''}`, page, pages))}
       `}
@@ -180,7 +182,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
   const summary = answerSummary(col.body, col.excerpt)
   const desc = col.metaDesc || clipSentences(flatText(col.excerpt) || summary, 160, 60)
   const physicianId = author ? `${BASE}/doctors/${author.slug}#physician` : undefined
-  const ogImageAbs = col.thumbnail ? (col.thumbnail.startsWith('http') ? col.thumbnail : `${BASE}${col.thumbnail}`) : undefined
+  const ogImageAbs = col.thumbnail ? (col.thumbnail.startsWith('http') ? col.thumbnail : `${BASE}${uploadImgUrl(col.thumbnail)}`) : undefined
   const catLabel = txName(col.category, cats)
 
   // FAQ: 원장 입력 FAQ(화면 하단) + 본문 질문형 소제목(화면 본문) — 중복 제거
@@ -250,8 +252,8 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
             <span style="color:var(--gray-400);font-size:14px;margin-left:auto"><i class="fa-solid fa-eye"></i> ${views.toLocaleString()}</span>
           </div>
           ${summary ? html`<div class="answer-summary-box"><p class="answer-summary-label"><i class="fa-solid fa-lightbulb"></i> 핵심 답변</p><p class="answer-summary">${summary}</p></div>` : ''}
-          ${col.thumbnail ? html`<img src="${col.thumbnail}" alt="${col.thumbnailAlt || col.title}" style="border-radius:var(--radius-lg);margin-bottom:30px" fetchpriority="high" decoding="async">` : ''}
-          <div class="prose">${raw(enhanceArticleImages(col.body, col.title).replace(/<(\/?)h1\b/gi, '<$1h2'))}</div>
+          ${col.thumbnail ? html`<img src="${uploadImgUrl(col.thumbnail)}" alt="${col.thumbnailAlt || col.title}" width="1200" height="630" style="border-radius:var(--radius-lg);margin-bottom:30px;height:auto" fetchpriority="high" decoding="async">` : ''}
+          <div class="prose">${raw(versionUploadImgs(enhanceArticleImages(col.body, col.title)).replace(/<(\/?)h1\b/gi, '<$1h2'))}</div>
 
           ${faqs.length ? html`
             <section class="col-faq" aria-label="자주 묻는 질문">

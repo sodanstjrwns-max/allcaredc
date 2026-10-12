@@ -9,7 +9,7 @@ import { LoginPage, RegisterPage, MyPage } from './pages/auth'
 import { ReservationPage } from './pages/reservation'
 import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
 import { ENCYCLOPEDIA_MERGED } from './data/encyclopedia-terms'
-import { ColumnIndex, ColumnDetail, Column } from './pages/column'
+import { ColumnIndex, ColumnDetail, Column, COLUMN_PER } from './pages/column'
 import { getColumnCategories } from './lib/column-categories'
 import { NoticeIndex, NoticeDetail, Notice, activePopupNotices } from './pages/notice'
 import { EventIndex, EventDetail, EventItem } from './pages/event'
@@ -20,6 +20,7 @@ import { Bindings, getMember, setMemberSession, clearSession, hashPassword, veri
 import { listCollection, addToCollection, uid, r2GetBinary, trackView, getViews } from './lib/store'
 import { CLINIC, treatmentForColumnCategory, getDoctor } from './data/clinic'
 import { answerSummary } from './lib/column-seo'
+import { edgeHtml, purgeColumnPages } from './lib/edge-cache'
 import { admin, ensureSeed } from './routes/admin'
 import { isValidStatsKey } from './routes/stats'
 import { sitemap, robotsTxt, llmsTxt, rssFeed, AreaPage } from './routes/seo'
@@ -62,6 +63,19 @@ app.use('*', async (c, next) => {
 // ════════════════ 관리자 라우트 ════════════════
 // 주소창에 /admin/ (끝 슬래시)를 입력해도 정상 동작하도록 정규화
 app.get('/admin/', (c) => c.redirect('/admin'))
+// 칼럼·칼럼 카테고리 저장(POST) 성공 후 → 공개 칼럼 엣지 캐시 즉시 삭제 (현재 데이터센터)
+app.use('/admin/*', async (c, next) => {
+  await next()
+  const path = new URL(c.req.url).pathname
+  if (c.req.method !== 'POST' || !/^\/admin\/column(s|-categories)(\/|$)/.test(path) || c.res.status >= 400) return
+  if ((c.res.headers.get('Location') || '').includes('/admin/login')) return // 미인증 요청은 무시
+  const purge = (async () => {
+    const [cols, cats] = await Promise.all([listCollection<Column>(c.env, 'columns'), getColumnCategories(c.env)])
+    const pub = cols.filter(x => x.published)
+    await purgeColumnPages(cols.map(x => x.slug), cats.map(x => x.slug), Math.ceil(pub.length / COLUMN_PER), new URL(c.req.url).origin)
+  })().catch(() => {})
+  try { c.executionCtx.waitUntil(purge) } catch { await purge }
+})
 app.route('/admin', admin)
 
 // ════════════════ SEO 파일 ════════════════
@@ -178,30 +192,33 @@ app.get('/area/:combo', (c) => {
 })
 
 // ── 칼럼 ──
-app.get('/column', async (c) => {
-  const cols = await listCollection<Column>(c.env, 'columns')
+app.get('/column', (c) => edgeHtml(c, async () => {
+  const [cols, cats] = await Promise.all([listCollection<Column>(c.env, 'columns'), getColumnCategories(c.env)])
   // §S20⑤: ?cat= 카테고리 필터 — 비포애프터/진료 페이지에서 역링크 진입
   const page = Math.max(1, parseInt(c.req.query('page') || '1') || 1)
-  return c.html(ColumnIndex(cols, c.req.query('cat'), await getColumnCategories(c.env), page).toString())
-})
-app.get('/column/:slug', async (c) => {
-  const cols = await listCollection<Column>(c.env, 'columns')
-  const col = cols.find(x => x.slug === c.req.param('slug') && x.published)
-  if (!col) return c.notFound()
+  return ColumnIndex(cols, c.req.query('cat'), cats, page).toString()
+}))
+app.get('/column/:slug', (c) => {
   const bot = isBot(c.req.header('User-Agent'))
-  const views = (await trackView(c.env, 'column', col.id, bot)).human
-  // §S20②: 전체 칼럼 전달 → '함께 보면 좋은 글' 3카드 / 같은 진료 진료사례 3건(개별 URL)
-  const cats = await getColumnCategories(c.env)
-  const tx = treatmentForColumnCategory(col.category, cats)
-  let relCases: { id: string; title: string }[] = []
-  if (tx) {
-    try {
-      relCases = (await listCollection<CaseItem>(c.env, 'cases')).filter(x => x.category === tx.slug)
+  // 조회수는 응답 뒤(waitUntil)에 기록 — 화면 숫자는 엣지 캐시 주기(5분) 단위로 갱신
+  const countView = (id: string) => trackView(c.env, 'column', id, bot)
+  return edgeHtml(c, async () => {
+    const [cols, cats] = await Promise.all([listCollection<Column>(c.env, 'columns'), getColumnCategories(c.env)])
+    const col = cols.find(x => x.slug === c.req.param('slug') && x.published)
+    if (!col) return null
+    // §S20②: 전체 칼럼 전달 → '함께 보면 좋은 글' 3카드 / 같은 진료 진료사례 3건(개별 URL)
+    const tx = treatmentForColumnCategory(col.category, cats)
+    const noCases: { id: string; title: string }[] = []
+    const [views, relCases] = await Promise.all([
+      getViews(c.env, 'column', col.id).then(v => v + (bot ? 0 : 1)).catch(() => 0),
+      tx ? listCollection<CaseItem>(c.env, 'cases').then(all => all.filter(x => x.category === tx.slug)
         .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3)
-        .map(x => ({ id: x.id, title: (x.title || '').trim() || `${tx.name} 치료 사례` }))
-    } catch {}
-  }
-  return c.html(ColumnDetail(col, views, cols, cats, relCases).toString())
+        .map(x => ({ id: x.id, title: (x.title || '').trim() || `${tx.name} 치료 사례` }))).catch(() => noCases)
+        : Promise.resolve(noCases),
+    ])
+    try { c.executionCtx.waitUntil(countView(col.id).catch(() => {})) } catch {}
+    return { html: ColumnDetail(col, views, cols, cats, relCases).toString(), tag: col.id }
+  }, (id) => countView(id))
 })
 
 // ── 공지 ──

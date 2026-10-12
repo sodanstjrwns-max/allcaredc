@@ -591,12 +591,40 @@ function columnEditorScript(faqsJson: string): string {
     document.execCommand('insertHTML', false, tags);
     updateCount();
   }
+  function shrinkImage(file, maxW){
+    return new Promise(function(resolve){
+      try {
+        if (!/^image\\/(png|jpeg|webp|bmp)$/i.test(file.type) || !window.createImageBitmap || file.size < 150*1024) return resolve(file);
+        createImageBitmap(file).then(function(bmp){
+          var w = bmp.width, h = bmp.height, scale = Math.min(1, maxW / w);
+          var cw = Math.round(w*scale), ch = Math.round(h*scale);
+          var cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+          var ctx = cv.getContext('2d'); ctx.drawImage(bmp, 0, 0, cw, ch);
+          if (/png|webp/i.test(file.type)) {
+            // 투명 픽셀이 있으면 JPG 변환 시 검게 변하므로 원본 유지
+            var d = ctx.getImageData(0, 0, cw, ch).data, step = Math.max(4, Math.floor(d.length/4/40000)*4);
+            for (var i = 3; i < d.length; i += step) { if (d[i] < 255) return resolve(file); }
+          }
+          cv.toBlob(function(b){
+            if (!b || b.size >= file.size) return resolve(file);
+            var base = (file.name || 'image').replace(/\\.[^.]+$/, '');
+            try { resolve(new File([b], base + '.jpg', { type: 'image/jpeg' })); } catch(e){ resolve(file); }
+          }, 'image/jpeg', 0.82);
+        }).catch(function(){ resolve(file); });
+      } catch(e){ resolve(file); }
+    });
+  }
   function upload(files, target){
     var imgs = Array.prototype.filter.call(files, function(f){ return f && f.type && f.type.indexOf('image/')===0; });
     if (!imgs.length) return;
-    if(status) status.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 업로드 중... ('+imgs.length+'장)';
-    var fd = new FormData(); imgs.forEach(function(f){ fd.append('files', f); });
-    fetch('/admin/upload-image', { method:'POST', body:fd })
+    if(status) status.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 사진 용량 줄이는 중... ('+imgs.length+'장)';
+    // 업로드 전 브라우저에서 축소: 썸네일 가로 1200px·본문 1600px JPG(품질 0.82). 투명 배경 PNG·GIF·실패 시 원본 그대로
+    Promise.all(imgs.map(function(f){ return shrinkImage(f, target === 'thumb' ? 1200 : 1600); }))
+    .then(function(list){
+    if(status) status.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 업로드 중... ('+list.length+'장)';
+    var fd = new FormData(); list.forEach(function(f){ fd.append('files', f, f.name); });
+    return fetch('/admin/upload-image', { method:'POST', body:fd });
+    })
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(j){
         var urls = j.urls || [];

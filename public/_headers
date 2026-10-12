@@ -1,0 +1,7 @@
+# 정적 이미지 1일 캐시(사진 교체 시 하루 안에 반영) (기본 4시간+매번 재검증 → 한국 회선에서 재방문마다 왕복 발생). css/js 는 ?v= 갱신 규칙이 있어 기본값 유지
+/static/img/*
+  Cache-Control: public, max-age=86400
+/static/og/*
+  Cache-Control: public, max-age=86400
+/static/logos/*
+  Cache-Control: public, max-age=86400
