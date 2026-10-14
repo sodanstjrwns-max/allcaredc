@@ -393,10 +393,11 @@ export function headTags(meta: Meta) {
     ${(CLINIC.siteVerification as any).naver2 ? raw(`<meta name="naver-site-verification" content="${(CLINIC.siteVerification as any).naver2}" />`) : ''}
     ${CLINIC.siteVerification.bing ? raw(`<meta name="msvalidate.01" content="${CLINIC.siteVerification.bing}" />`) : ''}
     ${(CLINIC.siteVerification as any).facebook ? raw(`<meta name="facebook-domain-verification" content="${(CLINIC.siteVerification as any).facebook}" />`) : ''}
-    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/static/img/favicon-32.png" sizes="32x32" type="image/png" />
-    <link rel="icon" href="/static/img/favicon-64.png" sizes="64x64" type="image/png" />
-    <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.ico?v=fav20261014" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=fav20261014" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png?v=fav20261014" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=fav20261014" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=fav20261014" />
     <link rel="manifest" href="/static/manifest.json" />
     <meta name="apple-mobile-web-app-title" content="365올케어치과" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
