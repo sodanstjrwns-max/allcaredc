@@ -1,4 +1,5 @@
 import { html, raw } from 'hono/html'
+import { yaksuCardFor, yaksuOg, yaksuCardGrid, YAKSU_CARD_CSS, YAKSU_CARDS, YAKSU_EXTRA } from '../lib/yaksu-cards'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, organizationSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS, getTreatment } from '../data/clinic'
@@ -86,7 +87,16 @@ export async function sitemap(env: Bindings): Promise<string> {
     freq: 'monthly',
     // 지역 페이지 = 지역 템플릿(routes/seo.ts AreaPage) + 지역 데이터 + 진료 데이터 중 최신
     mod: latestDate(CONTENT_DATES.pages.areaTemplate, CONTENT_DATES.areas[a.slug], CONTENT_DATES.treatments[t.slug]),
+    ...(a.slug === 'yaksu' ? { img: [{ url: `${BASE}${yaksuOg(t.slug)}`, title: `약수역 ${t.name} - ${CLINIC.name}` }] } : {}),
   })))
+  // 약수역 충치·신경치료·잇몸치료 — 약수역 진료 안내 카드로 정식 편입한 하위 페이지 (2026-10-14)
+  YAKSU_CARDS.filter(c => !CORE_TREATMENTS.some(t => t.slug === c.tx)).forEach(c => urls.push({
+    loc: `/area/yaksu-${c.tx}`,
+    pri: '0.7',
+    freq: 'monthly',
+    mod: latestDate(CONTENT_DATES.pages.areaTemplate, CONTENT_DATES.areas['yaksu'], CONTENT_DATES.treatments[c.tx]),
+    img: [{ url: `${BASE}${yaksuOg(c.tx)}`, title: `${c.name} - ${CLINIC.name}` }],
+  }))
   // 용어 백과 상세
   ENCYCLOPEDIA_DETAIL_SLUGS.forEach(s => urls.push({ loc: `/encyclopedia/${s}`, pri: '0.5', freq: 'monthly', mod: CONTENT_DATES.encyclopedia[s] }))
   // 칼럼 (동적 — 실제 수정일 lastmod + 썸네일 이미지)
@@ -196,6 +206,7 @@ export function robotsTxt(): string {
 User-agent: *
 Allow: /
 Allow: /og/
+Allow: /api/case-image/
 Disallow: /admin
 Disallow: /admin/
 Disallow: /api/
@@ -203,7 +214,8 @@ Crawl-delay: 1
 
 `
   // 주요 검색·AI 봇 개별 허용 (학습/색인 명시 동의)
-  out += aiBots.map(b => `User-agent: ${b}\nAllow: /\nDisallow: /admin\nDisallow: /api/`).join('\n\n')
+  // 진료사례 공개 사진(/api/case-image/ — 치료 후 사진은 로그인 게이트 그대로)은 Yeti·Googlebot 등이 가져갈 수 있게 (2026-10-14)
+  out += aiBots.map(b => `User-agent: ${b}\nAllow: /\nAllow: /api/case-image/\nDisallow: /admin\nDisallow: /api/`).join('\n\n')
 
   out += `
 
@@ -378,7 +390,13 @@ export function AreaPage(combo: string) {
     { q: '차를 가지고 가도 주차할 수 있나요?', a: '네, 건물 뒤편 무료 주차장을 이용하실 수 있습니다. 다만 자주식과 기계식이 함께 있어 대형 세단이나 큰 SUV는 자리가 맞지 않을 수 있습니다. 이 경우 인근 공영주차장을 이용해 주시면 됩니다. 평일 낮에는 주차 관리자가 도와드리고, 야간과 주말, 공휴일에는 직접 주차하시게 됩니다.' },
     { q: '야간진료나 주말에도 주차가 되나요?', a: '주차는 가능합니다. 다만 야간과 주말, 공휴일에는 주차 관리자가 없어 직접 주차하셔야 하며, 차량이 크신 경우 인근 공영주차장이 더 편할 수 있습니다.' },
     ...(tx.faqs && tx.faqs.length ? [{ q: tx.faqs[0].q, a: tx.faqs[0].a }] : []),
+    // 약수역 충치·신경 / 잇몸: 약수역 전용 질문 (2026-10-14)
+    ...(areaSlug === 'yaksu' && YAKSU_EXTRA[tx.slug] ? YAKSU_EXTRA[tx.slug].faqs : []),
   ]
+  // 약수역 진료 안내 6페이지: 페이지 고유 대표 사진 = og·본문 첫 사진·스키마 image·사이트맵 image (2026-10-14)
+  const card = yaksuCardFor(combo)
+  const cardImgAbs = card ? `${BASE}${yaksuOg(card.tx)}` : ''
+  const extra = areaSlug === 'yaksu' ? YAKSU_EXTRA[tx.slug] : undefined
 
   // ① LocalBusiness(Dentist) + 지역 areaServed 강조
   const localSchema = {
@@ -402,6 +420,10 @@ export function AreaPage(combo: string) {
     },
     significantLink: `${BASE}/treatments/${tx.slug}`,
     breadcrumb: { '@id': `${pageUrl}#breadcrumb` },
+    ...(card ? {
+      image: { '@type': 'ImageObject', url: cardImgAbs, width: 1200, height: 630, caption: card.name },
+      primaryImageOfPage: { '@type': 'ImageObject', url: cardImgAbs },
+    } : {}),
   }
   // ③ FAQPage + ④ BreadcrumbList + ⑤ Speakable
   const faqLd = faqSchema(areaFaqs)
@@ -420,6 +442,7 @@ export function AreaPage(combo: string) {
     <div class="container">
       <div class="grid-detail">
         <article class="prose reveal">
+          ${card ? raw(`${YAKSU_CARD_CSS}<figure class="yk-cover"><img src="${yaksuOg(card.tx)}" width="1200" height="630" fetchpriority="high" decoding="async" alt="${card.name}"></figure>`) : ''}
           <div class="answer-box" style="font-size:1.1rem">${area.name}(${area.adminArea})에서 ${area.access}, ${area.transit}에 위치한 365올케어치과에서 ${tx.name} 상담을 받으실 수 있습니다. 구강악안면외과·치과보철과·통합치의학과 전문의가 함께합니다.</div>
           <p class="area-hub-link">진료시간·의료진·진료 과목 전체는 <a href="/" style="color:var(--brand);font-weight:700;text-decoration:underline;text-underline-offset:3px">약수역 치과</a> 365올케어치과 홈에서 한 번에 보실 수 있습니다.</p>
 
@@ -448,11 +471,13 @@ export function AreaPage(combo: string) {
 
           ${tx.sections[0] ? html`<h2>${tx.sections[0].h}</h2><p>${tx.sections[0].p}</p>` : ''}
           ${tx.sections[1] ? html`<h2>${tx.sections[1].h}</h2><p>${tx.sections[1].p}</p>` : ''}
+          ${extra ? raw(extra.sections.map(x => `<h2>${x.h}</h2><p>${x.p}</p>`).join('')) : ''}
 
           <h2>${area.name} ${tx.name} 자주 묻는 질문</h2>
           ${raw(areaFaqs.map(f => `<div class="answer-box" style="margin:14px 0"><strong style="display:block;margin-bottom:6px">Q. ${f.q}</strong><span>${f.a}</span></div>`).join(''))}
 
           <p style="margin-top:24px"><a href="/treatments/${tx.slug}" class="btn btn-primary">${tx.name} 자세히 보기 <i class="fa-solid fa-arrow-right"></i></a></p>
+          ${card ? raw(`<h2>약수역 다른 진료 안내</h2>${yaksuCardGrid('sib', card.tx)}`) : ''}
         </article>
         <aside class="reveal reveal-d2">
           <div class="inlink-box" style="background:var(--brand);color:#fffeee;margin-bottom:20px">
@@ -473,11 +498,12 @@ export function AreaPage(combo: string) {
     </div>
   </section>`
   return Page({
-    title: `${area.name} ${tx.name} | 약수역 ${tx.name} 치과 - 365올케어치과`,
+    // 약수역은 '약수역 X | 약수역 X 치과' 중복 → 짧게 (2026-10-14)
+    title: areaSlug === 'yaksu' ? `약수역 ${tx.name} | 365올케어치과 (약수역 5번 출구 도보 1분)` : `${area.name} ${tx.name} | 약수역 ${tx.name} 치과 - 365올케어치과`,
     description: `${area.name} ${tx.name}${eulReul(tx.name)} 찾으신다면 약수역 365올케어치과. ${area.transit}, ${area.access}. ${tx.short} 치과 전문의 협진, 원내 기공실, 야간진료.`,
     path: `/area/${combo}`,
     // 정적 JPG는 사이트맵 대상(지역×핵심 진료) 조합만 생성 — 그 외 조합은 진료 대표 이미지 사용
-    ogImage: CORE_TREATMENTS.some(t => t.slug === tx.slug) ? `${BASE}/static/og/area/${combo}.jpg` : `${BASE}/static/og/treatment/${tx.slug}.jpg`,
+    ogImage: card ? cardImgAbs : CORE_TREATMENTS.some(t => t.slug === tx.slug) ? `${BASE}/static/og/area/${combo}.jpg` : `${BASE}/static/og/treatment/${tx.slug}.jpg`,
     schema: [bc, localSchema, areaSchema, faqLd, speakableSchema(['.answer-box', 'h1', 'h2'])],
   }, body)
 }

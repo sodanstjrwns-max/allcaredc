@@ -6,6 +6,7 @@ import { STORY_BRANCHES } from '../data/story'
 import { speakableSchema } from '../lib/seo-engine'
 import { truncate } from '../lib/text'
 import { txIcon } from '../data/tx-icons'
+import { yaksuCardGrid, yaksuCardItemList, YAKSU_CARD_CSS } from '../lib/yaksu-cards'
 
 // 핵심 진료별 영문 캐치프레이즈
 const TX_ENG: Record<string, string> = {
@@ -271,6 +272,16 @@ export function HomePage(popups: HomePopup[] = []) {
             </div>
           </article>`).join(''))}
       </div>
+    </div>
+  </section>
+
+  <!-- 약수역 진료 안내 사진 카드 (2026-10-14) — /area/yaksu-* 6개, ItemList 와 1:1 -->
+  <section class="section" id="yaksu-guide" aria-labelledby="yk-home-h">
+    <div class="container">
+      ${raw(YAKSU_CARD_CSS)}
+      ${raw(sectionHead('약수역 진료 안내', '<span id="yk-home-h">약수역에서 많이 찾으시는 <em>여섯 가지 진료</em></span>',
+    '약수역 5번 출구 도보 1분. 진료별 안내를 진료실 사진과 함께 정리했습니다.'))}
+      ${raw(yaksuCardGrid('home'))}
     </div>
   </section>
 
@@ -604,6 +615,7 @@ export function HomePage(popups: HomePopup[] = []) {
         ...STORY_BRANCHES.slice(0, 4).map(b => b.faq),
       ]),
       speakableSchema(['.answer-box', 'h1', 'h2']),
+      yaksuCardItemList(`https://${CLINIC.domain}/`),
     ].filter(Boolean),
   }
   return Page(meta, body)
