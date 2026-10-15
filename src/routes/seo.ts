@@ -76,9 +76,9 @@ export async function sitemap(env: Bindings): Promise<string> {
     img: [{ url: `${BASE}/static/og/treatment/${t.slug}.jpg`, title: `${t.name} - ${CLINIC.name}` }],
   }))
   // 의료진 (사진 포함)
-  ;['kwon-minsoo', 'kwon-jongjin', 'bae-suhyeon'].forEach(s => urls.push({
-    loc: `/doctors/${s}`, pri: '0.7', freq: 'monthly', mod: CONTENT_DATES.doctors[s],
-    img: [{ url: `${BASE}/static/img/${s}.webp` }],
+  DOCTORS.forEach(d => urls.push({
+    loc: `/doctors/${d.slug}`, pri: '0.7', freq: 'monthly', mod: CONTENT_DATES.doctors[d.slug],
+    img: [{ url: `${BASE}${d.photo}` }],
   }))
   // 지역 SEO (지역 × 핵심진료) — tier 우선순위 반영
   SEO_AREAS.forEach(a => CORE_TREATMENTS.forEach(t => urls.push({
@@ -248,7 +248,7 @@ export function llmsTxt(full = false): string {
 
   let s = `# ${CLINIC.name} (${CLINIC.nameEn})
 
-> ${CLINIC.philosophy} 서울 약수역 5번 출구 도보 1분에 위치한 치과 전문의 협진 치과입니다. 구강악안면외과·치과보철과·통합치의학과 전문의가 임플란트·치아교정·심미보철·잇몸·사랑니·턱관절을 진료하며, 원내 기공실과 의식하진정법(수면치료)을 갖추고 있습니다.
+> ${CLINIC.philosophy} 서울 약수역 5번 출구 도보 1분에 위치한 치과 전문의 협진 치과입니다. 구강악안면외과·치과보철과·치과교정과·통합치의학과 전문의가 임플란트·치아교정·심미보철·잇몸·사랑니·턱관절을 진료하며, 원내 기공실과 의식하진정법(수면치료)을 갖추고 있습니다.
 
 <!-- ${updated ? `최종 갱신: ${updated} | ` : ''}출처 표기: 365올케어치과(${BASE}) -->
 
@@ -384,7 +384,7 @@ export function AreaPage(combo: string) {
   // 지역 특화 FAQ (AEO — 로컬 검색 질문 대응)
   const areaFaqs = [
     { q: `${area.name}에서 365올케어치과까지 어떻게 가나요?`, a: `${area.transit} 위치이며, ${area.name} 기준 ${area.access}입니다. 서울 중구 동호로 171 더그레이스빌딩 4층(약수역 5번 출구 스타벅스 건물)입니다.` },
-    { q: `${area.name}에서 가까운 ${tx.name} 치과를 찾고 있어요.`, a: `약수역 365올케어치과는 ${area.name}에서 ${withGeori(area.access)}로, 구강악안면외과·치과보철과·통합치의학과 전문의가 ${txClause(tx.name)}. 예약 문의는 ${CLINIC.phone}.` },
+    { q: `${area.name}에서 가까운 ${tx.name} 치과를 찾고 있어요.`, a: `약수역 365올케어치과는 ${area.name}에서 ${withGeori(area.access)}로, 구강악안면외과·치과보철과·치과교정과·통합치의학과 전문의가 ${txClause(tx.name)}. 예약 문의는 ${CLINIC.phone}.` },
     { q: `직장인인데 ${area.name} 근처에서 야간에 ${txWithJinryo(tx.name)}가 가능한가요?`, a: `네, 365올케어치과는 월·화·목요일 저녁 20:30까지 야간진료를 운영합니다. ${area.name}에서 퇴근 후 내원하시기 편리합니다.` },
     // §지역페이지 1차: 주차 안내 FAQ 공통 추가
     { q: '차를 가지고 가도 주차할 수 있나요?', a: '네, 건물 뒤편 무료 주차장을 이용하실 수 있습니다. 다만 자주식과 기계식이 함께 있어 대형 세단이나 큰 SUV는 자리가 맞지 않을 수 있습니다. 이 경우 인근 공영주차장을 이용해 주시면 됩니다. 평일 낮에는 주차 관리자가 도와드리고, 야간과 주말, 공휴일에는 직접 주차하시게 됩니다.' },
@@ -443,7 +443,7 @@ export function AreaPage(combo: string) {
       <div class="grid-detail">
         <article class="prose reveal">
           ${card ? raw(`${YAKSU_CARD_CSS}<figure class="yk-cover"><img src="${yaksuOg(card.tx)}" width="1200" height="630" fetchpriority="high" decoding="async" alt="${card.name}"></figure>`) : ''}
-          <div class="answer-box" style="font-size:1.1rem">${area.name}(${area.adminArea})에서 ${area.access}, ${area.transit}에 위치한 365올케어치과에서 ${tx.name} 상담을 받으실 수 있습니다. 구강악안면외과·치과보철과·통합치의학과 전문의가 함께합니다.</div>
+          <div class="answer-box" style="font-size:1.1rem">${area.name}(${area.adminArea})에서 ${area.access}, ${area.transit}에 위치한 365올케어치과에서 ${tx.name} 상담을 받으실 수 있습니다. 구강악안면외과·치과보철과·치과교정과·통합치의학과 전문의가 함께합니다.</div>
           <p class="area-hub-link">진료시간·의료진·진료 과목 전체는 <a href="/" style="color:var(--brand);font-weight:700;text-decoration:underline;text-underline-offset:3px">약수역 치과</a> 365올케어치과 홈에서 한 번에 보실 수 있습니다.</p>
 
           <h2>${area.name} 주민을 위한 ${tx.name} 안내</h2>

@@ -3,6 +3,7 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
 import { CLINIC, DOCTORS, getDoctor, treatmentsForDoctor } from '../data/clinic'
 import { speakableSchema } from '../lib/seo-engine'
+import { docTag } from '../lib/doc-tags'
 
 // ============================================================
 // 의료진 목록 /doctors
@@ -28,7 +29,7 @@ export function DoctorsIndex() {
               <p class="title-line">${d.titleLine}</p>
               <p class="doc-career">${d.cardLine || d.career[0]}</p>
               <div class="doc-tags">
-                ${d.treatItems.map(t => `<span>${t}</span>`).join('')}
+                ${d.treatItems.map(docTag).join('')}
               </div>
             </div>
           </a>`).join(''))}
@@ -38,8 +39,8 @@ export function DoctorsIndex() {
   ${ctaBand()}
   `
   return Page({
-    title: '의료진 소개 | 구강악안면외과·통합치의학과·보철과 전문의 | 365올케어치과',
-    description: '약수역 365올케어치과 의료진. 구강악안면외과·통합치의학과 전문의, 보철과 전문의, 치의학박사가 함께하는 치과 전문의 협진 치과입니다.',
+    title: '의료진 소개 | 구강악안면외과·통합치의학과·보철과·교정과 전문의 | 365올케어치과',
+    description: '약수역 365올케어치과 의료진. 구강악안면외과·통합치의학과 전문의, 보철과 전문의, 교정과 전문의, 치의학박사가 함께하는 치과 전문의 협진 치과입니다.',
     path: '/doctors',
     schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }])],
   }, body)
@@ -101,9 +102,9 @@ export function DoctorDetail(slug: string) {
               <h2 style="font-size:2rem;margin:6px 0 2px">${d.name}</h2>
               ${d.nameEn ? html`<p style="color:var(--gold-600);font-size:.9rem;letter-spacing:.02em;font-weight:600;margin:0 0 8px">${d.nameEn}</p>` : ''}
               <p style="color:var(--gray-600);font-size:1.05rem;margin-bottom:20px">${d.titleLine}</p>
-              <p style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-600);font-weight:700;margin-bottom:10px">진료과목</p>
+              <p style="font-size:13px;letter-spacing:.02em;color:var(--gold-600);font-weight:700;margin-bottom:10px">진료과목</p>
               <div class="doc-tags">
-                ${raw(d.treatItems.map(t => `<span>${t}</span>`).join(''))}
+                ${raw(d.treatItems.map(docTag).join(''))}
               </div>
             </div>
           </div>

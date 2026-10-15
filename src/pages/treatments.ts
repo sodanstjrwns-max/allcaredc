@@ -24,7 +24,7 @@ export function TreatmentsIndex() {
     crumb: [{ name: '홈', url: '/' }, { name: '진료안내', url: '/treatments' }],
     chapter: 'Chapter 02 — The Meeting',
     title: '진료안내',
-    desc: '불편이 해답을 만나는 자리. 구강악안면외과·통합치의학과·보철과 전문의가 함께하는 365올케어치과의 진료 영역입니다.',
+    desc: '불편이 해답을 만나는 자리. 구강악안면외과·통합치의학과·보철과·교정과 전문의가 함께하는 365올케어치과의 진료 영역입니다.',
   })}
 
   <section class="section">
@@ -80,7 +80,7 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: 
   if (!t) return null
   const docs = doctorsForTreatment(slug)
   // 감수자: 해당 진료 담당 의료진 첫 번째(기존 스키마와 동일), 담당 지정이 없으면 대표원장
-  const reviewer = docs[0] || DOCTORS.find(d => d.role === '대표원장')
+  const reviewer = docs.find(d => !d.noReview) || DOCTORS.find(d => d.role === '대표원장')
   // §S20④: 같은 분야 최신 칼럼 3개 (resin-inlay→conservative 등 카테고리 별칭 흡수)
   const txCats = columnCategoriesForTreatment(slug)
   const txColumns = allColumns
@@ -254,7 +254,7 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: 
           </div>
 
           <div class="inlink-box">
-            <h3><i class="fa-solid fa-link text-mint"></i> 다른 진료</h3>
+            <h3><i class="fa-solid fa-tooth text-mint"></i> 다른 진료</h3>
             ${raw(related.map(r => `
               <a href="/treatments/${r.slug}"><span>${r.name}</span><i class="fa-solid fa-arrow-right" style="font-size:12px"></i></a>`).join(''))}
           </div>

@@ -21,7 +21,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
   {
     id: 'pain',
     chip: '이가 시리고 아파요',
-    icon: 'bolt',
+    icon: 'tx:conservative',
     empathy: '차가운 물 한 모금에 멈칫하는 순간이 잦아졌다면, 치아가 보내는 신호일 수 있습니다.',
     guide: '충치의 깊이를 정확히 진단해 필요한 만큼만 치료하는 것이 자연치아를 오래 쓰는 길입니다.',
     treatment: 'conservative',
@@ -33,7 +33,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
   {
     id: 'missing',
     chip: '이가 빠졌거나 흔들려요',
-    icon: 'tooth',
+    icon: 'tx:implant',
     empathy: '빈자리를 혀끝으로 자꾸 확인하게 되는 마음, 미루고 싶지만 신경 쓰이는 그 자리를 압니다.',
     guide: '구강악안면외과 전문의가 뼈·신경 상태를 입체적으로 진단한 뒤, 무리 없는 계획부터 세웁니다.',
     treatment: 'implant',
@@ -57,19 +57,19 @@ export const STORY_BRANCHES: StoryBranch[] = [
   {
     id: 'crooked',
     chip: '치아가 가지런하지 않아요',
-    icon: 'teeth',
+    icon: 'tx:ortho',
     empathy: '사진 찍을 때 입을 다물게 되는 습관, 웃음을 아끼게 만드는 이유가 되곤 합니다.',
     guide: '골격·배열·습관 중 원인이 무엇인지부터 진단하고, 일상에 맞는 장치를 함께 고릅니다.',
     treatment: 'ortho',
     treatmentName: '치아교정',
-    doctor: 'kwon-minsoo',
-    doctorName: '권민수 대표원장',
+    doctor: 'lee-geungji', // 2026-10-15 교정과 전문의 합류
+    doctorName: '이긍지 교정과 원장',
     faq: { q: '성인인데 교정이 너무 늦진 않았나요?', a: '교정에 나이 제한은 없습니다. 잇몸이 건강하다면 성인도 충분히 가능하며, 잇몸 상태를 함께 관리하며 진행합니다.' },
   },
   {
     id: 'front',
     chip: '앞니 모양·색이 신경 쓰여요',
-    icon: 'wand-magic-sparkles',
+    icon: 'tx:esthetic',
     empathy: '거울 앞에서 유독 오래 머무는 시선. 보이는 부위일수록 자연스러움이 더 중요해집니다.',
     guide: '보철과 전문의와 원내 기공실이 색·형태·잇몸선을 함께 설계해, 티 나지 않는 어울림을 추구합니다.',
     treatment: 'esthetic',
@@ -81,7 +81,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
   {
     id: 'jaw',
     chip: '턱에서 소리가 나요',
-    icon: 'face-grimace',
+    icon: 'ear-listen',
     empathy: '하품할 때 "딱" 하는 소리, 아침마다 뻐근한 턱. 무심코 지나치기 쉬운 불편입니다.',
     guide: '원인(습관·자세·스트레스)을 먼저 찾고, 생활 교정부터 장치 치료까지 단계적으로 접근합니다.',
     treatment: 'tmj',
@@ -93,7 +93,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
   {
     id: 'wisdom',
     chip: '사랑니가 걱정돼요',
-    icon: 'user-doctor',
+    icon: 'tx:surgery',
     empathy: '"언젠가 빼야 한다"는 말만 들은 채 미뤄둔 숙제. 막연한 두려움이 더 큰 법입니다.',
     guide: '매복 정도와 신경과의 거리를 영상으로 먼저 확인합니다. 외과 전문의가 안전을 우선해 진행합니다.',
     treatment: 'surgery',
@@ -105,7 +105,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
   {
     id: 'gum',
     chip: '잇몸에서 피가 나요',
-    icon: 'shield-heart',
+    icon: 'droplet',
     empathy: '양치할 때 비치는 붉은 기. 아프지 않다고 괜찮은 것은 아닐 수 있습니다.',
     guide: '잇몸 질환은 소리 없이 진행됩니다. 정기 점검과 단계에 맞는 치료로 토대를 지킵니다.',
     treatment: 'gum',
@@ -117,7 +117,7 @@ export const STORY_BRANCHES: StoryBranch[] = [
   {
     id: 'fear',
     chip: '치과가 무서워요',
-    icon: 'bed',
+    icon: 'tx:sleep',
     empathy: '치과 문 앞에서 돌아선 적이 있다면 — 그 두려움도 저희가 진료해야 할 대상입니다.',
     guide: '수면진료 세팅을 갖추고, 컨디션을 먼저 확인한 뒤 통증을 최소화하는 방향으로 설계합니다. (적용 여부는 상담으로 결정)',
     treatment: 'sleep',
