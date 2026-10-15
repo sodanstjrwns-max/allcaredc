@@ -5,7 +5,8 @@ import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, DOCTORS, TX_IMAGES } from '../
 import { STORY_BRANCHES } from '../data/story'
 import { speakableSchema } from '../lib/seo-engine'
 import { truncate } from '../lib/text'
-import { txIcon } from '../data/tx-icons'
+import { txIcon, iconHtml } from '../data/tx-icons'
+import { docTag } from '../lib/doc-tags'
 import { yaksuCardGrid, yaksuCardItemList, YAKSU_CARD_CSS } from '../lib/yaksu-cards'
 
 // 핵심 진료별 영문 캐치프레이즈
@@ -184,7 +185,7 @@ export function HomePage(popups: HomePopup[] = []) {
     </div>
     <div class="hero-inner hh-grid">
       <div class="hh-copy">
-        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 의식하진정법(수면진료)</span>
+        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 보철과 전문의 · 교정과 전문의 · 치의학박사 · 의식하진정법(수면진료)</span>
         <h1 class="hh-title hh-title--ko">
           <span class="line-mask"><span class="hh-ko-line">믿고 찾는</span></span>
           <span class="line-mask"><span class="hh-italic disp hh-ko-line">365올케어치과</span></span>
@@ -211,7 +212,7 @@ export function HomePage(popups: HomePopup[] = []) {
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img class="hh-portrait" src="/static/img/doctors-main-3.webp" alt="365올케어치과 치과 전문의 협진 시스템 — 약수역 통합진료팀" width="576" height="1024" fetchpriority="high" />
+          <img class="hh-portrait" src="/static/img/doctors-main-4.webp" srcset="/static/img/doctors-main-4.webp 576w, /static/img/doctors-main-4@2x.webp 864w" sizes="(max-width: 820px) 92vw, 420px" alt="365올케어치과 의료진 — 권종진 명예원장(구강악안면외과 전문의), 권민수 대표원장(구강악안면외과·통합치의학과 전문의), 배수현 보철과 원장(보철과 전문의), 이긍지 교정과 원장(치과교정과 전문의)" width="576" height="1024" fetchpriority="high" />
         </div>
         <figcaption class="hh-caption"><span class="hh-cap-eng disp">치과 전문의 협진 시스템</span> 진단부터 수술·보철·유지관리까지 한 곳에서</figcaption>
       </figure>
@@ -226,9 +227,9 @@ export function HomePage(popups: HomePopup[] = []) {
   <!-- ============ 신뢰 마퀴 띠 ============ -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>보철과 전문의</span>
+      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>보철과 전문의</span><span>교정과 전문의</span>
       <span>원내 기공실</span><span>수면 진료</span><span>야간 진료</span>
-      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>보철과 전문의</span>
+      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>보철과 전문의</span><span>교정과 전문의</span>
       <span>원내 기공실</span><span>수면 진료</span><span>야간 진료</span>
     </div>
   </div>
@@ -242,7 +243,7 @@ export function HomePage(popups: HomePopup[] = []) {
         ${raw(CLINIC.strengths.slice(0, 3).map((s, i) => `
           <article class="keypoint reveal reveal-d${i + 1}">
             <span class="kp-no">0${i + 1}</span>
-            <span class="kp-ico"><i class="fa-solid fa-${s.icon}"></i></span>
+            <span class="kp-ico">${iconHtml(s.icon)}</span>
             <h3 class="kp-title">${s.title}</h3>
             <p class="kp-desc">${s.desc}</p>
           </article>`).join(''))}
@@ -254,7 +255,7 @@ export function HomePage(popups: HomePopup[] = []) {
   <section class="section" style="background:var(--ivory-2)" id="core-tx">
     <div class="container">
       ${raw(sectionHead('핵심 진료', '전문의가 <em>직접 맡는</em> 진료',
-    '구강악안면외과·보철과·통합치의학과 전문의가 진단부터 수술·보철·사후관리까지 한 팀으로 책임집니다.'))}
+    '구강악안면외과·보철과·교정과·통합치의학과 전문의가 진단부터 수술·보철·사후관리까지 한 팀으로 책임집니다.'))}
       <div class="tx-feature">
         ${raw(CORE_TREATMENTS.map((t, i) => `
           <article class="tx-article reveal">
@@ -303,9 +304,9 @@ export function HomePage(popups: HomePopup[] = []) {
     <div class="container">
       ${raw(sectionHead('의료진', '<em>치과 전문의</em> 협진 시스템',
     '수술·보철·교정·턱관절까지 한 공간에서. 복잡한 케이스일수록 여러 전문 영역의 관점을 함께 반영합니다.'))}
-      <div class="doc-grid">
+      <div class="doc-grid doc-grid--home" id="homeDocGrid">
         ${raw(DOCTORS.map((d, i) => `
-          <a href="/doctors/${d.slug}" class="doc-card reveal reveal-d${i + 1}">
+          <a href="/doctors/${d.slug}" class="doc-card reveal reveal-d${(i % 4) + 1}${d.isHead ? ' is-head' : ''}">
             <div class="doc-photo"><img src="${d.photo}" alt="${d.name} ${d.role}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center 18%"></div>
             <div class="doc-body">
               <span class="role">${d.role}</span>
@@ -313,17 +314,20 @@ export function HomePage(popups: HomePopup[] = []) {
               <p class="title-line">${d.titleLine}</p>
               <p class="doc-career">${d.cardLine || d.career[0]}</p>
               <div class="doc-tags">
-                ${d.treatItems.map(t => `<span>${t}</span>`).join('')}
+                ${d.treatItems.map(docTag).join('')}
               </div>
             </div>
           </a>`).join(''))}
       </div>
+      <!-- 모바일 전용: 가로 스와이프 위치 점 (대표원장 카드가 맨 앞) -->
+      <div class="doc-dots" id="homeDocDots" aria-hidden="true">${raw(DOCTORS.map((_, i) => `<span${i === 0 ? ' class="on"' : ''}></span>`).join(''))}</div>
+      <script>(function(){var g=document.getElementById('homeDocGrid'),d=document.getElementById('homeDocDots');if(!g||!d)return;var t=0;g.addEventListener('scroll',function(){if(t)return;t=requestAnimationFrame(function(){t=0;var x=g.getBoundingClientRect().left,cs=Array.prototype.slice.call(g.children).sort(function(a,b){return a.getBoundingClientRect().left-b.getBoundingClientRect().left}),best=0,min=1e9;cs.forEach(function(c,i){var v=Math.abs(c.getBoundingClientRect().left-x);if(v<min){min=v;best=i;}});for(var k=0;k<d.children.length;k++)d.children[k].className=k===best?'on':'';});},{passive:true});})();</script>
 
       <!-- 차별점 (옵션 B: 헤더 좌우 분할 + 강점 3×2 카드 그리드) -->
       <div class="why-allcare" style="margin-top:90px">
         <div class="why-head grid-2">
           <div class="reveal">
-            <span class="sec-label"><span class="num">03-1</span> Why ALLCARE</span>
+            <span class="sec-kicker"><i class="hh-diamond" aria-hidden="true"></i> 전문의 진료의 차이</span>
             <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:22px 0 22px">왜 <em>전문의 진료</em>가<br>다른가</h2>
             <p style="color:var(--ink-soft,#5a6b78);line-height:1.8;max-width:460px">
               임플란트의 성패는 식립 그 자체보다 식립 이전의 진단에서 갈립니다.
@@ -341,7 +345,7 @@ export function HomePage(popups: HomePopup[] = []) {
           ${raw(CLINIC.strengths.map((s, i) => `
             <div class="why-card">
               <span class="why-no">0${i + 1}</span>
-              <span class="why-ico"><i class="fa-solid fa-${s.icon}"></i></span>
+              <span class="why-ico">${iconHtml(s.icon)}</span>
               <dt>${s.title}</dt>
               <dd>${s.desc}</dd>
             </div>`).join(''))}
@@ -351,7 +355,7 @@ export function HomePage(popups: HomePopup[] = []) {
       <!-- 원내 디지털 기공실 — '상주 기공사' 주장을 실제 장비로 증명 (§L: 자료1.docx 원내 기공실 강점) -->
       <div class="lab-gallery reveal" style="margin-top:90px">
         <div style="text-align:center;margin-bottom:38px">
-          <span class="sec-label" style="justify-content:center"><span class="num">03-2</span> In-House Digital Lab</span>
+          <span class="sec-kicker"><i class="hh-diamond" aria-hidden="true"></i> 원내 기공실</span>
           <h2 style="font-size:clamp(1.8rem,3.4vw,2.7rem);margin:18px 0 14px">원내 디지털 기공실</h2>
           <p style="max-width:620px;margin:0 auto;color:var(--ink-soft,#5a6b78);line-height:1.75">
             보철물을 외부에 맡기지 않습니다. 상주 기공사가 CAD 설계부터 밀링·소성·3D 프린팅까지
@@ -388,7 +392,7 @@ export function HomePage(popups: HomePopup[] = []) {
   <section class="section-sm stats-band" id="facts">
     <div class="container">
       <div class="ch-band-head reveal">
-        <span class="ch-no-light disp">By the Numbers</span>
+        <span class="sec-kicker sec-kicker--on-dark"><i class="hh-diamond" aria-hidden="true"></i> 진료 환경</span>
         <svg class="cb-orna" viewBox="0 0 120 12" fill="none" aria-hidden="true">
           <line class="co-line" pathLength="1" x1="0" y1="6" x2="48" y2="6"/>
           <path class="cb-dia" d="M60 1 L65 6 L60 11 L55 6 Z"/>
@@ -413,7 +417,7 @@ export function HomePage(popups: HomePopup[] = []) {
   <section class="section journey-sec" id="ch-journey">
     <div class="container">
       <div class="reveal" style="text-align:center;margin-bottom:54px">
-        <span class="disp" style="font-size:13px;letter-spacing:.14em;color:var(--brand-accent);text-transform:uppercase">Your Care Journey</span>
+        <span class="sec-kicker"><i class="hh-diamond" aria-hidden="true"></i> 진료 과정</span>
         <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);margin:14px 0 12px">처음 오신 순간부터, <em>오래도록 곁에</em></h2>
         <p style="color:var(--gray-600);max-width:600px;margin:0 auto">365올케어치과는 한 번의 치료로 끝나지 않습니다. 인지부터 사후관리까지, 흩어지지 않는 다섯 단계로 함께합니다.</p>
       </div>
@@ -421,7 +425,7 @@ export function HomePage(popups: HomePopup[] = []) {
         ${raw(CLINIC.journey.map((j, i) => `
           <li class="journey-step reveal reveal-d${(i % 4) + 1}">
             <div class="js-line" aria-hidden="true"></div>
-            <div class="js-node"><i class="fa-solid fa-${j.icon}"></i></div>
+            <div class="js-node">${iconHtml(j.icon)}</div>
             <div class="js-body">
               <span class="js-no">STEP ${j.step}</span>
               <h3 class="js-title">${j.title}</h3>
@@ -436,7 +440,7 @@ export function HomePage(popups: HomePopup[] = []) {
   <section class="section cases-sec" id="ch-cases" style="background:var(--ivory-2)">
     <div class="container">
       <div class="reveal" style="text-align:center;margin-bottom:28px">
-        <span class="disp" style="font-size:13px;letter-spacing:.14em;color:var(--brand-accent);text-transform:uppercase">대표 치료 사례</span>
+        <span class="sec-kicker"><i class="hh-diamond" aria-hidden="true"></i> 대표 치료 사례</span>
         <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);margin:14px 0 10px">끝까지 <em>해결 방법</em>을 찾은 진료</h2>
         <p class="answer-box" style="max-width:680px;margin:0 auto">단순히 많은 케이스를 진행하는 병원이 아니라, 어려운 케이스일수록 정확한 진단과 수술 계획으로 끝까지 해결 방법을 찾고, 환자의 불안과 부담까지 함께 고려하는 진료를 지향합니다.</p>
       </div>
@@ -444,7 +448,7 @@ export function HomePage(popups: HomePopup[] = []) {
         ${raw(CLINIC.cases.map((cs, i) => `
           <article class="case-card reveal reveal-d${(i % 2) + 1}">
             <header class="case-head">
-              <span class="case-tag"><i class="fa-solid fa-${cs.icon}"></i> ${cs.tag}</span>
+              <span class="case-tag">${iconHtml(cs.icon)} ${cs.tag}</span>
               <h3 class="case-title">${cs.title}</h3>
               <p class="case-sub">${cs.sub}</p>
             </header>
@@ -453,7 +457,7 @@ export function HomePage(popups: HomePopup[] = []) {
               <div class="case-step"><span class="case-step-label">진료</span><p>${cs.process}</p></div>
               <div class="case-step"><span class="case-step-label">결과</span><p>${cs.result}</p></div>
             </div>
-            ${cs.voice ? `<blockquote class="case-voice">"${cs.voice}"</blockquote>` : ''}
+            ${/* 2026-10-15: 환자 발언 인용(cs.voice)은 의료법상 치료경험담 소지가 있어 비노출 — 데이터는 보존 */ ''}
           </article>`).join(''))}
       </div>
       <p class="reviews-note reveal">※ 위 사례는 실제 진료 경험을 바탕으로 환자 동의를 받아 재구성한 것으로, 치료 결과는 환자 개인의 상태에 따라 차이가 있을 수 있습니다.</p>
@@ -468,7 +472,7 @@ export function HomePage(popups: HomePopup[] = []) {
       <div class="sn-chips reveal reveal-d2" role="tablist" aria-label="불편 증상 선택">
         ${raw(STORY_BRANCHES.map((b, i) => `
           <button class="sn-chip${i === 0 ? ' on' : ''}" data-branch="${b.id}" role="tab" aria-selected="${i === 0}">
-            <i class="fa-solid fa-${b.icon}"></i> ${b.chip}
+            ${iconHtml(b.icon, 'tx-svg-inline')} ${b.chip}
           </button>`).join(''))}
       </div>
       <div class="sn-stage reveal reveal-d3">
@@ -508,7 +512,7 @@ export function HomePage(popups: HomePopup[] = []) {
     <div class="container">
       <a class="oral-check-band reveal" href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="1분 구강 셀프 스캔 — 내 구강나이 확인하기 (새 창)">
         <div class="occ-left">
-          <span class="occ-eyebrow disp"><i class="fa-solid fa-wand-magic-sparkles"></i> 1분 구강 셀프 스캔</span>
+          <span class="occ-eyebrow disp"><i class="fa-solid fa-stopwatch"></i> 1분 구강 셀프 스캔</span>
           <h2 class="occ-title">내 <em>구강나이</em>는 몇 살일까?</h2>
           <p class="occ-lead">60초 셀프 스캔으로 내 치아·잇몸 상태를 리포트로 확인해 보세요. 365올케어치과 의료진이 만든 무료 자가진단입니다.</p>
           <span class="occ-cta">지금 무료로 확인하기 <i class="fa-solid fa-arrow-right"></i></span>
@@ -539,41 +543,52 @@ export function HomePage(popups: HomePopup[] = []) {
           </a>`).join(''))}
       </div>
 
-      <div class="grid-2" style="align-items:start;margin-top:80px">
+      <div class="grid-2 visit-grid" style="margin-top:80px">
         <div class="reveal">
-          <span class="sec-label"><span class="num">05-1</span> Visit Us</span>
+          <span class="sec-kicker"><i class="hh-diamond" aria-hidden="true"></i> 진료시간</span>
           <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:18px 0 24px">언제 오시면 되나요?</h2>
           <div style="background:#fffeee;border-radius:var(--radius-lg);border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow-sm)">
             ${raw(CLINIC.hours.map(h => `
               <div style="display:flex;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--line-soft)">
                 <span style="font-weight:600;color:${h.night ? 'var(--mint)' : 'var(--ink-soft)'}">${h.day}${h.night ? ' <span style="font-size:11px;background:var(--mint);color:#fffeee;padding:2px 8px;border-radius:999px;margin-left:6px">야간</span>' : ''}</span>
-                <span style="color:var(--gray-600);font-family:var(--font-disp)">${h.time}</span>
+                <span style="color:var(--gray-600)">${h.time}</span>
               </div>`).join(''))}
             <div style="display:flex;justify-content:space-between;padding:15px 22px;background:var(--ivory-2)">
-              <span style="font-weight:600;color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심시간</span>
-              <span style="color:var(--gray-600);font-family:var(--font-disp)">${CLINIC.lunch}</span>
+              <span style="font-weight:600;color:var(--gold-600)"><i class="fa-solid fa-utensils" style="font-size:12px"></i> 점심시간</span>
+              <span style="color:var(--gray-600)">${CLINIC.lunch}</span>
             </div>
             <div style="display:flex;justify-content:space-between;padding:15px 22px;background:var(--ivory-2);border-top:1px solid var(--line-soft)">
-              <span style="font-weight:600;color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 저녁시간</span>
-              <span style="color:var(--gray-600);font-family:var(--font-disp)">${CLINIC.dinner}</span>
+              <span style="font-weight:600;color:var(--gold-600)"><i class="fa-solid fa-utensils" style="font-size:12px"></i> 저녁시간</span>
+              <span style="color:var(--gray-600)">${CLINIC.dinner}</span>
             </div>
           </div>
           <p style="margin-top:14px;font-size:13px;color:var(--gray-500)"><i class="fa-solid fa-circle-info text-mint"></i> 토·일·공휴일은 점심시간 없이 진료합니다.</p>
           <p style="margin-top:8px;font-size:14px;color:var(--gray-600)"><i class="fa-solid fa-circle-info text-mint"></i> ${CLINIC.hoursNote}</p>
           <p style="margin-top:10px;font-size:13px;color:var(--gray-500);line-height:1.6"><i class="fa-solid fa-square-parking text-mint"></i> <strong>주차 안내</strong> — 건물 기계식 주차 운영. 전기차·대형 SUV는 기계식 주차가 어려워 인근 공영주차장 이용을 권장드립니다.</p>
         </div>
-        <div class="reveal reveal-d2">
-          <span class="sec-label"><span class="num">05-2</span> Directions</span>
+        <div class="reveal reveal-d2 visit-col">
+          <span class="sec-kicker"><i class="hh-diamond" aria-hidden="true"></i> 오시는 길</span>
           <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);margin:18px 0 24px">${CLINIC.directions}</h2>
           <div class="inlink-box" style="background:var(--navy-900);color:#fffeee">
             <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-location-dot" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div><strong style="display:block;font-size:17px;margin-bottom:4px">${CLINIC.name}</strong>${CLINIC.address}</div></div>
             <div style="display:flex;gap:14px;margin-bottom:18px"><i class="fa-solid fa-train-subway" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><div>${CLINIC.subway}</div></div>
-            <div style="display:flex;gap:14px"><i class="fa-solid fa-phone" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><a href="tel:${CLINIC.phoneRaw}" style="font-weight:700;font-size:18px;font-family:var(--font-disp)">${CLINIC.phone}</a></div>
+            <div style="display:flex;gap:14px"><i class="fa-solid fa-phone" style="color:var(--gold-300);font-size:20px;margin-top:3px"></i><a href="tel:${CLINIC.phoneRaw}" style="font-weight:700;font-size:18px">${CLINIC.phone}</a></div>
             <div class="pay-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px">
-              ${raw(CLINIC.payments.map(p => `<span class="pay-chip" title="${p.desc}"><i class="fa-solid fa-${p.icon}"></i> ${p.name}</span>`).join(''))}
+              ${raw(CLINIC.payments.map(p => `<span class="pay-chip" title="${p.desc}">${iconHtml(p.icon)} ${p.name}</span>`).join(''))}
             </div>
             ${CLINIC.sns.kakao ? raw(`<a href="${CLINIC.sns.kakao}" class="btn btn-kakao" target="_blank" rel="noopener" style="width:100%;justify-content:center;margin-top:14px"><i class="fa-solid fa-comment"></i> 카카오톡으로 빠른 상담</a>`) : ''}
-            <a href="/directions" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:14px">지도 보기 <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="/directions" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:14px">오시는 길 자세히 보기 <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <!-- 2026-10-15 원장 요청: 주소 박스 아래 빈 공간 → 지도(정적 이미지·lazy, 외부 iframe/스크립트 없음) + 카카오맵·네이버 지도 버튼. /directions 와 같은 카카오 정적 지도 -->
+          <div class="home-map">
+            <a href="https://map.kakao.com/link/map/2031808279" target="_blank" rel="noopener" class="home-map-img" aria-label="카카오맵에서 365올케어치과 위치 크게 보기">
+              <img src="https://staticmap.kakao.com/map/mapservice?FORMAT=PNG&SCALE=1.25&MX=502500&MY=1126113&S=0&IW=800&IH=500&LANG=0&COORDSTM=WCONGNAMUL&logo=kakao_logo" alt="365올케어치과 위치 지도 — 서울 중구 동호로 171 더그레이스빌딩 4층, 약수역 5번 출구 도보 1분" width="800" height="500" loading="lazy" decoding="async">
+            </a>
+            <div class="home-map-pin" aria-hidden="true"><span>365올케어치과 4층</span><i class="fa-solid fa-location-dot"></i></div>
+            <div class="home-map-links">
+              <a href="https://map.kakao.com/link/to/2031808279" target="_blank" rel="noopener" class="hm-btn hm-kakao"><i class="fa-solid fa-route"></i> 카카오맵 길찾기</a>
+              <a href="https://map.naver.com/p/search/${encodeURIComponent('365올케어치과의원 약수역')}" target="_blank" rel="noopener" class="hm-btn hm-naver"><i class="fa-solid fa-map-location-dot"></i> 네이버 지도</a>
+            </div>
           </div>
         </div>
       </div>
@@ -605,7 +620,7 @@ export function HomePage(popups: HomePopup[] = []) {
     description: '약수역 5번 출구 365올케어치과. 치과 전문의 협진 시스템으로 임플란트·치아교정·심미보철·일반진료를 진단부터 살핍니다. 수면진료·야간진료 운영.',
     path: '/',
     ogImage: `https://${CLINIC.domain}/static/og/home/main.jpg`,
-    preloadImage: '/static/img/doctors-main-3.webp',
+    preloadImage: '/static/img/doctors-main-4.webp',
     keywords: '약수역 치과,약수역 임플란트,약수역 교정,약수역 심미보철,365올케어치과,약수동 치과,중구 치과',
     schema: [
       organizationSchema(),

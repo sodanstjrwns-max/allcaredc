@@ -18,7 +18,7 @@ export const YAKSU_CARDS: YaksuCard[] = [
   { tx: 'ortho', name: '약수역 치아교정', tag: 'ORTHODONTICS', line: '성장기부터 성인까지, 교합과 기능까지 함께 보는 맞춤 교정' },
   { tx: 'esthetic', name: '약수역 심미보철', tag: 'ESTHETIC', line: '보철과 전문의와 원내 기공실이 함께 맞추는 앞니 심미 보철' },
   { tx: 'sleep', name: '약수역 수면진료', tag: 'SEDATION', line: '의식하진정법으로 치과 치료가 두려운 분도 편안하게' },
-  { tx: 'conservative', name: '약수역 충치·신경치료', tag: 'CAVITY · ROOT CANAL', line: '아프기 전에, 자연치아를 최대한 살리는 보존 진료' },
+  { tx: 'conservative', name: '약수역 충치·신경치료', tag: 'CONSERVATIVE', line: '아프기 전에, 자연치아를 최대한 살리는 보존 진료' },
   { tx: 'gum', name: '약수역 잇몸치료', tag: 'GUM CARE', line: '스케일링부터 치근활택술까지, 단계에 맞춘 잇몸 관리' },
 ]
 
@@ -46,7 +46,7 @@ export const YAKSU_CARD_CSS = `<style>
 .yk-card-img img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .yk-card:hover .yk-card-img img{transform:scale(1.04)}
 .yk-card-body{display:flex;flex-direction:column;gap:6px;padding:16px 18px 20px}
-.yk-card-tag{font-size:11px;letter-spacing:.14em;font-weight:600;color:var(--gold-600,#97774a)}
+.yk-card-tag{font-size:11px;letter-spacing:.04em;font-weight:700;color:var(--gold-600,#97774a)}
 .yk-card-title{font-size:17px;font-weight:800;color:var(--navy-800,#062741);line-height:1.35}
 .yk-card-line{font-size:13.5px;color:#4b5a68;line-height:1.6;word-break:keep-all}
 @media(max-width:900px){.yk-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}

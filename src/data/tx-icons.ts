@@ -88,3 +88,32 @@ export function txIcon(slug: string, faFallback = 'tooth', extraClass = ''): str
   if (!inner) return `<i class="fa-solid fa-${faFallback}${extraClass ? ' ' + extraClass : ''}" aria-hidden="true"></i>`
   return `<svg class="tx-svg${extraClass ? ' ' + extraClass : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${inner}</svg>`
 }
+
+/**
+ * 아이콘 이름 → HTML. 'tx:<진료 slug>' 이면 자체 제작 SVG, 그 외는 Font Awesome 이름.
+ * 2026-10-15 원장 요청(피그마 261015): 화면 곳곳의 일반 아이콘을 내용에 맞게 — 진료 관련은 메뉴와 같은 자체 아이콘으로 통일.
+ */
+export function iconHtml(name: string, extraClass = ''): string {
+  if (name.startsWith('tx:')) return txIcon(name.slice(3), 'tooth', extraClass)
+  return `<i class="fa-solid fa-${name}${extraClass ? ' ' + extraClass : ''}" aria-hidden="true"></i>`
+}
+
+/**
+ * 비용 안내 분류명 → 진료 아이콘 slug. 수가표는 원장이 관리자에서 편집(R2)하므로 분류명 키워드로 매칭하고,
+ * 매칭되지 않는 새 분류만 관리자에 입력된 Font Awesome 아이콘을 쓴다.
+ */
+const PRICE_ICON_RULES: [RegExp, string][] = [
+  [/임플란트/, 'implant'],
+  [/외과|골이식|뼈이식|사랑니/, 'surgery'],
+  [/턱관절/, 'tmj'],
+  [/교정/, 'ortho'],
+  [/보존|충치|신경/, 'conservative'],
+  [/보철|크라운|틀니/, 'esthetic'],
+  [/미백|심미/, 'whitening'],
+  [/수면|진정|마취/, 'sleep'],
+  [/잇몸|치주/, 'gum'],
+]
+export function priceCategoryIcon(category: string, faFallback = 'tooth'): string {
+  const hit = PRICE_ICON_RULES.find(([re]) => re.test(category))
+  return hit ? txIcon(hit[1], faFallback, 'tx-svg-inline') : `<i class="fa-solid fa-${faFallback}" aria-hidden="true"></i>`
+}

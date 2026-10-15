@@ -74,7 +74,7 @@ export function EncyclopediaPage() {
             <p>${esc(t.desc)}</p>
             <div class="links">
               ${detailLink}
-              <a href="/treatments/${t.treatment}"><i class="fa-solid fa-link"></i> ${esc(txName(t.treatment))}</a>
+              <a href="/treatments/${t.treatment}"><i class="fa-solid fa-tooth"></i> ${esc(txName(t.treatment))}</a>
             </div>
           </div>`
         }).join(''))}

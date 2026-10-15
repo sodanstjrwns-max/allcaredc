@@ -3,7 +3,7 @@ import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, PRICE_TABLE, PRICE_NOTES } from '../data/clinic'
 import { speakableSchema } from '../lib/seo-engine'
-import { txIcon } from '../data/tx-icons'
+import { txIcon, iconHtml, priceCategoryIcon } from '../data/tx-icons'
 
 const BASE = `https://${CLINIC.domain}`
 const DAY_CODE: Record<string, string> = { '월': 'Monday', '화': 'Tuesday', '수': 'Wednesday', '목': 'Thursday', '금': 'Friday', '토': 'Saturday', '일': 'Sunday' }
@@ -217,7 +217,7 @@ export function MissionPage() {
       <div class="value-grid">
         ${raw(CLINIC.values.map((v, i) => `
           <div class="value-card reveal reveal-d${i + 1}">
-            <div class="ico"><i class="fa-solid fa-${v.icon}"></i></div>
+            <div class="ico">${iconHtml(v.icon)}</div>
             <h3>${v.title}</h3>
             <p>${v.desc}</p>
           </div>`).join(''))}
@@ -239,7 +239,7 @@ export function MissionPage() {
         ${raw(CLINIC.collaboration.flow.map((f, i) => `
           <li class="flow5-card reveal reveal-d${(i % 3) + 1}">
             <span class="f5-step">${f.step}</span>
-            <span class="f5-ico"><i class="fa-solid fa-${f.icon}"></i></span>
+            <span class="f5-ico">${iconHtml(f.icon)}</span>
             <strong class="f5-name">${f.part}</strong>
             <p class="f5-desc">${f.desc}</p>
           </li>`).join(''))}
@@ -261,7 +261,7 @@ export function MissionPage() {
       <div class="collab-points">
         ${raw(CLINIC.collaboration.points.map((p, i) => `
           <article class="collab-card reveal reveal-d${i + 1}">
-            <span class="cc-ico"><i class="fa-solid fa-${p.icon}"></i></span>
+            <span class="cc-ico">${iconHtml(p.icon)}</span>
             <h3 class="cc-title">${p.title}</h3>
             <p class="cc-desc">${p.desc}</p>
           </article>`).join(''))}
@@ -280,7 +280,7 @@ export function MissionPage() {
       <dl class="aeo-grid">
         ${raw(CLINIC.strengths.map((s, i) => `
           <div class="aeo-card reveal reveal-d${(i % 2) + 1}">
-            <span class="aeo-ico"><i class="fa-solid fa-${s.icon}"></i></span>
+            <span class="aeo-ico">${iconHtml(s.icon)}</span>
             <dt>${s.title}</dt>
             <dd class="aeo-q">${s.head}</dd>
             <dd class="aeo-a">${s.desc}</dd>
@@ -321,7 +321,7 @@ export function MissionPage() {
   `
   return Page({
     title: '병원소개 | 365올케어치과 — 약수역 치과 전문의 협진 통합진료',
-    description: '약수역 365올케어치과는 구강악안면외과·통합치의학과·보철과 전문의 협진 시스템의 통합진료 치과입니다. 고난도 임플란트 수술 역량, 의식하진정법(수면진료) 병행, 원내 기공실로 불편함을 끝까지 살핍니다.',
+    description: '약수역 365올케어치과는 구강악안면외과·통합치의학과·보철과·교정과 전문의 협진 시스템의 통합진료 치과입니다. 고난도 임플란트 수술 역량, 의식하진정법(수면진료) 병행, 원내 기공실로 불편함을 끝까지 살핍니다.',
     path: '/mission',
     schema: [
       breadcrumbSchema([{ name: '홈', url: '/' }, { name: '병원소개', url: '/mission' }]),
@@ -427,8 +427,8 @@ export function DirectionsPage() {
           <div class="inlink-box">
             <h4><i class="fa-solid fa-clock text-mint"></i> 진료시간</h4>
             ${raw(CLINIC.hours.map(h => `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="font-weight:${h.night ? '700' : '400'};color:${h.night ? 'var(--brand)' : 'inherit'}">${h.day}</span><span style="color:var(--gray-600)">${h.time}</span></div>`).join(''))}
-            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 점심시간</span><span style="color:var(--gray-600)">${CLINIC.lunch}</span></div>
-            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-mug-hot" style="font-size:12px"></i> 저녁시간</span><span style="color:var(--gray-600)">${CLINIC.dinner}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-utensils" style="font-size:12px"></i> 점심시간</span><span style="color:var(--gray-600)">${CLINIC.lunch}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--gray-200)"><span style="color:var(--gold-600)"><i class="fa-solid fa-utensils" style="font-size:12px"></i> 저녁시간</span><span style="color:var(--gray-600)">${CLINIC.dinner}</span></div>
             <p style="font-size:12.5px;color:var(--gray-400);margin-top:10px">토·일·공휴일은 점심시간 없이 진료합니다.<br>${CLINIC.hoursNote}</p>
           </div>
           <div class="inlink-box">
@@ -555,7 +555,7 @@ export function PricingPage(groups?: import('../data/clinic').PriceGroup[]) {
 
       ${raw(table.map((g) => `
         <div class="reveal price-block" style="margin-bottom:34px">
-          <h2 class="price-cat"><i class="fa-solid fa-${g.icon}"></i> ${g.category}</h2>
+          <h2 class="price-cat">${priceCategoryIcon(g.category, g.icon)} ${g.category}</h2>
           ${g.note ? `<p class="price-cat-note">${g.note}</p>` : ''}
           <div class="price-table">
             ${g.rows.map((r) => `
