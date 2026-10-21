@@ -212,7 +212,7 @@ export function HomePage(popups: HomePopup[] = []) {
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img class="hh-portrait" src="/static/img/doctors-main-4.webp" srcset="/static/img/doctors-main-4.webp 576w, /static/img/doctors-main-4@2x.webp 864w" sizes="(max-width: 820px) 92vw, 420px" alt="365올케어치과 의료진 — 권종진 명예원장(구강악안면외과 전문의), 권민수 대표원장(구강악안면외과·통합치의학과 전문의), 배수현 보철과 원장(보철과 전문의), 이긍지 교정과 원장(치과교정과 전문의)" width="576" height="1024" fetchpriority="high" />
+          <img class="hh-portrait" src="/static/img/doctors-main-20261021.webp" srcset="/static/img/doctors-main-20261021.webp 576w, /static/img/doctors-main-20261021@2x.webp 864w" sizes="(max-width: 820px) 92vw, 420px" alt="365올케어치과 의료진 — 권종진 명예원장(구강악안면외과 전문의), 권민수 대표원장(구강악안면외과·통합치의학과 전문의), 배수현 보철과 원장(보철과 전문의), 이긍지 교정과 원장(치과교정과 전문의)" width="576" height="1024" fetchpriority="high" />
         </div>
         <figcaption class="hh-caption"><span class="hh-cap-eng disp">치과 전문의 협진 시스템</span> 진단부터 수술·보철·유지관리까지 한 곳에서</figcaption>
       </figure>
@@ -620,7 +620,7 @@ export function HomePage(popups: HomePopup[] = []) {
     description: '약수역 5번 출구 365올케어치과. 치과 전문의 협진 시스템으로 임플란트·치아교정·심미보철·일반진료를 진단부터 살핍니다. 수면진료·야간진료 운영.',
     path: '/',
     ogImage: `https://${CLINIC.domain}/static/og/home/main.jpg`,
-    preloadImage: '/static/img/doctors-main-4.webp',
+    preloadImage: '/static/img/doctors-main-20261021.webp',
     keywords: '약수역 치과,약수역 임플란트,약수역 교정,약수역 심미보철,365올케어치과,약수동 치과,중구 치과',
     schema: [
       organizationSchema(),

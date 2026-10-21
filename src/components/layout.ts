@@ -173,6 +173,7 @@ export function Header() {
                 <a href="/faq"><span class="ico"><i class="fa-solid fa-circle-question"></i></span><span><strong>자주 묻는 질문</strong></span></a>
                 <a href="/notice"><span class="ico"><i class="fa-solid fa-bullhorn"></i></span><span><strong>공지사항</strong></span></a>
                 <a href="/events"><span class="ico"><i class="fa-solid fa-gift"></i></span><span><strong>이벤트</strong><span>진행 중인 혜택</span></span></a>
+                <a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-tooth"></i></span><span><strong>셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>1분 구강나이 스캔 (새 창)</span></span></a>
               </div>
             </div>
           </li>
@@ -208,6 +209,7 @@ export function Header() {
       <a href="/faq">자주 묻는 질문</a>
       <a href="/notice">공지사항</a>
       <a href="/events">이벤트</a>
+      <a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener">셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;opacity:.6"></i></a>
     </div>
     <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:24px">예약 문의</a>
     <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:10px">${CLINIC.phone}</a>
@@ -250,6 +252,7 @@ export function Footer(path = '') {
             <li><a href="/column">원장 칼럼</a></li>
             <li><a href="/encyclopedia">치과 백과사전</a></li>
             <li><a href="/reservation">예약 문의</a></li>
+            <li><a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener">셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.7"></i></a></li>
             ${CLINIC.sns.naverBooking ? raw(`<li><a href="${CLINIC.sns.naverBooking}" target="_blank" rel="noopener">네이버 예약 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.7"></i></a></li>`) : ''}
           </ul>
         </div>
