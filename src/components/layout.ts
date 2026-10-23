@@ -173,7 +173,7 @@ export function Header() {
                 <a href="/faq"><span class="ico"><i class="fa-solid fa-circle-question"></i></span><span><strong>자주 묻는 질문</strong></span></a>
                 <a href="/notice"><span class="ico"><i class="fa-solid fa-bullhorn"></i></span><span><strong>공지사항</strong></span></a>
                 <a href="/events"><span class="ico"><i class="fa-solid fa-gift"></i></span><span><strong>이벤트</strong><span>진행 중인 혜택</span></span></a>
-                <a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-tooth"></i></span><span><strong>셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>1분 구강나이 스캔 (새 창)</span></span></a>
+                <a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-tooth"></i></span><span><strong>셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>1분 구강나이 스캔</span></span></a>
               </div>
             </div>
           </li>
