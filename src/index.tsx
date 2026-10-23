@@ -81,6 +81,8 @@ app.route('/admin', admin)
 // ════════════════ SEO 파일 ════════════════
 const TXT = 'text/plain; charset=utf-8'
 const SEO_CACHE = 'public, max-age=3600'
+// 치료사례집 웹뷰어는 public/casebook/ 정적 자산(_routes exclude /casebook/*). 슬래시 없는 주소만 워커가 받아 보정 — 뷰어가 상대경로라 필수
+app.get('/casebook', (c) => c.redirect('/casebook/', 301))
 app.get('/sitemap.xml', async (c) => c.body(await sitemap(c.env), 200, { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': SEO_CACHE }))
 app.get('/robots.txt', (c) => c.body(robotsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
 // §S20⑧: RSS 피드 — 칼럼·공지 자동 갱신 (네이버 서치어드바이저 RSS 제출용)

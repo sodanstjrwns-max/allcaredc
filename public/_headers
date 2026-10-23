@@ -5,3 +5,12 @@
   Cache-Control: public, max-age=86400
 /static/logos/*
   Cache-Control: public, max-age=86400
+# 치료사례집 웹뷰어 (2026-10-23) — 이미지·폰트는 길게(파일명 고정이라 교체 시 최대 7일), index.html·js·css 는 Pages 기본(매번 재검증)
+/casebook/pages/*
+  Cache-Control: public, max-age=604800
+/casebook/pages-m/*
+  Cache-Control: public, max-age=604800
+/casebook/thumbs/*
+  Cache-Control: public, max-age=604800
+/casebook/assets/*
+  Cache-Control: public, max-age=2592000

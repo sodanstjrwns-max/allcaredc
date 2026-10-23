@@ -159,6 +159,7 @@ export function Header() {
               <div class="mega-grid" style="grid-template-columns:1fr">
                 <a href="/cases"><span class="ico"><i class="fa-solid fa-images"></i></span><span><strong>비포/애프터</strong><span>치료 전후 사례</span></span></a>
                 <a href="/encyclopedia"><span class="ico"><i class="fa-solid fa-book-open"></i></span><span><strong>치과 백과사전</strong><span>치과 용어 사전</span></span></a>
+                <a href="/casebook/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-book"></i></span><span><strong>치료사례집 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>실제 치료 사례 모음</span></span></a>
               </div>
             </div>
           </li>
@@ -201,6 +202,7 @@ export function Header() {
     <div class="m-sub">
       <a href="/cases">비포/애프터</a>
       <a href="/encyclopedia">치과 백과사전</a>
+      <a href="/casebook/" target="_blank" rel="noopener">치료사례집 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;opacity:.6"></i></a>
     </div>
     <p class="m-drawer-title">안내</p>
     <div class="m-sub">
@@ -249,6 +251,7 @@ export function Footer(path = '') {
             ${footerHubLink(path) ? raw('<li><a href="/">약수역 치과</a></li>') : ''}
             <li><a href="/mission">병원소개</a></li>
             <li><a href="/cases">비포/애프터</a></li>
+            <li><a href="/casebook/" target="_blank" rel="noopener">치료사례집 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.7"></i></a></li>
             <li><a href="/column">원장 칼럼</a></li>
             <li><a href="/encyclopedia">치과 백과사전</a></li>
             <li><a href="/reservation">예약 문의</a></li>

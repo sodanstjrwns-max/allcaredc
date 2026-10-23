@@ -57,6 +57,7 @@ export async function sitemap(env: Bindings): Promise<string> {
     { loc: '/doctors', pri: '0.8', freq: 'monthly', mod: P.doctors },
     { loc: '/treatments', pri: '0.8', freq: 'monthly', mod: P.treatments },
     { loc: '/cases', pri: '0.7', freq: 'weekly', mod: newest(dyn.cases) },
+    { loc: '/casebook/', pri: '0.6', freq: 'monthly', mod: '2026-10-23' },
     { loc: '/column', pri: '0.7', freq: 'weekly', mod: newest(dyn.cols) },
     { loc: '/encyclopedia', pri: '0.6', freq: 'monthly', mod: latestDate(Object.values(CONTENT_DATES.encyclopedia)) },
     { loc: '/faq', pri: '0.7', freq: 'monthly', mod: P.faq },
