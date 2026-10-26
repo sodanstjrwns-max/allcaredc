@@ -195,12 +195,12 @@ export function HomePage(popups: HomePopup[] = []) {
         <div class="hero-actions reveal reveal-d3">
           <a href="/treatments" class="btn btn-primary">전체 진료 보기 <i class="fa-solid fa-arrow-right"></i></a>
           <a href="/reservation" class="btn btn-outline">상담·진단 예약</a>
-          <a href="/casebook/" class="btn btn-outline" target="_blank" rel="noopener" id="hero-link-casebook"><i class="fa-solid fa-book"></i> 치료사례집</a>
         </div>
-        <!-- §S20①: 원장칼럼·비포애프터 바로가기 (모바일 우선 노출) -->
+        <!-- §S20①: 원장칼럼·비포애프터·치료사례집 바로가기 (모바일 우선 노출) -->
         <nav class="hero-quick reveal reveal-d3" aria-label="콘텐츠 바로가기">
           <a href="/column" class="hero-quick-link" id="hero-link-column"><i class="fa-solid fa-pen-nib"></i> 원장칼럼</a>
           <a href="/cases" class="hero-quick-link" id="hero-link-cases"><i class="fa-solid fa-images"></i> 비포애프터</a>
+          <a href="/casebook/" class="hero-quick-link" target="_blank" rel="noopener" id="hero-link-casebook"><i class="fa-solid fa-book"></i> 치료사례집</a>
         </nav>
         <div class="hh-meta reveal reveal-d4">
           <div class="item"><span class="num num-ko">협진</span><span class="lbl">치과 전문의 협진 시스템</span></div>
