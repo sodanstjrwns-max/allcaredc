@@ -1850,9 +1850,9 @@ select.res-mini { background:#fff; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .btn { padding: 14px 22px; font-size: 14px; }
   .actions .btn, .hero-actions .btn { flex: 1 1 auto; }
-  /* §S20①: 모바일에선 바로가기 2버튼을 반반 크게 — 잘 보이게 */
-  .hero-quick { gap: 8px; }
-  .hero-quick-link { flex: 1 1 40%; justify-content: center; padding: 13px 14px; font-size: 15px; background: #fff; border-color: var(--gray-200, #ddd); box-shadow: 0 2px 10px rgba(14,27,48,.05); }
+  /* §S20①: 모바일에선 바로가기 3버튼(원장칼럼·비포애프터·치료사례집)을 한 줄 3등분 */
+  .hero-quick { gap: 6px; flex-wrap: nowrap; }
+  .hero-quick-link { flex: 1 1 0; min-width: 0; white-space: nowrap; justify-content: center; gap: 5px; padding: 12px 6px; font-size: 13.5px; background: #fff; border-color: var(--gray-200, #ddd); box-shadow: 0 2px 10px rgba(14,27,48,.05); }
 }
 
 /* ============================================================
