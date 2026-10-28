@@ -3526,3 +3526,14 @@ h1, h2, h3, h4, h5, h6 { font-weight: 800; }
   .footer-links li { margin-bottom: 0; }
   .footer-links a { padding: 9px 2px; min-height: 40px; }
 }
+
+/* ===== 2026-10-28 원장 요청: 히어로 '약수역'·마퀴 문구 추가·진료의 기반 수치 ===== */
+.hh-title--ko .hh-chunk { display: inline-block; }
+.marquee-track { animation-duration: 64s; }
+.stat .num .num-unit { font-size: .42em; font-weight: 700; margin-left: .12em; letter-spacing: -.01em; vertical-align: .12em; }
+.stat .lbl { word-break: keep-all; }
+/* '믿고 찾는 약수역'이 PC 2단 히어로에서 한 줄에 들어가도록 상한만 소폭 낮춤(80→76.8px) */
+@media (min-width: 1025px) {
+  .hero--heritage .hh-title--ko, .hh-title--ko { font-size: clamp(3rem, 5.8vw, 4.8rem); }
+}
+.stat .lbl .nw { display: inline-block; white-space: nowrap; }

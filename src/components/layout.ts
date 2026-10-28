@@ -413,12 +413,12 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20261026" />
+    <link rel="stylesheet" href="/static/style.css?v=20261028" />
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-    <!-- 2026-10-15 원장 요청 폰트 통일: 제목·본문·숫자 모두 Pretendard. 명조는 메인 첫 화면 제목('믿고 찾는 365올케어치과')에만 →
+    <!-- 2026-10-15 원장 요청 폰트 통일: 제목·본문·숫자 모두 Pretendard. 명조는 메인 첫 화면 제목('믿고 찾는 약수역 365올케어치과')에만 →
          그 글자만 서브셋(text=)으로 받는다. 영문 세리프(Fraunces)·타자기(DM Mono) 로드 제거 -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;800&display=swap&text=%EB%AF%BF%EA%B3%A0%EC%B0%BE%EB%8A%94365%EC%98%AC%EC%BC%80%EC%96%B4%EC%B9%98%EA%B3%BC" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;800&display=swap&text=%EB%AF%BF%EA%B3%A0%EC%B0%BE%EB%8A%94%EC%95%BD%EC%88%98%EC%97%AD365%EC%98%AC%EC%BC%80%EC%96%B4%EC%B9%98%EA%B3%BC" />
     <!-- FontAwesome: 비동기 로드(렌더 차단 제거) -->
     <link rel="stylesheet" media="print" onload="this.media='all'" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" /></noscript>

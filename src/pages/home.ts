@@ -187,7 +187,7 @@ export function HomePage(popups: HomePopup[] = []) {
       <div class="hh-copy">
         <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 보철과 전문의 · 교정과 전문의 · 치의학박사 · 의식하진정법(수면진료)</span>
         <h1 class="hh-title hh-title--ko">
-          <span class="line-mask"><span class="hh-ko-line">믿고 찾는</span></span>
+          <span class="line-mask"><span class="hh-ko-line"><span class="hh-chunk">믿고 찾는</span> <span class="hh-chunk">약수역</span></span></span>
           <span class="line-mask"><span class="hh-italic disp hh-ko-line">365올케어치과</span></span>
         </h1>
         <p class="hh-lead reveal reveal-d2"><strong>고난도 임플란트는 전문성을 더하고,</strong><br>일반진료는 기본과 원칙에 충실합니다.</p>
@@ -228,9 +228,11 @@ export function HomePage(popups: HomePopup[] = []) {
   <!-- ============ 신뢰 마퀴 띠 ============ -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>보철과 전문의</span><span>교정과 전문의</span>
+      <span>All-on-X · 안모 라인 회복</span><span>Biomimetic Dentistry</span><span>치과보철과 전문의</span><span>중장년 심미보철</span><span>자연치아 보존</span>
+      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>교정과 전문의</span>
       <span>원내 기공실</span><span>수면 진료</span><span>야간 진료</span>
-      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>보철과 전문의</span><span>교정과 전문의</span>
+      <span>All-on-X · 안모 라인 회복</span><span>Biomimetic Dentistry</span><span>치과보철과 전문의</span><span>중장년 심미보철</span><span>자연치아 보존</span>
+      <span>구강악안면외과＋통합치의학과 더블보드 전문의</span><span>교정과 전문의</span>
       <span>원내 기공실</span><span>수면 진료</span><span>야간 진료</span>
     </div>
   </div>
@@ -403,10 +405,10 @@ export function HomePage(popups: HomePopup[] = []) {
         <p>복잡한 케이스를 끝까지 살피는 진료 환경입니다.</p>
       </div>
       <div class="stats-grid">
-        <div class="stat reveal"><div class="num num-ko">협진</div><div class="lbl">치과 전문의 협진 시스템</div></div>
-        <div class="stat reveal reveal-d1"><div class="num"><span data-count="1">1</span></div><div class="lbl">원내 기공실 (상주 기공사)</div></div>
-        <div class="stat reveal reveal-d2"><div class="num"><span data-count="20" data-suffix=":30">20:30</span></div><div class="lbl">야간진료 마감 (월·화·목)</div></div>
-        <div class="stat reveal reveal-d3"><div class="num"><span data-count="2023">2023</span></div><div class="lbl">개원 연도</div></div>
+        <div class="stat reveal"><div class="num"><span data-count="7">7</span><span class="num-unit">개 과목</span></div><div class="lbl">4인의 전문의</div></div>
+        <div class="stat reveal reveal-d1"><div class="num"><span data-count="2">2</span><span class="num-unit">개</span></div><div class="lbl">전문의 자격 <span class="nw">(보철과·통합치의학과)</span></div></div>
+        <div class="stat reveal reveal-d2"><div class="num"><span data-count="1">1</span><span class="num-unit">분</span></div><div class="lbl">3·6호선 약수역 도보</div></div>
+        <div class="stat reveal reveal-d3"><div class="num"><span data-count="17">17</span><span class="num-unit">개 지역</span></div><div class="lbl">전국 시·도에서 찾아오는 치과</div></div>
       </div>
       <div class="reveal reveal-d3" style="text-align:center;margin-top:42px">
         <a href="/cases" class="btn btn-ghost">비포 / 애프터 이야기 보기 <i class="fa-solid fa-arrow-right"></i></a>
