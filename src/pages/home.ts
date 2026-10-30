@@ -406,7 +406,7 @@ export function HomePage(popups: HomePopup[] = []) {
       </div>
       <div class="stats-grid">
         <div class="stat reveal"><div class="num"><span data-count="7">7</span><span class="num-unit">개 과목</span></div><div class="lbl">4인의 전문의</div></div>
-        <div class="stat reveal reveal-d1"><div class="num"><span data-count="2">2</span><span class="num-unit">개</span></div><div class="lbl">전문의 자격 <span class="nw">(보철과·통합치의학과)</span></div></div>
+        <div class="stat reveal reveal-d1"><div class="num"><span data-count="4">4</span><span class="num-unit">명의 전문의</span></div><div class="lbl">구강악안면외과·통합치의학과<br>보철과·교정과</div></div>
         <div class="stat reveal reveal-d2"><div class="num"><span data-count="1">1</span><span class="num-unit">분</span></div><div class="lbl">3·6호선 약수역 도보</div></div>
         <div class="stat reveal reveal-d3"><div class="num"><span data-count="17">17</span><span class="num-unit">개 지역</span></div><div class="lbl">전국 시·도에서 찾아오는 치과</div></div>
       </div>
