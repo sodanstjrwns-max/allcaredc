@@ -1,5 +1,6 @@
 import { html, raw } from 'hono/html'
 import { Header, Footer, headTags, Meta } from './layout'
+import { IMMERSIVE_BODY } from '../lib/immersive-assets'
 
 
 // 2026-09-09 AEO 보완(A6): id 없는 h2/h3 소제목에 본문 텍스트 기반 앵커 id 자동 부여 (AI·검색엔진 딥링크용)
@@ -42,6 +43,7 @@ export function Page(meta: Meta, body: any) {
   ${Footer(meta.path)}
   <script>/* 네이버 광고 전환(신 스크립트 wcs.trans): 전화=lead+custom001, 카카오=lead+custom002, 네이버예약=lead+custom003 */
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href]');if(!a||!window.wcs||!window.wcs.trans)return;var h=(a.getAttribute('href')||'').toLowerCase();var c=null;if(h.indexOf('tel:')===0)c='custom001';else if(h.indexOf('pf.kakao.com')>=0||h.indexOf('open.kakao.com')>=0||h.indexOf('kakao:')===0)c='custom002';else if(h.indexOf('booking.naver.com')>=0||h.indexOf('naver.me')>=0||h.indexOf('smartplace.naver')>=0)c='custom003';if(!c)return;try{var l={};l.type='lead';l.value='0';wcs.trans(l);var v={};v.type=c;v.value='0';wcs.trans(v);}catch(_){}},true);</script>
+  ${meta.immersive ? raw(IMMERSIVE_BODY) : ''}
 </body>
 </html>`
 }

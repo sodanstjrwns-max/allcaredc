@@ -1,0 +1,22 @@
+/* 365올케어치과 메인 스크롤 몰입 연출 — static/immersive.js 가 html.mx 를 붙였을 때만 작동 */
+html.mx { scroll-behavior: auto !important; }
+html.mx.lenis, html.mx.lenis body { height: auto; }
+html.mx .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+/* 제목 낱말 마스크 (기존 split-rise 와 같은 결) */
+.mx-w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+.mx-wi { display: inline-block; will-change: transform; }
+
+/* 사진 시차 */
+.mx-par { overflow: hidden; }
+.mx-par img { will-change: transform; transform-origin: 50% 50%; }
+.mx-clip { will-change: clip-path; }
+
+/* 스크롤에 붙은 배너는 CSS transform 전환을 끄고 그림자 전환만 남김 */
+html.mx .oral-check-band { transition: box-shadow .3s ease; will-change: transform; }
+html.mx .oral-check-band:hover { transform: none; }
+html.mx #cta .cta-band { will-change: transform; }
+html.mx .js-line { will-change: transform; }
+
+/* 옆에서 들어오는 글·카드가 가로 스크롤을 만들지 않도록 */
+html.mx #core-tx, html.mx #ch-cases, html.mx #daily, html.mx #doctors, html.mx #ch-journey { overflow-x: clip; }

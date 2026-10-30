@@ -635,6 +635,7 @@ export function HomePage(popups: HomePopup[] = []) {
       speakableSchema(['.answer-box', 'h1', 'h2']),
       yaksuCardItemList(`https://${CLINIC.domain}/`),
     ].filter(Boolean),
+    immersive: true,
   }
   return Page(meta, body)
 }

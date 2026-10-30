@@ -1,4 +1,5 @@
 import { html, raw } from 'hono/html'
+import { IMMERSIVE_HEAD } from '../lib/immersive-assets'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, TREATMENTS, DOCTORS, SEO_AREAS } from '../data/clinic'
 import { txIcon } from '../data/tx-icons'
 import { footerHubLink } from '../lib/hub-link'
@@ -344,6 +345,7 @@ export type Meta = {
   preloadImage?: string  // LCP 이미지 preload (성능 최적화)
   isDetail?: boolean     // §Meta픽셀: 시술/진료 세부페이지 여부 → Lead_custom 이벤트 추가 (미지정 시 path로 자동 판별)
   article?: { published?: string; modified?: string; section?: string }  // og:type=article 일 때 article:* 메타
+  immersive?: boolean   // 메인 스크롤 몰입 연출(static/immersive.*) — 홈만
 }
 
 // §Meta픽셀: 세부페이지(상세) 판별 — slug가 붙는 상세 URL이면 Lead_custom 대상
@@ -414,6 +416,7 @@ export function headTags(meta: Meta) {
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
     <link rel="stylesheet" href="/static/style.css?v=20261028" />
+    ${meta.immersive ? raw(IMMERSIVE_HEAD) : ''}
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <!-- 2026-10-15 원장 요청 폰트 통일: 제목·본문·숫자 모두 Pretendard. 명조는 메인 첫 화면 제목('믿고 찾는 약수역 365올케어치과')에만 →
