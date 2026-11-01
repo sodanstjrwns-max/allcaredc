@@ -64,11 +64,30 @@
     claim(target);
     return gsap.fromTo(target, from, Object.assign({ ease: 'none', scrollTrigger: Object.assign({ scrub: true }, st) }, to));
   }
+  // 그라데이션 글씨(background-clip:text) 안을 낱말로 쪼개면 글자가 투명해진다(대구 2026-11-01 사고)
+  // → 그 요소 자체를 낱말 하나처럼 통째로 감싸 움직인다(요소 자신의 clip:text 는 transform 이 있어도 정상).
+  function clipTextHost(node) {
+    for (var e = node.parentElement; e; e = e.parentElement) {
+      var cs = getComputedStyle(e);
+      if (cs.webkitBackgroundClip === 'text' || cs.backgroundClip === 'text') return e;
+    }
+    return null;
+  }
   // 낱말 감싸기: em·br 등 하위 요소는 보존하고 텍스트만 낱말 단위로
   function splitWords(el) {
     var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     var nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
+    var hosts = [];
+    while (walker.nextNode()) {
+      var host = clipTextHost(walker.currentNode);
+      if (host) { if (hosts.indexOf(host) < 0) hosts.push(host); continue; }
+      nodes.push(walker.currentNode);
+    }
+    hosts.forEach(function (h) {
+      if (h === el || h.contains(el)) return; // 제목 전체가 그라데이션(또는 그 안)이면 쪼개지 않음
+      var w = document.createElement('span'); w.className = 'mx-w';
+      h.parentNode.insertBefore(w, h); w.appendChild(h); h.classList.add('mx-wi');
+    });
     nodes.forEach(function (node) {
       var parts = node.textContent.split(/(\s+)/);
       if (parts.join('').trim() === '') return;
