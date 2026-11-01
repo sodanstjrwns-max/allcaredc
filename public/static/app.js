@@ -352,10 +352,17 @@
     requestAnimationFrame(loop);
   })();
 
+  // 그라데이션 글씨(background-clip:text) 안을 낱말로 쪼개면 글자가 투명해진다(대구 2026-11-01 사고)
+  // → 제목 자체가 그라데이션(또는 그 안)이면 쪼개지 않고, 안의 그라데이션 요소는 낱말 하나처럼 통째로 둔다
+  function isClipText(e) { var c = getComputedStyle(e); return c.webkitBackgroundClip === 'text' || c.backgroundClip === 'text'; }
+  function inClipText(el) { for (var e = el; e; e = e.parentElement) { if (isClipText(e)) return true; } return false; }
+  function hasClipText(el) { return Array.prototype.some.call(el.querySelectorAll('*'), isClipText); }
+
   // ---------- word-rise reveal (split heading words) ----------
   (function () {
     var heads = document.querySelectorAll('[data-words]');
     heads.forEach(function (h) {
+      if (inClipText(h) || hasClipText(h)) return; // innerHTML 로 다시 쓰면 그라데이션 글씨가 깨지므로 그대로 둠
       var raw = h.getAttribute('data-words');
       var parts = (raw || h.textContent).split(' ');
       h.innerHTML = parts.map(function (w) {
@@ -401,11 +408,15 @@
         if (n.nodeType === 3) { // text node
           el.replaceChild(wrapTextNode(n), n);
         } else if (n.nodeType === 1) { // element (em 등) — 안쪽 텍스트도 동일 처리
-          processEl(n);
+          if (isClipText(n)) { // 그라데이션 요소는 쪼개지 않고 낱말 하나처럼 통째로
+            var wr = document.createElement('span'); wr.className = 'wr';
+            var inner = document.createElement('span');
+            el.replaceChild(wr, n); inner.appendChild(n); wr.appendChild(inner);
+          } else processEl(n);
         }
       });
     }
-    heads.forEach(function (h) { processEl(h); });
+    heads.forEach(function (h) { if (!inClipText(h)) processEl(h); });
 
     if (reduce) { heads.forEach(function (h) { h.classList.add('in'); }); return; }
     if ('IntersectionObserver' in window) {

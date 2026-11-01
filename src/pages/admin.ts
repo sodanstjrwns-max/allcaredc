@@ -112,7 +112,7 @@ function adminShell(active: string, title: string, content: any) {
   </aside>
   <main class="admin-main">${content}</main>
 </div>
-<script src="/static/app.js"></script>
+<script src="/static/app.js?v=799066fef2"></script>
 </body></html>`
 }
 

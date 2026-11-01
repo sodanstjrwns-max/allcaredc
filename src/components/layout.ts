@@ -326,7 +326,7 @@ export function Footer(path = '') {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=20260916"></script>
+  <script src="/static/app.js?v=799066fef2"></script>
   `
 }
 
