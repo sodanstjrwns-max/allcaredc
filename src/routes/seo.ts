@@ -5,7 +5,7 @@ import { breadcrumbSchema, faqSchema, organizationSchema } from '../components/l
 import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS, getTreatment } from '../data/clinic'
 import { speakableSchema } from '../lib/seo-engine'
 import type { Bindings } from '../lib/auth'
-import { listCollection } from '../lib/store'
+import { listPublic as listCollection } from '../lib/store'
 import { ENCYCLOPEDIA_DETAIL_SLUGS } from '../pages/encyclopedia'
 import { ENC_TERMS } from '../data/encyclopedia-terms'
 import { CONTENT_DATES, latestDate, contentUpdated } from '../data/content-dates'

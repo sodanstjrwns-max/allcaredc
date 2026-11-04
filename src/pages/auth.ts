@@ -1,4 +1,4 @@
-import { html } from 'hono/html'
+import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { CLINIC } from '../data/clinic'
 
@@ -18,9 +18,10 @@ function authShell(title: string, inner: any) {
   </section>`
 }
 
-export function LoginPage(next = '/', error?: string) {
+export function LoginPage(next = '/', error?: string, social = '') {
   const body = authShell('로그인', html`
     ${error ? html`<div style="background:#fdeaea;color:#c0392b;padding:12px 16px;border-radius:10px;margin-bottom:18px;font-size:14px">${error}</div>` : ''}
+    ${raw(social)}
     <form method="POST" action="/auth/login">
       <input type="hidden" name="next" value="${next}">
       <div class="field"><label>이메일</label><input type="email" name="email" required placeholder="name@example.com"></div>
@@ -32,14 +33,15 @@ export function LoginPage(next = '/', error?: string) {
   return Page({ title: '로그인 | 365올케어치과', description: '365올케어치과 회원 로그인', path: '/auth/login' }, body)
 }
 
-export function RegisterPage(next = '/', error?: string) {
+export function RegisterPage(next = '/', error?: string, social = '', v: { name?: string; email?: string; phone?: string } = {}) {
   const body = authShell('회원가입', html`
     ${error ? html`<div style="background:#fdeaea;color:#c0392b;padding:12px 16px;border-radius:10px;margin-bottom:18px;font-size:14px">${error}</div>` : ''}
+    ${raw(social)}
     <form method="POST" action="/auth/register">
       <input type="hidden" name="next" value="${next}">
-      <div class="field"><label>이름 <span class="req">*</span></label><input type="text" name="name" required></div>
-      <div class="field"><label>이메일 <span class="req">*</span></label><input type="email" name="email" required></div>
-      <div class="field"><label>전화번호 <span class="req">*</span></label><input type="tel" name="phone" required placeholder="010-0000-0000"></div>
+      <div class="field"><label>이름 <span class="req">*</span></label><input type="text" name="name" required value="${v.name || ''}"></div>
+      <div class="field"><label>이메일 <span class="req">*</span></label><input type="email" name="email" required value="${v.email || ''}"></div>
+      <div class="field"><label>전화번호 <span class="req">*</span></label><input type="tel" name="phone" required placeholder="010-0000-0000" value="${v.phone || ''}"></div>
       <div class="field"><label>비밀번호 <span class="req">*</span></label><input type="password" name="password" required minlength="6" placeholder="6자 이상"></div>
       <div class="field">
         <label class="checkbox-row"><input type="checkbox" name="agree_terms" required> <span>[필수] <a href="/terms" target="_blank" style="color:var(--brand-accent);text-decoration:underline">이용약관</a>에 동의합니다.</span></label>

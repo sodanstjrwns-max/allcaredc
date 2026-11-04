@@ -2,13 +2,15 @@ import { Hono } from 'hono'
 import { Bindings, getAdmin, setAdminSession, clearSession, secret } from '../lib/auth'
 import { verifyToken } from '../lib/auth'
 import { getCookie } from 'hono/cookie'
-import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary, r2GetBinary, getViews } from '../lib/store'
+import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary, r2GetBinary, getViews, isLive, kstInputToMs } from '../lib/store'
 import { notifySearchEngines } from '../lib/indexnow'
 import {
   AdminLogin, AdminDashboard, AdminReservations, AdminMembers, AdminCases, AdminCaseForm,
   AdminColumns, AdminColumnForm, AdminNotices, AdminNoticeForm,
-  AdminEvents, AdminEventForm, AdminPricing, AdminColumnCategories,
+  AdminEvents, AdminEventForm, AdminPricing, AdminColumnCategories, AdminSettings, AdminSchedule,
 } from '../pages/admin'
+import { getNotifySettings, saveNotifySettings, sendTelegram, notifyNewReservation } from '../lib/notify'
+import { getSchedule, saveSchedule, daysInMonth, defaultState, kstYm, validYm, type DayState } from '../lib/schedule'
 import { getColumnCategories, saveColumnCategories, slugifyCategory, CATEGORY_SLUG_RE } from '../lib/column-categories'
 import { loadPriceTable, savePriceTable } from '../lib/pricing'
 import type { PriceGroup } from '../data/clinic'
@@ -86,7 +88,11 @@ admin.get('/', async (c) => {
 })
 
 // ── 사이트 통계 (중앙 대시보드 연동) ──
-admin.get('/stats', async (c) => c.html(renderStatsPage(await fetchSiteStats())))
+admin.get('/stats', async (c) => {
+  const days = [7, 28, 90].includes(Number(c.req.query('days'))) ? Number(c.req.query('days')) : 28
+  const reservations = await listCollection<any>(c.env, 'reservations').catch(() => [])
+  return c.html(renderStatsPage(await fetchSiteStats(), { reservations, days }))
+})
 
 // ── 예약 ──
 admin.get('/reservations', async (c) => {
@@ -156,7 +162,7 @@ admin.post('/cases/new', async (c) => {
     ageGroup: String(form.ageGroup || ''), gender: String(form.gender || ''),
     category: String(form.category || ''), region: String(form.region || ''),
     doctor: String(form.doctor || ''), period: String(form.period || ''),
-    createdAt: Date.now(),
+    createdAt: Date.now(), ...parsePub(form),
   }
   // 이미지 업로드 → R2
   for (const field of ['panoBefore', 'panoAfter', 'intraBefore', 'intraAfter']) {
@@ -169,8 +175,8 @@ admin.post('/cases/new', async (c) => {
     }
   }
   await addToCollection(c.env, 'cases', item)
-  // 자동 색인: 새 케이스 등록 → 개별 사례 URL + 목록 통보 (백그라운드, 응답 지연 없음)
-  c.executionCtx.waitUntil(notifySearchEngines(`/cases/${item.id}`, '/cases'))
+  // 자동 색인: 공개된 케이스만 개별 사례 URL + 목록 통보 (백그라운드, 응답 지연 없음)
+  notifyIfLive(c, item, `/cases/${item.id}`, '/cases')
   return c.redirect('/admin/cases')
 })
 // 관리자 폼 미리보기용 케이스 이미지 서빙 (인증된 admin 영역 · 게이팅 없이 원본)
@@ -200,7 +206,7 @@ admin.post('/cases/:id/edit', async (c) => {
     ageGroup: String(form.ageGroup || ''), gender: String(form.gender || ''),
     category: String(form.category || ''), region: String(form.region || ''),
     doctor: String(form.doctor || ''), period: String(form.period || ''),
-    updatedAt: Date.now(),
+    updatedAt: Date.now(), ...parsePub(form),
   }
   // 새로 올린 파일만 R2 교체 — 비워두면 기존 사진 유지
   for (const field of ['panoBefore', 'panoAfter', 'intraBefore', 'intraAfter']) {
@@ -213,7 +219,7 @@ admin.post('/cases/:id/edit', async (c) => {
     }
   }
   await updateInCollection<CaseItem>(c.env, 'cases', id, patch)
-  c.executionCtx.waitUntil(notifySearchEngines(`/cases/${id}`, '/cases'))
+  notifyIfLive(c, patch, `/cases/${id}`, '/cases')
   return c.redirect('/admin/cases')
 })
 admin.post('/cases/:id/delete', async (c) => {
@@ -247,10 +253,10 @@ admin.post('/columns/new', async (c) => {
     keywords: parseKeywords(form.keywords),
     faqs: parseFaqs(form.faqs),
     relatedSlugs: parseRelatedSlugs(form.relatedSlugs),
-    published, createdAt: now, updatedAt: now,
-  })
-  // 자동 색인: 발행된 글만 검색엔진에 즉시 통보 (임시저장은 제외)
-  if (published) c.executionCtx.waitUntil(notifySearchEngines(`/column/${slug}`, '/column'))
+    published, publishAt: kstInputToMs(form.publishAt), createdAt: now, updatedAt: now,
+  } as any)
+  // 자동 색인: 지금 공개된 글만 검색엔진에 즉시 통보 (임시저장·예약은 제외)
+  if (published && isLive({ publishAt: kstInputToMs(form.publishAt) })) c.executionCtx.waitUntil(notifySearchEngines(`/column/${slug}`, '/column'))
   return c.redirect('/admin/columns')
 })
 admin.get('/columns/:id/edit', async (c) => {
@@ -275,10 +281,10 @@ admin.post('/columns/:id/edit', async (c) => {
     keywords: parseKeywords(form.keywords),
     faqs: parseFaqs(form.faqs),
     relatedSlugs: parseRelatedSlugs(form.relatedSlugs),
-    published, updatedAt: Date.now(),
-  })
-  // 자동 색인: 발행 상태로 수정된 글은 갱신 통보 (구글이 lastmod 보고 재크롤)
-  if (published) c.executionCtx.waitUntil(notifySearchEngines(`/column/${editSlug}`, '/column'))
+    published, publishAt: kstInputToMs(form.publishAt), updatedAt: Date.now(),
+  } as any)
+  // 자동 색인: 공개 상태로 수정된 글은 갱신 통보 (구글이 lastmod 보고 재크롤)
+  if (published && isLive({ publishAt: kstInputToMs(form.publishAt) })) c.executionCtx.waitUntil(notifySearchEngines(`/column/${editSlug}`, '/column'))
   return c.redirect('/admin/columns')
 })
 admin.post('/columns/:id/delete', async (c) => {
@@ -377,6 +383,8 @@ admin.post('/notices/new', async (c) => {
     id: uid('not_'), title: String(form.title || ''), body: String(form.body || ''),
     image, pinned: !!form.pinned, createdAt: Date.now(),
     popup: !!form.popup, popupUntil: String(form.popupUntil || '').trim() || undefined,
+    popupStart: String(form.popupStart || '').trim() || undefined, popupOrder: popupOrderOf(form.popupOrder),
+    ...parsePub(form),
   })
   return c.redirect('/admin/notices')
 })
@@ -392,6 +400,8 @@ admin.post('/notices/:id/edit', async (c) => {
     title: String(form.title || ''), body: String(form.body || ''),
     pinned: !!form.pinned,
     popup: !!form.popup, popupUntil: String(form.popupUntil || '').trim() || undefined,
+    popupStart: String(form.popupStart || '').trim() || undefined, popupOrder: popupOrderOf(form.popupOrder),
+    ...parsePub(form),
   }
   // 새 파일 업로드 시에만 이미지 교체, 없으면 URL 입력값 반영
   const file = form['imageFile'] as unknown as File
@@ -438,9 +448,9 @@ admin.post('/events/new', async (c) => {
     image: uploaded || (String(form.image || '').trim() || undefined),
     startDate: String(form.startDate || '').trim() || undefined,
     endDate: String(form.endDate || '').trim() || undefined,
-    pinned: !!form.pinned, createdAt: Date.now(),
+    pinned: !!form.pinned, createdAt: Date.now(), ...parsePub(form),
   })
-  c.executionCtx.waitUntil(notifySearchEngines(`/events/${id}`, '/events'))
+  notifyIfLive(c, parsePub(form), `/events/${id}`, '/events')
   return c.redirect('/admin/events')
 })
 admin.get('/events/:id/edit', async (c) => {
@@ -456,13 +466,13 @@ admin.post('/events/:id/edit', async (c) => {
     summary: String(form.summary || '').trim() || undefined,
     startDate: String(form.startDate || '').trim() || undefined,
     endDate: String(form.endDate || '').trim() || undefined,
-    pinned: !!form.pinned,
+    pinned: !!form.pinned, ...parsePub(form),
   }
   const uploaded = await uploadEventImage(c, form)
   if (uploaded) patch.image = uploaded
   else if (form.image !== undefined) patch.image = String(form.image || '').trim() || undefined
   await updateInCollection<EventItem>(c.env, 'events', c.req.param('id'), patch)
-  c.executionCtx.waitUntil(notifySearchEngines(`/events/${c.req.param('id')}`, '/events'))
+  notifyIfLive(c, patch, `/events/${c.req.param('id')}`, '/events')
   return c.redirect('/admin/events')
 })
 admin.post('/events/:id/delete', async (c) => {
@@ -493,6 +503,83 @@ admin.post('/pricing', async (c) => {
   await savePriceTable(c.env, clean)
   c.executionCtx.waitUntil(notifySearchEngines('/pricing', '/pricing'))
   return c.redirect('/admin/pricing?saved=1')
+})
+
+// 게시 상태·예약 발행 폼 값 → 저장 필드 (status 없음 = 게시)
+function parsePub(form: any): { status?: 'draft' | 'private'; publishAt?: number } {
+  const v = String(form.pubStatus || 'public')
+  const status = v === 'draft' ? 'draft' : v === 'private' ? 'private' : undefined
+  return { status, publishAt: kstInputToMs(form.publishAt) }
+}
+// 지금 공개된 항목만 검색엔진에 통보 (예약·임시저장·비공개는 제외)
+function notifyIfLive(c: any, item: any, path: string, list: string) {
+  if (isLive(item)) c.executionCtx.waitUntil(notifySearchEngines(path, list))
+}
+function popupOrderOf(v: any): number | undefined {
+  const n = parseInt(String(v ?? '').trim(), 10)
+  return isFinite(n) && n > 0 ? Math.min(n, 99) : undefined
+}
+
+// ── 진료일정 ──
+function shiftYm(ym: string, n: number) {
+  const [y, m] = ym.split('-').map(Number); const d = new Date(Date.UTC(y, m - 1 + n, 1))
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`
+}
+admin.get('/schedule', async (c) => {
+  const ym = validYm(c.req.query('ym')) ? String(c.req.query('ym')) : kstYm()
+  return c.html(AdminSchedule(await getSchedule(c.env), ym, shiftYm(ym, -1), shiftYm(ym, 1), c.req.query('ok') ? '저장했습니다. 달력 이미지와 진료일정 페이지에 바로 반영됩니다.' : undefined).toString())
+})
+admin.post('/schedule', async (c) => {
+  const ym = validYm(c.req.query('ym')) ? String(c.req.query('ym')) : kstYm()
+  const form = await c.req.parseBody()
+  const sc = await getSchedule(c.env)
+  for (const d of daysInMonth(ym)) {
+    const v = String(form[`d_${d}`] || '') as DayState
+    if (!['open', 'night', 'closed'].includes(v) || v === defaultState(d)) delete sc.days[d]
+    else sc.days[d] = v
+  }
+  const note = String(form.note || '').trim().slice(0, 60)
+  if (note) sc.notes[ym] = note; else delete sc.notes[ym]
+  sc.popupMonths = sc.popupMonths.filter(x => x !== ym)
+  if (form.popup) sc.popupMonths.push(ym)
+  await saveSchedule(c.env, sc)
+  return c.redirect(`/admin/schedule?ym=${ym}&ok=1`)
+})
+
+// ── 알림 설정 ──
+async function readNotifyForm(c: any) {
+  const form = await c.req.parseBody()
+  const emails = String(form.emails || '').split(/[\s,;]+/).map(x => x.trim().toLowerCase()).filter(x => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x)).slice(0, 10)
+  const st = {
+    emails,
+    telegramToken: String(form.telegramToken || '').trim() || undefined,
+    telegramChatId: String(form.telegramChatId || '').trim() || undefined,
+    remindOn: !!form.remindOn,
+    remindHours: Math.min(48, Math.max(1, parseInt(String(form.remindHours || '2'), 10) || 2)),
+  }
+  await saveNotifySettings(c.env, st)
+  return st
+}
+admin.get('/settings', async (c) => {
+  const MSG: Record<string, string> = { saved: '저장했습니다.', test: '저장하고 시험 알림을 보냈습니다. 메일함(스팸함 포함)과 텔레그램을 확인해 주세요.', found: '채팅 ID를 찾아 저장했습니다.', notfound: '채팅 ID를 찾지 못했습니다. 봇 대화방에서 메시지를 한 번 보낸 뒤 다시 눌러 주세요.' }
+  return c.html(AdminSettings(await getNotifySettings(c.env), MSG[c.req.query('ok') || ''] || undefined).toString())
+})
+admin.post('/settings', async (c) => { await readNotifyForm(c); return c.redirect('/admin/settings?ok=saved') })
+admin.post('/settings/test', async (c) => {
+  await readNotifyForm(c)
+  await notifyNewReservation(c.env, { name: '[시험] 알림 확인', phone: '010-0000-0000', treatment: '시험 발송', date: '', timeslot: '', message: '알림 설정 화면에서 보낸 시험 알림입니다. 실제 예약이 아닙니다.', source: '시험', createdAt: Date.now() })
+  return c.redirect('/admin/settings?ok=test')
+})
+admin.post('/settings/telegram-find', async (c) => {
+  const st = await readNotifyForm(c)
+  if (!st.telegramToken) return c.redirect('/admin/settings?ok=notfound')
+  const r: any = await fetch(`https://api.telegram.org/bot${st.telegramToken}/getUpdates`).then(x => x.json()).catch(() => null)
+  const upd = (r?.result || []).reverse().find((u: any) => u?.message?.chat?.id || u?.my_chat_member?.chat?.id)
+  const id = upd?.message?.chat?.id || upd?.my_chat_member?.chat?.id
+  if (!id) return c.redirect('/admin/settings?ok=notfound')
+  await saveNotifySettings(c.env, { ...st, telegramChatId: String(id) })
+  await sendTelegram({ ...st, telegramChatId: String(id) }, '✅ 365올케어치과 예약 알림이 연결되었습니다.')
+  return c.redirect('/admin/settings?ok=found')
 })
 
 function slugify(s: string): string {

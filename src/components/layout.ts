@@ -173,9 +173,11 @@ export function Header() {
                 <a href="/directions"><span class="ico"><i class="fa-solid fa-location-dot"></i></span><span><strong>오시는 길</strong><span>약수역 5번 출구</span></span></a>
                 <a href="/pricing"><span class="ico"><i class="fa-solid fa-won-sign"></i></span><span><strong>비급여 비용 안내</strong></span></a>
                 <a href="/faq"><span class="ico"><i class="fa-solid fa-circle-question"></i></span><span><strong>자주 묻는 질문</strong></span></a>
+                <a href="/schedule"><span class="ico"><i class="fa-solid fa-calendar-days"></i></span><span><strong>진료일정</strong><span>휴진·야간진료 달력</span></span></a>
                 <a href="/notice"><span class="ico"><i class="fa-solid fa-bullhorn"></i></span><span><strong>공지사항</strong></span></a>
                 <a href="/events"><span class="ico"><i class="fa-solid fa-gift"></i></span><span><strong>이벤트</strong><span>진행 중인 혜택</span></span></a>
                 <a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-tooth"></i></span><span><strong>셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>1분 구강나이 스캔</span></span></a>
+                <a href="https://allcaredc-2.ontheai.blog/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-blog"></i></span><span><strong>블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>올케어치과 소식·치아 이야기</span></span></a>
               </div>
             </div>
           </li>
@@ -210,9 +212,11 @@ export function Header() {
       <a href="/directions">오시는 길</a>
       <a href="/pricing">비용 안내</a>
       <a href="/faq">자주 묻는 질문</a>
+      <a href="/schedule">진료일정</a>
       <a href="/notice">공지사항</a>
       <a href="/events">이벤트</a>
       <a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener">셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;opacity:.6"></i></a>
+      <a href="https://allcaredc-2.ontheai.blog/" target="_blank" rel="noopener">블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;opacity:.6"></i></a>
     </div>
     <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:24px">예약 문의</a>
     <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:10px">${CLINIC.phone}</a>
@@ -244,6 +248,7 @@ export function Footer(path = '') {
             ${raw(CORE_TREATMENTS.map(t => `<li><a href="/treatments/${t.slug}">${t.name}</a></li>`).join(''))}
             <li><a href="/treatments">전체 진료보기</a></li>
             <li><a href="/doctors">의료진 소개</a></li>
+            <li><a href="https://allcaredc-2.ontheai.blog/" target="_blank" rel="noopener">블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.7"></i></a></li>
           </ul>
         </div>
         <div>
@@ -326,7 +331,7 @@ export function Footer(path = '') {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=799066fef2"></script>
+  <script src="/static/app.js?v=7e1bdd7dec"></script>
   `
 }
 

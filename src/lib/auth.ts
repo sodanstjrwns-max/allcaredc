@@ -12,6 +12,13 @@ export type Bindings = {
   RESEND_API_KEY?: string
   NOTIFICATION_EMAIL?: string
   SITE_URL?: string
+  CRON_KEY?: string
+  GOOGLE_CLIENT_ID?: string
+  GOOGLE_CLIENT_SECRET?: string
+  KAKAO_REST_KEY?: string
+  KAKAO_CLIENT_SECRET?: string
+  NAVER_CLIENT_ID?: string
+  NAVER_CLIENT_SECRET?: string
 }
 
 const enc = new TextEncoder()

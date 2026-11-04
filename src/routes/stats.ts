@@ -51,13 +51,18 @@ function deltaVal(delta: any, key: string): number | null {
 }
 
 // 증감 화살표 (invert=true: 값이 줄어드는 게 좋은 지표, 예: 평균 순위)
-function arrowHtml(d: number | null, invert = false, unit = ''): string {
-  if (d === null || d === 0) return '<span class="delta flat">— 직전 28일과 유사</span>'
+// 중앙 대시보드의 delta는 '직전 28일 대비 변화율(%)'이다. (2026-11-04 수정: 예전엔 단위 없이 표시돼
+//   -29%가 '29회 감소'처럼 읽혔음)
+function arrowHtml(d: number | null, invert = false, unit = '%'): string {
+  if (d === null || Math.abs(d) < 0.05) return '<span class="delta flat">— 직전 28일과 유사</span>'
   const good = invert ? d < 0 : d > 0
   const sym = d > 0 ? '▲' : '▼'
-  const mag = Math.abs(d) < 1 && unit === '' ? Math.abs(d).toFixed(2) : Math.abs(d) < 100 ? Math.abs(d).toFixed(1).replace(/\.0$/, '') : fmt(Math.abs(d))
+  const mag = Math.abs(d) < 100 ? Math.abs(d).toFixed(1).replace(/\.0$/, '') : fmt(Math.abs(d))
   return `<span class="delta ${good ? 'up' : 'down'}">${sym} ${mag}${unit} <small>vs 직전 28일</small></span>`
 }
+// 현재값과 변화율(%)로 직전 값 역산
+const prevFromPct = (cur: number, pctChange: number): number | null =>
+  pctChange <= -100 ? null : cur / (1 + pctChange / 100)
 
 // 일별 배열 정규화 ([3,5,..] 또는 [{date,clicks}...] 모두 허용)
 function dailyNums(arr: any, keys: string[]): number[] {
@@ -129,23 +134,27 @@ function buildInsights(d: any): string[] {
   const a = d.ga || {}
   const ai = d.ai || {}
   const dc = deltaVal(g.delta, 'clicks')
-  if (dc !== null && dc !== 0) {
+  if (dc !== null && Math.abs(dc) >= 0.5) {
+    const prev = prevFromPct(num(g.clicks), dc)
+    const span = prev !== null ? ` (${fmt(prev)}회 → ${fmt(num(g.clicks))}회)` : ''
     out.push(dc > 0
-      ? `최근 28일 검색 클릭이 직전 기간보다 ${fmt(Math.abs(dc))}회 늘었습니다. 상승 흐름입니다.`
-      : `최근 28일 검색 클릭이 직전 기간보다 ${fmt(Math.abs(dc))}회 줄었습니다. 콘텐츠 발행 주기를 점검해 보세요.`)
+      ? `최근 28일 검색 클릭이 직전 기간보다 ${Math.abs(dc).toFixed(1).replace(/\.0$/, '')}% 늘었습니다${span}. 상승 흐름입니다.`
+      : `최근 28일 검색 클릭이 직전 기간보다 ${Math.abs(dc).toFixed(1).replace(/\.0$/, '')}% 줄었습니다${span}. 콘텐츠 발행 주기를 점검해 보세요.`)
   } else if (num(g.clicks) > 0) {
     out.push(`최근 28일 검색 클릭은 ${fmt(num(g.clicks))}회로 직전 기간과 비슷한 수준입니다.`)
   }
   const tq = Array.isArray(g.topQueries) && g.topQueries.length ? rowOf(g.topQueries[0], ['query', 'name', 'key']) : null
   if (tq && tq.name) out.push(`가장 많이 유입된 검색어는 "${tq.name}"${tq.clicks ? ` (클릭 ${fmt(tq.clicks)}회)` : ''}입니다.`)
   const dp = deltaVal(g.delta, 'position')
-  if (dp !== null && Math.abs(dp) >= 0.1) {
-    out.push(dp < 0
-      ? `평균 검색 순위가 ${Math.abs(dp).toFixed(1)}계단 올랐습니다 (숫자가 낮을수록 상위 노출).`
-      : `평균 검색 순위가 ${Math.abs(dp).toFixed(1)}계단 내려갔습니다. 주요 키워드 경쟁 상황을 지켜보는 중입니다.`)
+  const pos = num(g.position)
+  const prevPos = dp !== null && pos > 0 ? prevFromPct(pos, dp) : null
+  if (prevPos !== null && Math.abs(pos - prevPos) >= 0.1) {
+    out.push(pos < prevPos
+      ? `평균 검색 순위가 ${prevPos.toFixed(1)}위에서 ${pos.toFixed(1)}위로 올랐습니다 (숫자가 낮을수록 상위 노출).`
+      : `평균 검색 순위가 ${prevPos.toFixed(1)}위에서 ${pos.toFixed(1)}위로 내려갔습니다. 주요 키워드 경쟁 상황을 지켜보는 중입니다.`)
   }
   if (num(ai.sessions) > 0) {
-    out.push(`ChatGPT·Perplexity 등 AI 검색에서 ${fmt(num(ai.sessions))}회 방문이 발생했습니다 (전체의 ${pct(ai.share)}). AEO 세팅이 작동하고 있다는 신호입니다.`)
+    out.push(`ChatGPT·Perplexity 등 AI 검색에서 ${fmt(num(ai.sessions))}회 방문이 발생했습니다 (전체의 ${pct1(ai.share)}). AEO 세팅이 작동하고 있다는 신호입니다.`)
   }
   if (num(a.leads) > 0) out.push(`최근 28일 온라인 상담(리드) 신청은 ${fmt(num(a.leads))}건입니다.`)
   if (out.length === 0) out.push('지표가 쌓이는 중입니다. 데이터가 충분해지면 자동 분석이 표시됩니다.')
@@ -231,7 +240,72 @@ function claritySection(c: any): string {
 }
 
 // ── 페이지 렌더 ──
-export function renderStatsPage(d: any): string {
+export type LocalStats = { reservations: any[]; days: number }
+
+// 경로별 예약 (자체 예약 기록 기준 · 기간 선택)
+function localSourceSection(local?: LocalStats): string {
+  if (!local) return ''
+  const days = local.days
+  const since = Date.now() - days * 86400000
+  const items = local.reservations.filter((r) => num(r?.createdAt) >= since)
+  const by: Record<string, { n: number; visited: number }> = {}
+  for (const r of items) {
+    const k = String(r?.source || '').trim() || '기록 없음'
+    by[k] = by[k] || { n: 0, visited: 0 }
+    by[k].n++
+    if (r?.status === '내원') by[k].visited++
+  }
+  const rows = Object.entries(by).sort((a, b) => b[1].n - a[1].n)
+  const tabs = [7, 28, 90].map((n) => `<a href="/admin/stats?days=${n}" class="rng${n === days ? ' on' : ''}">${n}일</a>`).join('')
+  const body = rows.length
+    ? `<table><thead><tr><th>유입 경로</th><th class="num">예약</th><th class="num">비중</th><th class="num">내원</th></tr></thead><tbody>${rows.map(([k, v]) =>
+        `<tr><td class="txt">${esc(k)}</td><td class="num">${fmt(v.n)}</td><td class="num">${Math.round((v.n / items.length) * 100)}%</td><td class="num">${fmt(v.visited)}</td></tr>`).join('')}</tbody></table>`
+    : `<div class="empty">최근 ${days}일 예약이 없습니다.</div>`
+  return `<section class="card">
+    <div class="sec-head"><h2>유입 경로별 예약 <small>자체 예약 기록 · 최근 ${days}일 · ${fmt(items.length)}건</small></h2><div class="rngs">${tabs}</div></div>
+    ${body}
+    <p class="note">2026-11-04부터 예약 접수 때 처음 들어온 경로(네이버 검색·플레이스·블로그·인스타그램·광고 등)를 함께 기록합니다. 그 전에 들어온 예약은 '기록 없음'으로 표시됩니다. 내원 수는 예약 관리에서 상태를 '내원'으로 바꾼 건입니다.</p>
+  </section>`
+}
+
+// GA 채널별 방문 (중앙 대시보드 · 28일)
+function channelSection(d: any): string {
+  const ch = Array.isArray(d?.channels) ? d.channels : []
+  const fp = d?.firstParty || null
+  if (!ch.length && !fp) return ''
+  const total = ch.reduce((a: number, x: any) => a + num(x?.sessions), 0)
+  const rows = ch.map((x: any) => `<tr><td class="txt">${esc(x.channel)}</td><td class="num">${fmt(num(x.sessions))}</td><td class="num">${fmt(num(x.users))}</td><td class="num">${total ? Math.round((num(x.sessions) / total) * 100) : 0}%</td></tr>`).join('')
+  const fpHtml = fp ? `<div class="mini-grid">
+      <div><b>${fmt(num(fp.booking))}</b><span>예약 버튼 클릭</span></div>
+      <div><b>${fmt(num(fp.tel))}</b><span>전화 버튼 클릭</span></div>
+      <div><b>${fmt(num(fp.formStart))}</b><span>예약 양식 작성 시작</span></div>
+      <div><b>${fmt(num(fp.formSubmit))}</b><span>예약 양식 제출</span></div>
+    </div><p class="note">버튼 클릭 수는 자체 수집 기준(${esc(fp.since || '')} ~ ${esc(fp.until || '')})입니다.</p>` : ''
+  return `<section class="card">
+    <h2>어디서 들어왔나 <small>GA · 최근 28일 · 방문 기준</small></h2>
+    ${rows ? `<table><thead><tr><th>채널</th><th class="num">세션</th><th class="num">사용자</th><th class="num">비중</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
+    ${fpHtml}
+  </section>`
+}
+
+// 네이버 (플레이스 순위·검색 트렌드)
+function naverSection(d: any): string {
+  const nv = d?.naver
+  if (!nv) return ''
+  const cur = Array.isArray(nv?.place?.current) ? nv.place.current : []
+  const trends = Array.isArray(nv?.trends) ? nv.trends : []
+  if (!cur.length && !trends.length) return ''
+  const place = cur.length ? `<table><thead><tr><th>키워드</th><th class="num">플레이스 순위</th></tr></thead><tbody>${cur.map((x: any) =>
+    `<tr><td class="txt">${esc(x.keyword)}</td><td class="num">${x.rank ? fmt(num(x.rank)) + '위' : '순위 밖'}</td></tr>`).join('')}</tbody></table>` : ''
+  const tr = trends.length ? `<table><thead><tr><th>검색어</th><th class="num">전월 대비</th></tr></thead><tbody>${trends.map((x: any) =>
+    `<tr><td class="txt">${esc(x.keyword)}</td><td class="num">${typeof x.momPct === 'number' ? (x.momPct > 0 ? '▲ ' : x.momPct < 0 ? '▼ ' : '') + Math.abs(x.momPct).toFixed(1).replace(/\.0$/, '') + '%' : '—'}</td></tr>`).join('')}</tbody></table>` : ''
+  return `<section class="tables">
+    <div class="card"><h3>네이버 플레이스 순위 <small>${esc(nv?.place?.checkedAt || '')}</small></h3>${place || '<div class="empty">데이터 없음</div>'}</div>
+    <div class="card"><h3>네이버 검색량 추이 <small>데이터랩</small></h3>${tr || '<div class="empty">데이터 없음</div>'}</div>
+  </section>`
+}
+
+export function renderStatsPage(d: any, local?: LocalStats): string {
   const configured = !!(d && d.configured !== false)
   const g = (d && d.gsc) || {}
   const a = (d && d.ga) || {}
@@ -252,10 +326,13 @@ export function renderStatsPage(d: any): string {
     <div class="card metric"><span class="m-label">방문자 <small>GA · 28일</small></span><strong>${V(!!hasGa, fmt(num(a.users)))}</strong>${hasGa ? arrowHtml(deltaVal(a.delta, 'users')) : ''}</div>
     <div class="card metric"><span class="m-label">세션</span><strong>${V(!!hasGa, fmt(num(a.sessions)))}</strong>${hasGa ? arrowHtml(deltaVal(a.delta, 'sessions')) : ''}</div>
     <div class="card metric"><span class="m-label">상담 신청 <small>리드</small></span><strong>${V(!!hasGa, fmt(num(a.leads)))}</strong></div>
-    <div class="card metric"><span class="m-label">AI 유입 세션 <small>ChatGPT 등</small></span><strong>${V(!!hasAi, fmt(num(ai.sessions)))}</strong>${hasAi && num(ai.sessions) > 0 ? `<span class="delta flat">전체의 ${pct(ai.share)}</span>` : ''}</div>
+    <div class="card metric"><span class="m-label">AI 유입 세션 <small>ChatGPT 등</small></span><strong>${V(!!hasAi, fmt(num(ai.sessions)))}</strong>${hasAi && num(ai.sessions) > 0 ? `<span class="delta flat">전체의 ${pct1(ai.share)}</span>` : ''}</div>
   </div>`
 
-  const queries = Array.isArray(g.topQueries) ? g.topQueries.slice(0, 10).map((x: any) => rowOf(x, ['query', 'name', 'key'])) : []
+  // 노출순 정렬 (2026-11-04 원장 요청) — 받은 목록 안에서 노출 많은 순, 같으면 클릭순
+  const queries = Array.isArray(g.topQueries)
+    ? g.topQueries.map((x: any) => rowOf(x, ['query', 'name', 'key'])).sort((a: any, b: any) => b.impressions - a.impressions || b.clicks - a.clicks).slice(0, 10)
+    : []
   const pages = Array.isArray(g.topPages) ? g.topPages.slice(0, 10).map((x: any) => rowOf(x, ['page', 'url', 'path', 'name', 'key'])) : []
   const aiRows = aiSourceRows(ai.bySource)
   const aiTotal = aiRows.reduce((s, r) => s + r[1], 0)
@@ -266,7 +343,10 @@ export function renderStatsPage(d: any): string {
   const queryRows = queries.map((r, i) =>
     `<tr><td class="rank">${i + 1}</td><td class="txt">${esc(r.name)}</td><td class="num">${fmt(r.clicks)}</td><td class="num">${fmt(r.impressions)}</td></tr>`).join('')
   const pageRows = pages.map((r, i) =>
-    `<tr><td class="rank">${i + 1}</td><td class="txt">${esc(r.name)}</td><td class="num">${fmt(r.clicks)}</td><td class="num">${fmt(r.impressions)}</td></tr>`).join('')
+    `<tr><td class="rank">${i + 1}</td><td class="txt">${esc(String(r.name).replace(/^https?:\/\/[^/]+/, '') || '/')}</td><td class="num">${fmt(r.clicks)}</td><td class="num">${fmt(r.impressions)}</td></tr>`).join('')
+  const pageNote = pages.length === 1
+    ? `<p class="note">구글 검색에서 클릭·노출이 기록된 페이지가 현재 홈 1개뿐입니다. 집계 오류가 아니라, 구글이 아직 다른 페이지를 검색 결과에 거의 보여 주지 않는다는 뜻입니다(서치콘솔 '페이지' 보고서와 같은 값).</p>`
+    : ''
   const aiTableRows = aiTotal > 0 ? aiRows.map(([label, v]) =>
     `<tr><td class="txt">${label}</td><td class="num">${fmt(v)}</td><td class="num">${aiTotal ? Math.round((v / aiTotal) * 100) : 0}%</td></tr>`).join('') : ''
 
@@ -350,6 +430,14 @@ td.txt{word-break:break-all}
 .clarity-link{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--accent);text-decoration:none;border:1px solid var(--border);padding:6px 12px;border-radius:8px;background:var(--card)}
 .clarity-link:hover{border-color:var(--accent)}
 .clarity .grid.metrics{margin-bottom:12px}
+h2 small,h3 small{font-size:.75rem;font-weight:600;color:var(--sub);margin-left:6px}
+.note{font-size:.8rem;color:var(--sub);margin-top:10px;line-height:1.6}
+.sec-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px}.sec-head h2{margin-bottom:0}
+.rngs{margin-left:auto;display:flex;gap:6px}.rng{font-size:.8rem;font-weight:700;text-decoration:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;color:var(--sub);background:var(--card)}
+.rng.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.mini-grid div{border:1px solid var(--border);border-radius:10px;padding:12px}
+.mini-grid b{display:block;font-size:1.25rem}.mini-grid span{font-size:.78rem;color:var(--sub)}
+@media(max-width:860px){.mini-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:860px){
   .grid.metrics{grid-template-columns:repeat(2,1fr)}
   .charts,.tables{grid-template-columns:1fr}
@@ -380,11 +468,17 @@ td.txt{word-break:break-all}
     <div class="card"><h3>일별 방문자</h3>${sparkline(usersDaily, '#0e4f8a')}</div>
   </section>
 
+  ${localSourceSection(local)}
+
+  ${channelSection(d)}
+
+  ${naverSection(d)}
+
   ${claritySection(clarity)}
 
   <section class="tables">
-    <div class="card"><h3>상위 검색어 TOP 10</h3>${tbl(queryRows, '검색어 데이터가 쌓이는 중입니다', '<th></th><th>검색어</th><th class="num">클릭</th><th class="num">노출</th>')}</div>
-    <div class="card"><h3>상위 페이지 TOP 10</h3>${tbl(pageRows, '페이지 데이터가 쌓이는 중입니다', '<th></th><th>페이지</th><th class="num">클릭</th><th class="num">노출</th>')}</div>
+    <div class="card"><h3>상위 검색어 <small>노출순</small></h3>${tbl(queryRows, '검색어 데이터가 쌓이는 중입니다', '<th></th><th>검색어</th><th class="num">클릭</th><th class="num">노출</th>')}</div>
+    <div class="card"><h3>상위 페이지 TOP 10</h3>${tbl(pageRows, '페이지 데이터가 쌓이는 중입니다', '<th></th><th>페이지</th><th class="num">클릭</th><th class="num">노출</th>')}${pageNote}</div>
   </section>
 
   <section class="card">

@@ -2,6 +2,36 @@ import { html, raw } from 'hono/html'
 import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName, type PriceGroup, type ColumnCategory } from '../data/clinic'
 import { eventStatus } from './event'
 import { POPUP_MAX, kstToday, allActivePopupNotices } from './notice'
+import { isLive, msToKstInput } from '../lib/store'
+import { type Schedule, daysInMonth, stateOf, defaultState, scheduleVersion } from '../lib/schedule'
+
+// ── 게시 상태 · 예약 발행 공통 (2026-11-04 원장 요청) ──
+// 목록 배지: 임시저장 / 비공개 / 예약(시각) / 게시
+export function pubBadge(x: any): string {
+  if (x?.status === 'draft' || (x?.published === false && !x?.status)) return '<span class="badge done">임시저장</span>'
+  if (x?.status === 'private') return '<span class="badge done" style="background:#f3e3e3;color:#a33">비공개</span>'
+  if (x?.publishAt && Number(x.publishAt) > Date.now()) {
+    const t = new Date(Number(x.publishAt)).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' })
+    return `<span class="badge" style="background:#fbf3e6;color:#8a6a35"><i class="fa-regular fa-clock" style="font-size:10px;margin-right:3px"></i>예약 ${t}</span>`
+  }
+  return '<span class="badge new">게시</span>'
+}
+// 입력 블록: 게시 / 임시저장 / 비공개 + 예약 발행 일시
+function pubBlock(x: any, hint = ''): string {
+  const st = x?.status === 'draft' ? 'draft' : x?.status === 'private' ? 'private' : 'public'
+  const r = (v: string, label: string, desc: string) => `<label class="checkbox-row" style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;cursor:pointer"><input type="radio" name="pubStatus" value="${v}"${st === v ? ' checked' : ''} style="margin-top:4px"> <span><strong>${label}</strong> <span style="font-size:12px;color:var(--gray-600)">${desc}</span></span></label>`
+  return `<div class="field pub-box" style="background:#f7f4ec;border:1px solid var(--line,#e6e0d2);border-radius:8px;padding:16px 18px 12px;margin:6px 0 16px">
+    <p style="font-weight:700;margin-bottom:10px"><i class="fa-solid fa-eye" style="color:var(--gold,#b08d57);margin-right:6px"></i>게시 상태</p>
+    ${r('public', '게시', '홈페이지에 공개')}
+    ${r('draft', '임시저장', '작성 중 · 홈페이지에 안 보임')}
+    ${r('private', '비공개', '검토·보류 · 홈페이지에 안 보임')}
+    <div style="margin-top:10px">
+      <label style="font-size:13px;color:var(--gray-600)">예약 발행 일시 <span style="opacity:.7">(게시 상태일 때만 · 비우면 저장 즉시 공개)</span></label>
+      <input type="datetime-local" name="publishAt" value="${msToKstInput(x?.publishAt)}" style="margin-top:6px;max-width:260px">
+      ${hint ? `<p style="font-size:12px;color:var(--gray-600);margin-top:6px">${hint}</p>` : ''}
+    </div>
+  </div>`
+}
 
 // 관리자 셸 (사이드바)
 function adminShell(active: string, title: string, content: any) {
@@ -16,6 +46,8 @@ function adminShell(active: string, title: string, content: any) {
     ['events', '이벤트', 'gift', '/admin/events'],
     ['pricing', '비급여 수가', 'won-sign', '/admin/pricing'],
     ['members', '회원 관리', 'users', '/admin/members'],
+    ['schedule', '진료일정', 'calendar-days', '/admin/schedule'],
+    ['settings', '알림 설정', 'bell', '/admin/settings'],
   ]
   return html`<!DOCTYPE html>
 <html lang="ko"><head>
@@ -112,7 +144,7 @@ function adminShell(active: string, title: string, content: any) {
   </aside>
   <main class="admin-main">${content}</main>
 </div>
-<script src="/static/app.js?v=799066fef2"></script>
+<script src="/static/app.js?v=7e1bdd7dec"></script>
 </body></html>`
 }
 
@@ -218,27 +250,68 @@ export function AdminDashboard(stats: {
 
 // ── 예약 관리 ──
 const esc = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-// 예약 상태 5단계 (권민수 대표원장 요청)
-export const RES_STATUSES = ['신규', '연락시도1', '연락시도2', '예약확정', '종결'] as const
+// 예약 상태 (권민수 대표원장 요청 5단계 + 2026-11-04 내원·노쇼·취소 추가 → 내원율 집계)
+export const RES_STATUSES = ['신규', '연락시도1', '연락시도2', '예약확정', '내원', '노쇼', '취소', '종결'] as const
 // 진행중(미종결) 상태 = 경과시간 카운트 대상
 const RES_OPEN = new Set(['신규', '연락시도1', '연락시도2'])
 function resStatusClass(s: string) {
   if (s === '신규') return 'new'
   if (s === '예약확정') return 'confirm'
-  if (s === '종결') return 'done'
+  if (s === '내원') return 'visited'
+  if (s === '노쇼') return 'noshow'
+  if (s === '취소' || s === '종결') return 'done'
   return 'trying' // 연락시도1/2
+}
+// 희망일(YYYY-MM-DD 또는 YYYY.MM.DD 등)을 YYYY-MM-DD로
+function resDate(v: any): string {
+  const m = String(v || '').match(/(\d{4})\D?(\d{1,2})\D?(\d{1,2})/)
+  return m ? `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}` : ''
 }
 
 export function AdminReservations(items: any[]) {
+  const today = kstToday()
   const cnt = (s: string) => items.filter(r => (r.status || '신규') === s).length
   const openCount = items.filter(r => RES_OPEN.has(r.status || '신규')).length
+  // 희망일이 지났는데 아직 결과(내원·노쇼·취소·종결)가 기록되지 않은 예약
+  const isOverdue = (r: any) => { const st = r.status || '신규'; const d = resDate(r.date); return !!d && d < today && (RES_OPEN.has(st) || st === '예약확정') }
+  const overdue = items.filter(isOverdue).length
+  const visited = cnt('내원'), noshow = cnt('노쇼'), canceled = cnt('취소')
+  const closedN = visited + noshow + canceled
+  const visitRate = closedN ? Math.round((visited / closedN) * 100) : null
   return adminShell('reservations', '예약 관리', html`
-    <div class="admin-head"><h1>예약 관리</h1><span style="color:var(--gray-600)">진행중 ${openCount}건 · 전체 ${items.length}건</span></div>
+    <style>
+      .badge.visited{background:#e3f4ea;color:#1f7a4d}.badge.noshow{background:#fde2e1;color:#c0392b}
+      .res-overdue{display:inline-block;margin-top:4px;padding:2px 8px;font-size:11px;font-weight:700;border-radius:999px;background:#fde2e1;color:#c0392b}
+      .res-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 20px;border-bottom:1px solid var(--gray-100)}
+      .res-tools input{font-size:13px;padding:7px 10px;border:1px solid var(--gray-100);border-radius:6px;font-family:inherit}
+      .res-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+      .res-sum div{background:#fffeee;border:1px solid var(--gray-100);border-radius:12px;padding:14px 16px}
+      .res-sum b{display:block;font-size:1.5rem;color:var(--brand)}.res-sum span{font-size:12.5px;color:var(--gray-600)}
+      @media(max-width:768px){.res-sum{grid-template-columns:1fr 1fr}}
+    </style>
+    <div class="admin-head"><h1>예약 관리</h1><span style="color:var(--gray-600)">진행중 ${openCount}건 · 확인 필요 ${overdue}건 · 전체 ${items.length}건</span></div>
+    <div class="res-sum">
+      <div><b>${openCount}</b><span>진행중 (신규·연락시도)</span></div>
+      <div><b style="${overdue ? 'color:#c0392b' : ''}">${overdue}</b><span>희망일 지남 · 결과 미기록</span></div>
+      <div><b>${visited}</b><span>내원 · 노쇼 ${noshow} · 취소 ${canceled}</span></div>
+      <div><b>${visitRate === null ? '—' : visitRate + '%'}</b><span>내원율 (내원 ÷ 내원·노쇼·취소)</span></div>
+    </div>
     ${items.length === 0 ? html`<div class="admin-card"><p style="color:var(--gray-600);text-align:center;padding:40px">접수된 예약이 없습니다.</p></div>` : html`
     <div class="admin-card" style="padding:0;overflow:hidden">
       <div style="display:flex;gap:6px;padding:14px 20px;border-bottom:1px solid var(--gray-100);flex-wrap:wrap">
         <button type="button" class="btn-sm btn-outline res-filter active" data-f="all">전체 (${items.length})</button>
+        <button type="button" class="btn-sm btn-outline res-filter" data-f="overdue" style="${overdue ? 'color:#c0392b;border-color:#e8b4b0' : ''}">확인 필요 (${overdue})</button>
         ${raw(RES_STATUSES.map(s => `<button type="button" class="btn-sm btn-outline res-filter" data-f="${s}">${s} (${cnt(s)})</button>`).join(''))}
+      </div>
+      <div class="res-tools">
+        <input type="search" id="resQ" placeholder="이름·연락처 검색" style="min-width:200px">
+        <span style="font-size:13px;color:var(--gray-600)">접수일</span>
+        <input type="date" id="resFrom"> <span style="color:var(--gray-400)">~</span> <input type="date" id="resTo">
+        <button type="button" class="btn-sm btn-outline" data-range="7">최근 7일</button>
+        <button type="button" class="btn-sm btn-outline" data-range="30">30일</button>
+        <button type="button" class="btn-sm btn-outline" data-range="90">90일</button>
+        <button type="button" class="btn-sm" id="resReset" style="color:var(--gray-600)">초기화</button>
+        <span id="resShown" style="margin-left:auto;font-size:13px;color:var(--gray-600)"></span>
       </div>
       <div style="overflow-x:auto"><table><thead><tr><th>접수 / 경과</th><th>이름·연락처</th><th>진료·희망</th><th>문의내용</th><th>상태·담당·메모</th></tr></thead><tbody>
       ${raw(items.map(r => {
@@ -247,6 +320,7 @@ export function AdminReservations(items: any[]) {
         const phoneDigits = String(r.phone || '').replace(/[^0-9]/g, '')
         const msg = esc(r.message)
         const isOpen = RES_OPEN.has(status)
+        const od = isOverdue(r)
         // 경과시간 배지 (진행중일 때만): 60분 초과 노랑, 4시간 초과 빨강
         const mins = Math.floor((Date.now() - (r.createdAt || Date.now())) / 60000)
         const elapsedTxt = mins < 60 ? `${mins}분 전` : mins < 1440 ? `${Math.floor(mins / 60)}시간 ${mins % 60}분 전` : `${Math.floor(mins / 1440)}일 전`
@@ -255,10 +329,12 @@ export function AdminReservations(items: any[]) {
           ? `<span class="elapsed ${level}">${level === 'red' ? '<i class="fa-solid fa-triangle-exclamation"></i> ' : level === 'yellow' ? '<i class="fa-solid fa-clock"></i> ' : ''}${elapsedTxt}</span>`
           : `<span style="color:var(--gray-400);font-size:12px">${elapsedTxt}</span>`
         const statusOpts = RES_STATUSES.map(s => `<option value="${s}"${s === status ? ' selected' : ''}>${s}</option>`).join('')
-        return `<tr data-status="${esc(status)}">
+        const created = new Date((r.createdAt || 0) + 9 * 3600000).toISOString().slice(0, 10)
+        const src = r.source ? `<br><span style="color:var(--gray-400);font-size:11px">유입: ${esc(r.source)}</span>` : ''
+        return `<tr data-status="${esc(status)}" data-overdue="${od ? '1' : ''}" data-created="${created}" data-q="${esc(String(r.name || '') + ' ' + phoneDigits + ' ' + String(r.phone || ''))}">
         <td style="white-space:nowrap">${d.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}<br><span style="color:var(--gray-400);font-size:12px">${d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' })}</span><br>${elapsedBadge}</td>
-        <td><strong>${esc(r.name)}</strong>${r.email ? `<br><span style="color:var(--gray-400);font-size:12px">${esc(r.email)}</span>` : ''}<br><a href="tel:${phoneDigits}" style="color:var(--brand-accent);font-weight:600"><i class="fa-solid fa-phone" style="font-size:11px"></i> ${esc(r.phone)}</a></td>
-        <td style="white-space:nowrap">${esc(r.treatment)}<br><span style="color:var(--gray-400);font-size:12px">${esc(r.date) || '희망일 무관'} ${esc(r.timeslot) || ''}</span></td>
+        <td><strong>${esc(r.name)}</strong>${r.email ? `<br><span style="color:var(--gray-400);font-size:12px">${esc(r.email)}</span>` : ''}<br><a href="tel:${phoneDigits}" style="color:var(--brand-accent);font-weight:600"><i class="fa-solid fa-phone" style="font-size:11px"></i> ${esc(r.phone)}</a>${src}</td>
+        <td style="white-space:nowrap">${esc(r.treatment)}<br><span style="color:var(--gray-400);font-size:12px">${esc(r.date) || '희망일 무관'} ${esc(r.timeslot) || ''}</span>${od ? '<br><span class="res-overdue"><i class="fa-solid fa-calendar-xmark"></i> 희망일 지남</span>' : ''}</td>
         <td style="max-width:220px">${msg ? `<span title="${msg}" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;color:var(--gray-600)">${msg}</span>` : '<span style="color:var(--gray-400)">-</span>'}</td>
         <td style="min-width:230px">
           <form method="POST" action="/admin/reservations/${r.id}/note">
@@ -272,16 +348,37 @@ export function AdminReservations(items: any[]) {
         </td></tr>`
       }).join(''))}
       </tbody></table></div>
+      <p id="resNone" hidden style="text-align:center;color:var(--gray-600);padding:30px">조건에 맞는 예약이 없습니다.</p>
     </div>
     <script>
       (function(){
         var btns=document.querySelectorAll('.res-filter');
         var rows=document.querySelectorAll('tbody tr[data-status]');
-        btns.forEach(function(b){b.addEventListener('click',function(){
-          btns.forEach(function(x){x.classList.remove('active')});b.classList.add('active');
-          var f=b.getAttribute('data-f');
-          rows.forEach(function(r){r.style.display=(f==='all'||r.getAttribute('data-status')===f)?'':'none'});
+        var q=document.getElementById('resQ'),from=document.getElementById('resFrom'),to=document.getElementById('resTo'),shown=document.getElementById('resShown'),none=document.getElementById('resNone');
+        var f='all';
+        function apply(){
+          var term=(q.value||'').trim().toLowerCase(), digits=term.replace(/[^0-9]/g,''), a=from.value, b=to.value, n=0;
+          rows.forEach(function(r){
+            var st=r.getAttribute('data-status'), ok=f==='all'||(f==='overdue'?r.getAttribute('data-overdue')==='1':st===f);
+            var c=r.getAttribute('data-created');
+            if(ok&&a&&c<a) ok=false; if(ok&&b&&c>b) ok=false;
+            if(ok&&term){ var hay=(r.getAttribute('data-q')||'').toLowerCase(); ok=hay.indexOf(term)>=0||(digits.length>=3&&hay.indexOf(digits)>=0); }
+            r.style.display=ok?'':'none'; if(ok) n++;
+          });
+          shown.textContent=n+'건 표시'; none.hidden=n!==0;
+        }
+        btns.forEach(function(x){x.addEventListener('click',function(){
+          btns.forEach(function(y){y.classList.remove('active')});x.classList.add('active');
+          f=x.getAttribute('data-f'); apply();
         })});
+        q.addEventListener('input',apply); from.addEventListener('change',apply); to.addEventListener('change',apply);
+        function ymd(d){return new Date(d.getTime()+9*3600000).toISOString().slice(0,10);}
+        document.querySelectorAll('[data-range]').forEach(function(x){x.addEventListener('click',function(){
+          var days=parseInt(x.getAttribute('data-range'),10), now=new Date();
+          from.value=ymd(new Date(now.getTime()-(days-1)*86400000)); to.value=ymd(now); apply();
+        })});
+        document.getElementById('resReset').addEventListener('click',function(){q.value='';from.value='';to.value='';apply();});
+        apply();
       })();
     </script>`}
   `)
@@ -297,7 +394,7 @@ export function AdminMembers(users: any[]) {
       ${raw(users.map(u => `<tr>
         <td>${new Date(u.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
         <td><strong>${u.name}</strong></td><td>${u.email}</td><td>${u.phone || '-'}</td>
-        <td><span class="badge done">${u.provider === 'google' ? 'Google' : '이메일'}</span></td>
+        <td><span class="badge done">${({ google: '구글', kakao: '카카오', naver: '네이버' } as Record<string, string>)[u.provider] || '이메일'}</span></td>
         <td>${u.marketing ? '동의' : '-'}</td></tr>`).join(''))}
       </tbody></table>`}
     </div>
@@ -310,12 +407,14 @@ export function AdminCases(items: any[], views: Record<string, number> = {}) {
     <div class="admin-head"><h1>비포애프터</h1><a href="/admin/cases/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 사례</a></div>
     <div class="admin-card">
       ${items.length === 0 ? html`<p style="color:var(--gray-600);text-align:center;padding:40px">등록된 사례가 없습니다.</p>` : html`
-      <table><thead><tr><th>등록일</th><th>제목</th><th>진료</th><th>나이/성별</th><th>담당</th><th>조회수</th><th>관리</th></tr></thead><tbody>
+      <p style="font-size:13px;color:var(--gray-600);margin-bottom:10px">전체 ${items.length}건 · 공개 ${items.filter(x => isLive(x)).length}건</p>
+      <table><thead><tr><th>등록일</th><th>제목</th><th>진료</th><th>나이/성별</th><th>담당</th><th>조회수</th><th>상태</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(c => `<tr>
         <td>${new Date(c.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
         <td><strong>${c.title}</strong></td><td>${TREATMENTS.find(t=>t.slug===c.category)?.name||c.category}</td>
         <td>${c.ageGroup || '-'} ${c.gender || ''}</td><td>${DOCTORS.find(d=>d.slug===c.doctor)?.name||'-'}</td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
+        <td>${pubBadge(c)}</td>
         <td style="white-space:nowrap"><a href="/admin/cases/${c.id}/edit" class="btn-sm" style="color:var(--gold-600);text-decoration:none">수정</a> <form method="POST" action="/admin/cases/${c.id}/delete" style="display:inline" onsubmit="return confirm('삭제하시겠습니까?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form></td></tr>`).join(''))}
       </tbody></table>`}
     </div>
@@ -363,6 +462,7 @@ export function AdminCaseForm(item?: any) {
           ${raw(photoField('intraBefore', '구내포토 — 치료 전'))}
           ${raw(photoField('intraAfter', '구내포토 — 치료 후'))}
         </div>
+        ${raw(pubBlock(it, '환자 사진이 들어가는 글이라, 동의·가림 처리를 확인하기 전에는 <strong>임시저장</strong> 또는 <strong>비공개</strong>로 두세요.'))}
         <button type="submit" class="btn btn-primary" style="margin-top:14px"><i class="fa-solid fa-floppy-disk"></i> ${edit ? '수정 저장' : '저장'}</button>
         <a href="/admin/cases" class="btn btn-outline" style="margin-left:8px">취소</a>
       </form>
@@ -382,7 +482,7 @@ export function AdminColumns(items: any[], views: Record<string, number> = {}, c
         <td><strong>${c.title}</strong></td><td>${columnCategoryName(c.category, cats)}</td>
         <td>${DOCTORS.find(d=>d.slug===c.author)?.name||'-'}</td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[c.id] || 0}</td>
-        <td><span class="badge ${c.published?'new':'done'}">${c.published?'게시':'임시'}</span></td>
+        <td>${pubBadge(c)}</td>
         <td><a href="/admin/columns/${c.id}/edit" class="btn-sm btn-outline">수정</a> <form method="POST" action="/admin/columns/${c.id}/delete" style="display:inline" onsubmit="return confirm('삭제?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form></td></tr>`).join(''))}
       </tbody></table>
     </div>
@@ -530,7 +630,10 @@ export function AdminColumnForm(col?: any, allColumns: any[] = [], cats: ColumnC
                 </div>
               ` : html`<p style="font-size:13px;color:var(--gray-400)">다른 발행 칼럼이 생기면 여기서 직접 선택할 수 있습니다.</p>`}
             </div>
-            <div class="field"><label class="checkbox-row"><input type="checkbox" name="published" ${c.published !== false ? 'checked' : ''}> <span>즉시 게시</span></label></div>
+            <div class="field"><label class="checkbox-row"><input type="checkbox" name="published" ${c.published !== false ? 'checked' : ''}> <span>게시 <span style="font-size:12px;color:var(--gray-600)">(체크 해제 = 임시저장)</span></span></label></div>
+            <div class="field"><label style="font-size:13px">예약 발행 일시 <span style="font-weight:400;color:var(--gray-400);font-size:12px">비우면 저장 즉시 공개</span></label>
+              <input type="datetime-local" name="publishAt" value="${raw(msToKstInput(c.publishAt))}">
+              <p style="font-size:12px;color:var(--gray-600);margin-top:4px">'게시'에 체크하고 날짜·시간을 넣으면 그 시각에 자동으로 홈페이지에 올라갑니다.</p></div>
             <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center"><i class="fa-solid fa-floppy-disk"></i> 저장하기</button>
             <a href="/admin/columns" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;margin-top:8px">취소</a>
           </div>
@@ -780,18 +883,22 @@ export function AdminNotices(items: any[], views: Record<string, number> = {}) {
     <div class="admin-head"><h1>공지사항</h1><a href="/admin/notices/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 공지</a></div>
     ${raw(popupLimitNote(live.length))}
     <div class="admin-card">
-      <table><thead><tr><th>작성일</th><th>제목</th><th>조회수</th><th>고정</th><th>팝업</th><th>관리</th></tr></thead><tbody>
+      <table><thead><tr><th>작성일</th><th>제목</th><th>조회수</th><th>상태</th><th>고정</th><th>팝업</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(n => {
-        const popupLive = n.popup && (!n.popupUntil || n.popupUntil >= today)
+        const popupLive = live.some(x => x.id === n.id)
         const popupExpired = n.popup && n.popupUntil && n.popupUntil < today
+        const popupWaiting = n.popup && !popupLive && !popupExpired
+        const ordTxt = typeof n.popupOrder === 'number' ? ` <span style="opacity:.8;font-weight:600">#${n.popupOrder}</span>` : ''
         const popupCell = popupLive
           ? (shown.has(n.id)
-            ? `<span class="badge popup-live"><i class="fa-solid fa-bell" style="font-size:10px;margin-right:4px"></i>노출중${n.popupUntil ? ` <span style="opacity:.8;font-weight:600">~${n.popupUntil}</span>` : ''}</span>`
+            ? `<span class="badge popup-live"><i class="fa-solid fa-bell" style="font-size:10px;margin-right:4px"></i>노출중${ordTxt}${n.popupUntil ? ` <span style="opacity:.8;font-weight:600">~${n.popupUntil}</span>` : ''}</span>`
             : `<span class="badge popup-expired" title="활성 팝업이 ${POPUP_MAX}개를 넘어 이 공지는 표시되지 않습니다">숨겨짐 (${POPUP_MAX}개 초과)</span>`)
-          : popupExpired ? `<span class="badge popup-expired">만료</span>` : '-'
+          : popupExpired ? `<span class="badge popup-expired">만료</span>`
+          : popupWaiting ? `<span class="badge" style="background:#fbf3e6;color:#8a6a35">대기${n.popupStart ? ` ${n.popupStart}~` : ''}</span>` : '-'
         return `<tr>
         <td>${new Date(n.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</td><td><strong>${n.title}</strong></td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[n.id] || 0}</td>
+        <td>${pubBadge(n)}</td>
         <td>${n.pinned ? '<span class="badge new">고정</span>' : '-'}</td>
         <td>${popupCell}</td>
         <td>
@@ -825,14 +932,22 @@ export function AdminNoticeForm(n?: any, activePopupCount = 0) {
             <input type="checkbox" name="popup" id="popupToggle" ${n?.popup ? 'checked' : ''}>
             <span><i class="fa-solid fa-bell" style="color:var(--gold,#b08d57);margin-right:6px"></i>홈 화면 팝업으로 띄우기</span>
           </label>
-          <p style="margin:8px 0 8px;font-size:13px;color:var(--gray-600,#777)">체크하면 메인 페이지 방문 시 이 공지가 팝업 창으로 표시됩니다. 여러 건이면 고정 공지 → 최신 공지 순으로 노출됩니다.</p>
+          <p style="margin:8px 0 8px;font-size:13px;color:var(--gray-600,#777)">체크하면 메인 페이지 방문 시 이 공지가 팝업 창으로 표시됩니다. 여러 건이면 <strong>노출 순서</strong> 숫자가 작은 것부터, 순서가 없으면 고정 공지 → 최신 공지 순입니다.</p>
           ${raw(popupLimitNote(activePopupCount))}
           <div id="popupOpts" style="${n?.popup ? '' : 'display:none'}">
-            <label style="font-size:13px;color:var(--gray-600,#777)">팝업 종료일 <span style="opacity:.6">(비우면 무기한 노출)</span></label>
-            <input type="date" name="popupUntil" value="${raw(esc(n?.popupUntil))}" style="margin-top:6px;max-width:220px">
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <div><label style="font-size:13px;color:var(--gray-600,#777)">팝업 시작일 <span style="opacity:.6">(비우면 바로 노출)</span></label><br>
+                <input type="date" name="popupStart" value="${raw(esc(n?.popupStart))}" style="margin-top:6px;max-width:200px"></div>
+              <div><label style="font-size:13px;color:var(--gray-600,#777)">팝업 종료일 <span style="opacity:.6">(비우면 무기한 노출)</span></label><br>
+                <input type="date" name="popupUntil" value="${raw(esc(n?.popupUntil))}" style="margin-top:6px;max-width:200px"></div>
+              <div><label style="font-size:13px;color:var(--gray-600,#777)">노출 순서 <span style="opacity:.6">(1이 맨 앞)</span></label><br>
+                <input type="number" name="popupOrder" min="1" max="99" value="${raw(n && typeof n.popupOrder === 'number' ? String(n.popupOrder) : '')}" style="margin-top:6px;width:90px"></div>
+            </div>
+            <p style="font-size:12px;color:var(--gray-600,#777);margin-top:8px">다음 달 진료일정은 시작일을 그달 1일로 넣어 미리 올려 두면, 그날부터 자동으로 팝업이 뜹니다.</p>
           </div>
         </div>
 
+        ${raw(pubBlock(n))}
         <button type="submit" class="btn btn-primary" style="margin-top:8px"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
         <a href="/admin/notices" class="btn btn-outline" style="margin-left:8px">취소</a>
       </form>
@@ -852,7 +967,7 @@ export function AdminEvents(items: any[], views: Record<string, number> = {}) {
     <div class="admin-head"><h1>이벤트</h1><a href="/admin/events/new" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 새 이벤트</a></div>
     <div class="admin-card">
       ${items.length === 0 ? html`<p style="color:var(--gray-600);text-align:center;padding:40px">등록된 이벤트가 없습니다.</p>` : html`
-      <table><thead><tr><th>등록일</th><th>제목</th><th>진행 기간</th><th>상태</th><th>조회수</th><th>고정</th><th>관리</th></tr></thead><tbody>
+      <table><thead><tr><th>등록일</th><th>제목</th><th>진행 기간</th><th>상태</th><th>게시</th><th>조회수</th><th>고정</th><th>관리</th></tr></thead><tbody>
       ${raw(items.map(e => {
         const st = eventStatus(e)
         const period = (e.startDate || e.endDate)
@@ -864,6 +979,7 @@ export function AdminEvents(items: any[], views: Record<string, number> = {}) {
         <td><strong>${esc(e.title)}</strong></td>
         <td style="white-space:nowrap;font-size:13px;color:var(--gray-600)">${period}</td>
         <td><span class="badge" style="${badge}">${st.label}</span></td>
+        <td>${pubBadge(e)}</td>
         <td><i class="fa-regular fa-eye" style="color:var(--gray-600);font-size:12px"></i> ${views[e.id] || 0}</td>
         <td>${e.pinned ? '<span class="badge new">고정</span>' : '-'}</td>
         <td style="white-space:nowrap">
@@ -905,6 +1021,7 @@ export function AdminEventForm(ev?: any) {
           의료광고법 준수를 위해 <strong>치료 결과 보장·과장 표현</strong>은 피해주세요. 비급여 비용은 “상담 시 안내” 형태를 권장합니다. (본문 하단에 면책 문구가 자동 표시됩니다.)
         </div>
 
+        ${raw(pubBlock(ev))}
         <button type="submit" class="btn btn-primary" style="margin-top:4px"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
         <a href="/admin/events" class="btn btn-outline" style="margin-left:8px">취소</a>
       </form>
@@ -1099,5 +1216,95 @@ export function AdminColumnCategories(cats: ColumnCategory[], usage: Record<stri
       });
     })();
     `)}</script>
+  `)
+}
+
+// ── 알림 설정 (2026-11-04 원장 요청: 받는 사람·텔레그램·미처리 재알림) ──
+export function AdminSettings(st: { emails: string[]; telegramToken?: string; telegramChatId?: string; remindOn: boolean; remindHours: number }, msg?: string) {
+  const e = (v: any) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  return adminShell('settings', '알림 설정', html`
+    <div class="admin-head"><h1>알림 설정</h1></div>
+    ${msg ? html`<div class="admin-card" style="background:#e6f7f5;color:#0d8174;padding:14px 20px">${msg}</div>` : ''}
+    <form method="POST" action="/admin/settings">
+      <div class="admin-card">
+        <h2 style="font-size:1.15rem;margin-bottom:8px"><i class="fa-solid fa-envelope" style="color:var(--brand-accent)"></i> 예약 알림 메일 받는 사람</h2>
+        <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">새 예약이 들어오면 아래 주소로 바로 메일이 갑니다. 여러 명이면 한 줄에 하나씩 적어 주세요.</p>
+        <textarea name="emails" style="width:100%;min-height:90px" placeholder="예: 365allcaredc@gmail.com">${raw(e(st.emails.join('\n')))}</textarea>
+      </div>
+      <div class="admin-card">
+        <h2 style="font-size:1.15rem;margin-bottom:8px"><i class="fa-solid fa-clock-rotate-left" style="color:var(--brand-accent)"></i> 미처리 예약 다시 알림</h2>
+        <label class="checkbox-row" style="margin-bottom:10px"><input type="checkbox" name="remindOn" ${st.remindOn ? 'checked' : ''}> <span>'신규' 상태로 오래 남은 예약을 한 번 더 알림</span></label>
+        <div style="display:flex;align-items:center;gap:8px;font-size:14px">접수 후 <input type="number" name="remindHours" min="1" max="48" value="${st.remindHours}" style="width:80px"> 시간이 지나도 상태가 '신규'이면 다시 알림</div>
+        <p style="font-size:12.5px;color:var(--gray-600);margin-top:10px">30분마다 확인하며, 밤(21시~9시)에는 보내지 않고 아침 9시에 모아서 보냅니다. 한 예약당 한 번만 다시 알립니다.</p>
+      </div>
+      <div class="admin-card">
+        <h2 style="font-size:1.15rem;margin-bottom:8px"><i class="fa-brands fa-telegram" style="color:#229ED9"></i> 텔레그램 알림 <span style="font-size:12px;font-weight:600;color:var(--gray-400)">선택</span></h2>
+        <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">휴대폰으로 바로 받고 싶으면 텔레그램 봇을 연결하세요. 메일과 함께 같은 내용이 텔레그램으로 옵니다. (카카오톡 알림톡은 유료 발송 대행사 계약이 필요해 텔레그램을 먼저 제공합니다.)</p>
+        <div class="grid-2" style="gap:14px">
+          <div class="field"><label>봇 토큰</label><input name="telegramToken" value="${raw(e(st.telegramToken))}" placeholder="123456:ABC... (@BotFather에서 발급)" autocomplete="off"></div>
+          <div class="field"><label>채팅 ID</label><input name="telegramChatId" value="${raw(e(st.telegramChatId))}" placeholder="예: 123456789"></div>
+        </div>
+        <details style="font-size:13px;color:var(--gray-600)"><summary style="cursor:pointer;font-weight:600">연결 방법</summary>
+          <ol style="padding-left:18px;margin-top:8px;line-height:1.8">
+            <li>텔레그램에서 <strong>@BotFather</strong> 검색 → /newbot → 봇 이름 입력 → 받은 <strong>토큰</strong>을 위 칸에 붙여넣기</li>
+            <li>만든 봇과 대화방을 열고 아무 말이나 한 번 보내기</li>
+            <li>아래 '채팅 ID 자동 찾기'를 누르면 채팅 ID가 채워집니다 (단체방에서 받으려면 봇을 방에 초대한 뒤 그 방에서 한 번 말하기)</li>
+          </ol>
+        </details>
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+      <button type="submit" formaction="/admin/settings/telegram-find" class="btn btn-outline" style="margin-left:8px">채팅 ID 자동 찾기</button>
+      <button type="submit" formaction="/admin/settings/test" class="btn btn-outline" style="margin-left:8px">저장하고 시험 알림 보내기</button>
+    </form>
+  `)
+}
+
+// ── 진료일정 입력 (2026-11-04 원장 요청: 달력 이미지를 매달 제작사에 맡기지 않도록) ──
+export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: string, msg?: string) {
+  const [y, m] = ym.split('-').map(Number)
+  const days = daysInMonth(ym)
+  const first = new Date(Date.UTC(y, m - 1, 1)).getUTCDay()
+  const label: Record<string, string> = { open: '진료', night: '야간진료', closed: '휴진' }
+  const cells: string[] = []
+  for (let i = 0; i < first; i++) cells.push('<div class="sc-cell sc-empty"></div>')
+  days.forEach((d, i) => {
+    const st = stateOf(sc, d), def = defaultState(d), wd = (first + i) % 7
+    cells.push(`<div class="sc-cell sc-${st}${st !== def ? ' sc-changed' : ''}"><span class="sc-num${wd === 0 ? ' sun' : wd === 6 ? ' sat' : ''}">${i + 1}</span>
+      <select name="d_${d}" onchange="this.parentNode.className='sc-cell sc-'+this.value+(this.value!=='${def}'?' sc-changed':'')">${['open', 'night', 'closed'].map(v => `<option value="${v}"${v === st ? ' selected' : ''}>${label[v]}${v === def ? ' (기본)' : ''}</option>`).join('')}</select></div>`)
+  })
+  const e = (v: any) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  return adminShell('schedule', '진료일정', html`
+    <style>
+      .sc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+      .sc-head{font-size:12px;font-weight:700;color:var(--gray-600);text-align:center;padding:6px 0}
+      .sc-cell{border:1px solid var(--gray-100);border-radius:8px;padding:8px;min-height:74px;background:#fff;display:flex;flex-direction:column;gap:6px}
+      .sc-cell select{font-size:12px;padding:4px;border:1px solid var(--gray-100);border-radius:4px;width:100%}
+      .sc-empty{border:none;background:none}
+      .sc-num{font-weight:800}.sc-num.sun{color:#a33}.sc-num.sat{color:#2a4d7a}
+      .sc-night{background:#faf4e8}.sc-closed{background:#f7e3df;border-color:#e3b3aa}
+      .sc-changed{box-shadow:inset 0 0 0 2px var(--brand-accent,#b08d57)}
+      @media(max-width:768px){.sc-cell select{font-size:11px}.sc-grid{gap:3px}.sc-cell{padding:4px;min-height:60px}}
+    </style>
+    <div class="admin-head"><h1>진료일정</h1>
+      <div style="display:flex;gap:8px;align-items:center"><a href="/admin/schedule?ym=${prevYm}" class="btn btn-outline btn-sm">‹ 이전 달</a><strong style="font-size:1.1rem">${y}년 ${m}월</strong><a href="/admin/schedule?ym=${nextYm}" class="btn btn-outline btn-sm">다음 달 ›</a></div></div>
+    ${msg ? html`<div class="admin-card" style="background:#e6f7f5;color:#0d8174;padding:14px 20px">${msg}</div>` : ''}
+    <form method="POST" action="/admin/schedule?ym=${ym}">
+      <div class="admin-card">
+        <p style="font-size:13px;color:var(--gray-600);margin-bottom:14px">월·화·목은 기본이 <strong>야간진료</strong>, 나머지는 <strong>진료</strong>입니다. <strong>휴진하는 날</strong>(격주 일요일·공휴일 휴진 등)과 기본과 다른 날만 바꾸고 저장하세요. 바뀐 날은 금색 테두리로 표시됩니다.</p>
+        <div class="sc-grid">${raw(['일', '월', '화', '수', '목', '금', '토'].map(h => `<div class="sc-head">${h}</div>`).join(''))}${raw(cells.join(''))}</div>
+      </div>
+      <div class="admin-card">
+        <div class="field"><label>달력 아래 안내 문구 <span style="font-weight:400;color:var(--gray-400);font-size:12px">비우면 '${m}월 진료일정을 참고하여 내원 부탁드립니다.'</span></label>
+          <input name="note" maxlength="60" value="${raw(e(sc.notes[ym]))}"></div>
+        <label class="checkbox-row"><input type="checkbox" name="popup" ${sc.popupMonths.includes(ym) ? 'checked' : ''}> <span><strong>${m}월 1일부터 말일까지 홈 화면 팝업으로 자동 노출</strong> (공지 팝업 맨 앞에 표시)</span></label>
+        <p style="font-size:12.5px;color:var(--gray-600);margin-top:10px">저장하면 ① 아래 달력 이미지가 자동으로 만들어지고 ② 홈페이지 <a href="/schedule" target="_blank" style="color:var(--brand-accent)">진료일정 페이지</a>에 올라가며 ③ 예약 문의 화면에서 휴진일은 고를 수 없게 막힙니다.</p>
+        <button type="submit" class="btn btn-primary" style="margin-top:12px"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+      </div>
+    </form>
+    <div class="admin-card">
+      <h2 style="font-size:1.1rem;margin-bottom:12px">자동 생성 달력 미리보기</h2>
+      <img src="/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}" alt="${m}월 진료일정" style="max-width:420px;width:100%;border:1px solid var(--gray-100);border-radius:8px">
+      <p style="font-size:12.5px;color:var(--gray-600);margin-top:8px">이미지 주소: <a href="/schedule/${ym}.svg" target="_blank">/schedule/${ym}.svg</a> — 블로그·카카오 채널에도 그대로 올릴 수 있습니다.</p>
+    </div>
   `)
 }

@@ -17,7 +17,7 @@ import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
 import { SeoHealthPage } from './pages/seo-health'
 import { Page } from './components/page'
 import { Bindings, getMember, setMemberSession, clearSession, hashPassword, verifyPassword, isBot } from './lib/auth'
-import { listCollection, addToCollection, uid, r2GetBinary, trackView, getViews } from './lib/store'
+import { listCollection, listPublic, addToCollection, uid, r2GetBinary, trackView, getViews } from './lib/store'
 import { CLINIC, treatmentForColumnCategory, getDoctor } from './data/clinic'
 import { answerSummary } from './lib/column-seo'
 import { edgeHtml, purgeColumnPages } from './lib/edge-cache'
@@ -28,6 +28,10 @@ import { aiTxt, ogImageSvg, resolveOg } from './lib/seo-engine'
 import { INDEXNOW_KEY } from './lib/indexnow'
 import { loadPriceTable, publicTable } from './lib/pricing'
 import { HANDOVER_DOC_B64 } from './lib/handover-doc'
+import { notifyNewReservation, remindPendingReservations } from './lib/notify'
+import { getSchedule, calendarSvg, validYm, kstYm, closedDates, hasMonth, scheduleVersion } from './lib/schedule'
+import { PageHero } from './components/page'
+import { enabledProviders, oauthStart, oauthCallback, socialButtons, type Provider } from './lib/oauth'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
@@ -98,7 +102,7 @@ app.get('/naver22a12bf996862862e0b64978f42923d9.html', (c) =>
 // 원장 칼럼 목록(llms.txt) / 칼럼별 핵심 답변(llms-full.txt) — 공개 글만, R2 실패 시 생략
 async function llmsColumns(env: any, full: boolean): Promise<string> {
   try {
-    const cols = (await listCollection<Column>(env, 'columns')).filter(x => x.published)
+    const cols = (await listPublic<Column>(env, 'columns')).filter(x => x.published)
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
     if (!cols.length) return ''
     const base = `https://${CLINIC.domain}`
@@ -136,9 +140,42 @@ app.get('/seo-health', (c) => c.html(SeoHealthPage().toString()))
 
 // ════════════════ 공개 페이지 ════════════════
 app.get('/', async (c) => {
-  const notices = await listCollection<Notice>(c.env, 'notices')
-  const pops = activePopupNotices(notices).map(p => ({ id: p.id, title: p.title, body: p.body, image: p.image }))
-  return c.html(HomePage(pops).toString())
+  const notices = await listPublic<Notice>(c.env, 'notices')
+  const pops: { id: string; title: string; body: string; image?: string; href?: string }[] =
+    activePopupNotices(notices).map(p => ({ id: p.id, title: p.title, body: p.body, image: p.image }))
+  // 진료일정 팝업 (관리자 '진료일정'에서 이 달을 팝업으로 지정한 경우, 그 달 동안 맨 앞에)
+  try {
+    const sc = await getSchedule(c.env), ym = kstYm()
+    if (sc.popupMonths.includes(ym)) {
+      const m = Number(ym.slice(5))
+      pops.unshift({ id: `sched-${ym}-${scheduleVersion(sc, ym)}`, title: `${m}월 진료일정`, body: sc.notes[ym] || `${m}월 진료일정을 참고하여 내원 부탁드립니다. 휴진일과 야간진료일을 확인해 주세요.`, image: `/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}`, href: '/schedule' })
+    }
+  } catch {}
+  return c.html(HomePage(pops.slice(0, 5)).toString())
+})
+
+// ── 진료일정 (관리자 입력 → 자동 달력) ──
+app.get('/schedule', async (c) => {
+  const sc = await getSchedule(c.env)
+  const months = [kstYm(), kstYm(1)].filter(ym => ym === kstYm() || hasMonth(sc, ym))
+  const body = html`
+  ${PageHero({ crumb: [{ name: '홈', url: '/' }, { name: '진료일정', url: '/schedule' }], title: '진료일정', desc: '이달의 휴진일과 야간진료일을 안내해 드립니다. 일요일은 격주로 진료합니다.' })}
+  <section class="section"><div class="container" style="max-width:860px;display:grid;gap:28px;justify-items:center">
+    ${raw(months.map(ym => `<figure style="margin:0;width:100%;max-width:560px"><img src="/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}" alt="${Number(ym.slice(5))}월 진료일정 — 휴진일·야간진료일 달력" width="760" style="width:100%;height:auto;border-radius:6px;box-shadow:0 10px 30px rgba(6,39,65,.12)"></figure>`).join(''))}
+    <p style="font-size:14px;color:var(--gray-600);text-align:center">진료시간: ${CLINIC.hours.map(h => `${h.day.replace('요일', '')} ${h.time}`).join(' · ')}<br>${CLINIC.lunchNote}</p>
+    <a href="/reservation" class="btn btn-primary">예약 문의하기</a>
+  </div></section>`
+  return c.html(Page({ title: '진료일정 · 휴진일 안내 | 365올케어치과', description: '365올케어치과 이달의 휴진일·야간진료일 달력입니다. 월·화·목 야간진료, 토·일·공휴일 오전 진료.', path: '/schedule' }, body).toString())
+})
+app.get('/schedule/:file', async (c) => {
+  const ym = c.req.param('file').replace(/\.svg$/, '')
+  if (!validYm(ym)) return c.notFound()
+  return c.body(calendarSvg(await getSchedule(c.env), ym), 200, { 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' })
+})
+app.get('/api/schedule', async (c) => {
+  const sc = await getSchedule(c.env)
+  const today = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10)
+  return c.json({ closed: closedDates(sc).filter(d => d >= today) }, 200, { 'Cache-Control': 'public, max-age=300' })
 })
 app.get('/mission', (c) => c.html(MissionPage().toString()))
 app.get('/directions', (c) => c.html(DirectionsPage().toString()))
@@ -160,11 +197,11 @@ app.get('/encyclopedia/:slug', (c) => {
 app.get('/treatments', (c) => c.html(TreatmentsIndex().toString()))
 app.get('/treatments/:slug', async (c) => {
   // §S20④: 같은 분야 최신 칼럼 3개를 진료 페이지 하단에 노출
-  const cols = await listCollection<Column>(c.env, 'columns')
+  const cols = await listPublic<Column>(c.env, 'columns')
   // 같은 진료 최신 진료사례 3건 → 개별 사례 페이지로 인링크
   let txCases: { id: string; title: string }[] = []
   try {
-    txCases = (await listCollection<CaseItem>(c.env, 'cases')).filter(x => x.category === c.req.param('slug'))
+    txCases = (await listPublic<CaseItem>(c.env, 'cases')).filter(x => x.category === c.req.param('slug'))
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3)
       .map(x => ({ id: x.id, title: (x.title || '').trim() || '진료 사례' }))
   } catch {}
@@ -195,7 +232,7 @@ app.get('/area/:combo', (c) => {
 
 // ── 칼럼 ──
 app.get('/column', (c) => edgeHtml(c, async () => {
-  const [cols, cats] = await Promise.all([listCollection<Column>(c.env, 'columns'), getColumnCategories(c.env)])
+  const [cols, cats] = await Promise.all([listPublic<Column>(c.env, 'columns'), getColumnCategories(c.env)])
   // §S20⑤: ?cat= 카테고리 필터 — 비포애프터/진료 페이지에서 역링크 진입
   const page = Math.max(1, parseInt(c.req.query('page') || '1') || 1)
   return ColumnIndex(cols, c.req.query('cat'), cats, page).toString()
@@ -205,7 +242,7 @@ app.get('/column/:slug', (c) => {
   // 조회수는 응답 뒤(waitUntil)에 기록 — 화면 숫자는 엣지 캐시 주기(5분) 단위로 갱신
   const countView = (id: string) => trackView(c.env, 'column', id, bot)
   return edgeHtml(c, async () => {
-    const [cols, cats] = await Promise.all([listCollection<Column>(c.env, 'columns'), getColumnCategories(c.env)])
+    const [cols, cats] = await Promise.all([listPublic<Column>(c.env, 'columns'), getColumnCategories(c.env)])
     const col = cols.find(x => x.slug === c.req.param('slug') && x.published)
     if (!col) return null
     // §S20②: 전체 칼럼 전달 → '함께 보면 좋은 글' 3카드 / 같은 진료 진료사례 3건(개별 URL)
@@ -213,7 +250,7 @@ app.get('/column/:slug', (c) => {
     const noCases: { id: string; title: string }[] = []
     const [views, relCases] = await Promise.all([
       getViews(c.env, 'column', col.id).then(v => v + (bot ? 0 : 1)).catch(() => 0),
-      tx ? listCollection<CaseItem>(c.env, 'cases').then(all => all.filter(x => x.category === tx.slug)
+      tx ? listPublic<CaseItem>(c.env, 'cases').then(all => all.filter(x => x.category === tx.slug)
         .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3)
         .map(x => ({ id: x.id, title: (x.title || '').trim() || `${tx.name} 치료 사례` }))).catch(() => noCases)
         : Promise.resolve(noCases),
@@ -225,11 +262,11 @@ app.get('/column/:slug', (c) => {
 
 // ── 공지 ──
 app.get('/notice', async (c) => {
-  const notices = await listCollection<Notice>(c.env, 'notices')
+  const notices = await listPublic<Notice>(c.env, 'notices')
   return c.html(NoticeIndex(notices).toString())
 })
 app.get('/notice/:id', async (c) => {
-  const notices = await listCollection<Notice>(c.env, 'notices')
+  const notices = await listPublic<Notice>(c.env, 'notices')
   const n = notices.find(x => x.id === c.req.param('id'))
   if (!n) return c.notFound()
   await trackView(c.env, 'notice', n.id, isBot(c.req.header('User-Agent')))
@@ -238,11 +275,11 @@ app.get('/notice/:id', async (c) => {
 
 // ── 이벤트 ──
 app.get('/events', async (c) => {
-  const events = await listCollection<EventItem>(c.env, 'events')
+  const events = await listPublic<EventItem>(c.env, 'events')
   return c.html(EventIndex(events).toString())
 })
 app.get('/events/:id', async (c) => {
-  const events = await listCollection<EventItem>(c.env, 'events')
+  const events = await listPublic<EventItem>(c.env, 'events')
   const e = events.find(x => x.id === c.req.param('id'))
   if (!e) return c.notFound()
   await trackView(c.env, 'event', e.id, isBot(c.req.header('User-Agent')))
@@ -259,21 +296,21 @@ app.get('/uploads/columns/:file', async (c) => {
 // ── 비포애프터 ──
 app.get('/cases', async (c) => {
   const member = await getMember(c)
-  const cases = await listCollection<CaseItem>(c.env, 'cases')
+  const cases = await listPublic<CaseItem>(c.env, 'cases')
   const page = Math.max(1, parseInt(c.req.query('page') || '1') || 1)
   return c.html(CasesPage(cases, !!member, { cat: c.req.query('cat'), doctor: c.req.query('doctor'), page }).toString())
 })
 // 진료사례 개별 페이지 — 텍스트 공개 색인, After 사진은 로그인 회원만 (/api/case-image 게이트 그대로)
 app.get('/cases/:id', async (c) => {
   const member = await getMember(c)
-  const cases = await listCollection<CaseItem>(c.env, 'cases')
+  const cases = await listPublic<CaseItem>(c.env, 'cases')
   const item = cases.find(x => x.id === c.req.param('id'))
   if (!item) return c.notFound()
   const siblings = cases.filter(x => x.id !== item.id && x.category === item.category).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3)
   let relCols: { slug: string; title: string }[] = []
   try {
     const colCats = caseColumnCats(item.category)
-    relCols = (await listCollection<Column>(c.env, 'columns')).filter(x => x.published && colCats.includes(x.category))
+    relCols = (await listPublic<Column>(c.env, 'columns')).filter(x => x.published && colCats.includes(x.category))
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 3).map(x => ({ slug: x.slug, title: x.title }))
   } catch {}
   return c.html(CaseDetailPage(item, !!member, siblings, relCols).toString())
@@ -283,7 +320,7 @@ app.get('/api/case-image/:id/:type', async (c) => {
   const { id, type } = c.req.param()
   const member = await getMember(c)
   if (type === 'after' && !member) return c.json({ error: 'login required' }, 403)
-  const cases = await listCollection<CaseItem>(c.env, 'cases')
+  const cases = await listPublic<CaseItem>(c.env, 'cases')
   const item = cases.find(x => x.id === id)
   if (!item) return c.notFound()
   const key = type === 'after' ? (item.panoAfter || item.intraAfter) : (item.panoBefore || item.intraBefore)
@@ -295,8 +332,17 @@ app.get('/api/case-image/:id/:type', async (c) => {
 })
 
 // ════════════════ 인증 ════════════════
-app.get('/auth/login', (c) => c.html(LoginPage(c.req.query('next') || '/').toString()))
-app.get('/auth/register', (c) => c.html(RegisterPage(c.req.query('next') || '/').toString()))
+app.get('/auth/login', (c) => {
+  const next = c.req.query('next') || '/'
+  return c.html(LoginPage(next, c.req.query('err') || undefined, socialButtons(enabledProviders(c.env), next)).toString())
+})
+app.get('/auth/register', (c) => {
+  const next = c.req.query('next') || '/'
+  return c.html(RegisterPage(next, undefined, socialButtons(enabledProviders(c.env), next)).toString())
+})
+// 간편 로그인 (구글·카카오·네이버) — 키가 등록된 제공자만 동작
+app.get('/auth/oauth/:p', (c) => { const p = c.req.param('p') as Provider; return ['google', 'kakao', 'naver'].includes(p) ? oauthStart(c, p) : c.notFound() })
+app.get('/auth/oauth/:p/callback', (c) => { const p = c.req.param('p') as Provider; return ['google', 'kakao', 'naver'].includes(p) ? oauthCallback(c, p) : c.notFound() })
 app.get('/auth/mypage', async (c) => {
   const m = await getMember(c)
   return m ? c.html(MyPage(m).toString()) : c.redirect('/auth/login?next=/auth/mypage')
@@ -308,11 +354,11 @@ app.post('/auth/register', async (c) => {
   const phone = String(form.phone || '').trim()
   const password = String(form.password || '')
   const next = String(form.next || '/')
-  if (!form.agree_terms) return c.html(RegisterPage(next, '이용약관에 동의해 주세요.').toString())
-  if (!form.agree_privacy) return c.html(RegisterPage(next, '개인정보 수집·이용에 동의해 주세요.').toString())
-  if (!name || !email || !phone || password.length < 6) return c.html(RegisterPage(next, '입력 정보를 확인해 주세요.').toString())
+  if (!form.agree_terms) return c.html(RegisterPage(next, '이용약관에 동의해 주세요.', socialButtons(enabledProviders(c.env), next), { name, email, phone }).toString())
+  if (!form.agree_privacy) return c.html(RegisterPage(next, '개인정보 수집·이용에 동의해 주세요.', socialButtons(enabledProviders(c.env), next), { name, email, phone }).toString())
+  if (!name || !email || !phone || password.length < 6) return c.html(RegisterPage(next, '입력 정보를 확인해 주세요.', socialButtons(enabledProviders(c.env), next), { name, email, phone }).toString())
   const users = await listCollection<any>(c.env, 'users')
-  if (users.find(u => u.email === email)) return c.html(RegisterPage(next, '이미 가입된 이메일입니다.').toString())
+  if (users.find(u => u.email === email)) return c.html(RegisterPage(next, '이미 가입된 이메일입니다.', socialButtons(enabledProviders(c.env), next), { name, email, phone }).toString())
   const pwHash = await hashPassword(password)
   await addToCollection(c.env, 'users', { id: uid('u_'), name, email, phone, pwHash, marketing: !!form.agree_marketing, provider: 'email', createdAt: Date.now() })
   await setMemberSession(c, { email, name })
@@ -351,6 +397,12 @@ app.post('/api/reservation', async (c) => {
     if (phoneDigits.length < 9 || phoneDigits.length > 11) return c.json({ ok: false, error: '연락처를 정확히 입력해 주세요. (예: 010-0000-0000)' })
     if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.email))) return c.json({ ok: false, error: '이메일 형식이 올바르지 않습니다.' })
     if (String(data.message || '').length > 1000) return c.json({ ok: false, error: '문의 내용이 너무 깁니다.' })
+    // 휴진일 선택 차단 (관리자 '진료일정'에서 휴진으로 지정한 날)
+    const wantDate = String(data.date || '').trim()
+    if (/^\d{4}-\d{2}-\d{2}$/.test(wantDate)) {
+      const closed = closedDates(await getSchedule(c.env).catch(() => ({ days: {}, popupMonths: [], notes: {} } as any)))
+      if (closed.includes(wantDate)) return c.json({ ok: false, error: `${Number(wantDate.slice(5, 7))}월 ${Number(wantDate.slice(8))}일은 휴진일입니다. 다른 날짜를 골라 주세요.` })
+    }
 
     // 중복 제출 제한: 같은 연락처로 3분 이내 재접수 차단
     const recent = await listCollection<any>(c.env, 'reservations')
@@ -366,53 +418,23 @@ app.post('/api/reservation', async (c) => {
       date: String(data.date || '').trim(),
       timeslot: String(data.timeslot || '').trim(),
       message: String(data.message || '').trim(),
+      // 유입 경로(첫 방문 기준, 브라우저가 판정) — 경로별 예약 통계용
+      source: String(data.source || '').trim().slice(0, 60) || undefined,
+      landing: String(data.landing || '').trim().slice(0, 80) || undefined,
       status: '신규',
       createdAt: Date.now(),
     }
     await addToCollection(c.env, 'reservations', item)
-    if (c.env.RESEND_API_KEY && c.env.NOTIFICATION_EMAIL) c.executionCtx?.waitUntil(sendReservationEmail(c.env, item))
+    c.executionCtx?.waitUntil(notifyNewReservation(c.env, item))
     return c.json({ ok: true })
   } catch { return c.json({ ok: false, error: '접수에 실패했습니다.' }) }
 })
 
-async function sendReservationEmail(env: Bindings, r: any) {
-  try {
-    const base = (env.SITE_URL || 'https://allcaredc.kr').replace(/\/$/, '')
-    const adminUrl = `${base}/admin/reservations`
-    const when = new Date(r.createdAt).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Seoul' })
-    const phoneDigits = String(r.phone || '').replace(/[^0-9]/g, '')
-    const esc = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: '365올케어치과 <noreply@allcaredc.kr>', to: [env.NOTIFICATION_EMAIL],
-        reply_to: r.email || undefined,
-        subject: `[예약문의] ${r.name} · ${r.treatment}`,
-        html: `
-          <div style="font-family:-apple-system,'Malgun Gothic',sans-serif;max-width:560px;margin:0 auto;color:#062741">
-            <div style="background:#062741;color:#fffeee;padding:18px 22px;border-radius:8px 8px 0 0">
-              <div style="font-size:13px;letter-spacing:.08em;color:#b08d57">ALLCARE DENTAL · 새 예약문의</div>
-              <div style="font-size:20px;font-weight:700;margin-top:4px">${esc(r.name)} 님의 예약 문의</div>
-            </div>
-            <table style="width:100%;border-collapse:collapse;border:1px solid #eee;border-top:none">
-              <tr><td style="padding:11px 16px;background:#faf9f2;width:110px;color:#b08d57;font-weight:600">접수일시</td><td style="padding:11px 16px">${esc(when)}</td></tr>
-              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">이름</td><td style="padding:11px 16px"><strong>${esc(r.name)}</strong></td></tr>
-              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">연락처</td><td style="padding:11px 16px"><a href="tel:${phoneDigits}" style="color:#062741;font-weight:700">${esc(r.phone)}</a></td></tr>
-              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">이메일</td><td style="padding:11px 16px">${esc(r.email) || '-'}</td></tr>
-              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">진료</td><td style="padding:11px 16px">${esc(r.treatment)}</td></tr>
-              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600">희망일시</td><td style="padding:11px 16px">${esc(r.date) || '-'} ${esc(r.timeslot) || ''}</td></tr>
-              <tr><td style="padding:11px 16px;background:#faf9f2;color:#b08d57;font-weight:600;vertical-align:top">문의내용</td><td style="padding:11px 16px;white-space:pre-wrap">${esc(r.message) || '-'}</td></tr>
-            </table>
-            <div style="text-align:center;padding:20px 0">
-              <a href="${adminUrl}" style="display:inline-block;background:#b08d57;color:#fff;text-decoration:none;padding:13px 30px;border-radius:6px;font-weight:700;font-size:15px">→ 관리자 화면에서 처리하기</a>
-            </div>
-            <p style="text-align:center;font-size:12px;color:#999;margin:0 0 8px">처리 기록은 관리자 페이지에 남습니다 · <a href="${adminUrl}" style="color:#b08d57">${adminUrl}</a></p>
-          </div>`,
-      }),
-    })
-  } catch {}
-}
+// 예약 미처리 재알림 — 외부 크론(Worker allcare-cron, 30분 간격)이 호출. ?key=CRON_KEY 필수
+app.get('/api/cron/reservation-remind', async (c) => {
+  if (!c.env.CRON_KEY || c.req.query('key') !== c.env.CRON_KEY) return c.notFound()
+  return c.json(await remindPendingReservations(c.env))
+})
 
 // 약관/개인정보
 app.get('/privacy', (c) => c.html(legalPage('개인정보 처리방침', PRIVACY, '/privacy').toString()))
@@ -472,6 +494,7 @@ const PRIVACY = `365올케어치과(이하 "병원")는 「개인정보 보호�
 
 1. 수집하는 개인정보 항목
 - 회원가입: 이름, 이메일, 전화번호
+- 간편 로그인(구글·카카오·네이버): 해당 서비스의 회원 식별값, 이름(별명), 이메일(제공에 동의한 경우)
 - 예약 문의: 이름, 연락처, 이메일(선택)
 - 예약 문의 내용에 이용자가 자발적으로 증상·불편사항 등 건강 관련 정보를 기재하는 경우, 해당 정보(민감정보)는 별도의 동의를 받아 수집·이용합니다.
 
@@ -494,6 +517,7 @@ const PRIVACY = `365올케어치과(이하 "병원")는 「개인정보 보호�
 - 병원은 원활한 서비스 제공을 위해 아래와 같이 개인정보 처리 업무를 위탁하고 있습니다.
   · 웹사이트 호스팅·인프라: Cloudflare, Inc.
   · 예약 알림 메일 발송: Resend (Plus Five Five, Inc.)
+  · 예약 알림 메신저 발송(병원이 사용하는 경우): Telegram Messenger Inc.
 - 위탁계약 시 개인정보가 안전하게 관리되도록 관련 사항을 규정하고 관리·감독합니다.
 
 7. 이용자 및 법정대리인의 권리

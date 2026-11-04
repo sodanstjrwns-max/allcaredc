@@ -2,6 +2,7 @@ import { html, raw } from 'hono/html'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
 import { CLINIC } from '../data/clinic'
+import { isLive } from '../lib/store'
 
 export type Notice = {
   id: string
@@ -14,6 +15,14 @@ export type Notice = {
   popup?: boolean
   /** 팝업 노출 종료일(YYYY-MM-DD). 비우면 무기한 */
   popupUntil?: string
+  /** 팝업 노출 시작일(YYYY-MM-DD). 비우면 바로 노출 (2026-11-04 원장 요청: 다음 달 일정 미리 등록) */
+  popupStart?: string
+  /** 팝업 노출 순서(작을수록 앞). 비우면 고정→최신순 뒤에 */
+  popupOrder?: number
+  /** 게시 상태: draft(임시저장)·private(비공개)·없음(게시) */
+  status?: 'draft' | 'private'
+  /** 예약 발행 시각(ms) */
+  publishAt?: number
 }
 
 /** 홈 팝업 동시 노출 최대 개수 */
@@ -26,9 +35,10 @@ export function kstToday(): string {
 
 /** 노출 조건을 만족하는 팝업 공지 전체 (popup=true, 종료일 미경과) — 고정 우선 → 최신순 */
 export function allActivePopupNotices(notices: Notice[], today = kstToday()): Notice[] {
+  const ord = (n: Notice) => (typeof n.popupOrder === 'number' && isFinite(n.popupOrder) ? n.popupOrder : 9999)
   return notices
-    .filter(n => n.popup && (!n.popupUntil || n.popupUntil >= today))
-    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.createdAt - a.createdAt)
+    .filter(n => n.popup && isLive(n) && (!n.popupStart || n.popupStart <= today) && (!n.popupUntil || n.popupUntil >= today))
+    .sort((a, b) => ord(a) - ord(b) || (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.createdAt - a.createdAt)
 }
 
 /** 홈에 실제로 띄울 팝업 공지 (최대 POPUP_MAX건) */

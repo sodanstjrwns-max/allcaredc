@@ -7,6 +7,39 @@
   'use strict';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // ---------- 유입 경로 기록 (2026-11-04 원장 요청: 경로별 예약 통계) ----------
+  // 처음 들어온 경로(첫 방문 기준, 30일 유지)를 브라우저에만 저장 → 예약 접수 때 함께 보냄. 개인정보 없음.
+  (function () {
+    try {
+      var KEY = 'ac_src', now = Date.now();
+      var old = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (old && now - old.at < 30 * 86400000) return;
+      var q = new URLSearchParams(location.search), ref = document.referrer || '', host = '';
+      try { host = ref ? new URL(ref).hostname : ''; } catch (e) {}
+      if (host && host.replace(/^www\./, '') === location.hostname.replace(/^www\./, '')) return; // 사이트 안 이동은 무시
+      var us = (q.get('utm_source') || '').toLowerCase(), um = (q.get('utm_medium') || '').toLowerCase(), src = '';
+      if (q.get('gclid') || q.get('gad_source')) src = '구글 광고';
+      else if (q.get('n_media') || q.get('NaPm') || q.get('n_query')) src = '네이버 광고';
+      else if (us) {
+        var paid = /cpc|ppc|paid|ad/.test(um);
+        src = /naver/.test(us) ? (paid ? '네이버 광고' : '네이버') : /insta|^ig$/.test(us) ? '인스타그램' : /google/.test(us) ? (paid ? '구글 광고' : '구글') :
+              /kakao/.test(us) ? '카카오' : /blog/.test(us) ? '블로그' : /facebook|meta|fb/.test(us) ? '페이스북' : us.slice(0, 30);
+      }
+      else if (!host) src = '직접 방문';
+      else if (/blog\.naver|m\.blog\.naver/.test(host)) src = '네이버 블로그';
+      else if (/map\.naver|place\.naver|m\.place\.naver|pcmap\.place/.test(host)) src = '네이버 플레이스';
+      else if (/naver\.com$/.test(host)) src = '네이버 검색';
+      else if (/(^|\.)google\./.test(host)) src = '구글 검색';
+      else if (/instagram\.com$|l\.instagram/.test(host)) src = '인스타그램';
+      else if (/ontheai\.blog$|tistory\.com$|brunch\.co\.kr$/.test(host)) src = '블로그';
+      else if (/daum\.net$|kakao\.com$/.test(host)) src = '카카오·다음';
+      else if (/chatgpt\.com$|openai\.com$|perplexity\.ai$|claude\.ai$|gemini\.google/.test(host)) src = 'AI 검색';
+      else if (/facebook\.com$|youtube\.com$/.test(host)) src = host.indexOf('youtube') >= 0 ? '유튜브' : '페이스북';
+      else src = '기타: ' + host.slice(0, 40);
+      localStorage.setItem(KEY, JSON.stringify({ src: src, at: now, landing: location.pathname.slice(0, 80) }));
+    } catch (e) {}
+  })();
+
   // ---------- header scroll state ----------
   var header = document.getElementById('siteHeader');
   var isSolid = header && header.classList.contains('force-solid');
@@ -697,6 +730,7 @@
     var form = e.target;
     var btn = form.querySelector('[type=submit]');
     var data = Object.fromEntries(new FormData(form).entries());
+    try { var srcInfo = JSON.parse(localStorage.getItem('ac_src') || 'null'); if (srcInfo) { data.source = srcInfo.src; data.landing = srcInfo.landing; } } catch (err) {}
     if (!data.agree) { window.showToast('개인정보 수집·이용에 동의해 주세요.'); return false; }
     btn.disabled = true; btn.textContent = '접수 중...';
     fetch('/api/reservation', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
@@ -1154,7 +1188,8 @@
       c.classList.toggle('filtered-out', !ok);
       if (ok) shown++;
     });
-    if (countEl) countEl.textContent = '총 ' + shown + '건';
+    // 즉시 필터 버튼이 있을 때만 숫자 갱신 — 서버가 넣은 '총 N건'(전체 건수)을 페이지 안 카드 수로 덮어쓰던 문제(2026-11-04)
+    if (countEl && fbtns.length) countEl.textContent = '총 ' + shown + '건';
     if (emptyEl) emptyEl.hidden = shown !== 0;
   }
   fbtns.forEach(function (b) {

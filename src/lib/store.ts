@@ -92,3 +92,32 @@ export async function getViews(env: Bindings, type: string, id: string): Promise
   const v = await r2Get<{ human: number }>(env, `views/${type}/${id}.json`)
   return v?.human || 0
 }
+
+// ── 게시 상태·예약 발행 (2026-11-04 원장 요청) ──
+//   status: 'draft'(임시저장) | 'private'(비공개) | 없음(게시)
+//   publishAt: 예약 발행 시각(ms). 지나기 전까지는 공개 화면·사이트맵에 나오지 않음
+export function isLive(x: any, now = Date.now()): boolean {
+  if (!x) return false
+  if (x.status === 'draft' || x.status === 'private') return false
+  if (x.publishAt && Number(x.publishAt) > now) return false
+  return true
+}
+// 공개 화면 전용 목록 — 칼럼은 published 플래그로 처리(예약 전이면 published=false로 바꿔 돌려줌),
+// 나머지(공지·이벤트·비포애프터)는 아직 공개되지 않은 항목을 뺀다
+export async function listPublic<T = any>(env: Bindings, name: string): Promise<T[]> {
+  const items = await listCollection<any>(env, name)
+  const now = Date.now()
+  if (name === 'columns') return items.map(x => (x.published && !isLive(x, now) ? { ...x, published: false } : x)) as T[]
+  return items.filter(x => isLive(x, now)) as T[]
+}
+// datetime-local(KST) ↔ ms
+export function kstInputToMs(v: any): number | undefined {
+  const s = String(v || '').trim()
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(s)) return undefined
+  const t = Date.parse(s + ':00+09:00')
+  return isFinite(t) ? t : undefined
+}
+export function msToKstInput(ms: any): string {
+  const n = Number(ms)
+  return n ? new Date(n + 9 * 3600000).toISOString().slice(0, 16) : ''
+}

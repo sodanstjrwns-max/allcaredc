@@ -118,6 +118,13 @@ export function ReservationPage() {
                   var cur=s.value;s.innerHTML='';opts(day).forEach(function(o){var op=document.createElement('option');op.value=o[0]?o[1]:'';op.textContent=o[1];s.appendChild(op);});
                   for(var i=0;i<s.options.length;i++){if(s.options[i].value===cur){s.value=cur;break;}}}
                 d.addEventListener('change',render);d.addEventListener('input',render);
+                // 휴진일 선택 차단 (관리자 진료일정 연동)
+                var closed=[],hint=document.createElement('p');hint.style.cssText='font-size:12.5px;color:#c0392b;margin:-8px 0 12px;display:none';
+                d.closest('.grid-2').insertAdjacentElement('afterend',hint);
+                fetch('/api/schedule').then(function(r){return r.json()}).then(function(j){closed=j.closed||[];check();}).catch(function(){});
+                function check(){var bad=d.value&&closed.indexOf(d.value)>=0;hint.style.display=bad?'block':'none';
+                  if(bad){hint.textContent=(+d.value.slice(5,7))+'월 '+(+d.value.slice(8))+'일은 휴진일입니다. 다른 날짜를 골라 주세요. (진료일정 보기: /schedule)';d.setCustomValidity('휴진일입니다');}else d.setCustomValidity('');}
+                d.addEventListener('change',check);d.addEventListener('input',check);
               })();</script>
               <div class="field"><label>문의 내용</label><textarea name="message" placeholder="불편하신 점이나 궁금하신 점을 자유롭게 적어주세요. (증상 등 건강 관련 내용을 적으실 경우 아래 민감정보 동의가 필요합니다)"></textarea></div>
               <div class="field">

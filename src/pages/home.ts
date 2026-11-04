@@ -26,7 +26,7 @@ function sectionHead(label: string, title: string, lead?: string, center = true)
   </header>`
 }
 
-type HomePopup = { id: string; title: string; body: string; image?: string }
+type HomePopup = { id: string; title: string; body: string; image?: string; href?: string }
 
 const escAttr = (s: unknown) => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -35,7 +35,7 @@ const escAttr = (s: unknown) => String(s ?? '')
 // 공지 팝업 카드 1장 — 카드별 고유 id·aria-labelledby
 function noticePopCard(p: HomePopup): string {
   const id = escAttr(p.id)
-  const href = `/notice/${encodeURIComponent(p.id)}`
+  const href = p.href || `/notice/${encodeURIComponent(p.id)}`
   const text = p.body.length > 140 ? p.body.slice(0, 140) + '…' : p.body
   return `
     <div class="np-card" id="np-card-${id}" data-pop-id="${id}" role="group" aria-labelledby="np-title-${id}">
@@ -60,7 +60,7 @@ const NOTICE_POP_JS = `
 (function(){
   var ov=document.getElementById('noticePop');
   if(!ov) return;
-  var stack=ov.querySelector('.np-stack'),nav=ov.querySelector('.np-nav'),ind=ov.querySelector('.np-ind'),chip=ov.querySelector('.np-expand');
+  var stack=ov.querySelector('.np-stack'),nav=ov.querySelector('.np-nav'),ind=ov.querySelector('.np-ind'),chip=ov.querySelector('.np-expand'),allbar=ov.querySelector('.np-allbar');
   function key(id){return 'np_dismiss_'+id;}
   function cards(){return Array.prototype.slice.call(stack.querySelectorAll('.np-card:not(.np-out)'));}
   // 오늘 숨긴 카드는 렌더 전에 제거
@@ -68,6 +68,7 @@ const NOTICE_POP_JS = `
     try{ var u=localStorage.getItem(key(c.getAttribute('data-pop-id'))); if(u && Date.now()<parseInt(u,10)) c.parentNode.removeChild(c); }catch(e){}
   });
   if(!cards().length){ ov.parentNode.removeChild(ov); return; }
+  if(allbar) allbar.hidden=cards().length<2;
   var mq=matchMedia('(max-width: 767px)');
   var compact=mq.matches, idx=0, prevOverflow='', locked=false;
   function lock(){ if(!locked){ prevOverflow=document.body.style.overflow; document.body.style.overflow='hidden'; locked=true; } }
@@ -80,6 +81,7 @@ const NOTICE_POP_JS = `
     var n=cards().length;
     chip.innerHTML=n>1?'진료 공지 <span class="np-count">'+n+'</span>':'진료 공지 보기';
     chip.setAttribute('aria-label','진료 공지 '+n+'건 보기');
+    if(allbar) allbar.hidden=n<2;
   }
   function show(i,dir){
     var cs=cards(); if(!cs.length) return;
@@ -119,6 +121,14 @@ const NOTICE_POP_JS = `
       try{ localStorage.setItem(key(c.getAttribute('data-pop-id')),String(Date.now()+86400000)); }catch(err){}
     }
     removeCard(c);
+  });
+  // 팝업 모두 닫기 / 오늘 하루 모두 보지 않기 (2026-11-04 원장 요청: PC에서 하나씩 닫아야 하는 불편)
+  if(allbar) allbar.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-np-all]'); if(!b) return;
+    if(b.getAttribute('data-np-all')==='hide'){
+      cards().forEach(function(c){ try{ localStorage.setItem(key(c.getAttribute('data-pop-id')),String(Date.now()+86400000)); }catch(err){} });
+    }
+    closeAll();
   });
   chip.addEventListener('click',function(){
     compact=false; chip.setAttribute('aria-expanded','true');
@@ -162,7 +172,20 @@ function noticePopHtml(popups: HomePopup[]): string {
       <span class="np-ind" aria-live="polite">1 / ${popups.length}</span>
       <button type="button" class="np-next" aria-label="다음 공지">&rsaquo;</button>
     </div>
+    <div class="np-allbar"${popups.length < 2 ? ' hidden' : ''}>
+      <button type="button" data-np-all="hide">오늘 하루 모두 보지 않기</button>
+      <button type="button" data-np-all="close" class="np-allclose">팝업 모두 닫기 <i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    </div>
   </div>
+  <style>
+    .notice-pop:not(.np-compact){flex-direction:column}
+    .notice-pop:not(.np-compact) .np-stack{margin:auto 0 0;width:100%}
+    .notice-pop.np-single .np-nav{margin-bottom:0}
+    .notice-pop .np-allbar{position:relative;z-index:2;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px auto auto;width:100%}
+    .notice-pop .np-allbar[hidden],.notice-pop.np-compact .np-allbar{display:none}
+    .notice-pop .np-allbar button{min-height:44px;padding:10px 18px;border-radius:4px;border:1px solid var(--gold,#b08d57);background:var(--ivory,#fffeee);color:var(--navy-800,#062741);font:600 14px var(--font-sans,sans-serif);cursor:pointer;box-shadow:0 4px 14px #06274133}
+    .notice-pop .np-allbar .np-allclose{background:var(--navy-800,#062741);color:#fffeee;border-color:var(--navy-800,#062741)}
+  </style>
   <script>${NOTICE_POP_JS}</script>`
 }
 
@@ -190,7 +213,7 @@ export function HomePage(popups: HomePopup[] = []) {
           <span class="line-mask"><span class="hh-ko-line"><span class="hh-chunk">믿고 찾는</span> <span class="hh-chunk">약수역</span></span></span>
           <span class="line-mask"><span class="hh-italic disp hh-ko-line">365올케어치과</span></span>
         </h1>
-        <p class="hh-lead reveal reveal-d2"><strong>고난도 임플란트는 전문성을 더하고,</strong><br>일반진료는 기본과 원칙에 충실합니다.</p>
+        <p class="hh-lead reveal reveal-d2"><strong>고난도 임플란트는 전문성을 더하고,</strong><br><strong>일반진료는 기본과 원칙에 충실합니다.</strong></p>
         <p class="hh-lead hh-lead--sub reveal reveal-d2">고난도 임플란트부터 치아교정·심미보철·일반 치과진료까지.<br>치과 전문의 협진 시스템을 바탕으로 정확하게 진단하고 필요한 치료를 제안합니다.</p>
         <div class="hero-actions reveal reveal-d3">
           <a href="/treatments" class="btn btn-primary">전체 진료 보기 <i class="fa-solid fa-arrow-right"></i></a>
@@ -213,7 +236,7 @@ export function HomePage(popups: HomePopup[] = []) {
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>
           </svg>
-          <img class="hh-portrait" src="/static/img/doctors-main-20261021.webp" srcset="/static/img/doctors-main-20261021.webp 576w, /static/img/doctors-main-20261021@2x.webp 864w" sizes="(max-width: 820px) 92vw, 420px" alt="365올케어치과 의료진 — 권종진 명예원장(구강악안면외과 전문의), 권민수 대표원장(구강악안면외과·통합치의학과 전문의), 배수현 보철과 원장(보철과 전문의), 이긍지 교정과 원장(치과교정과 전문의)" width="576" height="1024" fetchpriority="high" />
+          <img class="hh-portrait" src="/static/img/doctors-main-20261104.webp" srcset="/static/img/doctors-main-20261104.webp 576w, /static/img/doctors-main-20261104@2x.webp 864w" sizes="(max-width: 820px) 92vw, 420px" alt="365올케어치과 의료진 — 권종진 명예원장(구강악안면외과 전문의), 권민수 대표원장(구강악안면외과·통합치의학과 전문의), 배수현 보철과 원장(보철과 전문의), 이긍지 교정과 원장(치과교정과 전문의)" width="576" height="1024" fetchpriority="high" />
         </div>
         <figcaption class="hh-caption"><span class="hh-cap-eng disp">치과 전문의 협진 시스템</span> 진단부터 수술·보철·유지관리까지 한 곳에서</figcaption>
       </figure>
@@ -623,7 +646,7 @@ export function HomePage(popups: HomePopup[] = []) {
     description: '약수역 5번 출구 365올케어치과. 치과 전문의 협진 시스템으로 임플란트·치아교정·심미보철·일반진료를 진단부터 살핍니다. 수면진료·야간진료 운영.',
     path: '/',
     ogImage: `https://${CLINIC.domain}/static/og/home/main.jpg`,
-    preloadImage: '/static/img/doctors-main-20261021.webp',
+    preloadImage: '/static/img/doctors-main-20261104.webp',
     keywords: '약수역 치과,약수역 임플란트,약수역 교정,약수역 심미보철,365올케어치과,약수동 치과,중구 치과',
     schema: [
       organizationSchema(),
