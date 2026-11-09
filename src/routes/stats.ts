@@ -10,6 +10,8 @@ const STATS_MASTER_KEY = 'pfwe-b4f42f06'
 const STATS_API = 'https://pf-dashboard-2nt.pages.dev/api/stats/' + STATS_DOMAIN
 const CLARITY_ID = 'yc7sdhjwgd'
 const CLARITY_URL = 'https://clarity.microsoft.com/projects/view/' + CLARITY_ID + '/dashboard'
+// GA4 generate_lead(예약 접수 성공) 전송을 시작한 날 — 그 전 기간은 0 으로 잡힌다(누락 아님, 미전송)
+const LEADS_SINCE = '11/9 업데이트 배포 후'
 
 // ?key= 접근 검사 — 사이트 토큰 또는 마스터 키 일치 시 통과
 export const isValidStatsKey = (key?: string): boolean =>
@@ -156,7 +158,7 @@ function buildInsights(d: any): string[] {
   if (num(ai.sessions) > 0) {
     out.push(`ChatGPT·Perplexity 등 AI 검색에서 ${fmt(num(ai.sessions))}회 방문이 발생했습니다 (전체의 ${pct1(ai.share)}). AEO 세팅이 작동하고 있다는 신호입니다.`)
   }
-  if (num(a.leads) > 0) out.push(`최근 28일 온라인 상담(리드) 신청은 ${fmt(num(a.leads))}건입니다.`)
+  if (num(a.leads) > 0) out.push(`최근 28일 GA에 기록된 온라인 예약 완료(리드)는 ${fmt(num(a.leads))}건입니다.`)
   if (out.length === 0) out.push('지표가 쌓이는 중입니다. 데이터가 충분해지면 자동 분석이 표시됩니다.')
   return out.slice(0, 5)
 }
@@ -262,9 +264,9 @@ function localSourceSection(local?: LocalStats): string {
         `<tr><td class="txt">${esc(k)}</td><td class="num">${fmt(v.n)}</td><td class="num">${Math.round((v.n / items.length) * 100)}%</td><td class="num">${fmt(v.visited)}</td></tr>`).join('')}</tbody></table>`
     : `<div class="empty">최근 ${days}일 예약이 없습니다.</div>`
   return `<section class="card">
-    <div class="sec-head"><h2>유입 경로별 예약 <small>자체 예약 기록 · 최근 ${days}일 · ${fmt(items.length)}건</small></h2><div class="rngs">${tabs}</div></div>
+    <div class="sec-head"><h2>유입 경로별 예약 <small>실제 접수된 예약 · 최근 ${days}일 · ${fmt(items.length)}건</small></h2><div class="rngs">${tabs}</div></div>
     ${body}
-    <p class="note">2026-11-04부터 예약 접수 때 처음 들어온 경로(네이버 검색·플레이스·블로그·인스타그램·광고 등)를 함께 기록합니다. 그 전에 들어온 예약은 '기록 없음'으로 표시됩니다. 내원 수는 예약 관리에서 상태를 '내원'으로 바꾼 건입니다.</p>
+    <p class="note"><strong>가장 정확한 예약 수</strong>입니다(예약 관리 목록과 같은 기록). 2026-11-04부터 예약 접수 때 처음 들어온 경로(네이버 검색·플레이스·블로그·인스타그램·광고 등)를 함께 기록합니다. 그 전에 들어온 예약은 '기록 없음'으로 표시됩니다. 내원 수는 예약 관리에서 상태를 '내원'으로 바꾼 건입니다.</p>
   </section>`
 }
 
@@ -280,7 +282,7 @@ function channelSection(d: any): string {
       <div><b>${fmt(num(fp.tel))}</b><span>전화 버튼 클릭</span></div>
       <div><b>${fmt(num(fp.formStart))}</b><span>예약 양식 작성 시작</span></div>
       <div><b>${fmt(num(fp.formSubmit))}</b><span>예약 양식 제출</span></div>
-    </div><p class="note">버튼 클릭 수는 자체 수집 기준(${esc(fp.since || '')} ~ ${esc(fp.until || '')})입니다.</p>` : ''
+    </div><p class="note">버튼 클릭 수는 자체 수집 기준(${esc(fp.since || '')} ~ ${esc(fp.until || '')})입니다. '예약 양식 제출'은 <strong>보내기 버튼을 누른 횟수</strong>라, 동의 체크 누락·연락처 오류·휴진일 선택·중복 접수로 되돌아간 시도까지 함께 셉니다. 그래서 실제 예약 수(위 '유입 경로별 예약')보다 많게 나옵니다.</p>` : ''
   return `<section class="card">
     <h2>어디서 들어왔나 <small>GA · 최근 28일 · 방문 기준</small></h2>
     ${rows ? `<table><thead><tr><th>채널</th><th class="num">세션</th><th class="num">사용자</th><th class="num">비중</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
@@ -325,9 +327,10 @@ export function renderStatsPage(d: any, local?: LocalStats): string {
     <div class="card metric"><span class="m-label">평균 순위 <small>낮을수록 좋음</small></span><strong>${V(!!hasGsc && num(g.position) > 0, num(g.position).toFixed(1))}</strong>${hasGsc ? arrowHtml(deltaVal(g.delta, 'position'), true) : ''}</div>
     <div class="card metric"><span class="m-label">방문자 <small>GA · 28일</small></span><strong>${V(!!hasGa, fmt(num(a.users)))}</strong>${hasGa ? arrowHtml(deltaVal(a.delta, 'users')) : ''}</div>
     <div class="card metric"><span class="m-label">세션</span><strong>${V(!!hasGa, fmt(num(a.sessions)))}</strong>${hasGa ? arrowHtml(deltaVal(a.delta, 'sessions')) : ''}</div>
-    <div class="card metric"><span class="m-label">상담 신청 <small>리드</small></span><strong>${V(!!hasGa, fmt(num(a.leads)))}</strong></div>
+    <div class="card metric"><span class="m-label">온라인 예약 완료 <small>GA 리드 · 28일</small></span><strong>${V(!!hasGa, fmt(num(a.leads)))}</strong><span class="delta flat">${LEADS_SINCE}부터 집계</span></div>
     <div class="card metric"><span class="m-label">AI 유입 세션 <small>ChatGPT 등</small></span><strong>${V(!!hasAi, fmt(num(ai.sessions)))}</strong>${hasAi && num(ai.sessions) > 0 ? `<span class="delta flat">전체의 ${pct1(ai.share)}</span>` : ''}</div>
-  </div>`
+  </div>
+  <p class="note" style="margin:-8px 0 18px">예약 숫자가 세 군데 다르게 보이는 이유 — ① <b>온라인 예약 완료(GA 리드)</b>: 예약이 실제로 접수됐을 때 구글 애널리틱스로 보내는 신호(${LEADS_SINCE}부터, 광고 차단·추적 거부 브라우저는 빠짐) ② <b>예약 양식 제출</b>: 보내기 버튼을 누른 횟수(실패한 시도 포함) ③ <b>유입 경로별 예약</b>: 실제 접수된 예약 기록(가장 정확).</p>`
 
   // 노출순 정렬 (2026-11-04 원장 요청) — 받은 목록 안에서 노출 많은 순, 같으면 클릭순
   const queries = Array.isArray(g.topQueries)

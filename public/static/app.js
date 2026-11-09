@@ -565,6 +565,8 @@
         var ranges = HOURS[d.getDay()];
         var open = false;
         if (ranges) ranges.forEach(function (r) { if (mins >= r[0] && mins < r[1]) open = true; });
+        // 헤더 '진료 상태' 엔진이 있으면 그 판정(점심·저녁시간·휴진일·공휴일 반영)을 그대로 쓴다 — 표시 불일치 방지
+        if (window.acHours) open = window.acHours.status().open;
         live.classList.toggle('open', open);
         live.classList.toggle('closed', !open);
         var txt = live.querySelector('.txt');
@@ -737,6 +739,8 @@
       .then(function (r) { return r.json(); })
       .then(function (res) {
         if (res.ok) {
+          // GA4 리드 이벤트 — 관리자 '사이트 통계'의 '상담 신청(리드)'은 이 이벤트 수를 센다(2026-11-09: 그동안 이 사이트는 안 보내서 항상 0)
+          try { if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead', { form_name: 'reservation', treatment: String(data.treatment || '').slice(0, 40) }); } catch (err) {}
           form.reset();
           setResvStep(2);
           window.showToast('예약 문의가 접수되었습니다. 곧 연락드리겠습니다.');
@@ -1145,6 +1149,14 @@
   function toMin(hhmm) { var p = hhmm.split(':'); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); }
   function evalStatus() {
     if (!statusEl || !statusTxt) return;
+    if (window.acHours) {
+      var st = window.acHours.status();
+      statusEl.classList.remove('open', 'closed');
+      statusEl.classList.add(st.open ? 'open' : 'closed');
+      statusTxt.textContent = st.long;
+      if (todayEl) todayEl.textContent = st.today ? ('오늘 진료 ' + ('0' + Math.floor(st.today.o / 60)).slice(-2) + ':' + ('0' + st.today.o % 60).slice(-2) + ' ~ ' + ('0' + Math.floor(st.today.c / 60)).slice(-2) + ':' + ('0' + st.today.c % 60).slice(-2)) : '오늘은 휴진일입니다';
+      return;
+    }
     var now = new Date();
     var dayName = DAY_KO[now.getDay()];
     var spans = todayEl ? todayEl.querySelectorAll('[data-day]') : [];
@@ -1170,6 +1182,21 @@
     }
   }
   evalStatus();
+  document.addEventListener('ac:hours', evalStatus);
+
+  // 모바일: 상담 버튼이 본문 글자를 가리지 않도록 — 아래로 읽는 동안은 숨기고, 위로 올리거나 멈춘 맨 끝에서만 보이기 (2026-11-09)
+  var mqM = window.matchMedia('(max-width: 768px)');
+  var lastY = window.scrollY || 0, ticking = false;
+  function onScrollFab() {
+    ticking = false;
+    var y = window.scrollY || 0, dy = y - lastY;
+    if (Math.abs(dy) < 6) return;
+    var nearEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 40;
+    var hide = mqM.matches && !w.classList.contains('open') && dy > 0 && y > 120 && !nearEnd;
+    w.classList.toggle('cw-away', hide);
+    lastY = y;
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScrollFab); } }, { passive: true });
 })();
 
 // ---------- case gallery: 즉시 필터 + 라이트박스 ----------
@@ -1225,7 +1252,12 @@
     else { afterFig.style.display = 'none'; }
     elCat.textContent = card.getAttribute('data-cat-name') || '';
     elTitle.textContent = card.getAttribute('data-title') || '';
-    elDesc.textContent = card.getAttribute('data-desc') || '';
+    // 본문: 카드 안 <template>(서버가 소제목·단락·목록으로 나눈 HTML)을 그대로 복사 — 상세 페이지와 같은 형식
+    var tpl = card.querySelector('template.case-body-tpl');
+    elDesc.innerHTML = '';
+    if (tpl && tpl.content) elDesc.appendChild(tpl.content.cloneNode(true));
+    var elFull = document.getElementById('clFull');
+    if (elFull) elFull.href = '/cases/' + (card.getAttribute('data-id') || '');
     elTags.innerHTML = card.getAttribute('data-tags') || '';
     var doc = card.getAttribute('data-doctor');
     var docName = card.getAttribute('data-doctor-name');
@@ -1239,6 +1271,7 @@
     }
     lb.hidden = false;
     document.body.style.overflow = 'hidden';
+    var lbCard = lb.querySelector('.cl-card'); if (lbCard) lbCard.scrollTop = 0;
   }
   function closeLb() { lb.hidden = true; document.body.style.overflow = ''; }
 

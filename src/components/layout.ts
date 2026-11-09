@@ -121,16 +121,58 @@ export function schemaTag(obj: any) {
 }
 
 // ============================================================
+// 지금 진료 상태 엔진 (헤더 칩 · 히어로 LIVE · 상담 위젯 공용) — window.acHours
+//  진료시간 = CLINIC.hours 기준: 월·화·목 09:30~20:30(야간) / 수·금 09:30~18:30 / 토·일·공휴일 09:30~14:00
+//  평일 점심 12:30~14:00 · 저녁 17:30~18:00 (토·일·공휴일은 쉬는 시간 없음)
+//  날짜별 상태(진료·야간·공휴일·휴진)는 /api/schedule (관리자 진료일정) → localStorage 10분 캐시
+// ============================================================
+const HOURS_CHIP_JS = `(function(){
+var el=document.getElementById('hoursChip');if(!el||window.acHours)return;
+var DAYS={},WK=['일','월','화','수','목','금','토'];
+try{var c=JSON.parse(localStorage.getItem('ac_sched')||'null');if(c&&c.days)DAYS=c.days;}catch(e){}
+function p2(n){return(n<10?'0':'')+n}
+function kst(){var n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+324e5)}
+function ymd(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+function hm(m){return p2(Math.floor(m/60))+':'+p2(m%60)}
+function stateOf(d){var k=ymd(d);if(DAYS[k])return DAYS[k];var w=d.getDay();return(w==1||w==2||w==4)?'night':'open'}
+function hours(d){var st=stateOf(d),w=d.getDay();if(st==='closed')return null;
+if(st==='holiday'||w===0||w===6)return{o:570,c:840,br:[]};
+return{o:570,c:st==='night'?1230:1110,br:[[750,840,'점심시간','점심'],[1050,1080,'저녁시간','저녁']]}}
+function status(){var d=kst(),t=d.getHours()*60+d.getMinutes(),h=hours(d);
+if(!h)return{s:'closed',long:'오늘 휴진',short:'오늘 휴진',open:false,today:null};
+var r={o:h.o,c:h.c};
+if(t<h.o)return{s:'closed',long:'진료 전 · 오늘 '+hm(h.o)+'부터',short:'진료 전 '+hm(h.o)+'~',open:false,today:r};
+if(t<h.c){for(var i=0;i<h.br.length;i++){var b=h.br[i];if(t>=b[0]&&t<b[1])return{s:'break',long:b[2]+' '+hm(b[1])+'까지',short:b[3]+' ~'+hm(b[1]),open:false,today:r}}
+return{s:'open',long:'진료중 '+hm(h.c)+'까지',short:'진료중 ~'+hm(h.c),open:true,today:r}}
+for(var k=1;k<=14;k++){var n=new Date(d.getTime()+k*864e5),nh=hours(n);if(nh){var when=k===1?'내일':WK[n.getDay()]+'요일';
+return{s:'closed',long:'진료 종료 · '+when+' '+hm(nh.o)+'부터',short:'진료 종료',open:false,today:r}}}
+return{s:'closed',long:'진료 종료',short:'진료 종료',open:false,today:r}}
+function paint(){var st=status();el.setAttribute('data-s',st.s);
+el.querySelector('.hc-long').textContent=st.long;el.querySelector('.hc-short').textContent=st.short;
+el.setAttribute('aria-label','지금 진료 상태: '+st.long+' — 진료일정 보기');
+try{document.dispatchEvent(new CustomEvent('ac:hours',{detail:st}))}catch(e){}}
+window.acHours={status:status,paint:paint};
+paint();setInterval(paint,30000);
+var fresh=false;try{var c2=JSON.parse(localStorage.getItem('ac_sched')||'null');fresh=c2&&Date.now()-c2.at<6e5}catch(e){}
+if(!fresh&&window.fetch)fetch('/api/schedule').then(function(r){return r.json()}).then(function(j){if(j&&j.days){DAYS=j.days;try{localStorage.setItem('ac_sched',JSON.stringify({at:Date.now(),days:j.days}))}catch(e){}paint()}}).catch(function(){});
+})();`
+
+// ============================================================
 // HEADER (GNB + 메가드롭다운)
 // ============================================================
 export function Header() {
   return html`
   <header class="site-header" id="siteHeader">
     <div class="header-inner">
+      <div class="brand-wrap">
       <a href="/" class="logo" aria-label="${CLINIC.name} 홈">
         <span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="365올케어치과 로고" class="mark-img mark-ivory" width="32" height="32"/><img src="/static/img/logo-symbol.png" alt="365올케어치과 로고" class="mark-img mark-navy" width="32" height="32"/></span>
         <span>365올케어치과</span>
       </a>
+      <!-- 지금 진료 상태 (2026-11-09 원장 요청) — 요일별 진료시간 + 관리자 진료일정(휴진·공휴일) 기준, KST. 폭 고정 → 글자가 바뀌어도 레이아웃 이동 없음 -->
+      <a href="/schedule" class="hours-chip" id="hoursChip" data-s="wait" title="진료일정 보기"><span class="hc-dot" aria-hidden="true"></span><span class="hc-long">진료시간 안내</span><span class="hc-short">진료시간</span></a>
+      <script>${raw(HOURS_CHIP_JS)}</script>
+      </div>
       <nav aria-label="주메뉴">
         <ul class="gnb">
           <li><a href="/mission">병원소개</a></li>
@@ -177,7 +219,7 @@ export function Header() {
                 <a href="/notice"><span class="ico"><i class="fa-solid fa-bullhorn"></i></span><span><strong>공지사항</strong></span></a>
                 <a href="/events"><span class="ico"><i class="fa-solid fa-gift"></i></span><span><strong>이벤트</strong><span>진행 중인 혜택</span></span></a>
                 <a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-tooth"></i></span><span><strong>셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>1분 구강나이 스캔</span></span></a>
-                <a href="https://allcaredc-2.ontheai.blog/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-blog"></i></span><span><strong>블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>올케어치과 소식·치아 이야기</span></span></a>
+                <a href="https://blog.allcaredc.kr/" target="_blank" rel="noopener"><span class="ico"><i class="fa-solid fa-blog"></i></span><span><strong>블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.6"></i></strong><span>올케어치과 소식·치아 이야기</span></span></a>
               </div>
             </div>
           </li>
@@ -216,7 +258,7 @@ export function Header() {
       <a href="/notice">공지사항</a>
       <a href="/events">이벤트</a>
       <a href="https://allcare-oral-check.netlify.app/" target="_blank" rel="noopener">셀프 구강 체크 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;opacity:.6"></i></a>
-      <a href="https://allcaredc-2.ontheai.blog/" target="_blank" rel="noopener">블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;opacity:.6"></i></a>
+      <a href="https://blog.allcaredc.kr/" target="_blank" rel="noopener">블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;opacity:.6"></i></a>
     </div>
     <a href="/reservation" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:24px">예약 문의</a>
     <a href="tel:${CLINIC.phoneRaw}" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:10px">${CLINIC.phone}</a>
@@ -248,7 +290,7 @@ export function Footer(path = '') {
             ${raw(CORE_TREATMENTS.map(t => `<li><a href="/treatments/${t.slug}">${t.name}</a></li>`).join(''))}
             <li><a href="/treatments">전체 진료보기</a></li>
             <li><a href="/doctors">의료진 소개</a></li>
-            <li><a href="https://allcaredc-2.ontheai.blog/" target="_blank" rel="noopener">블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.7"></i></a></li>
+            <li><a href="https://blog.allcaredc.kr/" target="_blank" rel="noopener">블로그 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;opacity:.7"></i></a></li>
           </ul>
         </div>
         <div>
@@ -331,7 +373,7 @@ export function Footer(path = '') {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=7e1bdd7dec"></script>
+  <script src="/static/app.js?v=8dab5638a3"></script>
   `
 }
 
@@ -420,7 +462,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20261028" />
+    <link rel="stylesheet" href="/static/style.css?v=20261109" />
     ${meta.immersive ? raw(IMMERSIVE_HEAD) : ''}
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />

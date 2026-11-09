@@ -106,13 +106,14 @@ export function CasesPage(cases: CaseItem[], loggedIn: boolean, filter: { cat?: 
       <div class="cl-info">
         <span class="cl-cat" id="clCat"></span>
         <h2 id="clTitle"></h2>
-        <p id="clDesc"></p>
+        <div id="clDesc" class="prose case-body cl-body"></div>
         <ul class="cl-tags" id="clTags"></ul>
         <a id="clDoctor" class="cl-doctor" href="#" hidden></a>
         <div class="cl-cta">
           <a href="/reservation" class="btn btn-accent" style="font-size:14px"><i class="fa-solid fa-calendar-check"></i> 비슷한 고민, 상담받기</a>
           <!-- §S20⑤: 사례 → 같은 분야 칼럼 역링크 (JS가 카테고리 주입) -->
           <a id="clColumn" href="/column" class="btn btn-outline" style="font-size:14px" hidden><i class="fa-solid fa-pen-nib"></i> 관련 칼럼 읽기</a>
+          <a id="clFull" href="/cases" class="cl-full">사례 전체 보기 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></a>
         </div>
       </div>
     </div>
@@ -151,7 +152,7 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
   <article class="case-card reveal reveal-d${(i % 3) + 1}" data-cat="${esc(c.category)}"
     data-before="${esc(beforeSrc)}" data-after="${esc(afterSrc)}" data-locked="${loggedIn ? '0' : '1'}"
     data-title="${esc(storyLine(c, catName))}" data-cat-name="${esc(catName(c.category))}"
-    data-desc="${esc(c.description)}" data-tags="${esc(tagsHtml)}"
+    data-id="${esc(c.id)}" data-tags="${esc(tagsHtml)}"
     data-doctor="${esc(c.doctor || '')}" data-doctor-name="${esc(docName(c.doctor) ? docName(c.doctor) + ' 원장' : '')}">
     
     <div class="ba-slider${loggedIn ? '' : ' locked'}">
@@ -173,20 +174,56 @@ function caseCard(c: CaseItem, loggedIn: boolean, catName: (s: string) => string
       `}
     </div>
     <div class="case-meta">
-      <span class="case-story-no">Story ${String(i + 1).padStart(2, '0')} · ${catName(c.category)}</span>
       <h2 class="case-story-line"><a href="/cases/${esc(c.id)}">${esc(storyLine(c, catName))}</a></h2>
-      <p style="font-size:14px;color:var(--gray-600);margin-bottom:8px">${esc(c.description)}</p>
-      <div class="tags">
-        ${c.ageGroup ? `<i class="fa-solid fa-user"></i> ${c.ageGroup} ${c.gender || ''} · ` : ''}
-        ${c.period ? `<i class="fa-solid fa-clock"></i> ${c.period} · ` : ''}
-        ${c.region ? `<i class="fa-solid fa-location-dot"></i> ${c.region}` : ''}
-      </div>
-      ${c.doctor ? `<a href="/doctors/${c.doctor}" style="display:inline-block;margin-top:10px;font-size:13px;font-weight:600;color:var(--brand-accent)">담당: ${docName(c.doctor)} 원장 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></a>` : ''}
-      <a href="/column?cat=${esc(c.category)}" style="display:inline-block;margin-top:10px;margin-left:${c.doctor ? '12px' : '0'};font-size:13px;font-weight:600;color:var(--gray-600)"><i class="fa-solid fa-pen-nib" style="font-size:11px"></i> ${catName(c.category)} 칼럼</a>
-      <button type="button" class="case-detail-btn" aria-label="진료사례 크게 보기"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> 크게 보기</button>
-      <a href="/cases/${esc(c.id)}" style="display:inline-block;margin-top:10px;margin-left:12px;font-size:13px;font-weight:700;color:var(--brand)">사례 전체 보기 <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></a>
+      <button type="button" class="case-detail-btn" aria-label="${esc(storyLine(c, catName))} 크게 보기"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> 크게 보기</button>
+      <template class="case-body-tpl">${caseBodyHtml(c.description)}</template>
     </div>
   </article>`
+}
+
+// 사례 본문 → 소제목·단락·목록 HTML (2026-11-09 원장 요청: '크게 보기' 창도 상세 페이지처럼 나눠 보이게)
+//  - 빈 줄로 나뉜 덩어리 단위. 덩어리 첫 줄이 짧고 마침표가 없으면(예: '에어플로우란', '치료 전 상태') 소제목
+//  - 마침표 없이 끝나는 문장 줄이 2개 이상 이어지면(예: '알아두실 점' 항목) 목록. '-·•' 로 시작하는 줄도 목록
+//  - 맨 끝 '키워드, 키워드, …' 줄은 작은 글씨
+export function caseBodyHtml(text: string): string {
+  const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  const blocks = String(text || '').replace(/\r\n?/g, '\n').split(/\n\s*\n+/).map(b => b.split('\n').map(l => l.trim()).filter(Boolean)).filter(b => b.length)
+  const isBullet = (l: string) => /^[-·•▪◦*]\s*/.test(l) || /^\d+[.)]\s+/.test(l)
+  const ends = (l: string) => /[.!?。…:)\]」』"'”’]$/.test(l)
+  const isHead = (l: string) => l.length <= 26 && !ends(l) && !/니다$/.test(l) && !/^[※*]/.test(l) && !isBullet(l) && !/,/.test(l)
+  type U = { t: 'h' | 'p' | 'li' | 'kw' | 'note'; lines: string[]; bullet?: boolean }
+  const units: U[] = []
+  blocks.forEach((b, bi) => {
+    let lines = b
+    if (lines.length > 1 && isHead(lines[0])) { units.push({ t: 'h', lines: [lines[0]] }); lines = lines.slice(1) }
+    else if (lines.length === 1 && isHead(lines[0]) && bi < blocks.length - 1) { units.push({ t: 'h', lines }); return }
+    // 마침표 없는 줄이 2줄 이상 한 덩어리 → 항목 목록 (예: '알아두실 점' 아래 3줄, '한눈에 보기' 아래 줄들)
+    if (lines.length >= 2 && !lines.some(isBullet) && lines.every(l => !ends(l) && l.length > 6)) { lines.forEach(l => units.push({ t: 'li', bullet: true, lines: [l] })); return }
+    if (lines.every(isBullet)) { lines.forEach(l => units.push({ t: 'li', bullet: true, lines: [l.replace(/^([-·•▪◦*]|\d+[.)])\s*/, '')] })); return }
+    const one = lines.length === 1 ? lines[0] : ''
+    if (one && (one.match(/,/g) || []).length >= 3 && !ends(one)) { units.push({ t: 'kw', lines }); return }
+    if (/^※/.test(lines[0])) { units.push({ t: 'note', lines }); return }
+    units.push({ t: one && !ends(one) && one.length > 12 ? 'li' : 'p', lines })
+  })
+  // 낱개로 떨어진 'li' 후보(마침표 없는 문장 1줄)는 2개 이상 이어질 때만 목록, 아니면 단락
+  for (let i = 0; i < units.length; i++) {
+    if (units[i].t !== 'li') continue
+    let j = i; while (j < units.length && units[j].t === 'li') j++
+    if (j - i < 2 && !units[i].bullet) units[i].t = 'p'
+    i = j - 1
+  }
+  let out = '', inList = false
+  for (const u of units) {
+    if (u.t !== 'li' && inList) { out += '</ul>'; inList = false }
+    const body = u.lines.map(esc).join('<br>')
+    if (u.t === 'h') out += `<h3>${body}</h3>`
+    else if (u.t === 'li') { if (!inList) { out += '<ul>'; inList = true } out += `<li>${body}</li>` }
+    else if (u.t === 'kw') out += `<p class="case-kw">${body}</p>`
+    else if (u.t === 'note') out += `<p class="case-note">${body}</p>`
+    else out += `<p>${body}</p>`
+  }
+  if (inList) out += '</ul>'
+  return out
 }
 
 // 사례 제목: 원장이 입력한 제목(치료 내용)을 우선 사용, 없으면 "진료명 치료 사례" (원장 요청 2026-09-16 — 지역·연령·성별·기간은 별도 태그로만 표시)
@@ -265,7 +302,7 @@ export function CaseDetailPage(c: CaseItem, loggedIn: boolean, siblings: CaseIte
 
       ${c.description ? html`
       <h2 style="font-size:1.4rem;margin:40px 0 14px">진단과 치료 과정</h2>
-      <div class="prose reveal">${raw(c.description.split(/\r?\n/).filter(x => x.trim()).map(x => `<p>${esc(x)}</p>`).join(''))}</div>` : ''}
+      <div class="prose case-body reveal">${raw(caseBodyHtml(c.description))}</div>` : ''}
       <p style="font-size:12.5px;color:var(--gray-400);margin-top:24px">※ 환자 동의를 받아 게시한 사례이며, 전후 사진은 같은 촬영 조건에서 기록했습니다. 치료 결과는 개인의 구강 상태에 따라 차이가 있을 수 있습니다.</p>
 
       <div class="col-cta-row" style="margin-top:28px">

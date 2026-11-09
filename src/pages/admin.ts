@@ -3,7 +3,7 @@ import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName, typ
 import { eventStatus } from './event'
 import { POPUP_MAX, kstToday, allActivePopupNotices } from './notice'
 import { isLive, msToKstInput } from '../lib/store'
-import { type Schedule, daysInMonth, stateOf, defaultState, scheduleVersion } from '../lib/schedule'
+import { type Schedule, daysInMonth, stateOf, defaultState, scheduleVersion, isHoliday, DAY_STATES, CAL_W, CAL_H } from '../lib/schedule'
 
 // ── 게시 상태 · 예약 발행 공통 (2026-11-04 원장 요청) ──
 // 목록 배지: 임시저장 / 비공개 / 예약(시각) / 게시
@@ -144,7 +144,7 @@ function adminShell(active: string, title: string, content: any) {
   </aside>
   <main class="admin-main">${content}</main>
 </div>
-<script src="/static/app.js?v=7e1bdd7dec"></script>
+<script src="/static/app.js?v=8dab5638a3"></script>
 </body></html>`
 }
 
@@ -1264,13 +1264,15 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
   const [y, m] = ym.split('-').map(Number)
   const days = daysInMonth(ym)
   const first = new Date(Date.UTC(y, m - 1, 1)).getUTCDay()
-  const label: Record<string, string> = { open: '진료', night: '야간진료', closed: '휴진' }
+  const label: Record<string, string> = { open: '진료', night: '야간진료', holiday: '공휴일 진료(~14:00)', closed: '휴진' }
+  const ver = scheduleVersion(sc, ym)
+  const pngReady = sc.pngs[ym] === ver
   const cells: string[] = []
   for (let i = 0; i < first; i++) cells.push('<div class="sc-cell sc-empty"></div>')
   days.forEach((d, i) => {
     const st = stateOf(sc, d), def = defaultState(d), wd = (first + i) % 7
-    cells.push(`<div class="sc-cell sc-${st}${st !== def ? ' sc-changed' : ''}"><span class="sc-num${wd === 0 ? ' sun' : wd === 6 ? ' sat' : ''}">${i + 1}</span>
-      <select name="d_${d}" onchange="this.parentNode.className='sc-cell sc-'+this.value+(this.value!=='${def}'?' sc-changed':'')">${['open', 'night', 'closed'].map(v => `<option value="${v}"${v === st ? ' selected' : ''}>${label[v]}${v === def ? ' (기본)' : ''}</option>`).join('')}</select></div>`)
+    cells.push(`<div class="sc-cell sc-${st}${st !== def ? ' sc-changed' : ''}"><span class="sc-num${wd === 0 || isHoliday(d) ? ' sun' : wd === 6 ? ' sat' : ''}">${i + 1}${isHoliday(d) ? ' <small>공휴일</small>' : ''}</span>
+      <select name="d_${d}" onchange="this.parentNode.className='sc-cell sc-'+this.value+(this.value!=='${def}'?' sc-changed':'')">${DAY_STATES.map(v => `<option value="${v}"${v === st ? ' selected' : ''}>${label[v]}${v === def ? ' (기본)' : ''}</option>`).join('')}</select></div>`)
   })
   const e = (v: any) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   return adminShell('schedule', '진료일정', html`
@@ -1280,31 +1282,101 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
       .sc-cell{border:1px solid var(--gray-100);border-radius:8px;padding:8px;min-height:74px;background:#fff;display:flex;flex-direction:column;gap:6px}
       .sc-cell select{font-size:12px;padding:4px;border:1px solid var(--gray-100);border-radius:4px;width:100%}
       .sc-empty{border:none;background:none}
-      .sc-num{font-weight:800}.sc-num.sun{color:#a33}.sc-num.sat{color:#2a4d7a}
-      .sc-night{background:#faf4e8}.sc-closed{background:#f7e3df;border-color:#e3b3aa}
+      .sc-num{font-weight:800}.sc-num.sun{color:#a33}.sc-num.sat{color:#2a4d7a}.sc-num small{font-size:10.5px;font-weight:700}
+      .sc-night{background:#faf4e8}.sc-closed{background:#f7e3df;border-color:#e3b3aa}.sc-holiday{background:#fbeeee}
       .sc-changed{box-shadow:inset 0 0 0 2px var(--brand-accent,#b08d57)}
+      .sc-bg{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin:6px 0 16px}
+      .sc-bg-thumb{width:84px;aspect-ratio:1050/1485;border:1px solid var(--gray-100);border-radius:6px;background:#fffeee center/cover no-repeat;flex:none}
+      .sc-out{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+      .sc-dl{display:flex;flex-direction:column;gap:10px;min-width:240px}
+      .sc-png-st{font-size:12.5px;color:var(--gray-600)}
       @media(max-width:768px){.sc-cell select{font-size:11px}.sc-grid{gap:3px}.sc-cell{padding:4px;min-height:60px}}
     </style>
     <div class="admin-head"><h1>진료일정</h1>
       <div style="display:flex;gap:8px;align-items:center"><a href="/admin/schedule?ym=${prevYm}" class="btn btn-outline btn-sm">‹ 이전 달</a><strong style="font-size:1.1rem">${y}년 ${m}월</strong><a href="/admin/schedule?ym=${nextYm}" class="btn btn-outline btn-sm">다음 달 ›</a></div></div>
     ${msg ? html`<div class="admin-card" style="background:#e6f7f5;color:#0d8174;padding:14px 20px">${msg}</div>` : ''}
-    <form method="POST" action="/admin/schedule?ym=${ym}">
+    <form method="POST" action="/admin/schedule?ym=${ym}" id="scForm">
       <div class="admin-card">
-        <p style="font-size:13px;color:var(--gray-600);margin-bottom:14px">월·화·목은 기본이 <strong>야간진료</strong>, 나머지는 <strong>진료</strong>입니다. <strong>휴진하는 날</strong>(격주 일요일·공휴일 휴진 등)과 기본과 다른 날만 바꾸고 저장하세요. 바뀐 날은 금색 테두리로 표시됩니다.</p>
+        <p style="font-size:13px;color:var(--gray-600);margin-bottom:14px">월·화·목은 기본이 <strong>야간진료</strong>, 법정 공휴일은 <strong>공휴일 진료(09:30~14:00)</strong>, 나머지는 <strong>진료</strong>입니다. <strong>휴진하는 날</strong>(격주 일요일·공휴일 휴진 등)과 기본과 다른 날만 바꾸고 저장하세요. 바뀐 날은 금색 테두리로 표시됩니다. 여기서 정한 휴진일·공휴일은 홈페이지 상단 '진료중' 표시에도 그대로 반영됩니다.</p>
         <div class="sc-grid">${raw(['일', '월', '화', '수', '목', '금', '토'].map(h => `<div class="sc-head">${h}</div>`).join(''))}${raw(cells.join(''))}</div>
       </div>
       <div class="admin-card">
         <div class="field"><label>달력 아래 안내 문구 <span style="font-weight:400;color:var(--gray-400);font-size:12px">비우면 '${m}월 진료일정을 참고하여 내원 부탁드립니다.'</span></label>
           <input name="note" maxlength="60" value="${raw(e(sc.notes[ym]))}"></div>
+        <div class="field"><label>${m}월 배경 이미지 <span style="font-weight:400;color:var(--gray-400);font-size:12px">비우면 단색 배경 · 세로 사진 권장(자동으로 1050×1485에 맞춰 잘림)</span></label>
+          <div class="sc-bg">
+            <div class="sc-bg-thumb" id="scBgThumb" style="${sc.bgs[ym] ? `background-image:url('/schedule/${ym}.svg?v=${ver}')` : ''}"></div>
+            <div style="flex:1;min-width:220px">
+              <input type="file" accept="image/jpeg,image/png,image/webp" id="scBgFile">
+              <input type="hidden" name="bgData" id="scBgData">
+              <p id="scBgMsg" style="font-size:12.5px;color:var(--gray-600);margin-top:6px">${sc.bgs[ym] ? '배경 이미지가 등록되어 있습니다. 새 파일을 고르면 바뀝니다.' : '등록된 배경 없음 (단색)'}</p>
+              ${sc.bgs[ym] ? raw(`<label class="checkbox-row" style="margin-top:6px"><input type="checkbox" name="bgRemove" value="1"> <span>배경 이미지 지우고 단색으로</span></label>`) : ''}
+            </div>
+          </div></div>
         <label class="checkbox-row"><input type="checkbox" name="popup" ${sc.popupMonths.includes(ym) ? 'checked' : ''}> <span><strong>${m}월 1일부터 말일까지 홈 화면 팝업으로 자동 노출</strong> (공지 팝업 맨 앞에 표시)</span></label>
-        <p style="font-size:12.5px;color:var(--gray-600);margin-top:10px">저장하면 ① 아래 달력 이미지가 자동으로 만들어지고 ② 홈페이지 <a href="/schedule" target="_blank" style="color:var(--brand-accent)">진료일정 페이지</a>에 올라가며 ③ 예약 문의 화면에서 휴진일은 고를 수 없게 막힙니다.</p>
+        <p style="font-size:12.5px;color:var(--gray-600);margin-top:10px">저장하면 ① 아래 세로형 달력 이미지(SVG·PNG)가 자동으로 만들어지고 ② 홈페이지 <a href="/schedule" target="_blank" style="color:var(--brand-accent)">진료일정 페이지</a>에 올라가며 ③ 예약 문의 화면에서 휴진일은 고를 수 없게 막힙니다.</p>
         <button type="submit" class="btn btn-primary" style="margin-top:12px"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
       </div>
     </form>
     <div class="admin-card">
-      <h2 style="font-size:1.1rem;margin-bottom:12px">자동 생성 달력 미리보기</h2>
-      <img src="/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}" alt="${m}월 진료일정" style="max-width:420px;width:100%;border:1px solid var(--gray-100);border-radius:8px">
-      <p style="font-size:12.5px;color:var(--gray-600);margin-top:8px">이미지 주소: <a href="/schedule/${ym}.svg" target="_blank">/schedule/${ym}.svg</a> — 블로그·카카오 채널에도 그대로 올릴 수 있습니다.</p>
+      <h2 style="font-size:1.1rem;margin-bottom:12px">자동 생성 달력 (세로형 ${CAL_W}×${CAL_H})</h2>
+      <div class="sc-out">
+        <img id="scPreview" src="/schedule/${ym}.svg?v=${ver}" alt="${m}월 진료일정" width="${CAL_W}" height="${CAL_H}" style="max-width:360px;width:100%;height:auto;border:1px solid var(--gray-100);border-radius:8px">
+        <div class="sc-dl">
+          <a class="btn btn-primary" id="scPngDl" href="/schedule/${ym}.png?v=${ver}&dl=1"${pngReady ? '' : ' hidden'}><i class="fa-solid fa-download"></i> PNG 내려받기</a>
+          <a class="btn btn-outline" href="/schedule/${ym}.svg?v=${ver}&dl=1"><i class="fa-solid fa-download"></i> SVG 내려받기</a>
+          <button type="button" class="btn btn-outline" id="scPngMake"><i class="fa-solid fa-rotate"></i> PNG 다시 만들기</button>
+          <p class="sc-png-st" id="scPngSt">${pngReady ? 'PNG 준비됨' : 'PNG 만드는 중…'}</p>
+          <p style="font-size:12.5px;color:var(--gray-600)">블로그·카카오 채널에는 <strong>PNG</strong>를 올리세요. 배경 사진과 로고가 파일 안에 들어 있어 어디에 올려도 빠지지 않습니다.<br>이미지 주소: <a href="/schedule/${ym}.png" target="_blank">/schedule/${ym}.png</a> · <a href="/schedule/${ym}.svg" target="_blank">.svg</a></p>
+        </div>
+      </div>
     </div>
+    <script>
+    (function(){
+      var YM=${raw(JSON.stringify(ym))}, VER=${raw(JSON.stringify(ver))}, READY=${pngReady ? 'true' : 'false'}, W=${CAL_W}, H=${CAL_H};
+      // ① 배경 이미지: 브라우저에서 1050×1485 로 꽉 차게 잘라 JPEG(약 수백 KB)로 줄인 뒤 폼에 실어 보낸다
+      var file=document.getElementById('scBgFile'), data=document.getElementById('scBgData'), msg=document.getElementById('scBgMsg'), thumb=document.getElementById('scBgThumb');
+      file.addEventListener('change',function(){
+        var f=file.files&&file.files[0]; if(!f) return;
+        msg.textContent='이미지 준비 중…';
+        var url=URL.createObjectURL(f), im=new Image();
+        im.onload=function(){
+          var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+          var g=cv.getContext('2d'), sc=Math.max(W/im.naturalWidth,H/im.naturalHeight), dw=im.naturalWidth*sc, dh=im.naturalHeight*sc;
+          g.fillStyle='#fffeee'; g.fillRect(0,0,W,H); g.drawImage(im,(W-dw)/2,(H-dh)/2,dw,dh);
+          var q=.84, out=cv.toDataURL('image/jpeg',q);
+          while(out.length>1400000&&q>.5){ q-=.08; out=cv.toDataURL('image/jpeg',q); }
+          data.value=out; thumb.style.backgroundImage='url('+out+')';
+          msg.textContent='새 배경 준비됨 ('+Math.round(out.length*0.75/1024)+'KB) — 저장을 누르면 반영됩니다.';
+          URL.revokeObjectURL(url);
+        };
+        im.onerror=function(){ msg.textContent='이미지를 읽지 못했습니다. JPG·PNG 파일을 골라 주세요.'; };
+        im.src=url;
+      });
+      // ② PNG: 저장된 SVG(배경·로고 포함)를 캔버스로 그려 PNG 로 올린다
+      var st=document.getElementById('scPngSt'), dl=document.getElementById('scPngDl'), btn=document.getElementById('scPngMake');
+      function makePng(){
+        st.textContent='PNG 만드는 중…'; btn.disabled=true;
+        var im=new Image();
+        im.onload=function(){
+          var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+          cv.getContext('2d').drawImage(im,0,0,W,H);
+          cv.toBlob(function(b){
+            if(!b){ st.textContent='PNG를 만들지 못했습니다. 다른 브라우저(크롬)로 다시 시도해 주세요.'; btn.disabled=false; return; }
+            fetch('/admin/schedule/png?ym='+YM+'&v='+VER,{method:'POST',headers:{'Content-Type':'image/png'},body:b,credentials:'same-origin'})
+              .then(function(r){return r.json()}).then(function(j){
+                btn.disabled=false;
+                if(j.ok){ st.textContent='PNG 준비됨 ('+Math.round(b.size/1024)+'KB)'; dl.hidden=false; }
+                else st.textContent='PNG 저장 실패: '+(j.error||'');
+              }).catch(function(){ btn.disabled=false; st.textContent='PNG 저장 실패 — 네트워크를 확인해 주세요.'; });
+          },'image/png');
+        };
+        im.onerror=function(){ btn.disabled=false; st.textContent='달력 이미지를 읽지 못했습니다.'; };
+        im.src='/schedule/'+YM+'.svg?v='+VER+'&r='+Date.now();
+      }
+      btn.addEventListener('click',makePng);
+      if(!READY) makePng();
+    })();
+    </script>
   `)
 }

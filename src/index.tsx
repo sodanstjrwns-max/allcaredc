@@ -29,7 +29,7 @@ import { INDEXNOW_KEY } from './lib/indexnow'
 import { loadPriceTable, publicTable } from './lib/pricing'
 import { HANDOVER_DOC_B64 } from './lib/handover-doc'
 import { notifyNewReservation, remindPendingReservations } from './lib/notify'
-import { getSchedule, calendarSvg, validYm, kstYm, closedDates, hasMonth, scheduleVersion } from './lib/schedule'
+import { getSchedule, calendarSvg, validYm, kstYm, kstYmd, closedDates, hasMonth, scheduleVersion, upcomingStates, scheduleBgDataUri, CAL_W, CAL_H } from './lib/schedule'
 import { PageHero } from './components/page'
 import { enabledProviders, oauthStart, oauthCallback, socialButtons, type Provider } from './lib/oauth'
 
@@ -141,14 +141,15 @@ app.get('/seo-health', (c) => c.html(SeoHealthPage().toString()))
 // ════════════════ 공개 페이지 ════════════════
 app.get('/', async (c) => {
   const notices = await listPublic<Notice>(c.env, 'notices')
-  const pops: { id: string; title: string; body: string; image?: string; href?: string }[] =
+  const pops: { id: string; title: string; body: string; image?: string; href?: string; poster?: boolean }[] =
     activePopupNotices(notices).map(p => ({ id: p.id, title: p.title, body: p.body, image: p.image }))
   // 진료일정 팝업 (관리자 '진료일정'에서 이 달을 팝업으로 지정한 경우, 그 달 동안 맨 앞에)
   try {
     const sc = await getSchedule(c.env), ym = kstYm()
     if (sc.popupMonths.includes(ym)) {
       const m = Number(ym.slice(5))
-      pops.unshift({ id: `sched-${ym}-${scheduleVersion(sc, ym)}`, title: `${m}월 진료일정`, body: sc.notes[ym] || `${m}월 진료일정을 참고하여 내원 부탁드립니다. 휴진일과 야간진료일을 확인해 주세요.`, image: `/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}`, href: '/schedule' })
+      // 세로형 달력은 이미지만 크게 보여 주는 포스터 카드(본문 중복 제거, 화면 높이 90% 안에 들어가게)
+      pops.unshift({ id: `sched-${ym}-${scheduleVersion(sc, ym)}`, title: `${m}월 진료일정`, body: sc.notes[ym] || `${m}월 진료일정을 참고하여 내원 부탁드립니다. 휴진일과 야간진료일을 확인해 주세요.`, image: `/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}`, href: '/schedule', poster: true })
     }
   } catch {}
   return c.html(HomePage(pops.slice(0, 5)).toString())
@@ -161,21 +162,32 @@ app.get('/schedule', async (c) => {
   const body = html`
   ${PageHero({ crumb: [{ name: '홈', url: '/' }, { name: '진료일정', url: '/schedule' }], title: '진료일정', desc: '이달의 휴진일과 야간진료일을 안내해 드립니다. 일요일은 격주로 진료합니다.' })}
   <section class="section"><div class="container" style="max-width:860px;display:grid;gap:28px;justify-items:center">
-    ${raw(months.map(ym => `<figure style="margin:0;width:100%;max-width:560px"><img src="/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}" alt="${Number(ym.slice(5))}월 진료일정 — 휴진일·야간진료일 달력" width="760" style="width:100%;height:auto;border-radius:6px;box-shadow:0 10px 30px rgba(6,39,65,.12)"></figure>`).join(''))}
+    ${raw(months.map(ym => `<figure style="margin:0;width:100%;max-width:560px"><img src="/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}" alt="${Number(ym.slice(5))}월 진료일정 — 휴진일·야간진료일 달력" width="${CAL_W}" height="${CAL_H}" style="width:100%;height:auto;border-radius:6px;box-shadow:0 10px 30px rgba(6,39,65,.12)"></figure>`).join(''))}
     <p style="font-size:14px;color:var(--gray-600);text-align:center">진료시간: ${CLINIC.hours.map(h => `${h.day.replace('요일', '')} ${h.time}`).join(' · ')}<br>${CLINIC.lunchNote}</p>
     <a href="/reservation" class="btn btn-primary">예약 문의하기</a>
   </div></section>`
   return c.html(Page({ title: '진료일정 · 휴진일 안내 | 365올케어치과', description: '365올케어치과 이달의 휴진일·야간진료일 달력입니다. 월·화·목 야간진료, 토·일·공휴일 오전 진료.', path: '/schedule' }, body).toString())
 })
 app.get('/schedule/:file', async (c) => {
-  const ym = c.req.param('file').replace(/\.svg$/, '')
-  if (!validYm(ym)) return c.notFound()
-  return c.body(calendarSvg(await getSchedule(c.env), ym), 200, { 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' })
+  const m = c.req.param('file').match(/^(\d{4}-\d{2})\.(svg|png)$/)
+  if (!m || !validYm(m[1])) return c.notFound()
+  const ym = m[1], sc = await getSchedule(c.env)
+  const dl = c.req.query('dl') ? { 'Content-Disposition': `attachment; filename="allcaredc-schedule-${ym}.${m[2]}"` } : {}
+  if (m[2] === 'png') {
+    // PNG 는 관리자 화면이 저장 직후 브라우저에서 SVG→PNG 로 그려 올린 파일. 현재 달력 버전과 같을 때만 내보낸다.
+    const ver = scheduleVersion(sc, ym)
+    const obj = sc.pngs[ym] === ver ? await r2GetBinary(c.env, `schedule/png/${ym}-${ver}.png`) : null
+    if (!obj) return c.text('PNG가 아직 만들어지지 않았습니다. 관리자 > 진료일정에서 저장하면 자동으로 만들어집니다.', 404)
+    return c.body(obj.body as any, 200, { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=300', ...dl })
+  }
+  const bg = await scheduleBgDataUri(c.env, sc, ym)
+  return c.body(calendarSvg(sc, ym, bg), 200, { 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'public, max-age=300', ...dl })
 })
 app.get('/api/schedule', async (c) => {
   const sc = await getSchedule(c.env)
-  const today = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10)
-  return c.json({ closed: closedDates(sc).filter(d => d >= today) }, 200, { 'Cache-Control': 'public, max-age=300' })
+  const today = kstYmd()
+  // days: 오늘부터 3주간 날짜별 상태(진료·야간·공휴일·휴진) — 헤더 '진료중' 표시가 휴진일·공휴일을 반영하도록
+  return c.json({ closed: closedDates(sc).filter(d => d >= today), days: upcomingStates(sc, 21) }, 200, { 'Cache-Control': 'public, max-age=300' })
 })
 app.get('/mission', (c) => c.html(MissionPage().toString()))
 app.get('/directions', (c) => c.html(DirectionsPage().toString()))

@@ -26,7 +26,7 @@ function sectionHead(label: string, title: string, lead?: string, center = true)
   </header>`
 }
 
-type HomePopup = { id: string; title: string; body: string; image?: string; href?: string }
+type HomePopup = { id: string; title: string; body: string; image?: string; href?: string; poster?: boolean }
 
 const escAttr = (s: unknown) => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -37,6 +37,17 @@ function noticePopCard(p: HomePopup): string {
   const id = escAttr(p.id)
   const href = p.href || `/notice/${encodeURIComponent(p.id)}`
   const text = p.body.length > 140 ? p.body.slice(0, 140) + '…' : p.body
+  // 포스터형(세로 진료일정 달력): 이미지만 크게 — 제목은 화면 낭독기용으로만, 본문은 이미지에 이미 들어 있음
+  if (p.poster && p.image) return `
+    <div class="np-card np-poster" id="np-card-${id}" data-pop-id="${id}" role="group" aria-labelledby="np-title-${id}">
+      <button type="button" class="np-x" data-np-act="close" aria-label="${escAttr(p.title)} 공지 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      <h3 class="sr-only" id="np-title-${id}">${escAttr(p.title)}</h3>
+      <a href="${href}" class="np-img"><img src="${escAttr(p.image)}" alt="${escAttr(p.title)} — ${escAttr(text)}" width="1050" height="1485"></a>
+      <div class="np-foot">
+        <button type="button" class="np-dismiss" data-np-act="hide"><input type="checkbox" tabindex="-1" aria-hidden="true"> <span>오늘 하루 보지 않기</span></button>
+        <button type="button" class="np-close-text" data-np-act="close">닫기</button>
+      </div>
+    </div>`
   return `
     <div class="np-card" id="np-card-${id}" data-pop-id="${id}" role="group" aria-labelledby="np-title-${id}">
       <button type="button" class="np-x" data-np-act="close" aria-label="${escAttr(p.title)} 공지 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
@@ -101,6 +112,10 @@ const NOTICE_POP_JS = `
     if(mq.matches) show(idx,0);
   }
   function closeAll(){ ov.hidden=true; unlock(); }
+  // 모바일 '진료 공지' 버튼은 첫 화면에서만 — 스크롤하면 숨겨 소개 문구·구역 제목을 가리지 않게 (2026-11-09 원장 요청 ①안)
+  var away=false;
+  function onScroll(){ var a=(window.scrollY||window.pageYOffset)>window.innerHeight*0.45; if(a!==away){ away=a; ov.classList.toggle('np-chip-away',a); } }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
   function removeCard(c){
     c.classList.add('np-out');
     var single=ov.classList.contains('np-single');
@@ -185,6 +200,17 @@ function noticePopHtml(popups: HomePopup[]): string {
     .notice-pop .np-allbar[hidden],.notice-pop.np-compact .np-allbar{display:none}
     .notice-pop .np-allbar button{min-height:44px;padding:10px 18px;border-radius:4px;border:1px solid var(--gold,#b08d57);background:var(--ivory,#fffeee);color:var(--navy-800,#062741);font:600 14px var(--font-sans,sans-serif);cursor:pointer;box-shadow:0 4px 14px #06274133}
     .notice-pop .np-allbar .np-allclose{background:var(--navy-800,#062741);color:#fffeee;border-color:var(--navy-800,#062741)}
+    .np-card.np-poster{width:min(460px,calc((min(90vh,100vh - 150px) - 76px) * .7071));max-height:90vh;overflow:hidden}
+    .np-poster .np-img{background:none}
+    .np-poster .np-img img{width:100%;height:auto;max-height:none;aspect-ratio:1050/1485;object-fit:contain}
+    .np-poster .np-foot{position:static}
+    .notice-pop.np-compact{transition:opacity .25s ease,transform .25s ease,visibility .25s}
+    .notice-pop.np-compact.np-chip-away{opacity:0;visibility:hidden;transform:translateY(-8px);pointer-events:none}
+    @media(max-width:767px){
+      .notice-pop.np-single{padding-left:8px;padding-right:8px}
+      .np-single .np-card.np-poster{width:min(100%,calc((100svh - 190px) * .7071));max-height:none;margin:0 auto}
+      .np-poster .np-img img{max-height:none}
+    }
   </style>
   <script>${NOTICE_POP_JS}</script>`
 }

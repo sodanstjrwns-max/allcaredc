@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { Bindings, getAdmin, setAdminSession, clearSession, secret } from '../lib/auth'
 import { verifyToken } from '../lib/auth'
 import { getCookie } from 'hono/cookie'
-import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary, r2GetBinary, getViews, isLive, kstInputToMs } from '../lib/store'
+import { listCollection, saveCollection, addToCollection, updateInCollection, removeFromCollection, uid, r2PutBinary, r2GetBinary, r2Delete, getViews, isLive, kstInputToMs } from '../lib/store'
 import { notifySearchEngines } from '../lib/indexnow'
 import {
   AdminLogin, AdminDashboard, AdminReservations, AdminMembers, AdminCases, AdminCaseForm,
@@ -10,7 +10,7 @@ import {
   AdminEvents, AdminEventForm, AdminPricing, AdminColumnCategories, AdminSettings, AdminSchedule,
 } from '../pages/admin'
 import { getNotifySettings, saveNotifySettings, sendTelegram, notifyNewReservation } from '../lib/notify'
-import { getSchedule, saveSchedule, daysInMonth, defaultState, kstYm, validYm, type DayState } from '../lib/schedule'
+import { getSchedule, saveSchedule, daysInMonth, defaultState, kstYm, validYm, scheduleVersion, DAY_STATES, type DayState } from '../lib/schedule'
 import { getColumnCategories, saveColumnCategories, slugifyCategory, CATEGORY_SLUG_RE } from '../lib/column-categories'
 import { loadPriceTable, savePriceTable } from '../lib/pricing'
 import type { PriceGroup } from '../data/clinic'
@@ -535,15 +535,45 @@ admin.post('/schedule', async (c) => {
   const sc = await getSchedule(c.env)
   for (const d of daysInMonth(ym)) {
     const v = String(form[`d_${d}`] || '') as DayState
-    if (!['open', 'night', 'closed'].includes(v) || v === defaultState(d)) delete sc.days[d]
+    if (!DAY_STATES.includes(v) || v === defaultState(d)) delete sc.days[d]
     else sc.days[d] = v
   }
   const note = String(form.note || '').trim().slice(0, 60)
   if (note) sc.notes[ym] = note; else delete sc.notes[ym]
   sc.popupMonths = sc.popupMonths.filter(x => x !== ym)
   if (form.popup) sc.popupMonths.push(ym)
+  // 달 배경 이미지 (2026-11-09) — 브라우저가 1050×1485 JPEG 로 줄여 data URL 로 보낸다(원본 수 MB → 수백 KB)
+  const bgData = String(form.bgData || '')
+  const oldBg = sc.bgs[ym]
+  if (form.bgRemove || bgData) delete sc.bgs[ym]
+  const bm = bgData.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/)
+  if (bm && bm[2].length < 4_000_000) {
+    const bin = atob(bm[2]); const buf = new Uint8Array(bin.length)
+    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i)
+    const key = `schedule/bg/${ym}-${Date.now().toString(36)}.${bm[1] === 'image/png' ? 'png' : bm[1] === 'image/webp' ? 'webp' : 'jpg'}`
+    await r2PutBinary(c.env, key, buf.buffer, bm[1])
+    sc.bgs[ym] = key
+  }
+  if (oldBg && oldBg !== sc.bgs[ym]) await r2Delete(c.env, oldBg).catch(() => {})
   await saveSchedule(c.env, sc)
   return c.redirect(`/admin/schedule?ym=${ym}&ok=1`)
+})
+// 달력 PNG 업로드 — 관리자 화면이 저장 직후 SVG 를 캔버스로 그려 PNG 로 올린다(Workers 에는 한글 글꼴·래스터라이저가 없어 브라우저에서 변환)
+admin.post('/schedule/png', async (c) => {
+  const ym = String(c.req.query('ym') || ''), v = String(c.req.query('v') || '')
+  if (!validYm(ym)) return c.json({ ok: false, error: 'ym' }, 400)
+  const sc = await getSchedule(c.env)
+  const ver = scheduleVersion(sc, ym)
+  if (v !== ver) return c.json({ ok: false, error: '달력이 그사이 바뀌었습니다. 새로고침 후 다시 시도해 주세요.' }, 409)
+  const buf = await c.req.arrayBuffer()
+  const sig = new Uint8Array(buf.slice(0, 8))
+  if (buf.byteLength < 1000 || buf.byteLength > 12_000_000 || sig[0] !== 0x89 || sig[1] !== 0x50) return c.json({ ok: false, error: 'PNG 파일이 아닙니다.' }, 400)
+  const prev = sc.pngs[ym]
+  await r2PutBinary(c.env, `schedule/png/${ym}-${ver}.png`, buf, 'image/png')
+  sc.pngs[ym] = ver
+  await saveSchedule(c.env, sc)
+  if (prev && prev !== ver) await r2Delete(c.env, `schedule/png/${ym}-${prev}.png`).catch(() => {})
+  return c.json({ ok: true, url: `/schedule/${ym}.png?v=${ver}` })
 })
 
 // ── 알림 설정 ──
