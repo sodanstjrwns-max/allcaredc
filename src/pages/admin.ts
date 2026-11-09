@@ -33,6 +33,55 @@ function pubBlock(x: any, hint = ''): string {
   </div>`
 }
 
+// 공지·이벤트 이미지: 고르는 즉시 브라우저에서 용량을 줄여 올린다 (2026-11-09).
+// 원본 PNG 2MB가 그대로 올라가 홈 팝업 그림이 늦게 뜨던 것 — 긴 변 1600px·JPG(품질 0.85)로 바꿔 input.files를 교체.
+// 투명 배경은 WebP로(지원 안 하면 원본 유지), GIF·SVG·작은 파일(300KB 미만)·실패 시 원본 그대로.
+const ADMIN_SHRINK_JS = `
+(function(){
+  if(!window.createImageBitmap||!window.DataTransfer||!window.File) return;
+  function fmt(n){ return n>=1048576 ? (n/1048576).toFixed(1)+'MB' : Math.round(n/1024)+'KB'; }
+  function shrink(file,maxSide){
+    return new Promise(function(resolve){
+      try{
+        if(!/^image\\/(png|jpeg|webp|bmp)$/i.test(file.type)||file.size<300*1024) return resolve(file);
+        createImageBitmap(file).then(function(bmp){
+          var w=bmp.width,h=bmp.height,s=Math.min(1,maxSide/Math.max(w,h));
+          var cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));
+          var cv=document.createElement('canvas'); cv.width=cw; cv.height=ch;
+          var ctx=cv.getContext('2d'); ctx.drawImage(bmp,0,0,cw,ch);
+          var alpha=false;
+          if(/png|webp/i.test(file.type)){
+            var d=ctx.getImageData(0,0,cw,ch).data,step=Math.max(4,Math.floor(d.length/4/40000)*4);
+            for(var i=3;i<d.length;i+=step){ if(d[i]<255){ alpha=true; break; } }
+          }
+          var type=alpha?'image/webp':'image/jpeg', ext=alpha?'.webp':'.jpg';
+          cv.toBlob(function(b){
+            if(!b||b.type!==type||b.size>=file.size) return resolve(file);
+            var base=(file.name||'image').replace(/\\.[^.]+$/,'');
+            try{ resolve(new File([b],base+ext,{type:type})); }catch(e){ resolve(file); }
+          },type,0.85);
+        }).catch(function(){ resolve(file); });
+      }catch(e){ resolve(file); }
+    });
+  }
+  document.addEventListener('change',function(e){
+    var inp=e.target;
+    if(!inp||inp.type!=='file'||inp.name!=='imageFile') return;
+    var files=Array.prototype.slice.call(inp.files||[]); if(!files.length) return;
+    var btns=inp.form?Array.prototype.slice.call(inp.form.querySelectorAll('button[type=submit],button:not([type])')).filter(function(x){ return !x.disabled; }):[];
+    var note=inp.parentNode.querySelector('.shrink-note');
+    if(!note){ note=document.createElement('p'); note.className='shrink-note'; note.setAttribute('role','status'); note.style.cssText='font-size:12px;color:var(--gray-600);margin-top:6px'; inp.parentNode.appendChild(note); }
+    var before=files.reduce(function(a,f){return a+f.size;},0);
+    btns.forEach(function(b){ b.disabled=true; }); note.textContent='사진 용량 줄이는 중…';
+    Promise.all(files.map(function(f){ return shrink(f,1600); })).then(function(list){
+      var changed=list.some(function(f,i){ return f!==files[i]; });
+      if(changed){ try{ var dt=new DataTransfer(); list.forEach(function(f){ dt.items.add(f); }); inp.files=dt.files; changed=inp.files.length===list.length&&inp.files[0].size===list[0].size; }catch(err){ changed=false; } }
+      var after=changed?list.reduce(function(a,f){return a+f.size;},0):before;
+      note.textContent=changed?('자동으로 용량을 줄였습니다: '+fmt(before)+' → '+fmt(after)):(before>1048576?('용량이 큰 파일입니다('+fmt(before)+'). 줄이지 못해 그대로 올라갑니다.'):'');
+    }).catch(function(){ note.textContent=''; }).then(function(){ btns.forEach(function(b){ b.disabled=false; }); });
+  });
+})();`
+
 // 관리자 셸 (사이드바)
 function adminShell(active: string, title: string, content: any) {
   const nav = [
@@ -145,6 +194,7 @@ function adminShell(active: string, title: string, content: any) {
   <main class="admin-main">${content}</main>
 </div>
 <script src="/static/app.js?v=8dab5638a3"></script>
+<script>${raw(ADMIN_SHRINK_JS)}</script>
 </body></html>`
 }
 
