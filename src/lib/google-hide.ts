@@ -16,8 +16,10 @@
 //
 // 대상 구역 (가린다):
 //   - /encyclopedia, /encyclopedia/*  : 치과 용어 백과 목록 + 상세 (encyclopedia.json 일괄 생성)
-//   - /area/*                         : 지역 × 진료 조합 (SEO_AREAS × TREATMENTS 템플릿). 약수역 조합 포함
-//     ※ 이 사이트의 '약수역 치과' 지역 허브는 홈(/)이라 따로 남길 지역 허브 페이지가 없다.
+//   - /area/*                         : 지역 × 진료 조합 (SEO_AREAS × TREATMENTS 템플릿)
+//     ※ 예외(남긴다): 약수역 진료 안내 6쪽 /area/yaksu-{implant,ortho,esthetic,sleep,conservative,gum}
+//       — 병원 소재 역 × 진료, "약수역 임플란트" 같은 목표 검색어의 착지 페이지(홈 카드·사이트맵에 실린 6쪽, lib/yaksu-cards.ts).
+//       그 밖의 /area/* (다른 지역 조합, 약수동(yaksudong) 조합, 사이트맵에 없는 약수역 조합)은 가린다.
 // 남긴다 (손대지 않는다):
 //   홈, /treatments·상세, /doctors·상세, /pricing, /mission, /directions, /reservation, /faq,
 //   /cases·상세, /casebook/, /column·상세(관리자가 올린 R2 글), /notice, /events, /schedule 등 나머지 전부.
@@ -31,6 +33,16 @@ const GOOGLE_HIDE_ENABLED = true
 /** 구글에만 가리는 경로 접두사 (정확히 일치하거나 그 아래 경로) */
 const GOOGLE_HIDDEN_PREFIXES = ['/encyclopedia', '/area']
 
+/** 대상 구역 안에 있지만 구글에도 남기는 경로 (정확히 일치) — 약수역 진료 안내 6쪽 (2026-11-10 추가 지시) */
+const GOOGLE_KEEP_PATHS = new Set([
+  '/area/yaksu-implant',
+  '/area/yaksu-ortho',
+  '/area/yaksu-esthetic',
+  '/area/yaksu-sleep',
+  '/area/yaksu-conservative',
+  '/area/yaksu-gum',
+])
+
 export const GOOGLE_HIDE_HEADER = 'googlebot: noindex'
 
 /** 구글 검색 크롤러인가 — Googlebot(스마트폰·데스크톱·이미지 등), Google-InspectionTool.
@@ -43,5 +55,6 @@ export function isGoogleCrawler(ua: string | undefined | null): boolean {
 /** 구글에만 검색 제외할 경로인가 (pathname 기준, 쿼리 제외) */
 export function isGoogleHiddenPath(pathname: string): boolean {
   if (!GOOGLE_HIDE_ENABLED) return false
+  if (GOOGLE_KEEP_PATHS.has(pathname)) return false
   return GOOGLE_HIDDEN_PREFIXES.some(p => pathname === p || pathname.startsWith(p + '/'))
 }
