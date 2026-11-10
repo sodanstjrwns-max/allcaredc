@@ -42,7 +42,7 @@ export function DoctorsIndex() {
     title: '의료진 소개 | 구강악안면외과·통합치의학과·보철과·교정과 전문의 | 365올케어치과',
     description: '약수역 365올케어치과 의료진. 구강악안면외과·통합치의학과 전문의, 보철과 전문의, 교정과 전문의, 치의학박사가 함께하는 치과 전문의 협진 치과입니다.',
     path: '/doctors',
-    schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }])],
+    schema: [breadcrumbSchema([{ name: '홈', url: '/' }, { name: '의료진', url: '/doctors' }]), doctorListSchema()],
   }, body)
 }
 
@@ -55,27 +55,17 @@ export function DoctorDetail(slug: string) {
   const txs = treatmentsForDoctor(slug)
   const BASE = `https://${CLINIC.domain}`
   const pageUrl = `${BASE}/doctors/${slug}`
-  const specName: Record<string, string> = {
-    implant: 'OralAndMaxillofacialSurgery', surgery: 'OralAndMaxillofacialSurgery',
-    tmj: 'Dentistry', conservative: 'Dentistry', prosthetics: 'Prosthodontics',
-    gum: 'Periodontics', esthetic: 'Prosthodontics', denture: 'Prosthodontics', ortho: 'Orthodontic',
-  }
-
   // ── Physician (부가티급: 의료 전문 타입 + 전문분야·소속·진료 연결) ──
+  // 학력·자격·학회는 화면(경력·수련 / 학력 목록)에 있는 줄만 사용한다.
   const personSchema: any = {
     '@context': 'https://schema.org',
-    '@type': ['Physician', 'Person'],
-    '@id': `${pageUrl}#physician`,
-    name: d.name,
+    ...physicianCore(d),
     ...(d.nameEn ? { alternateName: d.nameEn } : {}),
-    jobTitle: `${d.role} / ${d.titleLine}`,
     description: d.intro,
-    url: pageUrl,
-    image: `${BASE}/static/og/doctor/${slug}.jpg`,
-    worksFor: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name, url: `${BASE}/` },
     workLocation: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name },
-    alumniOf: d.education.map(e => ({ '@type': 'EducationalOrganization', name: e })),
-    medicalSpecialty: [...new Set(d.specialties.map(s => specName[s]).filter(Boolean))],
+    ...(alumniOf(d).length ? { alumniOf: alumniOf(d) } : {}),
+    ...(credentialsOf(d).length ? { hasCredential: credentialsOf(d) } : {}),
+    ...(memberOf(d).length ? { memberOf: memberOf(d) } : {}),
     knowsAbout: txs.map(t => t.name),
     availableService: txs.map(t => ({
       '@type': 'MedicalProcedure', name: t.name, url: `${BASE}/treatments/${t.slug}`,
@@ -180,4 +170,67 @@ function ctaBand() {
       </div>
     </div>
   </section>`
+}
+
+// ============================================================
+// 의료진 구조화 데이터 공용 헬퍼 (2026-11-10 SEO·AEO 1차 정비)
+// 화면에 이미 있는 정보(DOCTORS)만 사용. 병원 엔티티는 기존 @id(/#clinic) 참조.
+// ============================================================
+const SPEC_NAME: Record<string, string> = {
+  implant: 'OralAndMaxillofacialSurgery', surgery: 'OralAndMaxillofacialSurgery',
+  tmj: 'Dentistry', conservative: 'Dentistry', prosthetics: 'Prosthodontics',
+  gum: 'Periodontics', esthetic: 'Prosthodontics', denture: 'Prosthodontics', ortho: 'Orthodontic',
+}
+type Doc = (typeof DOCTORS)[number]
+
+// 목록·상세 공통 뼈대: name·jobTitle·medicalSpecialty·worksFor·image·url
+function physicianCore(d: Doc) {
+  const BASE = `https://${CLINIC.domain}`
+  const pageUrl = `${BASE}/doctors/${d.slug}`
+  return {
+    '@type': ['Physician', 'Person'],
+    '@id': `${pageUrl}#physician`,
+    name: d.name,
+    jobTitle: `${d.role} / ${d.titleLine}`,
+    url: pageUrl,
+    image: `${BASE}/static/og/doctor/${d.slug}.jpg`,
+    worksFor: { '@type': 'Dentist', '@id': `${BASE}/#clinic`, name: CLINIC.name, url: `${BASE}/` },
+    medicalSpecialty: [...new Set(d.specialties.map(s => SPEC_NAME[s]).filter(Boolean))],
+  }
+}
+// 학력 줄에서 학교 이름만(연수원·단기 과정 수료 줄은 제외) — 중복 제거
+function alumniOf(d: Doc) {
+  const schools = d.education
+    .filter(e => !/연수원|과정 수료/.test(e))
+    .map(e => (/^([가-힣A-Za-z]+대학교(?:\([A-Za-z]+\))?)/.exec(e) || [])[1])
+    .filter(Boolean) as string[]
+  return [...new Set(schools)].map(name => ({ '@type': 'CollegeOrUniversity', name }))
+}
+// 학력 목록 전체 + 경력 목록의 인정의·인증의 줄 = 학위·전문의 자격·인증 (화면 문구 그대로)
+function credentialsOf(d: Doc) {
+  const lines = [...d.education, ...d.career.filter(c => /인정의|인증의/.test(c))]
+  return lines.map(name => ({
+    '@type': 'EducationalOccupationalCredential', name,
+    ...(/전문의/.test(name) ? { credentialCategory: '전문의' } : {}),
+  }))
+}
+// 경력 목록 중 현재 회원 표기(정회원·평생정회원·member)가 있는 학회만
+function memberOf(d: Doc) {
+  return d.career
+    .filter(c => /(평생정회원|정회원|member)\s*$/i.test(c))
+    .map(c => ({ '@type': 'Organization', name: c.replace(/\s*(평생정회원|정회원|member)\s*$/i, '').trim() }))
+}
+// /doctors 목록: 화면 카드와 1:1 (이름·직함·전문과목·진료 태그·사진·상세 주소)
+function doctorListSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${CLINIC.name} 의료진`,
+    numberOfItems: DOCTORS.length,
+    itemListElement: DOCTORS.map((d, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: { ...physicianCore(d), knowsAbout: d.treatItems },
+    })),
+  }
 }

@@ -151,6 +151,8 @@ export function aiTxt(): string {
   // Last-Updated = 콘텐츠 최신 수정일 (data/content-dates.ts contentUpdated, 오늘 날짜 아님)
   const updated = contentUpdated()
   const tier12 = SEO_AREAS.filter(a => a.tier <= 2).map(a => a.name).join(', ')
+  // 대표원장 직함은 DOCTORS 데이터 그대로(데이터에 없는 학위 표기 금지)
+  const headDoc = DOCTORS.find(d => d.isHead)
   return `# ai.txt — AI 크롤러 정책 (${CLINIC.name})
 # 본 사이트는 정확한 치과 의료정보 제공을 목적으로 하며, AI 답변 인용을 환영합니다.
 ${updated ? `# Last-Updated: ${updated}\n` : ''}
@@ -176,7 +178,7 @@ FAQ: ${BASE}/faq
 Fact: 병원명=${CLINIC.name} (영문 ${CLINIC.nameEn})
 Fact: 위치=약수역 5번 출구 도보 1분 (서울 중구 동호로 171 더그레이스빌딩 4층)
 Fact: 가까운역=3·6호선 약수역 5번 출구 도보 1분
-Fact: 대표원장=권민수 (구강악안면외과·통합치의학과 전문의, 치의학박사)
+Fact: 대표원장=${headDoc ? `${headDoc.name} (${headDoc.titleLine})` : ''}
 Fact: 전문의=구강악안면외과·치과보철과·치과교정과·통합치의학과 전문의 협진 시스템
 Fact: 진료=임플란트, 치아교정, 심미보철, 충치, 신경치료, 잇몸치료, 사랑니발치, 턱관절치료, 수면치료
 Fact: 야간진료=월·화·목 20:30까지

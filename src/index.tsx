@@ -17,7 +17,8 @@ import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
 import { SeoHealthPage } from './pages/seo-health'
 import { Page } from './components/page'
 import { Bindings, getMember, setMemberSession, clearSession, hashPassword, verifyPassword, isBot } from './lib/auth'
-import { listCollection, listPublic, addToCollection, uid, r2GetBinary, trackView, getViews } from './lib/store'
+import { listCollection, listPublic, addToCollection, uid, r2GetBinary, r2Head, trackView, getViews } from './lib/store'
+import { toYmd } from './data/content-dates'
 import { CLINIC, treatmentForColumnCategory, getDoctor } from './data/clinic'
 import { answerSummary } from './lib/column-seo'
 import { edgeHtml, purgeColumnPages } from './lib/edge-cache'
@@ -113,8 +114,17 @@ async function llmsColumns(env: any, full: boolean): Promise<string> {
     }).join('\n') + '\n'
   } catch { return '' }
 }
-app.get('/llms.txt', async (c) => c.body(llmsTxt() + await llmsColumns(c.env, false), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
-app.get('/llms-full.txt', async (c) => c.body(llmsTxt(true) + await llmsColumns(c.env, true), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
+// llms 표준 사실 블록의 '주요 비급여 진료비' = /pricing 과 같은 공개 표(비공개 행 제외). 저장일 = R2 편집본 저장 시각(없으면 생략). 읽기 전용.
+async function llmsFacts(env: any) {
+  try {
+    const prices = publicTable(await loadPriceTable(env))
+    let pricingSaved = ''
+    try { pricingSaved = toYmd((await r2Head(env, 'data/pricing.json'))?.uploaded) } catch {}
+    return { prices, pricingSaved }
+  } catch { return {} }
+}
+app.get('/llms.txt', async (c) => c.body(llmsTxt(false, await llmsFacts(c.env)) + await llmsColumns(c.env, false), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
+app.get('/llms-full.txt', async (c) => c.body(llmsTxt(true, await llmsFacts(c.env)) + await llmsColumns(c.env, true), 200, { 'Content-Type': TXT, 'Cache-Control': SEO_CACHE }))
 app.get('/ai.txt', (c) => c.body(aiTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
 // 납품 안내서 (비공개 — noindex, sitemap 미포함). 원장님 전달용.
 app.get('/handover-allcare-2026.html', (c) => {

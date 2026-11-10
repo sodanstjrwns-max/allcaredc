@@ -67,10 +67,14 @@ export function organizationSchema() {
       url: `${BASE}/treatments/${t.slug}`,
     })),
     // 진료 의료진 (E-E-A-T 신뢰 신호)
+    // @id = 의료진 상세 페이지의 Physician 엔티티(/doctors/:slug#physician)와 같은 식별자 → 병원↔의료진 연결
     employee: (DOCTORS || []).map(d => ({
-      '@type': 'Physician',
+      '@type': ['Physician', 'Person'],
+      '@id': `${BASE}/doctors/${d.slug}#physician`,
       name: d.name,
+      jobTitle: d.role,
       medicalSpecialty: d.titleLine || d.role,
+      url: `${BASE}/doctors/${d.slug}`,
     })),
     knowsAbout: ['임플란트', '치아교정', '심미보철', '충치치료', '신경치료', '잇몸치료', '사랑니발치', '턱관절치료', '수면치료'],
     sameAs: [CLINIC.sns.instagram, CLINIC.sns.blog, CLINIC.sns.kakao, CLINIC.sns.youtube].filter(Boolean),

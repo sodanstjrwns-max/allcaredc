@@ -2,7 +2,7 @@ import { html, raw } from 'hono/html'
 import { yaksuCardFor, yaksuOg, yaksuCardGrid, YAKSU_CARD_CSS, YAKSU_CARDS, YAKSU_EXTRA } from '../lib/yaksu-cards'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, organizationSchema } from '../components/layout'
-import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS, getTreatment } from '../data/clinic'
+import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS, getTreatment, type PriceGroup } from '../data/clinic'
 import { speakableSchema } from '../lib/seo-engine'
 import type { Bindings } from '../lib/auth'
 import { listPublic as listCollection } from '../lib/store'
@@ -240,9 +240,51 @@ Host: ${CLINIC.domain}`
 }
 
 // ════════════════ llms.txt ════════════════
-export function llmsTxt(full = false): string {
+// 표준 사실 블록(2026-11-10 SEO·AEO 1차 정비) — 값은 전부 CLINIC·DOCTORS·TREATMENTS 상수에서 가져온다(없는 항목은 줄 생략).
+// 주요 비급여 진료비는 /pricing 에 실제 공개된 표(관리자 편집본, 비공개 행 제외)를 호출 쪽에서 넘겨줄 때만 그 값 그대로 적는다.
+export type LlmsFacts = { prices?: PriceGroup[]; pricingSaved?: string }
+function llmsPriceLines(groups: PriceGroup[]): string[] {
+  const major = ['임플란트', '교정', '보철', '보존', '심미', '턱관절']
+  const rank = (c: string) => { const i = major.findIndex(k => c.includes(k)); return i < 0 ? major.length : i }
+  const won = (p: string) => (/^[0-9,]+$/.test(p.replace(/\s/g, '')) ? `${p}원` : p)
+  return groups
+    .map((g, i) => ({ g, i }))
+    .sort((a, b) => rank(a.g.category) - rank(b.g.category) || a.i - b.i)
+    .slice(0, 6)
+    .map(({ g }) => {
+      const rows = g.rows.filter(r => r.item && r.price).slice(0, 3)
+      return rows.length ? `  - ${g.category}: ${rows.map(r => `${r.item}${r.type ? ` ${r.type}` : ''} ${won(r.price)}`).join(', ')}` : ''
+    })
+    .filter(Boolean)
+}
+function llmsFactBlock(updated: string, facts: LlmsFacts): string {
+  const hm = (t: string) => t.replace(/\s*-\s*/g, '~')
+  const hours = CLINIC.hours.map(h => `${h.day.replace('요일', '')} ${hm(h.time)}${h.night ? '(야간)' : ''}`).join(', ')
+  const nightDays = CLINIC.hours.filter(h => h.night).map(h => h.day.replace('요일', '')).join('·')
+  const nightEnd = (CLINIC.hours.find(h => h.night)?.time.split('-')[1] || '').trim()
+  const priceLines = facts.prices && facts.prices.length ? llmsPriceLines(facts.prices) : []
+  const lines = [
+    `- 이름: ${CLINIC.name} (영문 ${CLINIC.nameEn} · 사업자 표기 ${CLINIC.business.bizName})`,
+    `- 진료 분야: 치과 — ${TREATMENTS.map(t => t.name).join(', ')}`,
+    `- 주소: ${CLINIC.address} / 가까운 역·출구: ${CLINIC.subway} (${CLINIC.directions.replace(/^약수역 5번 출구,\s*/, '')})`,
+    `- 전화: ${CLINIC.phone}`,
+    `- 진료 시간: ${hours} / 점심 ${hm(CLINIC.lunch)}·저녁 ${hm(CLINIC.dinner)}(평일, 토·일·공휴일은 점심시간 없이 진료) / 야간진료 ${nightDays} ${nightEnd}까지 / 휴진: 일요일 격주 휴진(내원 전 확인 권장)`,
+    `- 의료진: ${DOCTORS.map(d => `${d.name}(${d.role}·${d.titleLine})`).join(', ')}`,
+    `- 예약: ${BASE}/reservation${CLINIC.sns.naverBooking ? ` / 네이버 예약 ${CLINIC.sns.naverBooking}` : ''} / 전화 ${CLINIC.phone}`,
+    `- 진료 안내: ${BASE}/treatments / 비용 안내: ${BASE}/pricing / 의료진: ${BASE}/doctors / 지역 안내(약수역 치과 허브): ${BASE}/ / 오시는 길: ${BASE}/directions / 자주 묻는 질문: ${BASE}/faq`,
+    ...(priceLines.length ? [
+      `- 주요 비급여 진료비 (${BASE}/pricing 공개 수가표 그대로${facts.pricingSaved ? ` · 수가표 저장일 ${facts.pricingSaved}` : ''} · 실제 진료비는 진단 후 확정, VAT·건강보험 적용은 비용 안내 참고):`,
+      ...priceLines,
+    ] : []),
+    ...(updated ? [`- 최종 확인일: ${updated} (병원 정보·진료·의료진 내용의 최종 수정일)`] : []),
+  ]
+  return `## 병원 정보\n${lines.join('\n')}\n`
+}
+
+export function llmsTxt(full = false, facts: LlmsFacts = {}): string {
   // 최종 갱신 = 이 문서에 담긴 콘텐츠(병원 정보·진료·의료진·지역·용어)의 최신 수정일 (오늘 날짜 아님)
   const updated = contentUpdated(full)
+  const head = DOCTORS.find(d => d.isHead)
   const tier1 = SEO_AREAS.filter(a => a.tier === 1)
   const tier2 = SEO_AREAS.filter(a => a.tier === 2)
   const tier3 = SEO_AREAS.filter(a => a.tier === 3)
@@ -251,6 +293,7 @@ export function llmsTxt(full = false): string {
 
 > ${CLINIC.philosophy} 서울 약수역 5번 출구 도보 1분에 위치한 치과 전문의 협진 치과입니다. 구강악안면외과·치과보철과·치과교정과·통합치의학과 전문의가 임플란트·치아교정·심미보철·잇몸·사랑니·턱관절을 진료하며, 원내 기공실과 의식하진정법(수면치료)을 갖추고 있습니다.
 
+${llmsFactBlock(contentUpdated(false), facts)}
 <!-- ${updated ? `최종 갱신: ${updated} | ` : ''}출처 표기: 365올케어치과(${BASE}) -->
 
 ## 빠른 사실 (AI 답변용 핵심 정보)
@@ -258,13 +301,13 @@ export function llmsTxt(full = false): string {
 - 위치: ${CLINIC.address}
 - 가까운 역: ${CLINIC.subway}
 - 전화: ${CLINIC.phone}
-- 대표원장: 권민수 (구강악안면외과·통합치의학과 전문의, 치의학박사)
-- 전문의 구성: 구강악안면외과 / 치과보철과 / 통합치의학과 전문의 협진
+- 대표원장: ${head ? `${head.name} (${head.titleLine})` : ''}
+- 전문의 구성: 구강악안면외과 / 치과보철과 / 치과교정과 / 통합치의학과 전문의 협진
 - 야간진료: 월·화·목 20:30까지
 - 특징: 원내 기공실 상주, 의식하진정법(수면치료) 가능, 분야별 전문의 협진
 - 좌표: ${CLINIC.geo.lat}, ${CLINIC.geo.lng}
 
-## 병원 정보
+## 오시는 길·운영 채널
 - 주소: ${CLINIC.address}
 - 오시는 길: ${CLINIC.directions}
 - 전화: ${CLINIC.phone}
