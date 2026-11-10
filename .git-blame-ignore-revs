@@ -14,3 +14,5 @@ a61ad20d859d3345c091cfb2be6e3fe6e2f72abe
 86020e77203a382b4b6716233120c1eda4e97b7a
 # 2026-11-10 좁은 폰 헤더(로고·진료 상태 칩·메뉴 버튼) 간격·칩 폭 조정: 화면 배치만(본문 변화 없음)
 cab88daf68c53d8dca408ae1d83e392e67e3e862
+# 2026-11-10 SEO·AEO 1차 정비: llms.txt 사실 블록·의료진 스키마(ItemList·hasCredential·memberOf)만(본문 변화 없음)
+d22a9fb21301e5eb62a9727eeace7ea77bc13bdc
