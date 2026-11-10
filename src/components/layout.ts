@@ -139,16 +139,16 @@ function hours(d){var st=stateOf(d),w=d.getDay();if(st==='closed')return null;
 if(st==='holiday'||w===0||w===6)return{o:570,c:840,br:[]};
 return{o:570,c:st==='night'?1230:1110,br:[[750,840,'점심시간','점심'],[1050,1080,'저녁시간','저녁']]}}
 function status(){var d=kst(),t=d.getHours()*60+d.getMinutes(),h=hours(d);
-if(!h)return{s:'closed',long:'오늘 휴진',short:'오늘 휴진',open:false,today:null};
+if(!h)return{s:'closed',long:'오늘 휴진',short:'오늘 휴진',mini:'오늘 휴진',open:false,today:null};
 var r={o:h.o,c:h.c};
-if(t<h.o)return{s:'closed',long:'진료 전 · 오늘 '+hm(h.o)+'부터',short:'진료 전 '+hm(h.o)+'~',open:false,today:r};
-if(t<h.c){for(var i=0;i<h.br.length;i++){var b=h.br[i];if(t>=b[0]&&t<b[1])return{s:'break',long:b[2]+' '+hm(b[1])+'까지',short:b[3]+' ~'+hm(b[1]),open:false,today:r}}
-return{s:'open',long:'진료중 '+hm(h.c)+'까지',short:'진료중 ~'+hm(h.c),open:true,today:r}}
+if(t<h.o)return{s:'closed',long:'진료 전 · 오늘 '+hm(h.o)+'부터',short:'진료 전 '+hm(h.o)+'~',mini:'진료 전',open:false,today:r};
+if(t<h.c){for(var i=0;i<h.br.length;i++){var b=h.br[i];if(t>=b[0]&&t<b[1])return{s:'break',long:b[2]+' '+hm(b[1])+'까지',short:b[3]+' ~'+hm(b[1]),mini:b[2],open:false,today:r}}
+return{s:'open',long:'진료중 '+hm(h.c)+'까지',short:'진료중 ~'+hm(h.c),mini:'진료중',open:true,today:r}}
 for(var k=1;k<=14;k++){var n=new Date(d.getTime()+k*864e5),nh=hours(n);if(nh){var when=k===1?'내일':WK[n.getDay()]+'요일';
-return{s:'closed',long:'진료 종료 · '+when+' '+hm(nh.o)+'부터',short:'진료 종료',open:false,today:r}}}
-return{s:'closed',long:'진료 종료',short:'진료 종료',open:false,today:r}}
+return{s:'closed',long:'진료 종료 · '+when+' '+hm(nh.o)+'부터',short:'진료 종료',mini:'진료 종료',open:false,today:r}}}
+return{s:'closed',long:'진료 종료',short:'진료 종료',mini:'진료 종료',open:false,today:r}}
 function paint(){var st=status();el.setAttribute('data-s',st.s);
-el.querySelector('.hc-long').textContent=st.long;el.querySelector('.hc-short').textContent=st.short;
+el.querySelector('.hc-long').textContent=st.long;el.querySelector('.hc-short').textContent=st.short;var mi=el.querySelector('.hc-mini');if(mi)mi.textContent=st.mini||st.short;
 el.setAttribute('aria-label','지금 진료 상태: '+st.long+' — 진료일정 보기');
 try{document.dispatchEvent(new CustomEvent('ac:hours',{detail:st}))}catch(e){}}
 window.acHours={status:status,paint:paint};
@@ -170,7 +170,7 @@ export function Header() {
         <span>365올케어치과</span>
       </a>
       <!-- 지금 진료 상태 (2026-11-09 원장 요청) — 요일별 진료시간 + 관리자 진료일정(휴진·공휴일) 기준, KST. 폭 고정 → 글자가 바뀌어도 레이아웃 이동 없음 -->
-      <a href="/schedule" class="hours-chip" id="hoursChip" data-s="wait" title="진료일정 보기"><span class="hc-dot" aria-hidden="true"></span><span class="hc-long">진료시간 안내</span><span class="hc-short">진료시간</span></a>
+      <a href="/schedule" class="hours-chip" id="hoursChip" data-s="wait" title="진료일정 보기"><span class="hc-dot" aria-hidden="true"></span><span class="hc-long">진료시간 안내</span><span class="hc-short">진료시간</span><span class="hc-mini">진료시간</span></a>
       <script>${raw(HOURS_CHIP_JS)}</script>
       </div>
       <nav aria-label="주메뉴">
@@ -462,7 +462,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20261109" />
+    <link rel="stylesheet" href="/static/style.css?v=20261110" />
     ${meta.immersive ? raw(IMMERSIVE_HEAD) : ''}
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
