@@ -284,8 +284,8 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
           <!-- §S20③: 본문 하단 CTA — 카테고리별 진료 페이지 자동 연결 (모바일에서는 사이드바가 맨 아래로 밀려나는 문제 보완) -->
           <div class="col-cta-row">
             <a href="${related ? `/treatments/${related.slug}` : '/treatments'}" class="btn btn-primary"><i class="fa-solid fa-tooth"></i> ${related ? `${related.name} 진료 소개` : '진료 소개'}</a>
-            <a href="/reservation" class="btn btn-accent"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
-            <a href="tel:${CLINIC.phoneRaw}" class="btn btn-outline"><i class="fa-solid fa-phone"></i> 전화 상담</a>
+            <a href="/reservation" class="btn btn-accent" data-cta="article-end"><i class="fa-solid fa-calendar-check"></i> 예약 문의</a>
+            <a href="tel:${CLINIC.phoneRaw}" class="btn btn-outline" data-cta="article-end"><i class="fa-solid fa-phone"></i> 전화 상담</a>
           </div>
           <p style="font-size:12.5px;color:var(--gray-400);margin-top:20px">※ 본 칼럼은 일반적인 정보 제공을 위한 것으로 개인의 진단·치료를 대신하지 않으며, 치료 결과는 개인의 상태에 따라 차이가 있을 수 있습니다. 최종 검토일: ${fmtDate(col.updatedAt, col.createdAt)}</p>
         </article>

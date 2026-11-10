@@ -113,8 +113,9 @@ const NOTICE_POP_JS = `
   }
   function closeAll(){ ov.hidden=true; unlock(); }
   // 모바일 '진료 공지' 버튼은 첫 화면에서만 — 스크롤하면 숨겨 소개 문구·구역 제목을 가리지 않게 (2026-11-09 원장 요청 ①안)
+  // 2026-11-10: 스크롤을 시작하자마자(12px) 접고, 맨 위로 돌아오면 다시 보인다
   var away=false;
-  function onScroll(){ var a=(window.scrollY||window.pageYOffset)>window.innerHeight*0.45; if(a!==away){ away=a; ov.classList.toggle('np-chip-away',a); } }
+  function onScroll(){ var a=(window.scrollY||window.pageYOffset)>12; if(a!==away){ away=a; ov.classList.toggle('np-chip-away',a); } }
   window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
   function removeCard(c){
     c.classList.add('np-out');
@@ -206,6 +207,12 @@ function noticePopHtml(popups: HomePopup[]): string {
     .np-poster .np-foot{position:static}
     .notice-pop.np-compact{transition:opacity .25s ease,transform .25s ease,visibility .25s}
     .notice-pop.np-compact.np-chip-away{opacity:0;visibility:hidden;transform:translateY(-8px);pointer-events:none}
+    /* 2026-11-10 모바일 '진료 공지' 알약: 히어로 전문과목 줄(top 97px~)을 가리지 않게 메뉴 버튼 아래 빈 띠(60~90px)로 올리고 높이를 줄임. 누르는 영역은 ::after 로 44px 유지 */
+    .notice-pop.np-compact{inset:60px 16px auto auto}
+    .np-compact .np-expand{position:relative;min-height:0;height:30px;padding:0 10px 0 12px;font-size:13px;line-height:28px;white-space:nowrap;box-shadow:0 2px 10px #06274118}
+    .np-compact .np-expand::after{content:'';position:absolute;inset:0 -6px -14px -6px}
+    .np-compact .np-count{min-width:18px;height:18px;margin-left:5px;padding:0 5px;font-size:11px;vertical-align:0}
+    body:has(.m-drawer.open) .notice-pop.np-compact{opacity:0;visibility:hidden;pointer-events:none}
     @media(max-width:767px){
       .notice-pop.np-single{padding-left:8px;padding-right:8px}
       .np-single .np-card.np-poster{width:min(100%,calc((100svh - 190px) * .7071));max-height:none;margin:0 auto}
