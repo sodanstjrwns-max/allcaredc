@@ -236,7 +236,7 @@ export function HomePage(popups: HomePopup[] = []) {
     </svg>
     <div class="hero-top hh-top">
       <span>ALLCARE DENTAL — SPECIALIST COLLABORATIVE CARE</span>
-      <span class="hero-coord">37.5547°N · 127.0107°E</span>
+      <span class="hero-coord">37.5534°N · 127.0114°E</span>
       <span>EST. 2023 · 약수역</span>
     </div>
     <div class="hero-inner hh-grid">

@@ -53,7 +53,7 @@ export function MissionPage() {
     <div class="hero-bg"><img src="/static/img/interior.webp" alt="365올케어치과 진료 공간" data-drift="20"></div>
     <div class="hero-top">
       <span>ALLCARE DENTAL — SEOUL</span>
-      <span class="hero-coord">37.5547°N · 127.0107°E</span>
+      <span class="hero-coord">37.5534°N · 127.0114°E</span>
       <span>EST. 2023 · 약수역</span>
     </div>
     <div class="hero-inner">

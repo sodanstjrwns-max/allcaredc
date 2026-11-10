@@ -218,8 +218,8 @@ export const CLINIC = {
   email: '365allcare@naver.com',
   openedYear: '2023',
   openedFull: '2023년 7월',
-  // geo (약수역 인근 좌표)
-  geo: { lat: 37.5546, lng: 127.0103 },
+  // geo (네이버 플레이스 값과 일치)
+  geo: { lat: 37.5534104, lng: 127.0113909 },
   hours: [
     { day: '월요일', time: '09:30 - 20:30', night: true },
     { day: '화요일', time: '09:30 - 20:30', night: true },
