@@ -16,3 +16,5 @@ a61ad20d859d3345c091cfb2be6e3fe6e2f72abe
 cab88daf68c53d8dca408ae1d83e392e67e3e862
 # 2026-11-10 SEO·AEO 1차 정비: llms.txt 사실 블록·의료진 스키마(ItemList·hasCredential·memberOf)만(본문 변화 없음)
 d22a9fb21301e5eb62a9727eeace7ea77bc13bdc
+# 2026-11-10 병원 좌표를 네이버 플레이스 값으로 정정: 좌표 상수·히어로 좌표 표기만(본문 변화 없음)
+c73fa999388cc85426880abd937d88c1d7a8cb89
