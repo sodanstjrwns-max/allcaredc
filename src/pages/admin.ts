@@ -1340,6 +1340,7 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
       .sc-out{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
       .sc-dl{display:flex;flex-direction:column;gap:10px;min-width:240px}
       .sc-png-st{font-size:12.5px;color:var(--gray-600)}
+      .sc-dl .is-wait{opacity:.6}
       @media(max-width:768px){.sc-cell select{font-size:11px}.sc-grid{gap:3px}.sc-cell{padding:4px;min-height:60px}}
     </style>
     <div class="admin-head"><h1>진료일정</h1>
@@ -1373,8 +1374,8 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
       <div class="sc-out">
         <img id="scPreview" src="/schedule/${ym}.svg?v=${ver}" alt="${m}월 진료일정" width="${CAL_W}" height="${CAL_H}" style="max-width:360px;width:100%;height:auto;border:1px solid var(--gray-100);border-radius:8px">
         <div class="sc-dl">
-          <a class="btn btn-primary" id="scPngDl" href="/schedule/${ym}.png?v=${ver}&dl=1"${pngReady ? '' : ' hidden'}><i class="fa-solid fa-download"></i> PNG 내려받기</a>
-          <a class="btn btn-outline" href="/schedule/${ym}.svg?v=${ver}&dl=1"><i class="fa-solid fa-download"></i> SVG 내려받기</a>
+          <a class="btn btn-primary${pngReady ? '' : ' is-wait'}" id="scPngDl" href="/schedule/${ym}.png?v=${ver}&dl=1" download="allcaredc-schedule-${ym}.png"><i class="fa-solid fa-download"></i> PNG 내려받기</a>
+          <a class="btn btn-outline" href="/schedule/${ym}.svg?v=${ver}&dl=1" download="allcaredc-schedule-${ym}.svg"><i class="fa-solid fa-download"></i> SVG 내려받기</a>
           <button type="button" class="btn btn-outline" id="scPngMake"><i class="fa-solid fa-rotate"></i> PNG 다시 만들기</button>
           <p class="sc-png-st" id="scPngSt">${pngReady ? 'PNG 준비됨' : 'PNG 만드는 중…'}</p>
           <p style="font-size:12.5px;color:var(--gray-600)">블로그·카카오 채널에는 <strong>PNG</strong>를 올리세요. 배경 사진과 로고가 파일 안에 들어 있어 어디에 올려도 빠지지 않습니다.<br>이미지 주소: <a href="/schedule/${ym}.png" target="_blank">/schedule/${ym}.png</a> · <a href="/schedule/${ym}.svg" target="_blank">.svg</a></p>
@@ -1404,7 +1405,32 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
         im.src=url;
       });
       // ② PNG: 저장된 SVG(배경·로고 포함)를 캔버스로 그려 PNG 로 올린다
+      // .btn 의 display 가 hidden 속성을 덮어써 PNG 가 만들어지기 전에도 내려받기 버튼이 보였고, 게다가 app.js 의 페이지 전환
+      // 스크립트가 같은 사이트 링크를 모두 가로채 0.26초 뒤 그 주소로 이동시켜, 누르면 '아직 만들어지지 않았습니다' 글자 화면으로
+      // 넘어갔다(2026-11-10 원장 제보). 두 링크에 download 속성을 달아 전환 스크립트가 건너뛰게 했다. 이제는 화면을 떠나지 않고 내려받는다: 준비 전이면 다 만든 뒤 자동으로 내려받고,
+      // 실패하면 PNG 를 한 번 다시 만들어 이어서 받는다. 오류는 관리자 화면 안에 글로 보여 준다.
       var st=document.getElementById('scPngSt'), dl=document.getElementById('scPngDl'), btn=document.getElementById('scPngMake');
+      var ready=READY, wantDl=false, retried=false;
+      function download(){
+        st.textContent='PNG 내려받는 중…';
+        fetch(dl.getAttribute('href'),{credentials:'same-origin',cache:'no-store'})
+          .then(function(r){ if(!r.ok) throw new Error('not ready'); return r.blob(); })
+          .then(function(b){
+            var u=URL.createObjectURL(b), a=document.createElement('a');
+            a.href=u; a.download='allcaredc-schedule-'+YM+'.png'; document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function(){ URL.revokeObjectURL(u); },5000);
+            st.textContent='PNG 준비됨 — 내려받았습니다 ('+Math.round(b.size/1024)+'KB)';
+          })
+          .catch(function(){
+            if(!retried){ retried=true; ready=false; wantDl=true; dl.classList.add('is-wait'); makePng(); }
+            else st.textContent='PNG를 내려받지 못했습니다. ‘PNG 다시 만들기’를 누른 뒤 다시 시도해 주세요.';
+          });
+      }
+      dl.addEventListener('click',function(e){
+        e.preventDefault();
+        if(ready) return download();
+        wantDl=true; st.textContent='PNG 만드는 중… 다 되면 바로 내려받습니다.';
+      });
       function makePng(){
         st.textContent='PNG 만드는 중…'; btn.disabled=true;
         var im=new Image();
@@ -1416,7 +1442,7 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
             fetch('/admin/schedule/png?ym='+YM+'&v='+VER,{method:'POST',headers:{'Content-Type':'image/png'},body:b,credentials:'same-origin'})
               .then(function(r){return r.json()}).then(function(j){
                 btn.disabled=false;
-                if(j.ok){ st.textContent='PNG 준비됨 ('+Math.round(b.size/1024)+'KB)'; dl.hidden=false; }
+                if(j.ok){ ready=true; dl.classList.remove('is-wait'); st.textContent='PNG 준비됨 ('+Math.round(b.size/1024)+'KB)'; if(wantDl){ wantDl=false; download(); } }
                 else st.textContent='PNG 저장 실패: '+(j.error||'');
               }).catch(function(){ btn.disabled=false; st.textContent='PNG 저장 실패 — 네트워크를 확인해 주세요.'; });
           },'image/png');
