@@ -169,8 +169,8 @@ export function TreatmentDetail(slug: string, allColumns: Column[] = [], cats?: 
     <div class="container">
       <div class="grid-detail">
         <!-- 본문 -->
-        <article class="prose reveal">
-          ${t.core && TX_IMAGES[t.slug] ? html`<img src="${TX_IMAGES[t.slug]}" alt="${t.name}" style="border-radius:var(--radius-lg);margin-bottom:30px;width:100%;aspect-ratio:16/9;object-fit:cover" loading="lazy">` : ''}
+        <article class="prose reveal reveal-now">
+          ${t.core && TX_IMAGES[t.slug] ? html`<img src="${TX_IMAGES[t.slug]}" alt="${t.name}" style="border-radius:var(--radius-lg);margin-bottom:30px;width:100%;aspect-ratio:16/9;object-fit:cover" fetchpriority="high" decoding="async">` : ''}
 
           <p class="tx-intro-lead" style="font-size:1.2rem;color:var(--ink);font-weight:500">${t.intro}</p>
           <p class="tx-reviewed" style="font-size:13px;color:var(--gray-600);margin:-6px 0 28px">${reviewer ? raw(`감수: <a href="/doctors/${reviewer.slug}" style="color:inherit;text-decoration:underline">${reviewer.name} ${reviewer.role}</a> · `) : ''}최종 검토 <time datetime="${TX_LAST_REVIEWED}">${TX_LAST_REVIEWED}</time></p>

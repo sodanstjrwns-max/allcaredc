@@ -3607,3 +3607,19 @@ h1, h2, h3, h4, h5, h6 { font-weight: 800; }
 .case-body .case-kw{font-size:12.5px;color:var(--gray-400);line-height:1.6}
 .case-body .case-note{font-size:13px;color:var(--gray-600)}
 .cl-full{display:inline-block;margin-top:12px;font-size:13px;font-weight:700;color:var(--brand,#062741)}
+
+/* ============================================================
+   2026-11-12 첫 화면 속도(LCP) — 원장 요청 '모바일 첫 화면 13~15초'
+   첫 화면 요소의 등장 효과는 app.js(본문 끝)를 기다리지 않고 CSS 로 바로 시작한다.
+   (.reveal 은 opacity:0 에서 app.js 가 .in 을 붙여야 보였음 → 첫 화면 글자가 2초 넘게 늦게 그려짐)
+   ============================================================ */
+.reveal.reveal-now { opacity: 1; transform: none; transition: none; animation: acRevealNow .8s var(--ease) both; }
+.reveal-now.reveal-d1 { animation-delay: .06s; }
+.reveal-now.reveal-d2 { animation-delay: .12s; }
+.reveal-now.reveal-d3 { animation-delay: .18s; }
+.reveal-now.reveal-d4 { animation-delay: .24s; }
+@keyframes acRevealNow { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .reveal.reveal-now { animation: none; } }
+
+/* 2026-11-12 원장 요청 '상단 전화번호 줄바꿈': 1561px~ 에서 번호가 아이콘과 두 줄로 꺾이던 것 → 한 줄 고정 */
+.header-tel { white-space: nowrap; flex-shrink: 0; }

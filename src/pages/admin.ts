@@ -753,16 +753,25 @@ function columnEditorScript(faqsJson: string): string {
           var cw = Math.round(w*scale), ch = Math.round(h*scale);
           var cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
           var ctx = cv.getContext('2d'); ctx.drawImage(bmp, 0, 0, cw, ch);
-          if (/png|webp/i.test(file.type)) {
-            // 투명 픽셀이 있으면 JPG 변환 시 검게 변하므로 원본 유지
+          // 2026-11-12 원장 요청 '칼럼 사진 용량': WebP(투명 유지)로 줄인다. 1200×800 PNG 2MB → 약 80KB.
+          // (이전엔 반투명 픽셀이 하나라도 있으면 원본 PNG 를 그대로 올려 한 장 1~2MB 가 됐음)
+          var base = (file.name || 'image').replace(/\\.[^.]+$/, '');
+          function asFile(b, ext, type){ try { return new File([b], base + ext, { type: type }); } catch(e){ return null; } }
+          function hasAlpha(){
+            if (!/png|webp/i.test(file.type)) return false;
             var d = ctx.getImageData(0, 0, cw, ch).data, step = Math.max(4, Math.floor(d.length/4/40000)*4);
-            for (var i = 3; i < d.length; i += step) { if (d[i] < 255) return resolve(file); }
+            for (var i = 3; i < d.length; i += step) { if (d[i] < 255) return true; }
+            return false;
           }
           cv.toBlob(function(b){
-            if (!b || b.size >= file.size) return resolve(file);
-            var base = (file.name || 'image').replace(/\\.[^.]+$/, '');
-            try { resolve(new File([b], base + '.jpg', { type: 'image/jpeg' })); } catch(e){ resolve(file); }
-          }, 'image/jpeg', 0.82);
+            if (b && b.type === 'image/webp' && b.size < file.size) return resolve(asFile(b, '.webp', 'image/webp') || file);
+            // WebP 저장을 못 하는 브라우저(일부 Safari): 투명이 없으면 JPG, 있으면 원본
+            if (hasAlpha()) return resolve(file);
+            cv.toBlob(function(j){
+              if (!j || j.size >= file.size) return resolve(file);
+              resolve(asFile(j, '.jpg', 'image/jpeg') || file);
+            }, 'image/jpeg', 0.82);
+          }, 'image/webp', 0.8);
         }).catch(function(){ resolve(file); });
       } catch(e){ resolve(file); }
     });

@@ -99,7 +99,18 @@ const TXT = 'text/plain; charset=utf-8'
 const SEO_CACHE = 'public, max-age=3600'
 // 치료사례집 웹뷰어는 public/casebook/ 정적 자산(_routes exclude /casebook/*). 슬래시 없는 주소만 워커가 받아 보정 — 뷰어가 상대경로라 필수
 app.get('/casebook', (c) => c.redirect('/casebook/', 301))
-app.get('/sitemap.xml', async (c) => c.body(await sitemap(c.env), 200, { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': SEO_CACHE }))
+// 2026-11-12 원장 제안(사이트맵 구성): 구글 크롤러에는 구글에만 가린 구역(백과·지역 조합)을 뺀 사이트맵을 준다.
+//   → 서치 콘솔 '제출된 URL에 noindex' 경고가 사라지고, 구글은 홈·진료·의료진·칼럼·사례 주소만 받는다.
+//   네이버·Bing·브라우저 응답은 그대로(전체 주소). 되돌리기: google-hide.ts 의 GOOGLE_HIDE_ENABLED = false.
+app.get('/sitemap.xml', async (c) => {
+  let xml = await sitemap(c.env)
+  if (isGoogleCrawler(c.req.header('user-agent'))) {
+    xml = xml.replace(/\s*<url>\s*<loc>([^<]+)<\/loc>[\s\S]*?<\/url>/g, (block, loc) => {
+      try { return isGoogleHiddenPath(new URL(loc).pathname) ? '' : block } catch { return block }
+    })
+  }
+  return c.body(xml, 200, { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': SEO_CACHE, 'Vary': 'User-Agent' })
+})
 app.get('/robots.txt', (c) => c.body(robotsTxt(), 200, { 'Content-Type': TXT, 'Cache-Control': 'public, max-age=86400' }))
 // §S20⑧: RSS 피드 — 칼럼·공지 자동 갱신 (네이버 서치어드바이저 RSS 제출용)
 app.get('/rss.xml', async (c) => c.body(await rssFeed(c.env), 200, { 'Content-Type': 'application/rss+xml; charset=utf-8', 'Cache-Control': SEO_CACHE }))

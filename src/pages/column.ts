@@ -1,4 +1,5 @@
 import { html, raw } from 'hono/html'
+import { EN_TO_KO, KO_TO_EN, isEnglishColumn } from '../data/column-translations'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, DOCTORS, getDoctor, getTreatment, columnCategoryName, treatmentForColumnCategory, COLUMN_CATEGORIES, type ColumnCategory } from '../data/clinic'
@@ -176,6 +177,12 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
   const relatedCols = pickRelatedColumns(col, allColumns)
 
   const pageUrl = `${BASE}/column/${col.slug}`
+  // 영어 칼럼(분류 english): 언어 표시 en + 한글 원문과 hreflang 상호 연결 (2026-11-12 원장 요청)
+  const isEn = isEnglishColumn(col)
+  const pairSlug = isEn ? EN_TO_KO[col.slug] : KO_TO_EN[col.slug]
+  const pair = pairSlug ? allColumns.find(c => c.slug === pairSlug && c.published) : undefined
+  const lang: 'ko' | 'en' = isEn ? 'en' : 'ko'
+  const inLang = isEn ? 'en' : 'ko-KR'
   const published = isoOf(validTs(col.createdAt, col.updatedAt))
   const modified = isoOf(validTs(col.updatedAt, col.createdAt))
   const reviewed = kstYmd(validTs(col.updatedAt, col.createdAt))
@@ -204,7 +211,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
       image: { '@type': 'ImageObject', url: ogImageAbs || `${BASE}/static/img/og.jpg` },
       ...(col.keywords && col.keywords.length ? { keywords: col.keywords.join(', ') } : {}),
       articleSection: catLabel,
-      inLanguage: 'ko-KR',
+      inLanguage: inLang,
       mainEntityOfPage: { '@id': `${pageUrl}#webpage` },
       isPartOf: { '@id': `${BASE}/#website` },
       ...(related ? { about: { '@id': `${BASE}/treatments/${related.slug}#procedure` } } : {}),
@@ -216,7 +223,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
       url: pageUrl,
       name: col.metaTitle || col.title,
       description: desc,
-      inLanguage: 'ko-KR',
+      inLanguage: inLang,
       isPartOf: { '@id': `${BASE}/#website` },
       mainEntity: { '@id': `${pageUrl}#article` },
       breadcrumb: { '@id': `${pageUrl}#breadcrumb` },
@@ -251,6 +258,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
             <span style="color:var(--gray-400);font-size:14px">${fmtDate(col.createdAt, col.updatedAt)}</span>
             <span style="color:var(--gray-400);font-size:14px;margin-left:auto"><i class="fa-solid fa-eye"></i> ${views.toLocaleString()}</span>
           </div>
+          ${pair ? html`<p class="col-lang-switch" lang="${isEn ? 'ko' : 'en'}" style="margin:-10px 0 22px;font-size:14px"><a href="/column/${pair.slug}" hreflang="${isEn ? 'ko' : 'en'}" style="color:var(--brand);font-weight:700;text-decoration:underline"><i class="fa-solid fa-language"></i> ${isEn ? '한국어로 읽기' : 'Read in English'}</a></p>` : ''}
           ${summary ? html`<div class="answer-summary-box"><p class="answer-summary-label"><i class="fa-solid fa-lightbulb"></i> 핵심 답변</p><p class="answer-summary">${summary}</p></div>` : ''}
           ${col.thumbnail ? html`<img src="${uploadImgUrl(col.thumbnail)}" alt="${col.thumbnailAlt || col.title}" width="1200" height="630" style="border-radius:var(--radius-lg);margin-bottom:30px;height:auto" fetchpriority="high" decoding="async">` : ''}
           <div class="prose">${raw(versionUploadImgs(enhanceArticleImages(col.body, col.title)).replace(/<(\/?)h1\b/gi, '<$1h2'))}</div>
@@ -331,6 +339,8 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
     ogImage: ogImageAbs, // §S20⑨: 대표 이미지 → OG 썸네일
     ogType: 'article',
     article: { published, modified, section: catLabel },
+    lang,
+    alternates: pair ? [{ lang: isEn ? 'ko' : 'en', path: `/column/${pair.slug}` }] : undefined,
     schema: [{ '@context': 'https://schema.org', '@graph': graph }],
   }, body)
 }

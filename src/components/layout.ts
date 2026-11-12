@@ -397,12 +397,27 @@ export type Meta = {
   isDetail?: boolean     // §Meta픽셀: 시술/진료 세부페이지 여부 → Lead_custom 이벤트 추가 (미지정 시 path로 자동 판별)
   article?: { published?: string; modified?: string; section?: string }  // og:type=article 일 때 article:* 메타
   immersive?: boolean   // 메인 스크롤 몰입 연출(static/immersive.*) — 홈만
+  lang?: 'ko' | 'en'    // 페이지 언어(기본 ko). 영어 칼럼은 en → html lang·hreflang·og:locale·inLanguage
+  alternates?: { lang: 'ko' | 'en'; path: string }[]  // 같은 글의 다른 언어판(hreflang 상호 연결)
 }
 
 // §Meta픽셀: 세부페이지(상세) 판별 — slug가 붙는 상세 URL이면 Lead_custom 대상
 // /treatments/xxx, /encyclopedia/xxx, /doctors/xxx, /column/xxx, /cases 등
 function isDetailPath(path: string): boolean {
   return /^\/(treatments|encyclopedia|doctors|column|events|notice)\/[^/]+/.test(path)
+}
+
+// hreflang: 기본은 한국어 자기 자신 + x-default. 다른 언어판이 있으면 서로 가리키고, x-default 는 한국어판.
+function hreflangTags(meta: Meta, url: string): string {
+  const abs = (p: string) => `https://${CLINIC.domain}${p}`
+  const self = { lang: meta.lang || 'ko', path: meta.path }
+  const all = [self, ...(meta.alternates || []).filter(a => a.path !== meta.path)]
+  const code = (l: string) => (l === 'en' ? 'en' : 'ko-KR')
+  const xDefault = all.find(a => a.lang === 'ko') || self
+  return [
+    ...all.map(a => `<link rel="alternate" hreflang="${code(a.lang)}" href="${a.path === meta.path ? url : abs(a.path)}" />`),
+    `<link rel="alternate" hreflang="x-default" href="${xDefault.path === meta.path ? url : abs(xDefault.path)}" />`,
+  ].join('\n    ')
 }
 
 export function headTags(meta: Meta) {
@@ -419,8 +434,7 @@ export function headTags(meta: Meta) {
     ${meta.noindex ? raw('<meta name="robots" content="noindex, nofollow" />') : raw('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />')}
     <link rel="canonical" href="${url}" />
     <link rel="alternate" type="application/rss+xml" title="${CLINIC.name} 원장 칼럼·소식" href="https://${CLINIC.domain}/rss.xml" />
-    <link rel="alternate" hreflang="ko-KR" href="${url}" />
-    <link rel="alternate" hreflang="x-default" href="${url}" />
+    ${raw(hreflangTags(meta, url))}
     <meta property="og:type" content="${meta.ogType || 'website'}" />
     ${meta.ogType === 'article' && meta.article ? raw([
       meta.article.published ? `<meta property="article:published_time" content="${meta.article.published}" />` : '',
@@ -435,7 +449,7 @@ export function headTags(meta: Meta) {
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="${meta.title}" />
-    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:locale" content="${meta.lang === 'en' ? 'en_US' : 'ko_KR'}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${meta.title}" />
     <meta name="twitter:description" content="${meta.description}" />
@@ -466,13 +480,15 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20261110" />
+    <link rel="stylesheet" href="/static/style.css?v=20261112" />
     ${meta.immersive ? raw(IMMERSIVE_HEAD) : ''}
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <!-- 2026-11-12: 글꼴 CSS 는 화면을 막지 않게 비동기(print→all). 글꼴이 오기 전 잠깐 시스템 글꼴로 보였다가 바뀐다 -->
+    <link rel="stylesheet" crossorigin media="print" onload="this.media='all'" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <noscript><link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /></noscript>
     <!-- 2026-10-15 원장 요청 폰트 통일: 제목·본문·숫자 모두 Pretendard. 명조는 메인 첫 화면 제목('믿고 찾는 약수역 365올케어치과')에만 →
          그 글자만 서브셋(text=)으로 받는다. 영문 세리프(Fraunces)·타자기(DM Mono) 로드 제거 -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;800&display=swap&text=%EB%AF%BF%EA%B3%A0%EC%B0%BE%EB%8A%94%EC%95%BD%EC%88%98%EC%97%AD365%EC%98%AC%EC%BC%80%EC%96%B4%EC%B9%98%EA%B3%BC" />
+    ${meta.immersive ? raw(`<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;800&display=swap&text=%EB%AF%BF%EA%B3%A0%EC%B0%BE%EB%8A%94%EC%95%BD%EC%88%98%EC%97%AD365%EC%98%AC%EC%BC%80%EC%96%B4%EC%B9%98%EA%B3%BC" />`) : ''}
     <!-- FontAwesome: 비동기 로드(렌더 차단 제거) -->
     <link rel="stylesheet" media="print" onload="this.media='all'" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" /></noscript>

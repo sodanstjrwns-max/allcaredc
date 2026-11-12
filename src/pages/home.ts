@@ -241,30 +241,30 @@ export function HomePage(popups: HomePopup[] = []) {
     </div>
     <div class="hero-inner hh-grid">
       <div class="hh-copy">
-        <span class="hh-eyebrow reveal"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 보철과 전문의 · 교정과 전문의 · 치의학박사 · 의식하진정법(수면진료)</span>
+        <span class="hh-eyebrow reveal reveal-now"><i class="hh-diamond" aria-hidden="true"></i> 구강악안면외과 <strong>＋</strong> 통합치의학과 <em>더블보드 전문의</em> · 보철과 전문의 · 교정과 전문의 · 치의학박사 · 의식하진정법(수면진료)</span>
         <h1 class="hh-title hh-title--ko">
           <span class="line-mask"><span class="hh-ko-line"><span class="hh-chunk">믿고 찾는</span> <span class="hh-chunk">약수역</span></span></span>
           <span class="line-mask"><span class="hh-italic disp hh-ko-line">365올케어치과</span></span>
         </h1>
-        <p class="hh-lead reveal reveal-d2"><strong>고난도 임플란트는 전문성을 더하고,</strong><br><strong>일반진료는 기본과 원칙에 충실합니다.</strong></p>
-        <p class="hh-lead hh-lead--sub reveal reveal-d2">고난도 임플란트부터 치아교정·심미보철·일반 치과진료까지.<br>치과 전문의 협진 시스템을 바탕으로 정확하게 진단하고 필요한 치료를 제안합니다.</p>
-        <div class="hero-actions reveal reveal-d3">
+        <p class="hh-lead reveal reveal-d2 reveal-now"><strong>고난도 임플란트는 전문성을 더하고,</strong><br><strong>일반진료는 기본과 원칙에 충실합니다.</strong></p>
+        <p class="hh-lead hh-lead--sub reveal reveal-d2 reveal-now">고난도 임플란트부터 치아교정·심미보철·일반 치과진료까지.<br>치과 전문의 협진 시스템을 바탕으로 정확하게 진단하고 필요한 치료를 제안합니다.</p>
+        <div class="hero-actions reveal reveal-d3 reveal-now">
           <a href="/treatments" class="btn btn-primary">전체 진료 보기 <i class="fa-solid fa-arrow-right"></i></a>
           <a href="/reservation" class="btn btn-outline">상담·진단 예약</a>
         </div>
         <!-- §S20①: 원장칼럼·비포애프터·치료사례집 바로가기 (모바일 우선 노출) -->
-        <nav class="hero-quick reveal reveal-d3" aria-label="콘텐츠 바로가기">
+        <nav class="hero-quick reveal reveal-d3 reveal-now" aria-label="콘텐츠 바로가기">
           <a href="/column" class="hero-quick-link" id="hero-link-column"><i class="fa-solid fa-pen-nib"></i> 원장칼럼</a>
           <a href="/cases" class="hero-quick-link" id="hero-link-cases"><i class="fa-solid fa-images"></i> 비포애프터</a>
           <a href="/casebook/" class="hero-quick-link" target="_blank" rel="noopener" id="hero-link-casebook"><i class="fa-solid fa-book"></i> 치료사례집</a>
         </nav>
-        <div class="hh-meta reveal reveal-d4">
+        <div class="hh-meta reveal reveal-d4 reveal-now">
           <div class="item"><span class="num num-ko">협진</span><span class="lbl">치과 전문의 협진 시스템</span></div>
           <div class="item"><span class="num num-ko">수면</span><span class="lbl">의식하진정법(수면진료)</span></div>
           <div class="item"><span class="num"><span data-count="20" data-suffix=":30">20:30</span></span><span class="lbl">야간진료 (월·화·목)</span></div>
         </div>
       </div>
-      <figure class="hh-figure reveal reveal-d2">
+      <figure class="hh-figure reveal reveal-d2 reveal-now">
         <div class="hh-frame">
           <svg class="hh-frame-draw" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
             <rect class="hfd-rect" pathLength="1" x="0" y="0" width="100" height="100" vector-effect="non-scaling-stroke"/>

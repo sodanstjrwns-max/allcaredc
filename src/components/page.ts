@@ -23,7 +23,7 @@ function withHeadingIds(htmlStr: string): string {
 // 전체 페이지 셸 — SSR HTML 문자열 반환
 export function Page(meta: Meta, body: any) {
   return html`<!DOCTYPE html>
-<html lang="ko">
+<html lang="${meta.lang || 'ko'}">
 <head>
   ${headTags(meta)}
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-65JNN9W083"></script>
@@ -32,8 +32,9 @@ export function Page(meta: Meta, body: any) {
   <!-- Ahrefs Web Analytics (권민수 원장 요청 2026-10-15) — GA4·Clarity 와 같이 공개 페이지 공통 head 에만 삽입(관리자 화면 제외) -->
   <script src="https://analytics.ahrefs.com/analytics.js" data-key="WG32cim88YvItUISMSfpqg" async></script>
   <!-- 네이버 광고 전환추적 공통 스크립트 (원장 요청 2026-09-16) -->
-  <script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
-  <script type="text/javascript">if(!window.wcs_add)var wcs_add={};wcs_add["wa"]="s_248ae32299dd";if(!window._nasa)var _nasa={};if(window.wcs){wcs.inflow();wcs_do();}</script>
+  <!-- 2026-11-12: 동기 로드가 첫 화면을 약 0.9초 막아 비동기로. 로드가 끝나면 같은 호출(inflow·wcs_do)을 한다 -->
+  <script type="text/javascript">if(!window.wcs_add)var wcs_add={};wcs_add["wa"]="s_248ae32299dd";if(!window._nasa)var _nasa={};</script>
+  <script type="text/javascript" async src="//wcs.naver.net/wcslog.js" onload="if(window.wcs){wcs.inflow();wcs_do();}"></script>
 </head>
 <body>
   ${Header()}
