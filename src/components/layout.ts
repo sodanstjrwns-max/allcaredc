@@ -495,7 +495,7 @@ export function headTags(meta: Meta) {
     ${meta.schema ? raw(meta.schema.map(s => `<script type="application/ld+json">${JSON.stringify(s).replace(/</g, '\\u003c')}</script>`).join('')) : ''}
     ${(CLINIC as any).analytics?.ga4 ? raw(`<script async src="https://www.googletagmanager.com/gtag/js?id=${(CLINIC as any).analytics.ga4}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${(CLINIC as any).analytics.ga4}');</script>`) : ''}
     <script defer src="https://pf-dashboard-2nt.pages.dev/beacon.js"></script>
-    <!-- 네이버 애널리틱스 공통 스크립트는 page.ts의 광고 전환 공통 스크립트(wa s_248ae32299dd)와 중복이라 제거 (2026-09-19). wcs_do 이중 호출·키 충돌 방지 -->
+    <!-- 네이버 애널리틱스(25670873e0f56c0)·광고 전환(s_248ae32299dd)은 page.ts 한 곳에서 함께 호출 (2026-11-12 복구 — 9/19 에 '중복' 으로 뺀 것은 다른 계정이었음) -->
     ${pixelId ? raw(`<!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)

@@ -32,9 +32,15 @@ export function Page(meta: Meta, body: any) {
   <!-- Ahrefs Web Analytics (권민수 원장 요청 2026-10-15) — GA4·Clarity 와 같이 공개 페이지 공통 head 에만 삽입(관리자 화면 제외) -->
   <script src="https://analytics.ahrefs.com/analytics.js" data-key="WG32cim88YvItUISMSfpqg" async></script>
   <!-- 네이버 광고 전환추적 공통 스크립트 (원장 요청 2026-09-16) -->
-  <!-- 2026-11-12: 동기 로드가 첫 화면을 약 0.9초 막아 비동기로. 로드가 끝나면 같은 호출(inflow·wcs_do)을 한다 -->
-  <script type="text/javascript">if(!window.wcs_add)var wcs_add={};wcs_add["wa"]="s_248ae32299dd";if(!window._nasa)var _nasa={};</script>
-  <script type="text/javascript" async src="//wcs.naver.net/wcslog.js" onload="if(window.wcs){wcs.inflow();wcs_do();}"></script>
+  <!-- 네이버 공통 스크립트 — 계정 2개를 한 번 받은 wcslog.js 로 함께 호출한다.
+       ① 네이버 애널리틱스(방문 통계) 25670873e0f56c0 — 9/19 '중복' 으로 잘못 빼서 9/20 부터 방문 데이터 0(원장 11/12 요청으로 복구)
+       ② 네이버 광고 전환추적 s_248ae32299dd (원장 요청 2026-09-16) — 아래 클릭 전환(wcs.trans)도 이 키를 쓰므로 마지막에 둔다.
+       비동기 로드(2026-11-12, 첫 화면 약 0.9초 막던 것 제거) → 로드가 끝나면 호출 -->
+  <script type="text/javascript">if(!window.wcs_add)var wcs_add={};if(!window._nasa)var _nasa={};
+  window.acWcs=function(){if(!window.wcs||window.acWcsDone)return;window.acWcsDone=1;
+  wcs_add["wa"]="25670873e0f56c0";wcs_do();
+  wcs_add["wa"]="s_248ae32299dd";wcs.inflow();wcs_do();};</script>
+  <script type="text/javascript" async src="//wcs.naver.net/wcslog.js" onload="acWcs()"></script>
 </head>
 <body>
   ${Header()}

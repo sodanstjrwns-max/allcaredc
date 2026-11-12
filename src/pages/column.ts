@@ -251,7 +251,7 @@ export function ColumnDetail(col: Column, views: number, allColumns: Column[] = 
   <section class="section">
     <div class="container">
       <div class="grid-detail">
-        <article class="reveal">
+        <article class="reveal reveal-now">
           <div style="display:flex;align-items:center;gap:14px;padding-bottom:24px;margin-bottom:30px;border-bottom:1px solid var(--gray-200);flex-wrap:wrap">
             <span class="tag-pill cat-tag">${txName(col.category, cats)}</span>
             ${author ? html`<a href="/doctors/${author.slug}" style="font-weight:700;color:var(--brand)">${author.name} ${author.role}</a>` : ''}
