@@ -48,8 +48,18 @@ r2_get('data/columns.json', cur)
 cols = json.load(open(cur, encoding='utf-8'))
 refs = refs_of(cols)
 plan, before, after = {}, 0, 0
+def fetch(url):
+    for i in range(4):  # 사이트가 느릴 때(해외 경유) 한두 장씩 끊겨 재시도
+        try:
+            return urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=120).read()
+        except Exception:
+            if i == 3:
+                raise
+            time.sleep(5)
+
+
 for fname, stem in sorted(refs.items()):
-    raw = urllib.request.urlopen(urllib.request.Request(f'{SITE}/uploads/columns/{fname}', headers=UA), timeout=60).read()
+    raw = fetch(f'{SITE}/uploads/columns/{fname}')
     if len(raw) < 150 * 1024:
         continue
     im = Image.open(io.BytesIO(raw))
