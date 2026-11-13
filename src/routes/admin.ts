@@ -10,13 +10,13 @@ import {
   AdminEvents, AdminEventForm, AdminPricing, AdminColumnCategories, AdminSettings, AdminSchedule,
 } from '../pages/admin'
 import { getNotifySettings, saveNotifySettings, sendTelegram, notifyNewReservation } from '../lib/notify'
-import { getSchedule, saveSchedule, daysInMonth, defaultState, kstYm, validYm, scheduleVersion, DAY_STATES, type DayState } from '../lib/schedule'
+import { getSchedule, saveSchedule, daysInMonth, defaultState, kstYm, validYm, scheduleVersion, DAY_STATES, cleanCustom, type DayState } from '../lib/schedule'
 import { getColumnCategories, saveColumnCategories, slugifyCategory, CATEGORY_SLUG_RE } from '../lib/column-categories'
 import { loadPriceTable, savePriceTable } from '../lib/pricing'
 import type { PriceGroup } from '../data/clinic'
 import { fetchSiteStats, renderStatsPage, isValidStatsKey } from './stats'
 import { SEED_COLUMNS, Column } from '../pages/column'
-import { SEED_NOTICES, Notice, allActivePopupNotices } from '../pages/notice'
+import { SEED_NOTICES, Notice, allActivePopupNotices, newPreviewToken } from '../pages/notice'
 import { SEED_EVENTS, EventItem } from '../pages/event'
 import { CaseItem } from '../pages/cases'
 
@@ -379,20 +379,32 @@ admin.post('/notices/new', async (c) => {
     await r2PutBinary(c.env, key, await (file as any).arrayBuffer(), (file as any).type || 'image/jpeg')
     image = `/${key}`
   }
-  await addToCollection<Notice>(c.env, 'notices', {
+  const item: Notice = {
     id: uid('not_'), title: String(form.title || ''), body: String(form.body || ''),
     image, pinned: !!form.pinned, createdAt: Date.now(),
     popup: !!form.popup, popupUntil: String(form.popupUntil || '').trim() || undefined,
     popupStart: String(form.popupStart || '').trim() || undefined, popupOrder: popupOrderOf(form.popupOrder),
-    ...parsePub(form),
-  })
-  return c.redirect('/admin/notices')
+    ...parsePub(form), previewToken: newPreviewToken(),
+  }
+  await addToCollection<Notice>(c.env, 'notices', item)
+  // 임시저장·비공개·예약이면 수정 화면으로 돌아가 미리보기 링크를 바로 보여 준다
+  return c.redirect(isLive(item) ? '/admin/notices' : `/admin/notices/${item.id}/edit?saved=1`)
 })
 admin.get('/notices/:id/edit', async (c) => {
   const items = await listCollection<Notice>(c.env, 'notices')
   const n = items.find(x => x.id === c.req.param('id'))
   if (!n) return c.notFound()
-  return c.html(AdminNoticeForm(n, allActivePopupNotices(items).length).toString())
+  // 미리보기 토큰이 없는 예전 공지는 처음 열 때 만든다
+  if (!n.previewToken) { n.previewToken = newPreviewToken(); await updateInCollection<Notice>(c.env, 'notices', n.id, { previewToken: n.previewToken }) }
+  const msg = c.req.query('saved') ? '저장했습니다. 아래 미리보기 링크로 실제 게시 화면을 확인할 수 있습니다.' : c.req.query('reset') ? '미리보기 주소를 새로 만들었습니다. 이전 주소는 더 이상 열리지 않습니다.' : undefined
+  return c.html(AdminNoticeForm(n, allActivePopupNotices(items).length, msg).toString())
+})
+// 미리보기 주소 새로 만들기 — 예전 주소를 막을 때
+admin.post('/notices/:id/preview-reset', async (c) => {
+  const id = c.req.param('id')
+  const r = await updateInCollection<Notice>(c.env, 'notices', id, { previewToken: newPreviewToken() })
+  if (!r) return c.notFound()
+  return c.redirect(`/admin/notices/${id}/edit?reset=1`)
 })
 admin.post('/notices/:id/edit', async (c) => {
   const form = await c.req.parseBody()
@@ -413,8 +425,10 @@ admin.post('/notices/:id/edit', async (c) => {
   } else if (form.image !== undefined) {
     patch.image = String(form.image || '') || undefined
   }
-  await updateInCollection<Notice>(c.env, 'notices', c.req.param('id'), patch)
-  return c.redirect('/admin/notices')
+  const saved = await updateInCollection<Notice>(c.env, 'notices', c.req.param('id'), patch)
+  if (saved && !saved.previewToken) await updateInCollection<Notice>(c.env, 'notices', saved.id, { previewToken: newPreviewToken() })
+  // 아직 공개 전이면 수정 화면에 남아 미리보기로 확인할 수 있게
+  return c.redirect(saved && !isLive(saved) ? `/admin/notices/${saved.id}/edit?saved=1` : '/admin/notices')
 })
 admin.post('/notices/:id/delete', async (c) => {
   await removeFromCollection(c.env, 'notices', c.req.param('id'))
@@ -527,14 +541,24 @@ function shiftYm(ym: string, n: number) {
 }
 admin.get('/schedule', async (c) => {
   const ym = validYm(c.req.query('ym')) ? String(c.req.query('ym')) : kstYm()
-  return c.html(AdminSchedule(await getSchedule(c.env), ym, shiftYm(ym, -1), shiftYm(ym, 1), c.req.query('ok') ? '저장했습니다. 달력 이미지와 진료일정 페이지에 바로 반영됩니다.' : undefined).toString())
+  const empty = Number(c.req.query('empty') || 0)
+  const msg = c.req.query('ok') ? '저장했습니다. 달력 이미지와 진료일정 페이지에 바로 반영됩니다.' + (empty > 0 ? ` (직접 입력 문구가 비어 있던 ${empty}일은 기본값으로 저장했습니다.)` : '') : undefined
+  return c.html(AdminSchedule(await getSchedule(c.env), ym, shiftYm(ym, -1), shiftYm(ym, 1), msg).toString())
 })
 admin.post('/schedule', async (c) => {
   const ym = validYm(c.req.query('ym')) ? String(c.req.query('ym')) : kstYm()
   const form = await c.req.parseBody()
   const sc = await getSchedule(c.env)
+  let empty = 0
   for (const d of daysInMonth(ym)) {
     const v = String(form[`d_${d}`] || '') as DayState
+    if (v === 'custom') {
+      // 직접 입력(2026-11-13): 문구 필수, 시간은 선택(비우면 종일 휴진)
+      const cu = cleanCustom(form[`cl_${d}`], form[`cf_${d}`], form[`ct_${d}`])
+      if (cu) { sc.days[d] = 'custom'; sc.customs[d] = cu } else { delete sc.days[d]; delete sc.customs[d]; empty++ }
+      continue
+    }
+    delete sc.customs[d]
     if (!DAY_STATES.includes(v) || v === defaultState(d)) delete sc.days[d]
     else sc.days[d] = v
   }
@@ -556,7 +580,7 @@ admin.post('/schedule', async (c) => {
   }
   if (oldBg && oldBg !== sc.bgs[ym]) await r2Delete(c.env, oldBg).catch(() => {})
   await saveSchedule(c.env, sc)
-  return c.redirect(`/admin/schedule?ym=${ym}&ok=1`)
+  return c.redirect(`/admin/schedule?ym=${ym}&ok=1${empty ? `&empty=${empty}` : ''}`)
 })
 // 달력 PNG 업로드 — 관리자 화면이 저장 직후 SVG 를 캔버스로 그려 PNG 로 올린다(Workers 에는 한글 글꼴·래스터라이저가 없어 브라우저에서 변환)
 admin.post('/schedule/png', async (c) => {

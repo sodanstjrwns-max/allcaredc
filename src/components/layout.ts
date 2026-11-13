@@ -127,28 +127,34 @@ export function schemaTag(obj: any) {
 // ============================================================
 // 지금 진료 상태 엔진 (헤더 칩 · 히어로 LIVE · 상담 위젯 공용) — window.acHours
 //  진료시간 = CLINIC.hours 기준: 월·화·목 09:30~20:30(야간) / 수·금 09:30~18:30 / 토·일·공휴일 09:30~14:00
-//  평일 점심 12:30~14:00 · 저녁 17:30~18:00 (토·일·공휴일은 쉬는 시간 없음)
-//  날짜별 상태(진료·야간·공휴일·휴진)는 /api/schedule (관리자 진료일정) → localStorage 10분 캐시
+//  평일 점심 12:30~14:00 · 저녁 17:30~18:00 은 야간진료(18:30 넘어 진료)하는 날만 (토·일·공휴일은 쉬는 시간 없음)
+//   2026-11-13 권민수 원장 Figma 1번: 수·금(18:30 마감)에 17:30부터 '저녁시간'으로 뜨던 것 수정
+//  날짜별 상태(진료·야간·공휴일·휴진·직접 입력)는 /api/schedule (관리자 진료일정) → localStorage 10분 캐시
+//  직접 입력(custom): 시간이 있으면 그 시간만 진료(점심·저녁은 그 시간 안에 온전히 들 때만), 없으면 종일 휴진
 // ============================================================
 const HOURS_CHIP_JS = `(function(){
 var el=document.getElementById('hoursChip');if(!el||window.acHours)return;
-var DAYS={},WK=['일','월','화','수','목','금','토'];
-try{var c=JSON.parse(localStorage.getItem('ac_sched')||'null');if(c&&c.days)DAYS=c.days;}catch(e){}
+var DAYS={},CUS={},WK=['일','월','화','수','목','금','토'],CK='ac_sched2';
+try{var c=JSON.parse(localStorage.getItem(CK)||'null');if(c&&c.days){DAYS=c.days;CUS=c.custom||{}}}catch(e){}
 function p2(n){return(n<10?'0':'')+n}
 function kst(){var n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+324e5)}
 function ymd(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
 function hm(m){return p2(Math.floor(m/60))+':'+p2(m%60)}
-function stateOf(d){var k=ymd(d);if(DAYS[k])return DAYS[k];var w=d.getDay();return(w==1||w==2||w==4)?'night':'open'}
-function hours(d){var st=stateOf(d),w=d.getDay();if(st==='closed')return null;
-if(st==='holiday'||w===0||w===6)return{o:570,c:840,br:[]};
-return{o:570,c:st==='night'?1230:1110,br:[[750,840,'점심시간','점심'],[1050,1080,'저녁시간','저녁']]}}
+function stateOf(d){var k=ymd(d);if(DAYS[k]&&(DAYS[k]!=='custom'||CUS[k]))return DAYS[k];var w=d.getDay();return(w==1||w==2||w==4)?'night':'open'}
+function tm(v){var m=/^(\\d\\d):(\\d\\d)$/.exec(v||'');return m?(+m[1])*60+(+m[2]):null}
+function hours(d){var st=stateOf(d),w=d.getDay(),o=570,c,wk,lab='';if(st==='closed')return null;
+if(st==='custom'){var cu=CUS[ymd(d)],f=tm(cu.from),t=tm(cu.to);if(f==null||t==null||t<=f)return{off:1,lab:cu.label};o=f;c=t;wk=!!cu.wk;lab=cu.label}
+else if(st==='holiday'||w===0||w===6){c=840;wk=false}
+else{c=st==='night'?1230:1110;wk=true}
+var br=[];if(wk){if(o<=750&&c>=840)br.push([750,840,'점심시간','점심']);if(c>1110&&o<=1050)br.push([1050,1080,'저녁시간','저녁'])}
+return{o:o,c:c,br:br,lab:lab}}
 function status(){var d=kst(),t=d.getHours()*60+d.getMinutes(),h=hours(d);
-if(!h)return{s:'closed',long:'오늘 휴진',short:'오늘 휴진',mini:'오늘 휴진',open:false,today:null};
-var r={o:h.o,c:h.c};
-if(t<h.o)return{s:'closed',long:'진료 전 · 오늘 '+hm(h.o)+'부터',short:'진료 전 '+hm(h.o)+'~',mini:'진료 전',open:false,today:r};
+if(!h||h.off){var L=h&&h.lab&&h.lab!=='휴진'?'오늘 '+h.lab:'오늘 휴진';return{s:'closed',long:L,short:'오늘 휴진',mini:'오늘 휴진',open:false,today:null}}
+var r={o:h.o,c:h.c},tag=h.lab?' ('+h.lab+')':'';
+if(t<h.o)return{s:'closed',long:'진료 전 · 오늘 '+hm(h.o)+'부터'+tag,short:'진료 전 '+hm(h.o)+'~',mini:'진료 전',open:false,today:r};
 if(t<h.c){for(var i=0;i<h.br.length;i++){var b=h.br[i];if(t>=b[0]&&t<b[1])return{s:'break',long:b[2]+' '+hm(b[1])+'까지',short:b[3]+' ~'+hm(b[1]),mini:b[2],open:false,today:r}}
-return{s:'open',long:'진료중 '+hm(h.c)+'까지',short:'진료중 ~'+hm(h.c),mini:'진료중',open:true,today:r}}
-for(var k=1;k<=14;k++){var n=new Date(d.getTime()+k*864e5),nh=hours(n);if(nh){var when=k===1?'내일':WK[n.getDay()]+'요일';
+return{s:'open',long:'진료중 '+hm(h.c)+'까지'+tag,short:'진료중 ~'+hm(h.c),mini:'진료중',open:true,today:r}}
+for(var k=1;k<=14;k++){var n=new Date(d.getTime()+k*864e5),nh=hours(n);if(nh&&!nh.off){var when=k===1?'내일':WK[n.getDay()]+'요일';
 return{s:'closed',long:'진료 종료 · '+when+' '+hm(nh.o)+'부터',short:'진료 종료',mini:'진료 종료',open:false,today:r}}}
 return{s:'closed',long:'진료 종료',short:'진료 종료',mini:'진료 종료',open:false,today:r}}
 function paint(){var st=status();el.setAttribute('data-s',st.s);
@@ -157,8 +163,8 @@ el.setAttribute('aria-label','지금 진료 상태: '+st.long+' — 진료일정
 try{document.dispatchEvent(new CustomEvent('ac:hours',{detail:st}))}catch(e){}}
 window.acHours={status:status,paint:paint};
 paint();setInterval(paint,30000);
-var fresh=false;try{var c2=JSON.parse(localStorage.getItem('ac_sched')||'null');fresh=c2&&Date.now()-c2.at<6e5}catch(e){}
-if(!fresh&&window.fetch)fetch('/api/schedule').then(function(r){return r.json()}).then(function(j){if(j&&j.days){DAYS=j.days;try{localStorage.setItem('ac_sched',JSON.stringify({at:Date.now(),days:j.days}))}catch(e){}paint()}}).catch(function(){});
+var fresh=false;try{var c2=JSON.parse(localStorage.getItem(CK)||'null');fresh=c2&&Date.now()-c2.at<6e5}catch(e){}
+if(!fresh&&window.fetch)fetch('/api/schedule').then(function(r){return r.json()}).then(function(j){if(j&&j.days){DAYS=j.days;CUS=j.custom||{};try{localStorage.setItem(CK,JSON.stringify({at:Date.now(),days:j.days,custom:CUS}))}catch(e){}paint()}}).catch(function(){});
 })();`
 
 // ============================================================
@@ -349,7 +355,7 @@ export function Footer(path = '') {
   </nav>
 
   <!-- §E2 상시 원탭 전화 버튼 (데스크톱·태블릿 전용, 모바일은 하단 CTA바가 대체) -->
-  <a href="tel:${CLINIC.phoneRaw}" class="floating-tel" id="floatingTel" aria-label="전화 걸기 ${CLINIC.phone}">
+  <a href="tel:${CLINIC.phoneRaw}" class="floating-tel" id="floatingTel">
     <span class="ft-ic"><i class="fa-solid fa-phone"></i></span>
     <span class="ft-txt"><span class="ft-label">전화 상담</span><span class="ft-num">${CLINIC.phone}</span></span>
   </a>
@@ -480,7 +486,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20261112" />
+    <link rel="stylesheet" href="/static/style.css?v=20261113" />
     ${meta.immersive ? raw(IMMERSIVE_HEAD) : ''}
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <!-- 2026-11-12: 글꼴 CSS 는 화면을 막지 않게 비동기(print→all). 글꼴이 오기 전 잠깐 시스템 글꼴로 보였다가 바뀐다 -->

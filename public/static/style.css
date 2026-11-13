@@ -3623,3 +3623,15 @@ h1, h2, h3, h4, h5, h6 { font-weight: 800; }
 
 /* 2026-11-12 원장 요청 '상단 전화번호 줄바꿈': 1561px~ 에서 번호가 아이콘과 두 줄로 꺾이던 것 → 한 줄 고정 */
 .header-tel { white-space: nowrap; flex-shrink: 0; }
+
+/* ── 2026-11-13 권민수 원장 Figma 8번 '작은 글자 대비 보완' (WCAG AA 4.5:1 이상) ──
+   상단 시계·좌표 줄(홈 첫 화면), 칼럼 날짜(column.ts 인라인 → gray-600), 하단 링크·안내문,
+   이벤트 기간, 공지 '중요' 표시, 홈 소식 라벨, 칼럼·의료진 분류 글자. 색 계열은 그대로 두고 명도만 낮춤 */
+.hero--heritage .hh-top, .hero--heritage .hh-foot { color: #56636f; }
+.hero--heritage .hh-top .hero-coord, .hh-eyebrow, .tx-art-body .tx-no { color: #7d6236; }
+.footer-bottom { color: rgba(255,255,255,.62); }
+.compliance { color: rgba(255,255,255,.6); }
+.ev-period { color: #7d6236; }
+.notice-list .pin { background: #7d6236; }
+.np-label { color: #7d6236; }
+.doc-body .role { color: #7d6236; }

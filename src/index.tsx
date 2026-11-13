@@ -11,13 +11,13 @@ import { EncyclopediaPage, EncyclopediaDetailPage } from './pages/encyclopedia'
 import { ENCYCLOPEDIA_MERGED } from './data/encyclopedia-terms'
 import { ColumnIndex, ColumnDetail, Column, COLUMN_PER } from './pages/column'
 import { getColumnCategories } from './lib/column-categories'
-import { NoticeIndex, NoticeDetail, Notice, activePopupNotices } from './pages/notice'
+import { NoticeIndex, NoticeDetail, Notice, activePopupNotices, PREVIEW_TOKEN_RE } from './pages/notice'
 import { EventIndex, EventDetail, EventItem } from './pages/event'
 import { MissionPage, DirectionsPage, PricingPage } from './pages/static-pages'
 import { SeoHealthPage } from './pages/seo-health'
 import { Page } from './components/page'
 import { Bindings, getMember, setMemberSession, clearSession, hashPassword, verifyPassword, isBot } from './lib/auth'
-import { listCollection, listPublic, addToCollection, uid, r2GetBinary, r2Head, trackView, getViews } from './lib/store'
+import { listCollection, listPublic, addToCollection, uid, r2GetBinary, r2Head, trackView, getViews, isLive } from './lib/store'
 import { toYmd } from './data/content-dates'
 import { CLINIC, treatmentForColumnCategory, getDoctor } from './data/clinic'
 import { answerSummary } from './lib/column-seo'
@@ -30,7 +30,7 @@ import { INDEXNOW_KEY } from './lib/indexnow'
 import { loadPriceTable, publicTable } from './lib/pricing'
 import { HANDOVER_DOC_B64 } from './lib/handover-doc'
 import { notifyNewReservation, remindPendingReservations } from './lib/notify'
-import { getSchedule, calendarSvg, validYm, kstYm, kstYmd, closedDates, hasMonth, scheduleVersion, upcomingStates, scheduleBgDataUri, CAL_W, CAL_H } from './lib/schedule'
+import { getSchedule, calendarSvg, validYm, kstYm, kstYmd, closedDates, hasMonth, scheduleVersion, upcomingStates, upcomingCustoms, scheduleBgDataUri, daysInMonth, stateOf, customHours, CAL_W, CAL_H, type Schedule } from './lib/schedule'
 import { PageHero } from './components/page'
 import { enabledProviders, oauthStart, oauthCallback, socialButtons, type Provider } from './lib/oauth'
 import { isGoogleCrawler, isGoogleHiddenPath, GOOGLE_HIDE_HEADER } from './lib/google-hide'
@@ -188,13 +188,27 @@ app.get('/', async (c) => {
 })
 
 // ── 진료일정 (관리자 입력 → 자동 달력) ──
+// 달력 이미지 대체 문구: 휴진일·직접 입력한 날(단축진료 등)을 글로도 읽히게 (2026-11-13)
+function scheduleAlt(sc: Schedule, ym: string): string {
+  const m = Number(ym.slice(5)), closed: string[] = [], special: string[] = []
+  for (const d of daysInMonth(ym)) {
+    const st = stateOf(sc, d), day = Number(d.slice(8))
+    if (st === 'closed') closed.push(`${day}일`)
+    else if (st === 'custom') {
+      const cu = sc.customs[d], h = customHours(cu)
+      special.push(`${day}일 ${cu.label}${h ? `(${cu.from}~${cu.to})` : ''}`)
+    }
+  }
+  const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+  return esc(`${m}월 진료일정 — 휴진일·야간진료일 달력` + (closed.length ? ` · 휴진: ${closed.join(', ')}` : '') + (special.length ? ` · ${special.join(', ')}` : ''))
+}
 app.get('/schedule', async (c) => {
   const sc = await getSchedule(c.env)
   const months = [kstYm(), kstYm(1)].filter(ym => ym === kstYm() || hasMonth(sc, ym))
   const body = html`
   ${PageHero({ crumb: [{ name: '홈', url: '/' }, { name: '진료일정', url: '/schedule' }], title: '진료일정', desc: '이달의 휴진일과 야간진료일을 안내해 드립니다. 일요일은 격주로 진료합니다.' })}
   <section class="section"><div class="container" style="max-width:860px;display:grid;gap:28px;justify-items:center">
-    ${raw(months.map(ym => `<figure style="margin:0;width:100%;max-width:560px"><img src="/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}" alt="${Number(ym.slice(5))}월 진료일정 — 휴진일·야간진료일 달력" width="${CAL_W}" height="${CAL_H}" style="width:100%;height:auto;border-radius:6px;box-shadow:0 10px 30px rgba(6,39,65,.12)"></figure>`).join(''))}
+    ${raw(months.map(ym => `<figure style="margin:0;width:100%;max-width:560px"><img src="/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}" alt="${scheduleAlt(sc, ym)}" width="${CAL_W}" height="${CAL_H}" style="width:100%;height:auto;border-radius:6px;box-shadow:0 10px 30px rgba(6,39,65,.12)"></figure>`).join(''))}
     <p style="font-size:14px;color:var(--gray-600);text-align:center">진료시간: ${CLINIC.hours.map(h => `${h.day.replace('요일', '')} ${h.time}`).join(' · ')}<br>${CLINIC.lunchNote}</p>
     <a href="/reservation" class="btn btn-primary">예약 문의하기</a>
   </div></section>`
@@ -219,7 +233,8 @@ app.get('/api/schedule', async (c) => {
   const sc = await getSchedule(c.env)
   const today = kstYmd()
   // days: 오늘부터 3주간 날짜별 상태(진료·야간·공휴일·휴진) — 헤더 '진료중' 표시가 휴진일·공휴일을 반영하도록
-  return c.json({ closed: closedDates(sc).filter(d => d >= today), days: upcomingStates(sc, 21) }, 200, { 'Cache-Control': 'public, max-age=300' })
+  // custom: 직접 입력한 날의 문구·시간(2026-11-13) — 시간이 없으면 종일 휴진
+  return c.json({ closed: closedDates(sc).filter(d => d >= today), days: upcomingStates(sc, 21), custom: upcomingCustoms(sc, 21) }, 200, { 'Cache-Control': 'public, max-age=300' })
 })
 app.get('/mission', (c) => c.html(MissionPage().toString()))
 app.get('/directions', (c) => c.html(DirectionsPage().toString()))
@@ -308,6 +323,18 @@ app.get('/column/:slug', (c) => {
 app.get('/notice', async (c) => {
   const notices = await listPublic<Notice>(c.env, 'notices')
   return c.html(NoticeIndex(notices).toString())
+})
+// 공지 미리보기 (2026-11-13 권민수 원장 Figma 3번) — 임시저장·비공개·예약 글을 로그인 없이 링크로 확인.
+// 목록·사이트맵·검색엔진에는 안 나온다(noindex 메타 + X-Robots-Tag, 캐시 안 함). 게시된 글이면 실제 주소로 넘긴다.
+app.get('/notice/preview/:token', async (c) => {
+  const t = c.req.param('token')
+  if (!PREVIEW_TOKEN_RE.test(t)) return c.notFound()
+  const n = (await listCollection<Notice>(c.env, 'notices')).find(x => x.previewToken === t)
+  if (!n) return c.notFound()
+  if (isLive(n)) return c.redirect(`/notice/${n.id}`, 302)
+  return c.body(NoticeDetail(n, { preview: true }).toString(), 200, {
+    'Content-Type': 'text/html; charset=UTF-8', 'X-Robots-Tag': 'noindex, nofollow, noarchive', 'Cache-Control': 'private, no-store',
+  })
 })
 app.get('/notice/:id', async (c) => {
   const notices = await listPublic<Notice>(c.env, 'notices')

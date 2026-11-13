@@ -105,7 +105,7 @@ export function columnCardHtml(col: Column, i = 0, cats: ColumnCategory[] = COLU
         <span class="role">${txName(col.category, cats)}</span>
         <h3 style="font-size:1.1rem;line-height:1.4">${col.title}</h3>
         <p class="title-line" style="min-height:auto;margin-top:8px;font-size:14px">${col.excerpt}</p>
-        <p style="font-size:13px;color:var(--gray-400);margin-top:12px">${docName(col.author) ? `${docName(col.author)} 원장 · ` : ''}${fmtDate(col.createdAt, col.updatedAt)}</p>
+        <p style="font-size:13px;color:var(--gray-600);margin-top:12px">${docName(col.author) ? `${docName(col.author)} 원장 · ` : ''}${fmtDate(col.createdAt, col.updatedAt)}</p>
       </div>
     </a>`
 }

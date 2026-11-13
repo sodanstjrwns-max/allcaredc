@@ -8,10 +8,14 @@ import type { Bindings } from './auth'
 import { r2Get, r2Put } from './store'
 import { LOGO_SYMBOL_PNG_B64 } from '../data/logo-b64'
 
-export type DayState = 'open' | 'night' | 'holiday' | 'closed'
-export const DAY_STATES: DayState[] = ['open', 'night', 'holiday', 'closed']
+// 2026-11-13 권민수 원장 Figma 4번: 'custom'(직접 입력) — 관리자가 문구(단축진료·오후 휴진 등)와 시간을 직접 적는다.
+//  시간을 비우면 종일 휴진으로 처리(예약 폼에서도 막힘). 달력 이미지·진료일정 페이지·상단 진료 상태에 그대로 반영.
+export type DayState = 'open' | 'night' | 'holiday' | 'closed' | 'custom'
+export const DAY_STATES: DayState[] = ['open', 'night', 'holiday', 'closed', 'custom']
+export type CustomDay = { label: string; from?: string; to?: string }
 export type Schedule = {
   days: Record<string, DayState>      // 기본값과 다른 날만 저장 (YYYY-MM-DD)
+  customs: Record<string, CustomDay>  // days[d] === 'custom' 인 날의 문구·시간
   popupMonths: string[]               // 홈 팝업으로 띄울 달 (YYYY-MM)
   notes: Record<string, string>       // 달별 안내 문구
   bgs: Record<string, string>         // 달별 배경 이미지 R2 키 (YYYY-MM → schedule/bg/…jpg)
@@ -22,7 +26,7 @@ const KEY = 'data/schedule.json'
 
 export async function getSchedule(env: Bindings): Promise<Schedule> {
   const s = await r2Get<Schedule>(env, KEY).catch(() => null)
-  return { days: s?.days || {}, popupMonths: s?.popupMonths || [], notes: s?.notes || {}, bgs: s?.bgs || {}, pngs: s?.pngs || {}, updatedAt: s?.updatedAt }
+  return { days: s?.days || {}, customs: s?.customs || {}, popupMonths: s?.popupMonths || [], notes: s?.notes || {}, bgs: s?.bgs || {}, pngs: s?.pngs || {}, updatedAt: s?.updatedAt }
 }
 export async function saveSchedule(env: Bindings, s: Schedule) { await r2Put(env, KEY, { ...s, updatedAt: Date.now() }) }
 
@@ -45,7 +49,32 @@ export function defaultState(ymd: string): DayState {
   const wd = new Date(ymd + 'T00:00:00Z').getUTCDay()
   return wd === 1 || wd === 2 || wd === 4 ? 'night' : 'open'
 }
-export function stateOf(s: Schedule, ymd: string): DayState { return s.days[ymd] || defaultState(ymd) }
+export function stateOf(s: Schedule, ymd: string): DayState {
+  const st = s.days[ymd] || defaultState(ymd)
+  return st === 'custom' && !s.customs?.[ymd]?.label ? defaultState(ymd) : st
+}
+// ── 직접 입력 상태 ──
+export const CUSTOM_LABEL_MAX = 8
+const HM = /^([01]\d|2[0-3]):([0-5]\d)$/
+export const hmToMin = (v?: string) => { const m = HM.exec(String(v || '')); return m ? Number(m[1]) * 60 + Number(m[2]) : null }
+/** 직접 입력한 날의 진료 시간(분). 시간이 없거나 잘못되면 null = 종일 휴진 */
+export function customHours(cu?: CustomDay): { o: number; c: number } | null {
+  const o = hmToMin(cu?.from), c = hmToMin(cu?.to)
+  return o != null && c != null && c > o ? { o, c } : null
+}
+export const isClosedDay = (s: Schedule, ymd: string) => {
+  const st = stateOf(s, ymd)
+  return st === 'closed' || (st === 'custom' && !customHours(s.customs[ymd]))
+}
+/** 문구 정리: 앞뒤 공백·꺾쇠 제거, 최대 8자 */
+export function cleanCustom(label: any, from: any, to: any): CustomDay | null {
+  const l = String(label || '').replace(/[<>&"]/g, '').replace(/\s+/g, ' ').trim().slice(0, CUSTOM_LABEL_MAX)
+  if (!l) return null
+  const f = String(from || '').trim(), t = String(to || '').trim()
+  const out: CustomDay = { label: l }
+  if (hmToMin(f) != null && hmToMin(t) != null && (hmToMin(t) as number) > (hmToMin(f) as number)) { out.from = f; out.to = t }
+  return out
+}
 export function daysInMonth(ym: string): string[] {
   const [y, m] = ym.split('-').map(Number)
   const n = new Date(Date.UTC(y, m, 0)).getUTCDate()
@@ -59,10 +88,11 @@ export const kstYm = (offsetMonths = 0) => {
 export const kstYmd = (offsetDays = 0) => new Date(Date.now() + 9 * 3600000 + offsetDays * 86400000).toISOString().slice(0, 10)
 export const validYm = (v: any) => /^\d{4}-(0[1-9]|1[0-2])$/.test(String(v || ''))
 export function hasMonth(s: Schedule, ym: string) { return Object.keys(s.days).some(k => k.startsWith(ym)) || !!s.notes[ym] || s.popupMonths.includes(ym) || !!s.bgs[ym] }
-export function closedDates(s: Schedule): string[] { return Object.entries(s.days).filter(([, v]) => v === 'closed').map(([k]) => k).sort() }
+/** 예약 폼에서 막을 날: 휴진 + 시간 없이 직접 입력한 날(종일 휴진) */
+export function closedDates(s: Schedule): string[] { return Object.keys(s.days).filter(k => isClosedDay(s, k)).sort() }
 export function scheduleVersion(s: Schedule, ym: string): string {
   // 'v2' = 세로형 디자인. 디자인을 바꾸면 이 값을 올려 캐시·PNG를 새로 만들게 한다.
-  const str = JSON.stringify(['v2', ym, daysInMonth(ym).map(d => stateOf(s, d)), s.notes[ym] || '', s.bgs[ym] || ''])
+  const str = JSON.stringify(['v2', ym, daysInMonth(ym).map(d => { const st = stateOf(s, d); return st === 'custom' ? [st, s.customs[d]] : st }), s.notes[ym] || '', s.bgs[ym] || ''])
   let h = 0; for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0
   return (h >>> 0).toString(36)
 }
@@ -70,6 +100,17 @@ export function scheduleVersion(s: Schedule, ym: string): string {
 export function upcomingStates(s: Schedule, n = 21): Record<string, DayState> {
   const out: Record<string, DayState> = {}
   for (let i = 0; i < n; i++) { const d = kstYmd(i); out[d] = stateOf(s, d) }
+  return out
+}
+/** 오늘부터 n일간 직접 입력한 날 — 상단 진료 상태용. wk: 평일(공휴일 아님)이면 점심·저녁시간을 적용 */
+export function upcomingCustoms(s: Schedule, n = 21): Record<string, CustomDay & { wk: boolean }> {
+  const out: Record<string, CustomDay & { wk: boolean }> = {}
+  for (let i = 0; i < n; i++) {
+    const d = kstYmd(i)
+    if (stateOf(s, d) !== 'custom') continue
+    const wd = new Date(d + 'T00:00:00Z').getUTCDay()
+    out[d] = { ...s.customs[d], wk: wd >= 1 && wd <= 5 && !isHoliday(d) }
+  }
   return out
 }
 
@@ -111,6 +152,20 @@ export function calendarSvg(s: Schedule, ym: string, bg?: string): string {
     const cx = gx + c * cw + cw / 2, cy = gridTop + r * ch
     const st = stateOf(s, d)
     const hol = isHoliday(d)
+    if (st === 'custom') {
+      // 직접 입력: 숫자 위로 조금 올리고 문구 + (시간) 두 줄. 시간 없으면 종일 휴진 색
+      const cu = s.customs[d], hrs = customHours(cu), off = !hrs
+      const ny = cy + ch / 2 - 10
+      cells += off
+        ? `<circle cx="${cx.toFixed(1)}" cy="${ny - 11}" r="24" fill="#8a3b2e"/>`
+        : `<circle cx="${cx.toFixed(1)}" cy="${ny - 11}" r="24" fill="#fff" stroke="#8a6a35" stroke-width="2.5"/>`
+      const col = off ? '#fff' : (c === 0 || hol) ? '#b03a2e' : c === 6 ? '#2a4d7a' : '#062741'
+      cells += `<text x="${cx.toFixed(1)}" y="${ny}" text-anchor="middle" font-size="28" font-weight="700" fill="${col}" ${F}>${i + 1}</text>`
+      const fs = cu.label.length > 5 ? 15 : 18
+      cells += `<text x="${cx.toFixed(1)}" y="${ny + 30}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="${off ? '#8a3b2e' : '#8a6a35'}" ${F}>${x(cu.label)}</text>`
+      if (hrs) cells += `<text x="${cx.toFixed(1)}" y="${ny + 48}" text-anchor="middle" font-size="14" font-weight="600" fill="#5c4a2a" ${F}>${cu.from}~${cu.to}</text>`
+      return
+    }
     const numY = cy + ch / 2 - 4
     if (st === 'closed') cells += `<circle cx="${cx.toFixed(1)}" cy="${numY - 11}" r="27" fill="#8a3b2e"/>`
     else if (st === 'night') cells += `<circle cx="${cx.toFixed(1)}" cy="${numY - 11}" r="27" fill="#efe6d6"/>`

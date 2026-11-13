@@ -23,6 +23,21 @@ export type Notice = {
   status?: 'draft' | 'private'
   /** 예약 발행 시각(ms) */
   publishAt?: number
+  /** 미리보기 주소용 임시 토큰 (2026-11-13 권민수 원장 Figma 3번) — /notice/preview/:token */
+  previewToken?: string
+}
+
+/** 미리보기 토큰: 추측할 수 없는 24자(16진수) */
+export function newPreviewToken(): string {
+  return Array.from(crypto.getRandomValues(new Uint8Array(12)), b => b.toString(16).padStart(2, '0')).join('')
+}
+export const PREVIEW_TOKEN_RE = /^[0-9a-f]{24}$/
+/** 아직 공개되지 않은 이유 (미리보기 띠·관리자 안내용) */
+export function unpublishedReason(n: Notice): string {
+  if (n.status === 'draft') return '임시저장'
+  if (n.status === 'private') return '비공개'
+  if (n.publishAt && Number(n.publishAt) > Date.now()) return `예약 발행 (${new Date(Number(n.publishAt)).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' })})`
+  return '게시'
 }
 
 /** 홈 팝업 동시 노출 최대 개수 */
@@ -80,8 +95,12 @@ export function NoticeIndex(notices: Notice[]) {
   }, body)
 }
 
-export function NoticeDetail(n: Notice) {
+export function NoticeDetail(n: Notice, opts: { preview?: boolean } = {}) {
+  // 미리보기(2026-11-13): 실제 게시 화면과 똑같이 그리고 맨 위에 안내 띠만 얹는다. 검색엔진 제외(noindex + X-Robots-Tag), 목록·사이트맵에 없음
+  //  띠는 화면 맨 위 40px 에 고정하고 헤더를 그만큼 내린다(본문·헤더를 가리지 않게)
+  const pvBar = opts.preview ? html`<style>.site-header{top:40px}</style><div role="note" style="position:fixed;top:0;left:0;right:0;height:40px;z-index:1000;background:#8a3b2e;color:#fff;font-size:13px;line-height:40px;padding:0 12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>미리보기</strong> · ${unpublishedReason(n)} 상태 — 공지 목록·검색엔진에 나오지 않는 확인용 주소입니다</div>` : ''
   const body = html`
+  ${pvBar}
   ${PageHero({
     crumb: [{ name: '홈', url: '/' }, { name: '공지사항', url: '/notice' }, { name: n.title, url: `/notice/${n.id}` }],
     title: n.title,
@@ -97,9 +116,10 @@ export function NoticeDetail(n: Notice) {
     </div>
   </section>`
   return Page({
-    title: `${n.title} | 공지사항 | 365올케어치과`,
+    title: `${opts.preview ? '[미리보기] ' : ''}${n.title} | 공지사항 | 365올케어치과`,
     description: n.body.slice(0, 150),
-    path: `/notice/${n.id}`,
+    path: opts.preview ? `/notice/preview/${n.previewToken}` : `/notice/${n.id}`,
+    ...(opts.preview ? { noindex: true, isDetail: false } : {}),
   }, body)
 }
 

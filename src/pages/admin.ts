@@ -3,7 +3,7 @@ import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName, typ
 import { eventStatus } from './event'
 import { POPUP_MAX, kstToday, allActivePopupNotices } from './notice'
 import { isLive, msToKstInput } from '../lib/store'
-import { type Schedule, daysInMonth, stateOf, defaultState, scheduleVersion, isHoliday, DAY_STATES, CAL_W, CAL_H } from '../lib/schedule'
+import { type Schedule, daysInMonth, stateOf, defaultState, scheduleVersion, isHoliday, DAY_STATES, CAL_W, CAL_H, CUSTOM_LABEL_MAX } from '../lib/schedule'
 
 // ── 게시 상태 · 예약 발행 공통 (2026-11-04 원장 요청) ──
 // 목록 배지: 임시저장 / 비공개 / 예약(시각) / 게시
@@ -962,6 +962,7 @@ export function AdminNotices(items: any[], views: Record<string, number> = {}) {
         <td>${popupCell}</td>
         <td>
           <a href="/admin/notices/${n.id}/edit" class="btn-sm" style="color:var(--gold,#b08d57)">수정</a>
+          ${!isLive(n) && n.previewToken ? `<a href="/notice/preview/${n.previewToken}" target="_blank" rel="noopener" class="btn-sm" style="color:#2a6f8f">미리보기</a>` : ''}
           <form method="POST" action="/admin/notices/${n.id}/delete" style="display:inline" onsubmit="return confirm('삭제?')"><button class="btn-sm" style="color:#c0392b">삭제</button></form>
         </td></tr>`
       }).join(''))}
@@ -970,12 +971,43 @@ export function AdminNotices(items: any[], views: Record<string, number> = {}) {
   `)
 }
 
-export function AdminNoticeForm(n?: any, activePopupCount = 0) {
+// 공지 미리보기 링크 상자 (2026-11-13 권민수 원장 Figma 3번)
+//  임시저장·비공개·예약 글도 로그인 없이 링크로 실제 게시 화면을 볼 수 있다. 목록·검색엔진에는 안 나옴.
+function noticePreviewBox(n: any): string {
+  if (!n?.previewToken) return ''
+  const path = `/notice/preview/${n.previewToken}`
+  const live = isLive(n)
+  return `<div class="admin-card" style="background:#f3f7f9;border:1px solid #cfe0e8">
+    <h2 style="font-size:1.05rem;margin-bottom:6px"><i class="fa-solid fa-link" style="color:#2a6f8f"></i> 미리보기 링크</h2>
+    ${live
+      ? `<p style="font-size:13px;color:var(--gray-600)">이 공지는 지금 <strong>게시 중</strong>이라 미리보기 링크를 열면 실제 공지 주소로 넘어갑니다.</p>`
+      : `<p style="font-size:13px;color:var(--gray-600);margin-bottom:10px">로그인하지 않은 분도 이 링크로 <strong>실제 게시 화면</strong>을 볼 수 있습니다. 공지사항 목록과 검색엔진에는 나오지 않습니다. 고친 뒤에는 <strong>저장하고</strong> 다시 열어 주세요.</p>`}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <input id="pvUrl" readonly value="${path}" style="flex:1;min-width:240px;font-size:13px;background:#fff" onfocus="this.select()">
+      <button type="button" class="btn btn-outline btn-sm" id="pvCopy"><i class="fa-regular fa-copy"></i> 주소 복사</button>
+      <a class="btn btn-outline btn-sm" href="${path}" target="_blank" rel="noopener"><i class="fa-solid fa-desktop"></i> PC 화면으로 열기</a>
+      <button type="button" class="btn btn-outline btn-sm" id="pvMobile"><i class="fa-solid fa-mobile-screen"></i> 모바일 크기로 열기</button>
+    </div>
+    <form method="POST" action="/admin/notices/${n.id}/preview-reset" style="margin-top:10px" onsubmit="return confirm('미리보기 주소를 새로 만들까요? 이전에 보낸 주소는 열리지 않게 됩니다.')">
+      <button class="btn-sm" style="background:none;border:none;color:var(--gray-600);text-decoration:underline;cursor:pointer;padding:0;font-size:12.5px">주소 새로 만들기 (이전 주소 막기)</button>
+    </form>
+    <script>(function(){
+      var u=document.getElementById('pvUrl'); u.value=location.origin+u.value;
+      document.getElementById('pvCopy').addEventListener('click',function(){var b=this;
+        (navigator.clipboard?navigator.clipboard.writeText(u.value):Promise.reject()).catch(function(){u.select();document.execCommand('copy')}).then(function(){b.innerHTML='<i class="fa-solid fa-check"></i> 복사됨';setTimeout(function(){b.innerHTML='<i class="fa-regular fa-copy"></i> 주소 복사'},1600)});});
+      document.getElementById('pvMobile').addEventListener('click',function(){window.open(u.value,'pvm','width=400,height=840')});
+    })();</script>
+  </div>`
+}
+
+export function AdminNoticeForm(n?: any, activePopupCount = 0, msg?: string) {
   const edit = !!n
   const action = edit ? `/admin/notices/${n.id}/edit` : '/admin/notices/new'
   const esc = (s: string) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   return adminShell('notices', edit ? '공지 수정' : '공지 작성', html`
     <div class="admin-head"><h1>${edit ? '공지 수정' : '공지 작성'}</h1></div>
+    ${msg ? html`<div class="admin-card" style="background:#e6f7f5;color:#0d8174;padding:14px 20px">${msg}</div>` : ''}
+    ${raw(edit ? noticePreviewBox(n) : '')}
     <div class="admin-card">
       <form method="POST" action="${action}" enctype="multipart/form-data">
         <div class="field"><label>제목 <span class="req">*</span></label><input name="title" required value="${raw(esc(n?.title))}"></div>
@@ -1006,7 +1038,7 @@ export function AdminNoticeForm(n?: any, activePopupCount = 0) {
           </div>
         </div>
 
-        ${raw(pubBlock(n))}
+        ${raw(pubBlock(n, '임시저장·비공개로 저장하면 이 화면 위쪽에 <strong>미리보기 링크</strong>가 생겨, 게시 전에 실제 화면을 확인하거나 검토자에게 보낼 수 있습니다.'))}
         <button type="submit" class="btn btn-primary" style="margin-top:8px"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
         <a href="/admin/notices" class="btn btn-outline" style="margin-left:8px">취소</a>
       </form>
@@ -1323,15 +1355,23 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
   const [y, m] = ym.split('-').map(Number)
   const days = daysInMonth(ym)
   const first = new Date(Date.UTC(y, m - 1, 1)).getUTCDay()
-  const label: Record<string, string> = { open: '진료', night: '야간진료', holiday: '공휴일 진료(~14:00)', closed: '휴진' }
+  const label: Record<string, string> = { open: '진료', night: '야간진료', holiday: '공휴일 진료(~14:00)', closed: '휴진', custom: '직접 입력…' }
   const ver = scheduleVersion(sc, ym)
   const pngReady = sc.pngs[ym] === ver
   const cells: string[] = []
   for (let i = 0; i < first; i++) cells.push('<div class="sc-cell sc-empty"></div>')
   days.forEach((d, i) => {
     const st = stateOf(sc, d), def = defaultState(d), wd = (first + i) % 7
+    const cu = st === 'custom' ? sc.customs[d] : undefined
+    const ev = (v: any) => String(v ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+    // 2026-11-13 권민수 원장 Figma 4번: '직접 입력…' 을 고르면 문구·시간 칸이 열린다(시간 비우면 종일 휴진)
     cells.push(`<div class="sc-cell sc-${st}${st !== def ? ' sc-changed' : ''}"><span class="sc-num${wd === 0 || isHoliday(d) ? ' sun' : wd === 6 ? ' sat' : ''}">${i + 1}${isHoliday(d) ? ' <small>공휴일</small>' : ''}</span>
-      <select name="d_${d}" onchange="this.parentNode.className='sc-cell sc-'+this.value+(this.value!=='${def}'?' sc-changed':'')">${DAY_STATES.map(v => `<option value="${v}"${v === st ? ' selected' : ''}>${label[v]}${v === def ? ' (기본)' : ''}</option>`).join('')}</select></div>`)
+      <select name="d_${d}" onchange="scSel(this,'${def}')">${DAY_STATES.map(v => `<option value="${v}"${v === st ? ' selected' : ''}>${label[v]}${v === def ? ' (기본)' : ''}</option>`).join('')}</select>
+      <div class="sc-cus"${st === 'custom' ? '' : ' hidden'}>
+        <input name="cl_${d}" maxlength="${CUSTOM_LABEL_MAX}" placeholder="예: 단축진료" value="${ev(cu?.label)}" aria-label="${i + 1}일 상태 문구">
+        <input type="time" name="cf_${d}" value="${ev(cu?.from)}" aria-label="${i + 1}일 진료 시작">
+        <input type="time" name="ct_${d}" value="${ev(cu?.to)}" aria-label="${i + 1}일 진료 끝">
+      </div></div>`)
   })
   const e = (v: any) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   return adminShell('schedule', '진료일정', html`
@@ -1343,6 +1383,9 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
       .sc-empty{border:none;background:none}
       .sc-num{font-weight:800}.sc-num.sun{color:#a33}.sc-num.sat{color:#2a4d7a}.sc-num small{font-size:10.5px;font-weight:700}
       .sc-night{background:#faf4e8}.sc-closed{background:#f7e3df;border-color:#e3b3aa}.sc-holiday{background:#fbeeee}
+      .sc-custom{background:#fffaf0;border-color:#d9c39a}
+      .sc-cus{display:flex;flex-direction:column;gap:4px}.sc-cus[hidden]{display:none}
+      .sc-cus input{font-size:12px;padding:4px 5px;border:1px solid #d9c39a;border-radius:4px;width:100%;min-width:0;background:#fff}
       .sc-changed{box-shadow:inset 0 0 0 2px var(--brand-accent,#b08d57)}
       .sc-bg{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin:6px 0 16px}
       .sc-bg-thumb{width:84px;aspect-ratio:1050/1485;border:1px solid var(--gray-100);border-radius:6px;background:#fffeee center/cover no-repeat;flex:none}
@@ -1358,6 +1401,7 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
     <form method="POST" action="/admin/schedule?ym=${ym}" id="scForm">
       <div class="admin-card">
         <p style="font-size:13px;color:var(--gray-600);margin-bottom:14px">월·화·목은 기본이 <strong>야간진료</strong>, 법정 공휴일은 <strong>공휴일 진료(09:30~14:00)</strong>, 나머지는 <strong>진료</strong>입니다. <strong>휴진하는 날</strong>(격주 일요일·공휴일 휴진 등)과 기본과 다른 날만 바꾸고 저장하세요. 바뀐 날은 금색 테두리로 표시됩니다. 여기서 정한 휴진일·공휴일은 홈페이지 상단 '진료중' 표시에도 그대로 반영됩니다.</p>
+        <p style="font-size:13px;color:var(--gray-600);margin:-6px 0 14px"><strong>직접 입력…</strong>을 고르면 그날의 문구(${CUSTOM_LABEL_MAX}자까지, 예: 단축진료·오후 휴진)와 진료 시간을 적을 수 있습니다. 시간을 적으면 그 시간만 진료로, <strong>시간을 비우면 종일 휴진</strong>으로 표시됩니다(예약 문의에서도 그날은 고를 수 없음). 달력 이미지·진료일정 페이지·상단 진료 상태에 모두 반영됩니다.</p>
         <div class="sc-grid">${raw(['일', '월', '화', '수', '목', '금', '토'].map(h => `<div class="sc-head">${h}</div>`).join(''))}${raw(cells.join(''))}</div>
       </div>
       <div class="admin-card">
@@ -1392,6 +1436,11 @@ export function AdminSchedule(sc: Schedule, ym: string, prevYm: string, nextYm: 
       </div>
     </div>
     <script>
+    function scSel(sel, def){
+      var cell=sel.parentNode, v=sel.value, box=cell.querySelector('.sc-cus');
+      cell.className='sc-cell sc-'+v+(v!==def?' sc-changed':'');
+      if(box){ box.hidden = v!=='custom'; if(v==='custom'){ var l=box.querySelector('input'); if(l&&!l.value) l.focus(); } }
+    }
     (function(){
       var YM=${raw(JSON.stringify(ym))}, VER=${raw(JSON.stringify(ver))}, READY=${pngReady ? 'true' : 'false'}, W=${CAL_W}, H=${CAL_H};
       // ① 배경 이미지: 브라우저에서 1050×1485 로 꽉 차게 잘라 JPEG(약 수백 KB)로 줄인 뒤 폼에 실어 보낸다

@@ -372,7 +372,7 @@ export function DirectionsPage() {
 
   const directionsFaqs = [
     { q: '365올케어치과는 약수역에서 얼마나 걸리나요?', a: `${CLINIC.subway}입니다. 5번 출구로 나오시면 스타벅스가 있는 건물 4층입니다.` },
-    { q: '주차가 가능한가요?', a: '건물 기계식 주차장을 이용하실 수 있습니다. 전기차·대형 SUV는 기계식 주차가 어려워 인근 공영주차장 이용을 권장드리며, 방문 전 전화로 주차 가능 여부를 확인해 주세요.' },
+    { q: '주차가 가능한가요?', a: CLINIC.parking.full },
     { q: '야간 진료를 하나요?', a: `${CLINIC.hoursNote}` },
   ]
 
@@ -411,7 +411,7 @@ export function DirectionsPage() {
             <h3><i class="fa-solid fa-bus text-mint"></i> 버스</h3>
             <p>약수역 정류장 하차 후 도보로 이동하실 수 있습니다. 마을버스·간선버스 모두 약수역 인근에 정차합니다.</p>
             <h3><i class="fa-solid fa-car text-mint"></i> 자가용 · 주차 안내</h3>
-            <p>건물은 <strong>기계식 주차장</strong>을 운영합니다. 다만 <strong>전기차와 대형 SUV는 기계식 주차가 어려워</strong>, 해당 차량은 <strong>인근 공영주차장 이용</strong>을 권장드립니다. 주차 공간이 한정되어 있으니, 방문 전 전화(<a href="tel:${CLINIC.phoneRaw}">${CLINIC.phone}</a>)로 주차 가능 여부를 확인해 주시면 정확히 안내해 드립니다.</p>
+            <p>${CLINIC.parking.full}</p>
             <h3><i class="fa-solid fa-clock text-mint"></i> 진료시간 안내</h3>
             <p>월·화·목요일은 09:30~20:30 야간진료, <strong>수·금요일은 09:30~18:30</strong>까지 진료합니다. 토·일·공휴일은 09:30~14:00(일요일 격주)이며, 평일 <strong>점심시간은 ${CLINIC.lunch}</strong>, <strong>저녁시간은 ${CLINIC.dinner}</strong>입니다. <strong>토·일·공휴일은 점심시간 없이 진료</strong>합니다. 진료시간은 변동될 수 있으니, 방문 전 전화로 확인해 주시면 정확히 안내해 드립니다.</p>
           </div>

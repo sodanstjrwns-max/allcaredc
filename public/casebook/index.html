@@ -8,6 +8,13 @@
 <link rel="icon" href="assets/favicon.png">
 <link rel="stylesheet" href="viewer.css?v=261021-4">
 <link rel="canonical" href="https://allcaredc.kr/casebook/">
+<!-- 2026-11-13 권민수 원장 Figma 8번 '페이지 제목 누락 보완': 공유용 제목(og)·본문 제목(h1) 추가 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="365올케어치과">
+<meta property="og:title" content="치료사례집 | 365올케어치과">
+<meta property="og:description" content="임플란트, 치아교정, 심미보철, 일반치료, 수면진료 실제 치료 사례를 책처럼 넘겨 보는 365올케어치과 치료사례집">
+<meta property="og:url" content="https://allcaredc.kr/casebook/">
+<meta property="og:image" content="https://allcaredc.kr/casebook/pages/01.webp">
 <!-- 사이트 공통 분석 태그 (src/components/page.ts 와 동일 ID) — 원장 제공 뷰어에 추가한 유일한 수정 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-65JNN9W083"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65JNN9W083',{anonymize_ip:true});</script>
@@ -20,10 +27,10 @@
   <a class="brand" href="#p1" aria-label="표지로">
     <img src="assets/logo-white.png" alt="365올케어치과">
   </a>
-  <div class="doc-title">
+  <h1 class="doc-title" style="margin:0;font-size:inherit;font-weight:inherit">
     <span class="t">치료사례집</span>
     <span class="s">CASE BOOK</span>
-  </div>
+  </h1>
   <div class="top-actions">
     <div class="seg" role="group" aria-label="보기 방식">
       <button type="button" data-mode="flip" aria-pressed="true">
