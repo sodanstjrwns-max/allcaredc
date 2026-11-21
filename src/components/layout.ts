@@ -1,5 +1,6 @@
 import { html, raw } from 'hono/html'
 import { IMMERSIVE_HEAD } from '../lib/immersive-assets'
+import { STYLE_V, APP_V } from '../lib/asset-version'
 import { CLINIC, CORE_TREATMENTS, SUB_TREATMENTS, TREATMENTS, DOCTORS, SEO_AREAS } from '../data/clinic'
 import { txIcon } from '../data/tx-icons'
 import { footerHubLink } from '../lib/hub-link'
@@ -176,7 +177,7 @@ export function Header() {
     <div class="header-inner">
       <div class="brand-wrap">
       <a href="/" class="logo" aria-label="${CLINIC.name} 홈">
-        <span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="365올케어치과 로고" class="mark-img mark-ivory" width="32" height="32"/><img src="/static/img/logo-symbol.png" alt="365올케어치과 로고" class="mark-img mark-navy" width="32" height="32"/></span>
+        <span class="mark"><img src="/static/img/logo-symbol-ivory-96.webp" alt="365올케어치과 로고" class="mark-img mark-ivory" width="32" height="32"/><img src="/static/img/logo-symbol-96.webp" alt="365올케어치과 로고" class="mark-img mark-navy" width="32" height="32"/></span>
         <span>365올케어치과</span>
       </a>
       <!-- 지금 진료 상태 (2026-11-09 원장 요청) — 요일별 진료시간 + 관리자 진료일정(휴진·공휴일) 기준, KST. 폭 고정 → 글자가 바뀌어도 레이아웃 이동 없음 -->
@@ -285,7 +286,7 @@ export function Footer(path = '') {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory.png" alt="365올케어치과 로고" width="30" height="30" style="display:block"/></span> 365올케어치과</div>
+          <div class="footer-logo"><span class="mark"><img src="/static/img/logo-symbol-ivory-96.webp" alt="365올케어치과 로고" width="30" height="30" style="display:block"/></span> 365올케어치과</div>
           <p style="line-height:1.7">${CLINIC.philosophy}<br>약수역에서 오래도록 곁을 지키는 치과를 만듭니다.</p>
           <div class="footer-sns">
             ${CLINIC.sns.instagram ? raw(`<a href="${CLINIC.sns.instagram}" aria-label="인스타그램" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>`) : ''}
@@ -383,7 +384,7 @@ export function Footer(path = '') {
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/static/app.js?v=8dab5638a3"></script>
+  <script src="/static/app.js?v=${APP_V}"></script>
   `
 }
 
@@ -486,7 +487,7 @@ export function headTags(meta: Meta) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     ${meta.preloadImage ? raw(`<link rel="preload" as="image" href="${meta.preloadImage}" fetchpriority="high" />`) : ''}
     <!-- 본문 CSS는 렌더 차단 없이 우선 적용 -->
-    <link rel="stylesheet" href="/static/style.css?v=20261113" />
+    <link rel="stylesheet" href="/static/style.css?v=${STYLE_V}" />
     ${meta.immersive ? raw(IMMERSIVE_HEAD) : ''}
     <!-- 한글 동적 서브셋(Pretendard): 실제 사용 글자만 로드 → 4MB→수십KB -->
     <!-- 2026-11-12: 글꼴 CSS 는 화면을 막지 않게 비동기(print→all). 글꼴이 오기 전 잠깐 시스템 글꼴로 보였다가 바뀐다 -->

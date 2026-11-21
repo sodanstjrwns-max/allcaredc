@@ -31,7 +31,7 @@ export type EdgeRendered = string | { html: string; tag?: string } | null
 
 /** HTML 엣지 캐시. render() 가 null 이면 캐시하지 않고 404.
  *  tag: 캐시본에 함께 보관할 짧은 값(예: 칼럼 id) → 캐시 적중 때 onHit(tag) 로 전달(조회수 기록 등) */
-export async function edgeHtml(c: Context, render: () => Promise<EdgeRendered>, onHit?: (tag: string) => Promise<unknown>): Promise<Response> {
+export async function edgeHtml(c: Context, render: () => Promise<EdgeRendered>, onHit?: (tag: string) => Promise<unknown>, ttl = EDGE_HTML_TTL): Promise<Response> {
   const cache = cacheOf()
   const url = new URL(c.req.url)
   const key = edgeKey(url.origin, url.pathname + url.search)
@@ -54,7 +54,7 @@ export async function edgeHtml(c: Context, render: () => Promise<EdgeRendered>, 
   if (cache) {
     later(c, cache.put(key, new Response(body, { status: 200, headers: {
       'Content-Type': 'text/html; charset=UTF-8',
-      'Cache-Control': `public, max-age=${EDGE_HTML_TTL}`,
+      'Cache-Control': `public, max-age=${ttl}`,
       ...(tag ? { 'X-Edge-Tag': tag } : {}),
     } })))
   }
@@ -74,4 +74,19 @@ export async function purgeColumnPages(slugs: string[], cats: string[], pages: n
   for (const s of slugs) if (s) paths.add(`/column/${encodeURIComponent(s)}`)
   const origins = new Set([origin, 'https://allcaredc.kr'])
   await Promise.all([...origins].flatMap(o => [...paths].map(p => cache.delete(edgeKey(o, p)).catch(() => false))))
+}
+
+// ============================================================
+// 첫 화면(/) 엣지 캐시 — 2026-11-17 권민수 원장 11/16 재점검 ③(첫 화면 응답 속도)
+//   - 공지 팝업·진료일정 팝업을 매 요청 R2 에서 읽던 것을 2분간 엣지에 보관
+//   - 관리자 화면에서 무엇이든 저장(POST)하면 현재 데이터센터의 첫 화면 캐시를 바로 삭제(index.tsx)
+//   - 다른 데이터센터는 최대 2분 뒤 자연 갱신
+// ============================================================
+export const HOME_HTML_TTL = 120
+
+export async function purgeHome(origin: string): Promise<void> {
+  const cache = cacheOf()
+  if (!cache) return
+  const origins = new Set([origin, 'https://allcaredc.kr'])
+  await Promise.all([...origins].map(o => cache.delete(edgeKey(o, '/')).catch(() => false)))
 }

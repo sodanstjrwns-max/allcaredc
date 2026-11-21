@@ -21,7 +21,7 @@ import { listCollection, listPublic, addToCollection, uid, r2GetBinary, r2Head, 
 import { toYmd } from './data/content-dates'
 import { CLINIC, treatmentForColumnCategory, getDoctor } from './data/clinic'
 import { answerSummary } from './lib/column-seo'
-import { edgeHtml, purgeColumnPages } from './lib/edge-cache'
+import { edgeHtml, purgeColumnPages, purgeHome, HOME_HTML_TTL } from './lib/edge-cache'
 import { admin, ensureSeed } from './routes/admin'
 import { isValidStatsKey } from './routes/stats'
 import { sitemap, robotsTxt, llmsTxt, rssFeed, AreaPage } from './routes/seo'
@@ -90,6 +90,16 @@ app.use('/admin/*', async (c, next) => {
     const pub = cols.filter(x => x.published)
     await purgeColumnPages(cols.map(x => x.slug), cats.map(x => x.slug), Math.ceil(pub.length / COLUMN_PER), new URL(c.req.url).origin)
   })().catch(() => {})
+  try { c.executionCtx.waitUntil(purge) } catch { await purge }
+})
+// 관리자에서 무엇이든 저장(POST 등)하면 첫 화면 엣지 캐시 삭제 — 공지 팝업·진료일정 팝업이 바로 보이게 (2026-11-17)
+app.use('/admin/*', async (c, next) => {
+  await next()
+  if (c.req.method === 'GET' || c.req.method === 'HEAD' || c.res.status >= 400) return
+  const path = new URL(c.req.url).pathname
+  if (path === '/admin/login' || path === '/admin/logout') return
+  if ((c.res.headers.get('Location') || '').includes('/admin/login')) return // 미인증 요청은 무시
+  const purge = purgeHome(new URL(c.req.url).origin).catch(() => {})
   try { c.executionCtx.waitUntil(purge) } catch { await purge }
 })
 app.route('/admin', admin)
@@ -171,7 +181,7 @@ app.get('/og/:type/:file', (c) => {
 app.get('/seo-health', (c) => c.html(SeoHealthPage().toString()))
 
 // ════════════════ 공개 페이지 ════════════════
-app.get('/', async (c) => {
+app.get('/', (c) => edgeHtml(c, async () => {
   const notices = await listPublic<Notice>(c.env, 'notices')
   const pops: { id: string; title: string; body: string; image?: string; href?: string; poster?: boolean }[] =
     activePopupNotices(notices).map(p => ({ id: p.id, title: p.title, body: p.body, image: p.image }))
@@ -184,8 +194,8 @@ app.get('/', async (c) => {
       pops.unshift({ id: `sched-${ym}-${scheduleVersion(sc, ym)}`, title: `${m}월 진료일정`, body: sc.notes[ym] || `${m}월 진료일정을 참고하여 내원 부탁드립니다. 휴진일과 야간진료일을 확인해 주세요.`, image: `/schedule/${ym}.svg?v=${scheduleVersion(sc, ym)}`, href: '/schedule', poster: true })
     }
   } catch {}
-  return c.html(HomePage(pops.slice(0, 5)).toString())
-})
+  return HomePage(pops.slice(0, 5)).toString()
+}, undefined, HOME_HTML_TTL))
 
 // ── 진료일정 (관리자 입력 → 자동 달력) ──
 // 달력 이미지 대체 문구: 휴진일·직접 입력한 날(단축진료 등)을 글로도 읽히게 (2026-11-13)

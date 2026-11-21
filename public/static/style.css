@@ -3635,3 +3635,69 @@ h1, h2, h3, h4, h5, h6 { font-weight: 800; }
 .notice-list .pin { background: #7d6236; }
 .np-label { color: #7d6236; }
 .doc-body .role { color: #7d6236; }
+
+/* ===== 2026-11-17 권민수 원장 11/16 재점검(Figma '1116 홈페이지 수정 요청') — 모바일 ===== */
+/* 아무 데서나 쓰는 '이 묶음은 한 줄에' */
+.nobr{white-space:nowrap}
+@media(max-width:820px){
+  /* ① 헤더: 보이지 않는 주메뉴 칸이 사이 간격(24px×2)을 차지해 412px 등에서 메뉴 버튼이 화면 밖으로 밀렸다.
+     주메뉴 칸을 빼고, 메뉴 버튼은 항상 오른쪽 끝에 붙이고, 공간이 모자라면 상태 칩이 먼저 줄어든다. */
+  .header-inner > nav[aria-label="주메뉴"]{display:none}
+  .header-inner{gap:10px}
+  .brand-wrap{flex:0 1 auto;min-width:0}
+  .header-cta{flex:none;margin-left:auto}
+  .logo{min-height:44px;flex:none}
+  /* 상태 칩: 글자 12px, 보이는 높이 30px · 누르는 영역 44px(::after). 글자 길이에 맞춰 폭이 정해지고 칩 뒤에는 아무것도 없어 다른 요소가 움직이지 않는다 */
+  .hours-chip{position:relative;flex:0 1 auto;min-width:0;width:auto;max-width:170px;height:30px;padding:0 10px;gap:5px;font-size:12px;overflow:visible}
+  .hours-chip .hc-long,.hours-chip .hc-short,.hours-chip .hc-mini{min-width:0;white-space:nowrap}
+  .hours-chip::after{content:'';position:absolute;inset:-7px -3px}
+}
+@media(max-width:430px){
+  .logo{gap:7px}
+  .logo > span:last-child{font-size:19px}
+  .logo .mark{width:34px;height:34px}
+}
+@media(max-width:380px){
+  .header-inner{padding-left:14px;padding-right:14px;gap:8px}
+  .hours-chip{width:auto;padding:0 8px;gap:4px}
+}
+/* 349px 이하: '진료중 ~20:30'처럼 시각이 붙은 문구가 잘리므로 시각 없는 짧은 상태만 */
+@media(max-width:349px){
+  .hours-chip{width:auto}
+  .hours-chip .hc-short{display:none}
+  .hours-chip .hc-mini{display:inline;overflow:hidden;text-overflow:ellipsis}
+}
+/* ④ 320px 메인 제목: '365올케어치과'가 1.6px 넘치던 것 */
+@media(max-width:360px){
+  .hero--heritage .hh-title--ko, .hh-title--ko{font-size:2.8rem}
+}
+/* ⑤ 모바일 최소 글씨 12px (320px에서 11px 이하였던 곳) */
+@media(max-width:820px){
+  .hero-foot, .hero--heritage .hh-foot, .hero-top{font-size:12px}
+  .js-no{font-size:12px}
+  .compliance{font-size:12px}
+  .mcb-item{font-size:12px}
+  .ev-pin{font-size:12px}
+  .partner-item figcaption span{font-size:12px}
+  .site-footer small{font-size:12px}
+  .price-value .price-won{font-size:max(12px,.72em)}
+}
+/* ⑥ 누르는 영역 44px — 보이는 모양은 그대로 두고 높이만 넓히거나(::after) 최소 높이를 준다 */
+@media(max-width:820px){
+  .link-arrow::after{content:'';position:absolute;left:-4px;right:-4px;top:50%;height:44px;transform:translateY(-50%)}
+  .sn-chip{min-height:44px}
+  .hm-btn{min-height:44px}
+  .tag-pill{min-height:44px}
+  .list-pager a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .inlink-box a[href^="tel:"]{display:inline-flex;align-items:center;min-height:44px}
+  .footer-links a,.footer-contact a,.footer-bottom .legal a{display:inline-flex;align-items:center;min-height:44px}
+  .breadcrumb a{position:relative}
+  .breadcrumb a::after{content:'';position:absolute;left:-4px;right:-4px;top:50%;height:44px;transform:translateY(-50%)}
+  .section-head > a{position:relative}
+  .section-head > a::after{content:'';position:absolute;left:-4px;right:-4px;top:50%;height:44px;transform:translateY(-50%)}
+  [id^="faq-"] > a{display:inline-flex;align-items:center;min-height:44px}
+}
+/* ⑦ 기공실 사진: 모바일에서 모든 행이 가장 높은 행(큰 사진)과 같은 높이가 되어 사진 사이 84px 공백 → 행 높이를 내용에 맞춤 */
+@media(max-width:860px){
+  .lab-grid{grid-auto-rows:auto}
+}

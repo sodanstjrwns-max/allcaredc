@@ -14,3 +14,13 @@
   Cache-Control: public, max-age=604800
 /casebook/assets/*
   Cache-Control: public, max-age=2592000
+# 2026-11-17 권민수 원장 11/16 재점검 ③: CSS·JS 는 주소의 ?v= 가 파일 내용 해시(scripts/asset-version.mjs·immersive-version.mjs, npm run build 가 자동 갱신)
+# → 내용이 바뀌면 주소가 바뀌므로 1년 캐시 + 재검증 없음. 재방문 때 서버 왕복(REVALIDATED) 제거
+/static/style.css
+  Cache-Control: public, max-age=31536000, immutable
+/static/app.js
+  Cache-Control: public, max-age=31536000, immutable
+/static/immersive.css
+  Cache-Control: public, max-age=31536000, immutable
+/static/immersive.js
+  Cache-Control: public, max-age=31536000, immutable

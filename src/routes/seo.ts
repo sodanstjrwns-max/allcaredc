@@ -1,5 +1,5 @@
 import { html, raw } from 'hono/html'
-import { yaksuCardFor, yaksuOg, yaksuCardGrid, YAKSU_CARD_CSS, YAKSU_CARDS, YAKSU_EXTRA } from '../lib/yaksu-cards'
+import { yaksuCardFor, yaksuOg, yaksuCover, yaksuCardGrid, YAKSU_CARD_CSS, YAKSU_CARDS, YAKSU_EXTRA } from '../lib/yaksu-cards'
 import { Page, PageHero } from '../components/page'
 import { breadcrumbSchema, faqSchema, organizationSchema } from '../components/layout'
 import { CLINIC, TREATMENTS, CORE_TREATMENTS, SEO_AREAS, DOCTORS, getTreatment, type PriceGroup } from '../data/clinic'
@@ -486,7 +486,7 @@ export function AreaPage(combo: string) {
     <div class="container">
       <div class="grid-detail">
         <article class="prose reveal">
-          ${card ? raw(`${YAKSU_CARD_CSS}<figure class="yk-cover"><img src="${yaksuOg(card.tx)}" width="1200" height="630" fetchpriority="high" decoding="async" alt="${card.name}"></figure>`) : ''}
+          ${card ? raw(`${YAKSU_CARD_CSS}<figure class="yk-cover"><img src="${yaksuCover(card.tx)}" width="1200" height="630" fetchpriority="high" decoding="async" alt="${card.name}"></figure>`) : ''}
           <div class="answer-box" style="font-size:1.1rem">${area.name}(${area.adminArea})에서 ${area.access}, ${area.transit}에 위치한 365올케어치과에서 ${tx.name} 상담을 받으실 수 있습니다. 구강악안면외과·치과보철과·치과교정과·통합치의학과 전문의가 함께합니다.</div>
           <p class="area-hub-link">진료시간·의료진·진료 과목 전체는 <a href="/" style="color:var(--brand);font-weight:700;text-decoration:underline;text-underline-offset:3px">약수역 치과</a> 365올케어치과 홈에서 한 번에 보실 수 있습니다.</p>
 

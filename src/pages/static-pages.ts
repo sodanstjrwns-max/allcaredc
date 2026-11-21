@@ -13,10 +13,10 @@ const DAY_CODE: Record<string, string> = { '월': 'Monday', '화': 'Tuesday', '�
 //   ① 아래 갤러리 첫 썸네일과 중복 ② 모자이크 미처리로 상대측 얼굴 노출(개인정보) 사유로
 //   마크업과 이미지 파일 모두 삭제함. 다시 추가하지 말 것 — 모자이크된 4장 갤러리만 유지.
 const PARTNER_ORGS = [
-  { name: '약수시장상인회', img: '/static/img/partner-yaksu-market.jpg', caption: '상호협력 발전을 위한 업무협약', alt: '365올케어치과 - 약수시장상인회 업무협약식, 권민수 대표원장이 상인회 측과 상호협력 협약서를 든 모습(상대측 얼굴 모자이크 처리)' },
-  { name: '다온봉사단', img: '/static/img/partner-daon.jpg', caption: '의료서비스 지원 협약', alt: '365올케어치과 - 다온봉사단 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
-  { name: '약수동주민센터', img: '/static/img/partner-community-center.jpg', caption: '취약계층 의료서비스 지원 협약', alt: '365올케어치과 - 약수동주민센터 취약계층 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
-  { name: '중구산악회', img: '/static/img/partner-junggu-alpine.jpg', caption: '지역 단체 의료서비스 지원 협약', alt: '365올케어치과 - 중구산악회 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
+  { name: '약수시장상인회', img: '/static/img/partner-yaksu-market.webp', caption: '상호협력 발전을 위한 업무협약', alt: '365올케어치과 - 약수시장상인회 업무협약식, 권민수 대표원장이 상인회 측과 상호협력 협약서를 든 모습(상대측 얼굴 모자이크 처리)' },
+  { name: '다온봉사단', img: '/static/img/partner-daon.webp', caption: '의료서비스 지원 협약', alt: '365올케어치과 - 다온봉사단 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
+  { name: '약수동주민센터', img: '/static/img/partner-community-center.webp', caption: '취약계층 의료서비스 지원 협약', alt: '365올케어치과 - 약수동주민센터 취약계층 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
+  { name: '중구산악회', img: '/static/img/partner-junggu-alpine.webp', caption: '지역 단체 의료서비스 지원 협약', alt: '365올케어치과 - 중구산악회 의료서비스 지원 협약식(상대측 얼굴 모자이크 처리)' },
 ]
 
 // 진료시간 → openingHoursSpecification 변환 (요일별 1줄 포맷: '월요일' / '09:30 - 20:30')

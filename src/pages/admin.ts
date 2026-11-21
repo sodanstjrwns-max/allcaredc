@@ -1,4 +1,5 @@
 import { html, raw } from 'hono/html'
+import { STYLE_V, APP_V } from '../lib/asset-version'
 import { CLINIC, TREATMENTS, DOCTORS, COLUMN_CATEGORIES, columnCategoryName, type PriceGroup, type ColumnCategory } from '../data/clinic'
 import { eventStatus } from './event'
 import { POPUP_MAX, kstToday, allActivePopupNotices } from './notice'
@@ -43,7 +44,8 @@ const ADMIN_SHRINK_JS = `
   function shrink(file,maxSide){
     return new Promise(function(resolve){
       try{
-        if(!/^image\\/(png|jpeg|webp|bmp)$/i.test(file.type)||file.size<300*1024) return resolve(file);
+        // 2026-11-17 원장 11/16 'WebP 미변환': 20KB 넘는 사진은 전부 WebP 로(못 하는 브라우저는 투명 없으면 JPG)
+        if(!/^image\\/(png|jpeg|bmp)$/i.test(file.type)||file.size<20*1024) return resolve(file);
         createImageBitmap(file).then(function(bmp){
           var w=bmp.width,h=bmp.height,s=Math.min(1,maxSide/Math.max(w,h));
           var cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));
@@ -54,19 +56,23 @@ const ADMIN_SHRINK_JS = `
             var d=ctx.getImageData(0,0,cw,ch).data,step=Math.max(4,Math.floor(d.length/4/40000)*4);
             for(var i=3;i<d.length;i+=step){ if(d[i]<255){ alpha=true; break; } }
           }
-          var type=alpha?'image/webp':'image/jpeg', ext=alpha?'.webp':'.jpg';
+          var base=(file.name||'image').replace(/\\.[^.]+$/,'');
+          function done(b,type,ext){ try{ resolve(new File([b],base+ext,{type:type})); }catch(e){ resolve(file); } }
           cv.toBlob(function(b){
-            if(!b||b.type!==type||b.size>=file.size) return resolve(file);
-            var base=(file.name||'image').replace(/\\.[^.]+$/,'');
-            try{ resolve(new File([b],base+ext,{type:type})); }catch(e){ resolve(file); }
-          },type,0.85);
+            if(b&&b.type==='image/webp'&&b.size<file.size) return done(b,'image/webp','.webp');
+            if(alpha) return resolve(file);
+            cv.toBlob(function(j){
+              if(!j||j.type!=='image/jpeg'||j.size>=file.size) return resolve(file);
+              done(j,'image/jpeg','.jpg');
+            },'image/jpeg',0.85);
+          },'image/webp',0.82);
         }).catch(function(){ resolve(file); });
       }catch(e){ resolve(file); }
     });
   }
   document.addEventListener('change',function(e){
     var inp=e.target;
-    if(!inp||inp.type!=='file'||inp.name!=='imageFile') return;
+    if(!inp||inp.type!=='file'||!/^(imageFile|panoBefore|panoAfter|intraBefore|intraAfter)$/.test(inp.name)) return;
     var files=Array.prototype.slice.call(inp.files||[]); if(!files.length) return;
     var btns=inp.form?Array.prototype.slice.call(inp.form.querySelectorAll('button[type=submit],button:not([type])')).filter(function(x){ return !x.disabled; }):[];
     var note=inp.parentNode.querySelector('.shrink-note');
@@ -105,7 +111,7 @@ function adminShell(active: string, title: string, content: any) {
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/style.css?v=${STYLE_V}">
 <style>
   body{background:var(--gray-100)}
   .admin-wrap{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
@@ -193,14 +199,14 @@ function adminShell(active: string, title: string, content: any) {
   </aside>
   <main class="admin-main">${content}</main>
 </div>
-<script src="/static/app.js?v=8dab5638a3"></script>
+<script src="/static/app.js?v=${APP_V}"></script>
 <script>${raw(ADMIN_SHRINK_JS)}</script>
 </body></html>`
 }
 
 // ── 로그인 ──
 export function AdminLogin(error?: string) {
-  return html`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>관리자 로그인</title><meta name="robots" content="noindex"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"><link rel="stylesheet" href="/static/style.css"></head>
+  return html`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>관리자 로그인</title><meta name="robots" content="noindex"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"><link rel="stylesheet" href="/static/style.css?v=${STYLE_V}"></head>
 <body style="background:var(--brand-deep);display:grid;place-items:center;min-height:100vh">
   <div class="form-card" style="width:90%;max-width:400px">
     <h1 style="font-size:1.4rem;text-align:center;margin-bottom:24px"><i class="fa-solid fa-lock text-mint"></i> 관리자 로그인</h1>
@@ -747,7 +753,7 @@ function columnEditorScript(faqsJson: string): string {
   function shrinkImage(file, maxW){
     return new Promise(function(resolve){
       try {
-        if (!/^image\\/(png|jpeg|webp|bmp)$/i.test(file.type) || !window.createImageBitmap || file.size < 150*1024) return resolve(file);
+        if (!/^image\\/(png|jpeg|webp|bmp)$/i.test(file.type) || !window.createImageBitmap || file.size < 20*1024) return resolve(file);
         createImageBitmap(file).then(function(bmp){
           var w = bmp.width, h = bmp.height, scale = Math.min(1, maxW / w);
           var cw = Math.round(w*scale), ch = Math.round(h*scale);

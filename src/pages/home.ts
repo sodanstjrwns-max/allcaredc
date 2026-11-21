@@ -214,10 +214,19 @@ function noticePopHtml(popups: HomePopup[]): string {
     .np-compact .np-count{min-width:18px;height:18px;margin-left:5px;padding:0 5px;font-size:11px;vertical-align:0}
     body:has(.m-drawer.open) .notice-pop.np-compact{opacity:0;visibility:hidden;pointer-events:none}
     @media(max-width:767px){
-      .notice-pop.np-single{padding-left:8px;padding-right:8px}
-      .np-single .np-card.np-poster{width:min(100%,calc((100svh - 190px) * .7071));max-height:none;margin:0 auto}
+      .notice-pop.np-single{padding:max(14px,env(safe-area-inset-top)) 8px max(14px,env(safe-area-inset-bottom))}
+      /* 2026-11-17 원장 11/16 재점검 ②: 카드 + 넘김 버튼(44) + '모두' 버튼(44) + 간격·여백·하단 안전영역이 화면 높이 안에 들어가게.
+         카드 최대 높이에서 아래 버튼 몫(--np-rest)을 미리 빼고, 넘치는 본문은 카드 안에서 스크롤 */
+      .notice-pop.np-single{--np-rest:calc(160px + env(safe-area-inset-top) + env(safe-area-inset-bottom))}
+      .notice-pop.np-single:has(.np-allbar[hidden]){--np-rest:calc(108px + env(safe-area-inset-top) + env(safe-area-inset-bottom))}
+      .np-single .np-nav{margin:8px auto 0}
+      .notice-pop .np-allbar{margin:8px auto 0;gap:8px;flex-wrap:nowrap}
+      .notice-pop .np-allbar button{flex:0 1 auto;min-width:0;padding:10px 12px;font-size:13px;white-space:nowrap}
+      .np-single .np-card,.np-single .np-card.np-active{max-height:calc(100svh - var(--np-rest))}
+      .np-single .np-card.np-poster{width:min(100%,calc((100svh - var(--np-rest) - 71px) * .7071));margin:0 auto}
       .np-poster .np-img img{max-height:none}
     }
+    @media(max-width:340px){.notice-pop .np-allbar button{padding:10px 8px;font-size:12.5px}}
   </style>
   <script>${NOTICE_POP_JS}</script>`
 }
@@ -591,7 +600,7 @@ export function HomePage(popups: HomePopup[] = []) {
   <!-- ============ 일상 관리 (진료시간 / 오시는 길 + 일반 진료) ============ -->
   <section class="section" style="background:var(--ivory-2)" id="daily">
     <div class="container">
-      ${raw(sectionHead('일상 관리', '큰 치료부터 <em>일상 관리</em>까지',
+      ${raw(sectionHead('일상 관리', '큰 치료부터 <span class="nobr"><em>일상 관리</em>까지</span>',
     '고난도 수술만이 아니라, 충치·잇몸·검진 같은 일상 진료까지 한 곳에서 이어서 관리합니다.'))}
 
       <div class="tx-sub-grid">
@@ -609,7 +618,7 @@ export function HomePage(popups: HomePopup[] = []) {
           <div style="background:#fffeee;border-radius:var(--radius-lg);border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow-sm)">
             ${raw(CLINIC.hours.map(h => `
               <div style="display:flex;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--line-soft)">
-                <span style="font-weight:600;color:${h.night ? 'var(--mint)' : 'var(--ink-soft)'}">${h.day}${h.night ? ' <span style="font-size:11px;background:var(--mint);color:#fffeee;padding:2px 8px;border-radius:999px;margin-left:6px">야간</span>' : ''}</span>
+                <span style="font-weight:600;color:${h.night ? 'var(--mint)' : 'var(--ink-soft)'}">${h.day}${h.night ? ' <span style="font-size:12px;background:var(--mint);color:#fffeee;padding:2px 8px;border-radius:999px;margin-left:6px">야간</span>' : ''}</span>
                 <span style="color:var(--gray-600)">${h.time}</span>
               </div>`).join(''))}
             <div style="display:flex;justify-content:space-between;padding:15px 22px;background:var(--ivory-2)">

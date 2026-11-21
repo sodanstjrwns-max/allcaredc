@@ -25,6 +25,8 @@ export const YAKSU_CARDS: YaksuCard[] = [
 /** 카드 대상 하위 페이지 combo(yaksu-*) */
 export const YAKSU_COMBOS = YAKSU_CARDS.map(c => `yaksu-${c.tx}`)
 export const yaksuOg = (tx: string) => `/static/cards/yaksu-${tx}.jpg`
+/** 화면용 표지(WebP, 2026-11-17). 공유 미리보기(og:image)·이미지 사이트맵은 호환을 위해 JPG(yaksuOg) 유지 */
+export const yaksuCover = (tx: string) => `/static/cards/yaksu-${tx}.webp`
 const thumb = (tx: string) => `/static/cards/yaksu-${tx}-600.webp`
 export function yaksuCardFor(combo: string): YaksuCard | undefined {
   return YAKSU_CARDS.find(c => `yaksu-${c.tx}` === combo)
@@ -34,7 +36,7 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 
 /** 사진 카드 그리드 HTML. exclude: 현재 페이지 tx */
 export function yaksuCardGrid(idPrefix: string, exclude = ''): string {
-  return `<ul class="yk-cards" role="list">${YAKSU_CARDS.filter(c => c.tx !== exclude).map((c, i) => `<li><a class="yk-card" href="/area/yaksu-${c.tx}" aria-labelledby="${idPrefix}-${c.tx}"><span class="yk-card-img"><img src="${thumb(c.tx)}" width="600" height="600" loading="lazy" decoding="async" alt="${esc(c.name)}"></span><span class="yk-card-body"><span class="yk-card-tag" aria-hidden="true">${String(i + 1).padStart(2, '0')} / ${c.tag}</span><strong class="yk-card-title" id="${idPrefix}-${c.tx}">${esc(c.name)}</strong><span class="yk-card-line">${esc(c.line)}</span></span></a></li>`).join('')}</ul>`
+  return `<ul class="yk-cards" role="list">${YAKSU_CARDS.filter(c => c.tx !== exclude).map((c, i) => `<li><a class="yk-card" href="/area/yaksu-${c.tx}" aria-labelledby="${idPrefix}-${c.tx}"><span class="yk-card-img"><img src="${thumb(c.tx)}" width="600" height="600" loading="lazy" decoding="async" alt="${esc(c.name)}"></span><span class="yk-card-body"><span class="yk-card-tag" aria-hidden="true"><span class="yk-tag-no">${String(i + 1).padStart(2, '0')} /</span> <span class="yk-tag-en">${c.tag}</span></span><strong class="yk-card-title" id="${idPrefix}-${c.tx}">${esc(c.name)}</strong><span class="yk-card-line">${esc(c.line)}</span></span></a></li>`).join('')}</ul>`
 }
 
 export const YAKSU_CARD_CSS = `<style>
@@ -46,11 +48,12 @@ export const YAKSU_CARD_CSS = `<style>
 .yk-card-img img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .yk-card:hover .yk-card-img img{transform:scale(1.04)}
 .yk-card-body{display:flex;flex-direction:column;gap:6px;padding:16px 18px 20px}
-.yk-card-tag{font-size:11px;letter-spacing:.04em;font-weight:700;color:var(--gold-600,#97774a)}
+.yk-card-tag{font-size:12px;letter-spacing:.04em;font-weight:700;color:var(--gold-600,#97774a)}
 .yk-card-title{font-size:17px;font-weight:800;color:var(--navy-800,#062741);line-height:1.35}
 .yk-card-line{font-size:13.5px;color:#4b5a68;line-height:1.6;word-break:keep-all}
 @media(max-width:900px){.yk-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
-@media(max-width:520px){.yk-card-body{padding:11px 12px 14px}.yk-card-title{font-size:15px}.yk-card-line{display:none}}
+@media(max-width:520px){.yk-card-body{padding:11px 12px 14px}.yk-card-title{font-size:15px}.yk-card-line{display:none}.yk-card-tag{letter-spacing:.02em}.yk-tag-en{display:block}}
+/* 2026-11-17: 좁은 화면에서 '02 / ORTHODONTICS'처럼 긴 태그만 두 줄이 되어 카드 제목 높이가 들쭉날쭉 → 모든 카드를 번호 / 영문 두 줄로 맞춤 */
 @media(prefers-reduced-motion:reduce){.yk-card,.yk-card-img img{transition:none}}
 .yk-cover{margin:0 0 28px}
 .yk-cover img{display:block;width:100%;height:auto;border-radius:16px}
